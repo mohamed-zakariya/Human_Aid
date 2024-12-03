@@ -1,6 +1,23 @@
 # Human_Aid
 Our system is designed to support individuals with dyslexia by improving their reading and writing skills through innovative, user-friendly solutions. By leveraging interactive tools and accessibility-focused design, we aim to make learning more engaging and effective for those with reading challenges.
 
+#Project Structure
+
+```mermaid
+graph TD;
+    main --> develop
+    develop --> frontend
+    develop --> backend
+    develop --> AI
+    frontend --> webApp
+    frontend --> mobileApp
+    AI --> Models
+    AI --> data
+    AI --> notebooks
+```
+
+
+
 # Contribution Guide
 
 Welcome to the repository! This document outlines the process for contributing to the project, including guidelines for creating branches, pushing code, and performing code reviews. Please read this carefully before contributing.
