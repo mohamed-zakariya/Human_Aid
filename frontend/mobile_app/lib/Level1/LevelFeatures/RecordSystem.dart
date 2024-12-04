@@ -21,8 +21,7 @@ class RecordSystem extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             shape: const CircleBorder(), // Makes the button circular
             padding: EdgeInsets.fromLTRB(0, screenWidth/10, 0, 0), // Removes padding for a precise size
-            // backgroundColor: Colors.transparent,
-
+            backgroundColor: Colors.white60,
             // Background color
             elevation: 15, // Adds elevation
           ),
@@ -43,7 +42,7 @@ class RecordSystem extends StatelessWidget {
                     child: Icon(
                       Icons.mic,
                       size: 40,
-                      color: Colors.white,
+                      color: Colors.white70,
                     ),
                   ),
                 ),

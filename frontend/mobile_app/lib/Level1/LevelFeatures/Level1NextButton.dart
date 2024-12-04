@@ -19,11 +19,11 @@ class Level1NextButton extends StatelessWidget {
         shadowColor: const Color(0x33000000), // Shadow color
         elevation: 6, // Elevation for shadow effect
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30), // Rounded corners
+          borderRadius: BorderRadius.circular(8), // Rounded corners
         ),
-        padding: const EdgeInsets.all(5), // Padding inside the button
+        padding: const EdgeInsets.all(2), // Padding inside the button
         minimumSize: Size(
-          MediaQuery.of(context).size.width - 200,
+          MediaQuery.of(context).size.width - 150,
           60, // Button size
         ),
       ),
