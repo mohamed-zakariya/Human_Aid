@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/HomePage/course_card.dart';
+import 'course_card.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -61,7 +61,7 @@ class HomePage extends StatelessWidget {
                     description: "انطق الكلمات بشكل صحيح",
                     progress: 20,
                     color: Colors.purple,
-                    image: "assets/level1.png.jpg", 
+                    image: "assets/images/level1.png.jpg",
                     onTap: () {
                       // Handle the tap action here, e.g., navigate to a new page
                       print("Level 1 tapped");
@@ -73,7 +73,7 @@ class HomePage extends StatelessWidget {
                     description: "تابع التمارين لتحسين النطق",
                     progress: 50,
                     color: Colors.orange,
-                    image: "assets/level2.png.jpg", 
+                    image: "assets/images/level2.png.jpg",
                     onTap: () {
                       // Handle the tap action for Level 2
                       print("Level 2 tapped");

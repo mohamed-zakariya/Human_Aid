@@ -5,25 +5,26 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class RecordSystem extends StatelessWidget {
 
   final double screenWidth;
-
-  const RecordSystem({super.key, required this.screenWidth});
+  final bool recordFlag;
+  final VoidCallback  onToggle;
+  const RecordSystem({super.key, required this.screenWidth,
+  required this.recordFlag, required this.onToggle});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+      margin: const EdgeInsets.fromLTRB(0, 15, 0, 20),
       child: Opacity(
         opacity: 1,
         child: ElevatedButton(
-          onPressed: () {
-            print("Container clicked!");
-          },
+          onPressed:onToggle,
           style: ElevatedButton.styleFrom(
             shape: const CircleBorder(), // Makes the button circular
             padding: EdgeInsets.fromLTRB(0, screenWidth/10, 0, 0), // Removes padding for a precise size
-            backgroundColor: const Color(0xFFFADADD),
+            // backgroundColor: Colors.transparent,
+
             // Background color
-            elevation: 5, // Adds elevation
+            elevation: 15, // Adds elevation
           ),
           child: Column(
             children: [
@@ -33,22 +34,23 @@ class RecordSystem extends StatelessWidget {
                   width: 80,
                   height: MediaQuery.of(context).size.height>0 ? 80: 0,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF316BBE),
+                    color: Colors.red.shade200,
+
                     borderRadius: BorderRadius.circular(40),
                   ),
                   child: const Align(
                     alignment: AlignmentDirectional(0, 0),
                     child: Icon(
                       Icons.mic,
-                      color: Colors.white,
                       size: 40,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
               const Opacity(
                 opacity: 0.5,
-                child: Text("اضغط للتجيل", style: TextStyle(
+                child: Text("", style: TextStyle(
                   fontSize: 15,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
