@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/HomePage/course_card.dart';
+
+import 'course_card.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

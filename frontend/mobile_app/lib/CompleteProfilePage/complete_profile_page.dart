@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/HomePage/home_page.dart';
+
+import '../HomePage/home_page.dart';
 
 class CompleteProfilePage extends StatelessWidget {
   const CompleteProfilePage({super.key});

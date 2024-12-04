@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/CompleteProfilePage/complete_profile_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../CompleteProfilePage/complete_profile_page.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
