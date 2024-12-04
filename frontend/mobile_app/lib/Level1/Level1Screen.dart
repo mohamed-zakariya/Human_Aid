@@ -1,37 +1,23 @@
 import 'package:flutter/material.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mobile_app/Level1/LevelFeatures/Level1Navbar.dart';
+import 'package:mobile_app/Level1/LevelFeatures/Level1NextButton.dart';
 import 'LevelFeatures/DisplayedText.dart';
 import 'LevelFeatures/LetterContainer.dart';
-import 'LevelFeatures/Level1Navbar.dart';
-import 'LevelFeatures/Level1NextButton.dart';
 import 'LevelFeatures/RecordSystem.dart';
 import 'LevelFeatures/TextGenerated.dart';
 
-class Level1screen extends StatefulWidget {
+class Level1screen extends StatelessWidget {
   const Level1screen({super.key});
-
-  @override
-  State<Level1screen> createState() => _Level1screenState();
-}
-
-class _Level1screenState extends State<Level1screen> {
-
-  bool initialRecordDone = false;
-  // const widthScreen = MediaQuery.of(context).size.width;
-  void toggleRecordDone() {
-    setState(() {
-      initialRecordDone = true;
-      print(initialRecordDone);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
 
     const String word = "التفاحة"; // Replace with any word
+    // const widthScreen = MediaQuery.of(context).size.width;
 
-
-    return Scaffold(
+    return MaterialApp(
+      home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.blue.shade100,
           title: const Align(
@@ -48,12 +34,13 @@ class _Level1screenState extends State<Level1screen> {
                 const DisplayedText(word: word),
                 const LetterContainer(word: word),
                 const TextGenerated(),
-                RecordSystem(screenWidth: MediaQuery.of(context).size.width, recordFlag: initialRecordDone, onToggle: toggleRecordDone,),
-                Level1NextButton(initialRecordDone: initialRecordDone, onToggle: toggleRecordDone)
+                RecordSystem(screenWidth: MediaQuery.of(context).size.width),
+                const Level1NextButton()
               ],
             ),
           ),
         ),
+      ),
     );
   }
 }

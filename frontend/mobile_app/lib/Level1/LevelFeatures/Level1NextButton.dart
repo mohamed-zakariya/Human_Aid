@@ -2,35 +2,35 @@ import 'package:flutter/material.dart';
 
 
 class Level1NextButton extends StatelessWidget {
-  final bool initialRecordDone;
-  final VoidCallback onToggle;
-  const Level1NextButton({super.key, required this.initialRecordDone, required this.onToggle});
+  const Level1NextButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    return ElevatedButton(
-      onPressed: (){
-
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: initialRecordDone == true? Colors.red.shade200: Colors.grey.shade300, // Background color
-        foregroundColor: Colors.white, // Text color
-        shadowColor: const Color(0x33000000), // Shadow color
-        elevation: 6, // Elevation for shadow effect
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Rounded corners
-        ),
-        padding: const EdgeInsets.all(2), // Padding inside the button
-        minimumSize: Size(
-          MediaQuery.of(context).size.width - 150,
-          60, // Button size
-        ),
+    return Container(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(5),
+      alignment: const Alignment(0, 0),
+      width: MediaQuery.of(context).size.width - 200,
+      height: MediaQuery.of(context).size.height > 0 ? 60 : 0,
+      decoration: BoxDecoration(
+        color: Colors.blue.shade100,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const[
+          BoxShadow(
+            blurRadius: 4,
+            color: Color(0x33000000),
+            offset: Offset(
+              0,
+              6,
+            ),
+          )
+        ],// Adjust the radius as needed
       ),
       child: const Text(
         "التالي",
         style: TextStyle(
           fontSize: 35,
+          color: Colors.brown,
         ),
       ),
     );

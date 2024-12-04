@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../HomePage/home_page.dart';
 
 class CompleteProfilePage extends StatelessWidget {
