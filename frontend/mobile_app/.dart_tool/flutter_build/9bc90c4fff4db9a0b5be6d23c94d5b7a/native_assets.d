@@ -1,1 +1,0 @@
- D:\\GraduationProject\\Project\\Human_Aid\\frontend\\mobile_app\\.dart_tool\\flutter_build\\9bc90c4fff4db9a0b5be6d23c94d5b7a\\native_assets.yaml: 
