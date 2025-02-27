@@ -1,4 +1,4 @@
-import { loginParent, signUpParent, refreshTokenParent, logout } from "../controllers/parentController.js";
+import { loginParent, signUpParent, refreshTokenParent, logout,forgotParentPassword,resetParentPassword,verifyParentOTP } from "../controllers/parentController.js";
 import Parents from "../models/Parents.js";
 
 export const parentResolvers = {
@@ -19,6 +19,15 @@ export const parentResolvers = {
     },
     logout: async (_, { refreshToken }) => {
       return await logout(refreshToken);
+    },
+    forgotParentPassword: async (_, { email }) => {
+      return await forgotParentPassword(email);
+    },
+    verifyParentOTP: async (_, { email, otp }) => {
+      return await verifyParentOTP(email, otp);
+    },
+    resetParentPassword: async (_, { token, newPassword }) => {
+      return await resetParentPassword(token, newPassword);
     },
   },
 };

@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../config/jwtConfig.js";
 import Parents from "../models/Parents.js";
-
+import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
 // Parent Login
 export const loginParent = async (email, password) => {
     if (!email || !password) {
@@ -136,3 +136,15 @@ export const logout = async (refreshToken) => {
 
     return { message: "Logged out successfully" };
 };
+
+export const forgotParentPassword = async (email) => {
+    return await requestOTP(email, "parent");
+  };
+  
+  export const verifyParentOTP = async (email, otp) => {
+    return await verifyOTP(email, otp, "parent");
+  };
+  
+  export const resetParentPassword = async (token, newPassword) => {
+    return await resetPassword(token, newPassword, "parent");
+  };

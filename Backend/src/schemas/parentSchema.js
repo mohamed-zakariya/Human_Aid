@@ -22,6 +22,19 @@ type LogoutResponse {
     message: String!
 }
 
+type ForgotPasswordResponse {
+    message: String!
+  }
+
+  type VerifyOTPResponse {
+    message: String!
+    token: String
+  }
+
+  type ResetPasswordResponse {
+    message: String!
+  }
+
 extend type Query {
     parents: [Parent!]
 }
@@ -43,6 +56,21 @@ extend type Mutation {
     logout(
         refreshToken: String!
     ): LogoutResponse!
+
+    
+    forgotParentPassword(
+      email: String!
+    ): ForgotPasswordResponse!
+
+    verifyParentOTP(
+      email: String!
+      otp: String!
+    ): VerifyOTPResponse!
+
+    resetParentPassword(
+      token: String!
+      newPassword: String!
+    ): ResetPasswordResponse!
 
 }
 input AddParentData{

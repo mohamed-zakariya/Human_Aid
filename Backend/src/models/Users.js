@@ -12,6 +12,8 @@ const userSchema = new Schema({
     gender: { type: String, enum: ['male', 'female'], required: true },
     role: { type: String, enum: ['adult', 'child'], required: true },
     currentStage: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], required: false },
+    otp: { type: String, default: null },
+    otpExpires: { type: Date, default: null },
     lastActiveDate: { type: Date, default: Date.now },
     createdAt: { type: Date, default: Date.now },
     refreshTokens: [{

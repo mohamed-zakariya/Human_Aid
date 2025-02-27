@@ -1,6 +1,5 @@
 export const userTypeDefs = `#graphql
-
-type User {
+  type User {
     id: ID!
     name: String!
     username: String!
@@ -12,9 +11,9 @@ type User {
     role: String!
     currentStage: String
     lastActiveDate: String!
-}
+  }
 
-type LoginResponse {
+  type LoginResponse {
     id: ID!
     name: String!
     username: String!
@@ -25,51 +24,78 @@ type LoginResponse {
     accessToken: String
     refreshToken: String
     role: String!
-}
+  }
 
-type LogoutResponse {
+  type LogoutResponse {
     message: String!
-}
+  }
 
-extend type Query {
+  type ForgotPasswordResponse {
+    message: String!
+  }
+
+  type VerifyOTPResponse {
+    message: String!
+    token: String
+  }
+
+  type ResetPasswordResponse {
+    message: String!
+  }
+
+  extend type Query {
     users: [User!]
-}
+  }
 
-extend type Mutation {
+  extend type Mutation {
     login(
-        username: String!
-        password: String!
+      username: String!
+      password: String!
     ): LoginResponse!
 
     signUpAdult(
-        name: String!
-        username: String!
-        email: String!
-        password: String!
-        phoneNumber: String
-        nationality: String!
-        birthdate: String!
-        gender: String!
-        role: String!
+      name: String!
+      username: String!
+      email: String!
+      password: String!
+      phoneNumber: String
+      nationality: String!
+      birthdate: String!
+      gender: String!
+      role: String!
     ): LoginResponse!
 
     signUpChild(
-        parentId: ID!
-        name: String!
-        username: String!
-        password: String!
-        nationality: String!
-        birthdate: String!
-        gender: String!
-        role: String!
+      parentId: ID!
+      name: String!
+      username: String!
+      password: String!
+      nationality: String!
+      birthdate: String!
+      gender: String!
+      role: String!
     ): User!
 
     refreshTokenUser(
-        refreshToken: String!
+      refreshToken: String!
     ): LoginResponse!
 
     logout(
-        refreshToken: String!
+      refreshToken: String!
     ): LogoutResponse!
-}
+
+    forgotUserPassword(
+      email: String!
+    ): ForgotPasswordResponse!
+
+    verifyUserOTP(
+      email: String!
+      otp: String!
+    ): VerifyOTPResponse!
+
+    resetUserPassword(
+      token: String!
+      newPassword: String!
+    ): ResetPasswordResponse!
+  }
 `;
