@@ -6,6 +6,10 @@ export const parentResolvers = {
     parents: async () => {
       return await Parents.find();
     },
+    checkParentEmailExists: async (_, { email }) => {
+      const parent = await Parents.findOne({ email });
+      return { emailExists: !!parent };
+    },
   },
   Mutation: {
     loginParent: async (_, { email, password }) => {

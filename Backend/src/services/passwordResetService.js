@@ -20,25 +20,44 @@ export const requestOTP = async (email, userType) => {
   await user.save();
 
   await sendOTPEmail(email, otp);
-  return "OTP sent successfully.";
+  return { message: "OTP sent successfully" };
 };
 
 export const verifyOTP = async (email, otp, userType) => {
+  console.log("Verifying OTP for:", email, otp, userType);
+
   const Model = userType === "parent" ? Parents : Users;
   const user = await Model.findOne({ email });
-  if (!user || user.otp !== otp || user.otpExpires < new Date()) {
-    throw new Error("Invalid or expired OTP.");
+  console.log("User found:", user);
+
+  if (!user) {
+    console.log("User not found.");
+    throw new Error("User not found.");
   }
 
-  // Generate JWT token for password reset
-  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "15m" });
+  if (user.otp !== otp) {
+    console.log("Invalid OTP.");
+    throw new Error("Invalid OTP.");
+  }
 
-  // Clear OTP after verification
+  if (user.otpExpires < new Date()) {
+    console.log("OTP has expired.");
+    throw new Error("OTP has expired.");
+  }
+
+  if (!process.env.JWT_SECRET) {
+    console.log("JWT secret is not configured.");
+    throw new Error("JWT secret is not configured.");
+  }
+
+  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "15m" });
+  console.log("Token generated:", token);
+
   user.otp = null;
   user.otpExpires = null;
   await user.save();
 
-  return token;
+  return {token};
 };
 
 export const resetPassword = async (token, newPassword, userType) => {
@@ -50,8 +69,7 @@ export const resetPassword = async (token, newPassword, userType) => {
 
     user.password = await bcrypt.hash(newPassword, 7);
     await user.save();
-
-    return "Password reset successfully.";
+    return { message: "Password reset successfully." }
   } catch (error) {
     throw new Error("Invalid or expired token.");
   }

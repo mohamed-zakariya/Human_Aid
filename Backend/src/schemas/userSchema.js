@@ -1,17 +1,22 @@
 export const userTypeDefs = `#graphql
   type User {
     id: ID!
-    name: String!
+    name: String
     username: String!
     email: String
     phoneNumber: String
-    nationality: String!
+    nationality: String
     birthdate: String!
     gender: String!
-    role: String!
+    role: String
     currentStage: String
-    lastActiveDate: String!
-  }
+    lastActiveDate: String
+}
+
+type signUpChildResponse{
+    parentId: ID!
+    child: User
+}
 
   type LoginResponse {
     id: ID!
@@ -36,7 +41,7 @@ export const userTypeDefs = `#graphql
 
   type VerifyOTPResponse {
     message: String!
-    token: String
+    token: String!
   }
 
   type ResetPasswordResponse {
@@ -66,15 +71,8 @@ export const userTypeDefs = `#graphql
     ): LoginResponse!
 
     signUpChild(
-      parentId: ID!
-      name: String!
-      username: String!
-      password: String!
-      nationality: String!
-      birthdate: String!
-      gender: String!
-      role: String!
-    ): User!
+        child: AddChildData
+    ): signUpChildResponse!
 
     refreshTokenUser(
       refreshToken: String!
@@ -98,4 +96,14 @@ export const userTypeDefs = `#graphql
       newPassword: String!
     ): ResetPasswordResponse!
   }
+  input AddChildData{
+    parentId: ID!
+    name: String!
+    username: String!
+    password: String!
+    nationality: String!
+    birthdate: String!
+    gender: String!
+    role: String!
+}
 `;
