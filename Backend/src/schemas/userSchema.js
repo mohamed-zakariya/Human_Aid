@@ -9,7 +9,7 @@ type User {
     nationality: String
     birthdate: String!
     gender: String!
-    role: String
+    role: String!
     currentStage: String
     lastActiveDate: String
 }
