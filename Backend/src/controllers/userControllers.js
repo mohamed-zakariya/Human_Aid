@@ -204,14 +204,9 @@ export const signUpChild = async ({ parentId, name, username, password, national
     await newUser.save();
 
     return {
-        id: newUser.id,
-        name: newUser.name,
-        username: newUser.username,
-        birthdate: newUser.birthdate,
-        nationality: newUser.nationality,
-        gender: newUser.gender,
+        child: newUser,
+        parentId: parentId,
         accessToken,
         refreshToken,
-        role: newUser.role,
     };
 };

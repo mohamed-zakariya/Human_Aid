@@ -14,7 +14,8 @@ export const userResolvers = {
       return await signUpAdult(args);
     },
     signUpChild: async (_, args) => {
-      return await signUpChild(args);
+      console.log(args.child);
+      return await signUpChild(args.child);
     },
     refreshTokenUser: async (_, { refreshToken }) => {
       return await refreshTokenUser(refreshToken);

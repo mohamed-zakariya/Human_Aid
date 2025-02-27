@@ -2,16 +2,21 @@ export const userTypeDefs = `#graphql
 
 type User {
     id: ID!
-    name: String!
+    name: String
     username: String!
     email: String
     phoneNumber: String
-    nationality: String!
+    nationality: String
     birthdate: String!
     gender: String!
-    role: String!
+    role: String
     currentStage: String
-    lastActiveDate: String!
+    lastActiveDate: String
+}
+
+type signUpChildResponse{
+    parentId: ID!
+    child: User
 }
 
 type LoginResponse {
@@ -54,15 +59,8 @@ extend type Mutation {
     ): LoginResponse!
 
     signUpChild(
-        parentId: ID!
-        name: String!
-        username: String!
-        password: String!
-        nationality: String!
-        birthdate: String!
-        gender: String!
-        role: String!
-    ): User!
+        child: AddChildData
+    ): signUpChildResponse!
 
     refreshTokenUser(
         refreshToken: String!
@@ -71,5 +69,17 @@ extend type Mutation {
     logout(
         refreshToken: String!
     ): LogoutResponse!
+
+
+}
+input AddChildData{
+    parentId: ID!
+    name: String!
+    username: String!
+    password: String!
+    nationality: String!
+    birthdate: String!
+    gender: String!
+    role: String!
 }
 `;
