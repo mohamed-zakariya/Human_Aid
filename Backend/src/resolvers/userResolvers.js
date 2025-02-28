@@ -1,9 +1,13 @@
 import { login, signUpAdult, signUpChild, refreshTokenUser, logout,forgotUserPassword,verifyUserOTP,resetUserPassword } from "../controllers/userControllers.js"
-
+import Users from "../models/Users.js";
 export const userResolvers = {
   Query: {
     users: async () => {
       return await Users.find();
+    },
+    checkUserUsernameExists: async (_, { username }) => {
+      const user = await Users.findOne({ username });
+      return { usernameExists: !!user };
     },
   },
   Mutation: {

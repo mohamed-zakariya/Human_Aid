@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../config/jwtConfig.js";
 import Parents from "../models/Parents.js";
+import { sendWelcomeEmail } from '../config/emailConfig.js';
 import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
 // Parent Login
 export const loginParent = async (email, password) => {
@@ -77,7 +78,7 @@ export const signUpParent = async ({ name,email, password, phoneNumber, national
     // Save refresh token
     newParent.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) });
     await newParent.save();
-
+    await sendWelcomeEmail(newUser.email, newUser.name);
     return {
         parent: newParent,
         accessToken,
@@ -146,3 +147,5 @@ export const forgotParentPassword = async (email) => {
   export const resetParentPassword = async (token, newPassword) => {
     return await resetPassword(token, newPassword, "parent");
   };
+
+

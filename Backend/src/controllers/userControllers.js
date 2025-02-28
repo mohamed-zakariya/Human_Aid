@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { generateAccessToken, generateRefreshToken } from '../config/jwtConfig.js';
 import Users from '../models/Users.js';
 import Parents from '../models/Parents.js';
+import { sendWelcomeEmail } from '../config/emailConfig.js';
 import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
 // Login function
 export const login = async (username, password) => {
@@ -140,7 +141,7 @@ export const signUpAdult = async ({ name, username, email, password, phoneNumber
     // Save refresh token to the database
     newUser.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) });
     await newUser.save();
-
+    await sendWelcomeEmail(newUser.email, newUser.name);
     return {
         id: newUser.id,
         name: newUser.name,

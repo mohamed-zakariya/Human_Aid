@@ -61,7 +61,6 @@ extend type Mutation {
         refreshToken: String!
     ): LogoutResponse!
 
-    
     forgotParentPassword(
       email: String!
     ): ForgotPasswordResponse!
@@ -86,5 +85,4 @@ input AddParentData{
   birthdate: String
   gender: String
 }
-
 `;
