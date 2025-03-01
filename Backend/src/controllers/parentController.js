@@ -139,9 +139,12 @@ export const forgotParentPassword = async (email) => {
     return await requestOTP(email, "parent");
   };
   
-  export const verifyParentOTP = async (email, otp) => {
+export const verifyParentOTP = async (email, otp) => {
+    // returns { token } only
     return await verifyOTP(email, otp, "parent");
   };
+  
+  
   
   export const resetParentPassword = async (token, newPassword) => {
     return await resetPassword(token, newPassword, "parent");
