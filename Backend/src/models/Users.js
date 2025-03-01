@@ -18,7 +18,7 @@ const userSchema = new Schema({
     createdAt: { type: Date, default: Date.now },
     refreshTokens: [{
         token: { type: String, required: true },
-        expiresAt: { type: Date, required: true } // Optional for manual cleanup
+        expiresAt: { type: Date, required: true } 
     }]
 }, { timestamps: true });
 

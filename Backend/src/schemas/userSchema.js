@@ -54,8 +54,13 @@ type signUpAdultdResponse{
     message: String!
   }
 
+  type UsernameCheckResponse {
+    usernameExists: Boolean!
+}
+
   extend type Query {
     users: [User!]
+    checkUserUsernameExists(username: String!): UsernameCheckResponse!
   }
 
   extend type Mutation {
