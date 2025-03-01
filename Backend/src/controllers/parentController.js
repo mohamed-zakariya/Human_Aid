@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../config/jwtConfig.js";
 import Parents from "../models/Parents.js";
-
+import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
 // Parent Login
 export const loginParent = async (email, password) => {
     if (!email || !password) {
@@ -25,21 +25,15 @@ export const loginParent = async (email, password) => {
     await parent.save();
 
     return {
-        id: parent.id,
-        name: parent.name,
-        username: parent.username,
-        email: parent.email,
-        phoneNumber: parent.phoneNumber,
-        nationality: parent.nationality,
-        birthdate: parent.birthdate,
+        parent,
         accessToken,
         refreshToken,
     };
 };
 
 // Parent Registration
-export const signUpParent = async ({ name, username, email, password, phoneNumber, nationality, birthdate,gender }) => {
-    if (!name || !username || !password || !nationality || !birthdate || !gender) {
+export const signUpParent = async ({ name,email, password, phoneNumber, nationality, birthdate,gender }) => {
+    if (!name || !email || !password || !nationality || !birthdate || !gender) {
         throw new Error("All required fields must be provided");
     }
     // Validate email format
@@ -52,15 +46,13 @@ export const signUpParent = async ({ name, username, email, password, phoneNumbe
     if (password.length < 8) {
         throw new Error('Password must be at least 8 characters long');
     }
-
-    const existingParent = await Parents.findOne({ $or: [{ username }, { email }] });
-    if (existingParent) throw new Error("Username or Email already exists");
+    const existingParent = await Parents.findOne({ email });
+    if (existingParent) throw new Error(" Email already exists");
 
     const hashedPassword = await bcrypt.hash(password, 7);
 
     const newParent = new Parents({
         name,
-        username,
         email,
         password: hashedPassword,
         phoneNumber,
@@ -73,8 +65,8 @@ export const signUpParent = async ({ name, username, email, password, phoneNumbe
     //await newParent.save();
 
     // Generate tokens
-    const accessToken = generateAccessToken({ id: newParent.id, username: newParent.username });
-    const refreshToken = generateRefreshToken({ id: newParent.id, username: newParent.username });
+    const accessToken = generateAccessToken({ id: newParent.id, email: newParent.email });
+    const refreshToken = generateRefreshToken({ id: newParent.id, email: newParent.email });
 
     // Save refresh token
     newParent.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) });
@@ -136,3 +128,15 @@ export const logout = async (refreshToken) => {
 
     return { message: "Logged out successfully" };
 };
+
+export const forgotParentPassword = async (email) => {
+    return await requestOTP(email, "parent");
+  };
+  
+  export const verifyParentOTP = async (email, otp) => {
+    return await verifyOTP(email, otp, "parent");
+  };
+  
+  export const resetParentPassword = async (token, newPassword) => {
+    return await resetPassword(token, newPassword, "parent");
+  };

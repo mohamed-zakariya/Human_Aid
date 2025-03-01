@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { generateAccessToken, generateRefreshToken } from '../config/jwtConfig.js';
 import Users from '../models/Users.js';
 import Parents from '../models/Parents.js';
-
+import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
 // Login function
 export const login = async (username, password) => {
     if (!username || !password) {
@@ -142,17 +142,9 @@ export const signUpAdult = async ({ name, username, email, password, phoneNumber
     await newUser.save();
 
     return {
-        id: newUser.id,
-        name: newUser.name,
-        username: newUser.username,
-        email: newUser.email,
-        phoneNumber: newUser.phoneNumber,
-        nationality: newUser.nationality,
-        birthdate: newUser.birthdate,
-        gender: newUser.gender,
+        adult: newUser,
         accessToken,
         refreshToken,
-        role: newUser.role,
     };
 };
 
@@ -210,3 +202,17 @@ export const signUpChild = async ({ parentId, name, username, password, national
         refreshToken,
     };
 };
+
+export const forgotUserPassword = async (email) => {
+    return await requestOTP(email, "user");
+  };
+  
+  export const verifyUserOTP = async (email, otp) => {
+    return await verifyOTP(email, otp, "user");
+  };
+  
+  export const resetUserPassword = async (token, newPassword) => {
+    return await resetPassword(token, newPassword, "user");
+  };
+
+

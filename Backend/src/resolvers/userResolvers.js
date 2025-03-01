@@ -1,4 +1,4 @@
-import { login, signUpAdult, signUpChild, refreshTokenUser, logout } from "../controllers/userControllers.js"
+import { login, signUpAdult, signUpChild, refreshTokenUser, logout,forgotUserPassword,verifyUserOTP,resetUserPassword } from "../controllers/userControllers.js"
 
 export const userResolvers = {
   Query: {
@@ -11,7 +11,7 @@ export const userResolvers = {
       return await login(username, password);
     },
     signUpAdult: async (_, args) => {
-      return await signUpAdult(args);
+      return await signUpAdult(args.adult);
     },
     signUpChild: async (_, args) => {
       console.log(args.child);
@@ -20,8 +20,17 @@ export const userResolvers = {
     refreshTokenUser: async (_, { refreshToken }) => {
       return await refreshTokenUser(refreshToken);
     },
-    logout: async (_, { refreshToken }) => {   // ✅ Added GraphQL logout mutation
+    logout: async (_, { refreshToken }) => {   
       return await logout(refreshToken);
+    },
+    forgotUserPassword: async (_, { email }) => {
+      return await forgotUserPassword(email);
+    },
+    verifyUserOTP: async (_, { email, otp }) => {
+      return await verifyUserOTP(email, otp);
+    },
+    resetUserPassword: async (_, { token, newPassword }) => {
+      return await resetUserPassword(token, newPassword);
     },
   },
 };

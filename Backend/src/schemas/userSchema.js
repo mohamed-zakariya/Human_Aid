@@ -1,6 +1,5 @@
 export const userTypeDefs = `#graphql
-
-type User {
+  type User {
     id: ID!
     name: String
     username: String!
@@ -19,7 +18,13 @@ type signUpChildResponse{
     child: User
 }
 
-type LoginResponse {
+type signUpAdultdResponse{
+    adult: User
+    refreshToken: String
+    accessToken: String
+}
+
+  type LoginResponse {
     id: ID!
     name: String!
     username: String!
@@ -30,49 +35,66 @@ type LoginResponse {
     accessToken: String
     refreshToken: String
     role: String!
-}
+  }
 
-type LogoutResponse {
+  type LogoutResponse {
     message: String!
-}
+  }
 
-extend type Query {
+  type ForgotPasswordResponse {
+    message: String!
+  }
+
+  type VerifyOTPResponse {
+    message: String!
+    token: String!
+  }
+
+  type ResetPasswordResponse {
+    message: String!
+  }
+
+  extend type Query {
     users: [User!]
-}
+  }
 
-extend type Mutation {
+  extend type Mutation {
     login(
-        username: String!
-        password: String!
+      username: String!
+      password: String!
     ): LoginResponse!
 
     signUpAdult(
-        name: String!
-        username: String!
-        email: String!
-        password: String!
-        phoneNumber: String
-        nationality: String!
-        birthdate: String!
-        gender: String!
-        role: String!
-    ): LoginResponse!
+      adult: AddAdultData
+    ): signUpAdultdResponse!
 
     signUpChild(
         child: AddChildData
     ): signUpChildResponse!
 
     refreshTokenUser(
-        refreshToken: String!
+      refreshToken: String!
     ): LoginResponse!
 
     logout(
-        refreshToken: String!
+      refreshToken: String!
     ): LogoutResponse!
 
+    forgotUserPassword(
+      email: String!
+    ): ForgotPasswordResponse!
 
-}
-input AddChildData{
+    verifyUserOTP(
+      email: String!
+      otp: String!
+    ): VerifyOTPResponse!
+
+    resetUserPassword(
+      token: String!
+      newPassword: String!
+    ): ResetPasswordResponse!
+  }
+  input AddChildData{
     parentId: ID!
     name: String!
     username: String!
@@ -82,4 +104,15 @@ input AddChildData{
     gender: String!
     role: String!
 }
+  input AddAdultData{
+    name: String!
+    username: String!
+    email: String!
+    phoneNumber: String
+    password: String!
+    nationality: String!
+    birthdate: String!
+    gender: String!
+    role: String!
+  }
 `;

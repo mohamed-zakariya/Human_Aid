@@ -3,7 +3,6 @@ export const parentTypeDefs = `#graphql
 type Parent {
     id: ID!
     name: String!
-    username: String
     email: String!
     phoneNumber: String
     nationality: String
@@ -22,8 +21,26 @@ type LogoutResponse {
     message: String!
 }
 
+type ForgotPasswordResponse {
+    message: String!
+  }
+
+  type VerifyOTPResponse {
+    message: String!
+    token: String
+  }
+
+  type ResetPasswordResponse {
+    message: String!
+  }
+
+  type EmailCheckResponse {
+    emailExists: Boolean!
+}
+
 extend type Query {
     parents: [Parent!]
+    checkParentEmailExists(email: String!): EmailCheckResponse!
 }
 
 extend type Mutation {
@@ -44,10 +61,24 @@ extend type Mutation {
         refreshToken: String!
     ): LogoutResponse!
 
+    
+    forgotParentPassword(
+      email: String!
+    ): ForgotPasswordResponse!
+
+    verifyParentOTP(
+      email: String!
+      otp: String!
+    ): VerifyOTPResponse!
+
+    resetParentPassword(
+      token: String!
+      newPassword: String!
+    ): ResetPasswordResponse!
+
 }
 input AddParentData{
   name: String!
-  username: String
   email: String!
   password: String
   phoneNumber: String
