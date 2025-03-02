@@ -9,6 +9,10 @@ export const userResolvers = {
       const user = await Users.findOne({ username });
       return { usernameExists: !!user };
     },
+    checkUserEmailExists: async (_, { email }) => {
+      const user = await Users.findOne({ email });
+      return { emailExists: !!user };
+    },
   },
   Mutation: {
     login: async (_, { username, password }) => {

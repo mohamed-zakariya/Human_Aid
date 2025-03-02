@@ -27,16 +27,9 @@ export const login = async (username, password) => {
     await user.save();
 
     return {
-        id: user.id,
-        name: user.name,
-        username: user.username,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        nationality: user.nationality,
-        birthdate: user.birthdate,
+        user,
         accessToken,
         refreshToken,
-        role: user.role,
     };
 };
 
