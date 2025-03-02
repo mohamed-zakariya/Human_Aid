@@ -8,7 +8,7 @@ export const userTypeDefs = `#graphql
     nationality: String
     birthdate: String!
     gender: String!
-    role: String
+    role: String!
     currentStage: String
     lastActiveDate: String
 }
@@ -16,6 +16,12 @@ export const userTypeDefs = `#graphql
 type signUpChildResponse{
     parentId: ID!
     child: User
+}
+
+type signUpAdultdResponse{
+    adult: User
+    refreshToken: String
+    accessToken: String
 }
 
   type LoginResponse {
@@ -64,16 +70,8 @@ type signUpChildResponse{
     ): LoginResponse!
 
     signUpAdult(
-      name: String!
-      username: String!
-      email: String!
-      password: String!
-      phoneNumber: String
-      nationality: String!
-      birthdate: String!
-      gender: String!
-      role: String!
-    ): LoginResponse!
+      adult: AddAdultData
+    ): signUpAdultdResponse!
 
     signUpChild(
         child: AddChildData
@@ -111,4 +109,15 @@ type signUpChildResponse{
     gender: String!
     role: String!
 }
+  input AddAdultData{
+    name: String!
+    username: String!
+    email: String!
+    phoneNumber: String
+    password: String!
+    nationality: String!
+    birthdate: String!
+    gender: String!
+    role: String!
+  }
 `;
