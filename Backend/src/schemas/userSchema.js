@@ -25,16 +25,9 @@ type signUpAdultdResponse{
 }
 
   type LoginResponse {
-    id: ID!
-    name: String!
-    username: String!
-    email: String
-    phoneNumber: String
-    nationality: String!
-    birthdate: String!
+    user:User
     accessToken: String
     refreshToken: String
-    role: String!
   }
 
   type LogoutResponse {
@@ -57,10 +50,17 @@ type signUpAdultdResponse{
   type UsernameCheckResponse {
     usernameExists: Boolean!
 }
+  type EmailCheckResponse {
+    emailExists: Boolean!
+  }
 
   extend type Query {
     users: [User!]
     checkUserUsernameExists(username: String!): UsernameCheckResponse!
+  }
+  extend type Query {
+    users: [User!]
+    checkUserEmailExists(email: String!): EmailCheckResponse!
   }
 
   extend type Mutation {
