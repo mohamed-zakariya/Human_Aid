@@ -26,13 +26,7 @@ export const loginParent = async (email, password) => {
     await parent.save();
 
     return {
-        id: parent.id,
-        name: parent.name,
-        username: parent.username,
-        email: parent.email,
-        phoneNumber: parent.phoneNumber,
-        nationality: parent.nationality,
-        birthdate: parent.birthdate,
+        parent,
         accessToken,
         refreshToken,
     };

@@ -143,17 +143,9 @@ export const signUpAdult = async ({ name, username, email, password, phoneNumber
     await newUser.save();
     await sendWelcomeEmail(newUser.email, newUser.name);
     return {
-        id: newUser.id,
-        name: newUser.name,
-        username: newUser.username,
-        email: newUser.email,
-        phoneNumber: newUser.phoneNumber,
-        nationality: newUser.nationality,
-        birthdate: newUser.birthdate,
-        gender: newUser.gender,
+        adult: newUser,
         accessToken,
         refreshToken,
-        role: newUser.role,
     };
 };
 

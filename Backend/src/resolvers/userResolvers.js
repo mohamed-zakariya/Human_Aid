@@ -15,7 +15,7 @@ export const userResolvers = {
       return await login(username, password);
     },
     signUpAdult: async (_, args) => {
-      return await signUpAdult(args);
+      return await signUpAdult(args.adult);
     },
     signUpChild: async (_, args) => {
       console.log(args.child);
