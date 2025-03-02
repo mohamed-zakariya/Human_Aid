@@ -78,7 +78,7 @@ export const signUpParent = async ({ name,email, password, phoneNumber, national
     // Save refresh token
     newParent.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) });
     await newParent.save();
-    await sendWelcomeEmail(newUser.email, newUser.name);
+    await sendWelcomeEmail(newParent.email, newParent.name);
     return {
         parent: newParent,
         accessToken,
