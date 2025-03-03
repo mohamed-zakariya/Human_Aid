@@ -20,8 +20,16 @@ const userSchema = new Schema({
         token: { type: String, required: true },
         expiresAt: { type: Date, required: true } 
     }]
-}, { timestamps: true,});
+}, { 
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true } 
+    
+});
 
+userSchema.virtual('id').get(function() {
+    return this._id.toHexString();
+});
 
 const Users = mongoose.model('Users', userSchema);
 export default Users;

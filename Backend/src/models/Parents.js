@@ -9,7 +9,7 @@ const parentSchema = new Schema({
     phoneNumber: { type: String, required: false },
     nationality: { type: String, required: false },
     birthdate: { type: Date, required: false },
-    gender: { type: String, enum: ['male', 'female'], required: true },
+    gender: { type: String, enum: ['male', 'female'], required: false },
     googleId: { type: String, unique: true, sparse: true },
     otp: { type: String, default: null },
     otpExpires: { type: Date, default: null },
