@@ -1,4 +1,4 @@
 import { userResolvers } from './userResolvers.js';
 import { parentResolvers } from './parentResolvers.js';
-
-export const resolvers = [userResolvers, parentResolvers];
+import { wordsResolvers } from './wordsResolver.js';
+export const resolvers = [userResolvers, parentResolvers,wordsResolvers];
