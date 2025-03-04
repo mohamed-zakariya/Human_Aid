@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobileapp/Services/auth_service.dart';
+import 'package:mobileapp/Services/google_auth_parent_service.dart';
 
 import '../../generated/l10n.dart';
 import '../../models/parent.dart';
@@ -182,7 +183,14 @@ class _LoginScreenGaurdianState extends State<LoginScreenGaurdian> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                        final authService = AuthParentService();
+                        final user = await authService.signInWithGoogle();
+                        if (user != null) {
+                          // Navigate to the home screen or save credentials
+                          Navigator.pushReplacementNamed(context, '/home');
+                        }
+                      },
                     icon: const FaIcon(FontAwesomeIcons.google),
                     color: Colors.red,
                   ),
