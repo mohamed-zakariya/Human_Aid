@@ -7,22 +7,52 @@ import { authenticateJWT } from './src/middleware/authMiddleware.js';
 import { resolvers } from './src/resolvers/combineResolvers.js';
 import googleAuthController from './src/controllers/googleAuthController.js';
 import passport from 'passport';
-import './src/config/googleStrategy.js'; 
+import multer from 'multer';
+import path from 'path';
+import './src/config/googleStrategy.js';
+
 const app = express();
 app.use(express.json());
+// Serve uploaded files
+app.use('/uploads', express.static('uploads'));
+
+
+
 // Initialize Passport
 app.use(passport.initialize());
 
 // Google OAuth routes
 app.use(googleAuthController);
 app.use((req, res, next) => {
-  if (req.path !== "/graphql") {
+  if (req.path !== "/graphql" && req.path !== "/upload-audio") {
     authenticateJWT(req, res, next);
   } else {
     next();
-  }
+  }  
 });
-//  Apollo Plugin for Logging Response Time
+
+// Set up Multer for file uploads (Audio)
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+
+// Speech Upload Route
+app.post('/upload-audio', upload.single('audio'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  // Return public URL instead of file path
+  const fileUrl = `http://localhost:5500/uploads/${req.file.filename}`;
+  console.log("Received audio file:", fileUrl);
+  res.json({ message: "Audio received", fileUrl });
+});
+
+// Apollo Plugin for Logging Response Time
 const responseTimePlugin = {
   requestDidStart() {
     const startTime = Date.now();
@@ -56,6 +86,7 @@ const startServer = async () => {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`GraphQL endpoint available at http://localhost:${PORT}/graphql`);
+    console.log(`Upload endpoint: http://localhost:${PORT}/upload-audio`);
   });
 };
 
@@ -64,6 +95,3 @@ const startServer = async () => {
   await connectDB();
   await startServer();
 })();
-
-
-

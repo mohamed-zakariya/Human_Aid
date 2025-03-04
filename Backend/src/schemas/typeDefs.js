@@ -1,6 +1,7 @@
 import {userTypeDefs}from './userSchema.js'
 import { parentTypeDefs } from "./parentSchema.js";
 import { wordsTypeDefs } from './wordsSchema.js';
+import { speechTypeDefs } from './speechSchema.js';
 export const baseTypeDefs = `#graphql
 
 type Query {
@@ -17,4 +18,5 @@ export const typeDefs = [
     userTypeDefs,
     parentTypeDefs,
     wordsTypeDefs,
+    speechTypeDefs,
   ];

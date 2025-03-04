@@ -24,7 +24,7 @@ const SummaryEvaluationSchema = new mongoose.Schema({
 });
 
 const exerciseprogressSchema = new mongoose.Schema({
-    progress_id: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
+    //progress_id: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
     exercise_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Exercises', required: true },
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
     exercise_time_spent: [ExerciseTimeSpentSchema],
