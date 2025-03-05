@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:mobileapp/models/learner.dart';
 
 class Parent {
   final String? id;
@@ -9,6 +10,7 @@ class Parent {
   final String birthdate;
   final String nationality;
   final String gender;
+  final Learner? learners;
   // final String? accessToken;
   // final String? refreshToken;
 
@@ -22,6 +24,7 @@ class Parent {
     required this.birthdate,
     required this.nationality,
     required this.gender,
+    this.learners
     // this.accessToken,
     // this.refreshToken,
   });
@@ -37,6 +40,7 @@ class Parent {
       birthdate: json["birthdate"]?? "",
       nationality: json["nationality"]?? "",
       gender: json["gender"]?? "",
+      learners: json["linkedChildren"]
       // accessToken: accessToken,
     );
   }

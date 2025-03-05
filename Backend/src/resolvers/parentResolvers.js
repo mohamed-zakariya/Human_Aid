@@ -10,6 +10,11 @@ export const parentResolvers = {
       const parent = await Parents.findOne({ email });
       return { emailExists: !!parent };
     },
+    getParentChildren: async (_, { parentId }) => {
+      const parent = await Parents.findById(parentId).populate('linkedChildren');
+      console.log(parent.linkedChildren);
+      return  parent.linkedChildren;
+    }
   },
   Mutation: {
     loginParent: async (_, { email, password }) => {

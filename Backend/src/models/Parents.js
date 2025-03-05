@@ -13,7 +13,7 @@ const parentSchema = new Schema({
     googleId: { type: String, unique: true, sparse: true },
     otp: { type: String, default: null },
     otpExpires: { type: Date, default: null },
-    linkedChildren: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    linkedChildren: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
     refreshTokens: [{
         token: { type: String, required: true },
         expiresAt: { type: Date, required: true } 

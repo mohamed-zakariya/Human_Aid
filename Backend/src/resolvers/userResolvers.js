@@ -1,4 +1,4 @@
-import { login, signUpAdult, signUpChild, refreshTokenUser, logout,forgotUserPassword,verifyUserOTP,resetUserPassword } from "../controllers/userControllers.js"
+import { login, signUpAdult, signUpChild, refreshTokenUser, logout,forgotUserPassword,verifyUserOTP,resetUserPassword, deleteChild } from "../controllers/userControllers.js"
 import Users from "../models/Users.js";
 export const userResolvers = {
   Query: {
@@ -24,6 +24,9 @@ export const userResolvers = {
     signUpChild: async (_, args) => {
       console.log(args.child);
       return await signUpChild(args.child);
+    },
+    deleteChild: async (_, args) => {
+      return await deleteChild(args);
     },
     refreshTokenUser: async (_, { refreshToken }) => {
       return await refreshTokenUser(refreshToken);

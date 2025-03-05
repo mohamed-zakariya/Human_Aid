@@ -10,7 +10,7 @@ class Validators{
     if(value == null || value.isEmpty){
       return  Intl.getCurrentLocale() == 'ar'? "يجب إدخال الاسم" : "Name must be Entered";
     }
-    else if(value.length < 5){
+    else if(value.length < 3){
       return Intl.getCurrentLocale() == 'ar'? "يجب أن يكون الاسم على الأقل 2 أحرف" : "Name must be at least 2  characters";
     }
     return null;
