@@ -57,7 +57,10 @@ export const verifyOTP = async (email, otp, userType) => {
   user.otpExpires = null;
   await user.save();
 
-  return {token};
+  return {
+    message: "OTP verified successfully",
+    token,
+  };
 };
 
 export const resetPassword = async (token, newPassword, userType) => {
