@@ -8,7 +8,6 @@ import { resolvers } from './src/resolvers/combineResolvers.js';
 import googleAuthController from './src/controllers/googleAuthController.js';
 import passport from 'passport';
 import multer from 'multer';
-import path from 'path';
 import './src/config/googleStrategy.js';
 
 const app = express();
