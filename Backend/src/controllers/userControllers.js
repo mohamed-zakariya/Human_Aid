@@ -197,6 +197,50 @@ export const signUpChild = async ({ parentId, name, username, password, national
     };
 };
 
+export const deleteChild = async ( {parentId, passwordParent, usernameChild }) => {
+    console.log(parentId);
+    console.log(passwordParent);
+    console.log(usernameChild);
+
+    if (!parentId || !passwordParent || !usernameChild) {
+        throw new Error('All required fields must be provided');
+    }
+
+    // Find parent by ID
+    const parent = await Parents.findById(parentId);
+    if (!parent) {
+        throw new Error('Parent not found');
+    }
+
+    // Validate parent's password
+    const isPasswordValid = await bcrypt.compare(passwordParent, parent.password);
+    if (!isPasswordValid) {
+        throw new Error('Invalid parent password');
+    }
+
+    // Find child by username
+    const child = await Users.findOne({ username: usernameChild, role: 'child' });
+    if (!child) {
+        throw new Error('Child not found');
+    }
+
+    // Check if the child is linked to the parent
+    const childIndex = parent.linkedChildren.indexOf(child._id);
+    if (childIndex === -1) {
+        throw new Error('Child is not linked to this parent');
+    }
+
+    // Remove child from parent's linkedChildren
+    parent.linkedChildren.splice(childIndex, 1);
+    await parent.save();
+
+    // Delete the child user
+    await Users.findByIdAndDelete(child._id);
+
+    return { success: true, message: "Child successfully deleted" };;
+};
+
+
 export const forgotUserPassword = async (email) => {
     return await requestOTP(email, "user");
   };

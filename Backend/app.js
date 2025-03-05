@@ -5,6 +5,7 @@ import { typeDefs } from './src/schemas/typeDefs.js';
 import { connectDB } from './src/config/dbConfig.js';
 import { authenticateJWT } from './src/middleware/authMiddleware.js';
 import { resolvers } from './src/resolvers/combineResolvers.js';
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import googleAuthController from './src/controllers/googleAuthController.js';
 import passport from 'passport';
 import './src/config/googleStrategy.js'; 

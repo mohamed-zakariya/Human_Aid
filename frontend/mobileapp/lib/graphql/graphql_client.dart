@@ -28,6 +28,11 @@ class GraphQLService {
     await prefs.setString("refreshToken", refreshToken);
   }
 
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return await prefs.getString("accessToken");
+  }
+
   static Future<void> clearTokens() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove("accessToken");
@@ -94,7 +99,6 @@ class GraphQLService {
 
   static Future<QueryResult?> handleAuthErrors({
     required QueryResult result,
-    required BuildContext context,
     required String role,
     required Future<QueryResult> Function() retryRequest, // Function to retry the request
   }) async {
@@ -112,11 +116,10 @@ class GraphQLService {
         } else {
           print("Refresh failed! Logging out...");
           await GraphQLService.clearTokens();
-          Navigator.pushReplacementNamed(context, "/login");
+          // Navigator.pushReplacementNamed(context, "/login");
         }
       }
     }
-
     return null; // Return null if no retry is needed
   }
 

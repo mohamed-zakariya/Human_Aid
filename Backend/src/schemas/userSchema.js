@@ -54,6 +54,11 @@ type signUpAdultdResponse{
     emailExists: Boolean!
   }
 
+  type DeleteChildResponse {
+  success: Boolean!
+  message: String!
+  }
+
   extend type Query {
     users: [User!]
     checkUserUsernameExists(username: String!): UsernameCheckResponse!
@@ -62,6 +67,8 @@ type signUpAdultdResponse{
     users: [User!]
     checkUserEmailExists(email: String!): EmailCheckResponse!
   }
+
+
 
   extend type Mutation {
     login(
@@ -76,6 +83,12 @@ type signUpAdultdResponse{
     signUpChild(
         child: AddChildData
     ): signUpChildResponse!
+
+    deleteChild(
+      parentId: String!,
+      passwordParent: String!,
+      usernameChild: String!
+    ): DeleteChildResponse
 
     refreshTokenUser(
       refreshToken: String!
