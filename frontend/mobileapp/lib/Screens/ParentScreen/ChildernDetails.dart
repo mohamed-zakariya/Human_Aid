@@ -40,6 +40,9 @@ class _ChildrenDetailsState extends State<ChildrenDetails> {
     }
     try {
       List<Learner?>? data = await ParentService.getChildrenData(parent!.id);
+      if (data == null){
+        Navigator.pushReplacementNamed(context, "/intro");
+      }
       setState(() {
         children = data ?? [];
         isLoading = false;

@@ -97,7 +97,7 @@ export const refreshTokenParent = async (refreshToken) => {
 
         // Remove old refresh token
         parent.refreshTokens = parent.refreshTokens.filter(rt => rt.token !== refreshToken);
-
+        
         // Generate new tokens
         const newAccessToken = generateAccessToken({ id: parent.id, username: parent.username });
         const newRefreshToken = generateRefreshToken({ id: parent.id, username: parent.username });
