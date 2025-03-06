@@ -5,6 +5,7 @@ import { typeDefs } from './src/schemas/typeDefs.js';
 import { connectDB } from './src/config/dbConfig.js';
 import { authenticateJWT } from './src/middleware/authMiddleware.js';
 import { resolvers } from './src/resolvers/combineResolvers.js';
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import googleAuthController from './src/controllers/googleAuthController.js';
 import passport from 'passport';
 import multer from 'multer';
@@ -23,13 +24,39 @@ app.use(passport.initialize());
 
 // Google OAuth routes
 app.use(googleAuthController);
-app.use((req, res, next) => {
-  if (req.path !== "/graphql" && req.path !== "/upload-audio") {
-    authenticateJWT(req, res, next);
-  } else {
-    next();
-  }  
+
+// app.use((req, res, next) => {
+//   if (req.path !== "/graphql" && req.path !== "/upload-audio") {
+//     authenticateJWT(req, res, next);
+//   } else {
+//     next();
+//   }  
+// });
+app.use(async (req, res, next) => {
+  if (req.path === "/graphql" && req.body?.query) {
+    const { query } = req.body;
+
+    // Extract operation name from the query string
+    const operationMatch = query.match(/\bmutation\s+(\w+)/);
+    const operationName = operationMatch ? operationMatch[1] : null;
+
+    const publicOperations = ["loginParent",
+       "signUpParent", "refreshTokenParent",
+         "loginUser", "signUpChild",
+          "signUpAdult", "googleLogin",
+           "checkUserUsernameExists", "checkParentEmailExists",
+            "checkUserEmailExists"];
+
+    if (operationName && publicOperations.includes(operationName)) {
+      return next(); // Allow unauthenticated access
+    }
+  }
+
+  authenticateJWT(req, res, next);
 });
+
+
+// app.use(authenticateJWT)
 
 // Set up Multer for file uploads (Audio)
 const storage = multer.diskStorage({

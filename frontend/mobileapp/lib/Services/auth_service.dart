@@ -87,12 +87,6 @@ class AuthService {
 
   }
 
-  // retrieve token
-  static Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("token");
-  }
-
   // remove token
   void logoutLearner(BuildContext context) async {
     await GraphQLService.clearTokens();

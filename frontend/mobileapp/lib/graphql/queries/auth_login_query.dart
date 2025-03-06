@@ -19,9 +19,6 @@ const String loginParentQuery = """
       id,
       name,
       email,
-      linkedChildren {
-        name,
-      }
     },
     accessToken,
     refreshToken

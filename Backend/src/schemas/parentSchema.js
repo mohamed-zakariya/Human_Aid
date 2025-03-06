@@ -41,6 +41,7 @@ type ForgotPasswordResponse {
 extend type Query {
     parents: [Parent!]
     checkParentEmailExists(email: String!): EmailCheckResponse!
+    getParentChildren(parentId: ID!): [User!]
 }
 
 extend type Mutation {

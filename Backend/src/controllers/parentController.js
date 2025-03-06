@@ -25,6 +25,7 @@ export const loginParent = async (email, password) => {
     parent.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) });
     await parent.save();
 
+
     return {
         parent,
         accessToken,
@@ -96,7 +97,7 @@ export const refreshTokenParent = async (refreshToken) => {
 
         // Remove old refresh token
         parent.refreshTokens = parent.refreshTokens.filter(rt => rt.token !== refreshToken);
-
+        
         // Generate new tokens
         const newAccessToken = generateAccessToken({ id: parent.id, username: parent.username });
         const newRefreshToken = generateRefreshToken({ id: parent.id, username: parent.username });

@@ -6,6 +6,7 @@ class GraphQLService {
   static Future<GraphQLClient> getClient() async {
     final prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString("accessToken");
+    print("checkkkkkkkkk $accessToken");
 
     final HttpLink httpLink = HttpLink("http://10.0.2.2:5500/graphql");
 
@@ -28,6 +29,11 @@ class GraphQLService {
     await prefs.setString("refreshToken", refreshToken);
   }
 
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return await prefs.getString("accessToken");
+  }
+
   static Future<void> clearTokens() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove("accessToken");
@@ -41,7 +47,7 @@ class GraphQLService {
     if (refreshToken == null) return false; // No refresh token, must log in
 
     final HttpLink httpLink = HttpLink("http://10.0.2.2:5500/graphql");
-
+    print("olddd token $refreshToken");
     final GraphQLClient client = GraphQLClient(
       link: httpLink,
       cache: GraphQLCache(),
@@ -49,7 +55,7 @@ class GraphQLService {
 
     String refreshTokenMutation = role == "parent"
         ? """
-          mutation RefreshTokenParent(\$refreshToken: String!) {
+          mutation refreshTokenParent(\$refreshToken: String!) {
             refreshTokenParent(refreshToken: \$refreshToken) {
               accessToken
               refreshToken
@@ -57,7 +63,7 @@ class GraphQLService {
           }
         """
         : """
-          mutation RefreshTokenUser(\$refreshToken: String!) {
+          mutation refreshTokenUser(\$refreshToken: String!) {
             refreshTokenUser(refreshToken: \$refreshToken) {
               accessToken
               refreshToken
@@ -72,7 +78,7 @@ class GraphQLService {
         },
       ),
     );
-
+    print(result);
     if (result.hasException) return false; // Refresh failed
 
     final String newAccessToken = role == "parent"
@@ -84,41 +90,56 @@ class GraphQLService {
         : result.data?["refreshTokenUser"]?["refreshToken"];
 
     if (newAccessToken != null && newRefreshToken != null) {
+      print("savedddddddddddddddd");
       await saveTokens(newAccessToken, newRefreshToken);
       return true;
     }
-
 
     return false;
   }
 
   static Future<QueryResult?> handleAuthErrors({
     required QueryResult result,
-    required BuildContext context,
     required String role,
-    required Future<QueryResult> Function() retryRequest, // Function to retry the request
+    required Future<QueryResult> Function() retryRequest,
   }) async {
+    print("Handling authentication errors for the result: $result");
+
     if (result.hasException) {
-      bool isUnauthorized = result.exception!.graphqlErrors.any(
+      print("Exception found in result.");
+      bool isUnauthorized = result.exception!.graphqlErrors.isNotEmpty
+          ? result.exception!.graphqlErrors.any(
             (error) => error.message.contains("Unauthorized"),
-      );
+      )
+          : result.exception!.linkException is ServerException &&
+          result.exception!.linkException.toString().contains("Unauthorized");
+      print(isUnauthorized);
 
       if (isUnauthorized) {
-        bool refreshed = await refreshToken(role); // Try refreshing token
+        print("Token appears to be invalid or expired. Attempting to refresh.");
+
+        bool refreshed = await refreshToken(role);
 
         if (refreshed) {
-          print("Token refreshed! Retrying request...");
-          return await retryRequest(); // Retry the original request
+          print("Token successfully refreshed! Retrying the original request...");
+          final prefs = await SharedPreferences.getInstance();
+          String? accessToken = prefs.getString("accessToken");
+          String? refreshToken = prefs.getString("refreshToken");
+          print("new access tokeennn $accessToken");
+          print("new refresh tokeennn $refreshToken");
+
+          return await retryRequest();
         } else {
-          print("Refresh failed! Logging out...");
+          print("Token refresh failed! Logging out and clearing tokens...");
           await GraphQLService.clearTokens();
-          Navigator.pushReplacementNamed(context, "/login");
+          return null;
         }
       }
     }
 
-    return null; // Return null if no retry is needed
+    return result;
   }
+
 
 
 }
