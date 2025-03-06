@@ -1,6 +1,6 @@
 
 const String checkUserUsernameExists = """
-  query checkUsernameExists(\$username: String!){
+  query checkUserUsernameExists(\$username: String!){
   checkUserUsernameExists(username: \$username) {
     usernameExists
   }
@@ -8,7 +8,7 @@ const String checkUserUsernameExists = """
 """;
 
 const String checkParentEmailExists = """
-  query checkEmailExists(\$email: String!){
+  query checkParentEmailExists(\$email: String!){
   checkParentEmailExists(email: \$email) {
     emailExists
   }
@@ -16,7 +16,7 @@ const String checkParentEmailExists = """
 """;
 
 const String checkUserEmailExists = """
-  query checkEmailExists(\$email: String!){
+  query checkUserEmailExists(\$email: String!){
   checkUserEmailExists(email: \$email) {
     emailExists
   }

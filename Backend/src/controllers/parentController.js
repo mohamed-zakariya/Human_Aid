@@ -94,9 +94,6 @@ export const refreshTokenParent = async (refreshToken) => {
         if (!parent) {
             throw new Error("Invalid refresh token");
         }
-
-        
-
         // Generate new tokens
         const newAccessToken = generateAccessToken({ id: parent.id, username: parent.username });
         const newRefreshToken = generateRefreshToken({ id: parent.id, username: parent.username });

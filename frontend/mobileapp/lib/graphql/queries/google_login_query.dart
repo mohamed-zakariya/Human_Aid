@@ -1,5 +1,5 @@
 const String googleLoginMutation = '''
-  mutation GoogleLogin(\$idToken: String!) {
+  mutation googleLogin(\$idToken: String!) {
     googleLogin(idToken: \$idToken) {
       user {
         id

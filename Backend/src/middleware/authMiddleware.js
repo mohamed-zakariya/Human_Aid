@@ -8,6 +8,7 @@ export const authenticateJWT = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
+  console.log(token);
 
   try {
     const decoded = verifyAccessToken(token);
@@ -17,3 +18,5 @@ export const authenticateJWT = (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized: Invalid or Expired Token" });
   }
 };
+
+

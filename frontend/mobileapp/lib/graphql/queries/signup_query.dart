@@ -1,5 +1,5 @@
 const String signupParentQuery = """
-  mutation createparentAccount(\$parent: AddParentData!){
+  mutation signUpParent(\$parent: AddParentData!){
   signUpParent(parent: \$parent) {
     parent{
       id,
@@ -17,7 +17,7 @@ const String signupParentQuery = """
 """;
 
 const String signupChildQuery = """
-  mutation createChildAccount(\$child: AddChildData!){
+  mutation signUpChild(\$child: AddChildData!){
   signUpChild(child: \$child) {
     child{
       name,
@@ -33,7 +33,7 @@ const String signupChildQuery = """
 
 
 const String signupAdultQuery = """
-  mutation createAdultAccount(\$adult: AddAdultData){
+  mutation signUpAdult(\$adult: AddAdultData){
   signUpAdult(adult: \$adult) {
     adult {
       name,
