@@ -1,5 +1,5 @@
 
-export const speechTypeDefs = `#graphql
+export const wordsExerciseTypeDefs = `#graphql
 scalar Upload
   type ProcessedSpeech {
     spokenWord: String!
@@ -8,7 +8,7 @@ scalar Upload
     message: String!
   }
   type Mutation {
-    processSpeech(
+    wordsExercise(
       userId: ID!
       exerciseId: ID!
       wordId: ID!

@@ -9,7 +9,6 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import googleAuthController from './src/controllers/googleAuthController.js';
 import passport from 'passport';
 import multer from 'multer';
-import path from 'path';
 import './src/config/googleStrategy.js';
 
 const app = express();
@@ -32,6 +31,8 @@ app.use(googleAuthController);
 //     next();
 //   }  
 // });
+
+
 app.use(async (req, res, next) => {
   if (req.path === "/graphql" && req.body?.query) {
     const { query } = req.body;
