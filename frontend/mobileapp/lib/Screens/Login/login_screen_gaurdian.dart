@@ -185,10 +185,31 @@ class _LoginScreenGaurdianState extends State<LoginScreenGaurdian> {
                   IconButton(
                     onPressed: () async {
                         final authService = AuthParentService();
+                        // user is a Map<String, dynamic> from the backend if successful
                         final user = await authService.signInWithGoogle();
+
                         if (user != null) {
-                          // Navigate to the home screen or save credentials
-                          Navigator.pushReplacementNamed(context, '/home');
+                          // Extract the 'parent' part of the response
+                          final parentJson = user['parent'] as Map<String, dynamic>?;
+                          if (parentJson != null) {
+                            // Convert JSON to your Parent model
+                            final parent = Parent.fromJson({
+                              "id":          parentJson["_id"],
+                              "name":        parentJson["name"],
+                              "email":       parentJson["email"],
+                              "phoneNumber": parentJson["phoneNumber"] ?? "",
+                              "birthdate":   parentJson["birthdate"] ?? "",
+                              "nationality": parentJson["nationality"] ?? "",
+                              "gender":      parentJson["gender"] ?? "",
+                            });
+
+                            // Pass `parent` as arguments to the route
+                            Navigator.pushReplacementNamed(
+                              context,
+                              '/parentHome',
+                              arguments: parent,
+                            );
+                          }
                         }
                       },
                     icon: const FaIcon(FontAwesomeIcons.google),

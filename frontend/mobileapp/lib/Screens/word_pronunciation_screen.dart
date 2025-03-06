@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../services/words_service.dart';
-import '../models/learner.dart'; // Add this import for Learner model
+import '../services/audio_service.dart';
+import '../services/speech_service.dart';
+import '../models/learner.dart';
+import '../models/word.dart';
 
 class WordPronunciationScreen extends StatefulWidget {
   final Function(Locale)? onLocaleChange;
@@ -21,18 +24,31 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
 
   // The current word fetched from the database
   String _currentWord = "";
+  String _currentWordId = ""; // Add ID to track the current word
 
   int _attemptsLeft = 3;
   
   // User info
   Learner? _learner;
   String _username = "";
+  String _userId = ""; // Add user ID for backend requests
+
+  // Audio service
+  final AudioService _audioService = AudioService();
+  
+  // Exercise info
+  String _exerciseId = "67c66a0e3387a31ba1ee4a72"; // Replace with actual exercise ID from navigation args
 
   // Recording configuration
   static const int _maxRecordingSeconds = 30;
   int _timerSeconds = 0;
   Timer? _timer;
   bool _isRecording = false;
+  
+  // Feedback state
+  bool _isProcessing = false;
+  String _feedbackMessage = "";
+  bool? _isCorrect;
 
   @override
   void initState() {
@@ -46,6 +62,7 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
         setState(() {
           _learner = args;
           _username = _learner?.name ?? "User";
+          _userId = _learner?.id ?? "user123"; // Get user ID from learner model
         });
       }
     });
@@ -54,53 +71,77 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _audioService.dispose();
     super.dispose();
   }
 
   /// Fetch a random word from the database
-  Future<void> _loadWord() async {
-    // Choose whichever level you want
-    const String level = "Beginner";
-    final fetchedWord = await WordsService.fetchRandomWord(level);
+// In WordPronunciationScreen
 
-    if (fetchedWord != null && fetchedWord.isNotEmpty) {
+Future<void> _loadWord() async {
+  setState(() {
+    _isProcessing = true;
+    _feedbackMessage = "";
+    _isCorrect = null;
+  });
+  
+  // This now returns a Word? instead of a String?
+  final Word? fetchedWord = await WordsService.fetchRandomWord("Beginner");
+
+  if (fetchedWord == null) {
+    // Handle "no words" scenario
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("لا توجد كلمات في هذا المستوى.")),
+    );
+    setState(() {
+      _isProcessing = false;
+    });
+    return;
+  }
+
+  // We got a valid Word with real MongoDB _id
+  setState(() {
+    _currentWord = fetchedWord.text;    // text = "قمر" or "تفاحة", etc.
+    _currentWordId = fetchedWord.id;    // e.g. "6427fae2fd720055f811029d"
+    _wordLetters = fetchedWord.text.split('');
+    _isProcessing = false;
+  });
+}
+
+
+  /// Start recording + timer
+  void _startRecording() async {
+    try {
+      await _audioService.startRecording();
+      
       setState(() {
-        _currentWord = fetchedWord;
-        _wordLetters = fetchedWord.split('');
+        _isRecording = true;
+        _timerSeconds = 0;
+        _feedbackMessage = "";
+        _isCorrect = null;
       });
-    } else {
-      // Handle "no words found" scenario
+
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        setState(() => _timerSeconds++);
+        if (_timerSeconds >= _maxRecordingSeconds) {
+          _stopRecording();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("انتهى الوقت المسموح للتسجيل!")),
+          );
+        }
+      });
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("لا توجد كلمات في هذا المستوى.")),
+        SnackBar(content: Text("خطأ في بدء التسجيل: $e")),
       );
     }
   }
 
-  /// Start recording + timer
-  void _startRecording() {
-    setState(() {
-      _isRecording = true;
-      _timerSeconds = 0;
-    });
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() => _timerSeconds++);
-      if (_timerSeconds >= _maxRecordingSeconds) {
-        _stopRecording();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("انتهى الوقت المسموح للتسجيل!")),
-        );
-      }
-    });
-
-    // TODO: Start audio recording
-  }
-
   /// Stop recording + timer
-  void _stopRecording() {
+  Future<String?> _stopRecording() async {
     _timer?.cancel();
     setState(() => _isRecording = false);
-    // TODO: Stop audio recording
+    return await _audioService.stopRecording();
   }
 
   void _onRecordButtonPressed() {
@@ -111,19 +152,87 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
     }
   }
 
-  void _onWrongButtonPressed() {
+  void _onWrongButtonPressed() async {
     // Discard recording if needed
-    if (_isRecording) _stopRecording();
+    if (_isRecording) {
+      final audioPath = await _stopRecording();
+      // We don't process the audio in this case, just discard it
+      setState(() {
+        _feedbackMessage = "تم تجاهل التسجيل";
+      });
+    }
   }
 
-  void _onCorrectButtonPressed() {
-    // Save recording if needed
-    if (_isRecording) _stopRecording();
+  void _onCorrectButtonPressed() async {
+    // Process recording if available
+    if (_isRecording) {
+      final audioPath = await _stopRecording();
+      if (audioPath != null) {
+        _processSpeech(audioPath);
+      }
+    }
+  }
+
+  /// Process the speech recording
+  Future<void> _processSpeech(String audioPath) async {
+    setState(() {
+      _isProcessing = true;
+      _feedbackMessage = "جاري معالجة التسجيل...";
+    });
+
+    try {
+      final result = await SpeechService.processSpeech(
+        userId: _userId,
+        exerciseId: _exerciseId,
+        wordId: _currentWordId,
+        audioFilePath: audioPath,
+      );
+
+      if (result != null) {
+        setState(() {
+          _isProcessing = false;
+          _feedbackMessage = result['message'];
+          _isCorrect = result['isCorrect'];
+          
+          // Update attempts if incorrect
+          if (!result['isCorrect']) {
+            _attemptsLeft = _attemptsLeft > 0 ? _attemptsLeft - 1 : 0;
+          }
+        });
+        
+        // If out of attempts, show message and load next word after delay
+        if (_attemptsLeft == 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("انتهت المحاولات! سننتقل للكلمة التالية...")),
+          );
+          
+          Future.delayed(const Duration(seconds: 3), () {
+            _loadWord();
+            setState(() {
+              _attemptsLeft = 3; // Reset attempts for next word
+            });
+          });
+        }
+      } else {
+        setState(() {
+          _isProcessing = false;
+          _feedbackMessage = "حدث خطأ أثناء معالجة التسجيل";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isProcessing = false;
+        _feedbackMessage = "خطأ: $e";
+      });
+    }
   }
 
   /// When "التالي" is pressed, fetch a new word
   void _onNextButtonPressed() {
     _loadWord(); 
+    setState(() {
+      _attemptsLeft = 3; // Reset attempts
+    });
   }
 
   /// Format seconds as mm:ss
@@ -154,6 +263,41 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
         ),
       ),
     );
+  }
+
+  // Build feedback widget based on processing state
+  Widget _buildFeedback() {
+    if (_isProcessing) {
+      return const CircularProgressIndicator();
+    }
+    
+    if (_feedbackMessage.isNotEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: _isCorrect == true 
+              ? Colors.green.withOpacity(0.2) 
+              : _isCorrect == false 
+                  ? Colors.red.withOpacity(0.2) 
+                  : Colors.grey.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          _feedbackMessage,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: _isCorrect == true 
+                ? Colors.green 
+                : _isCorrect == false 
+                    ? Colors.red 
+                    : Colors.black87,
+          ),
+        ),
+      );
+    }
+    
+    return const SizedBox.shrink();
   }
 
   @override
@@ -252,7 +396,12 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
+              
+              // Feedback message
+              _buildFeedback(),
+
+              const SizedBox(height: 10),
 
               // Timer + Progress
               Padding(
@@ -327,17 +476,18 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
 
                   // Record or Stop
                   ElevatedButton(
-                    onPressed: _onRecordButtonPressed,
+                    onPressed: _isProcessing ? null : _onRecordButtonPressed,
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(20),
                       backgroundColor: Colors.white,
                       elevation: 3,
                       foregroundColor: Colors.grey,
+                      disabledBackgroundColor: Colors.grey.shade300,
                     ),
                     child: Icon(
                       _isRecording ? Icons.stop : Icons.fiber_manual_record,
-                      color: Colors.red,
+                      color: _isRecording ? Colors.black : Colors.red,
                       size: 32,
                     ),
                   ),
@@ -370,13 +520,14 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
                 height: 56,
                 margin: const EdgeInsets.fromLTRB(16, 8, 16, 20),
                 child: ElevatedButton(
-                  onPressed: _onNextButtonPressed, // fetch a new word
+                  onPressed: _isProcessing ? null : _onNextButtonPressed,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueGrey[200],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     elevation: 2,
+                    disabledBackgroundColor: Colors.grey.shade300,
                   ),
                   child: const Text(
                     'التالي',

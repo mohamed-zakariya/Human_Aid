@@ -1,12 +1,15 @@
 // services/words_service.dart
+
 import 'dart:math';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../graphql/graphql_client.dart';
 import '../graphql/queries/words_query.dart';
-import '../models/word.dart'; // If you want to use the Word model
+import '../models/word.dart'; // The Word model with {id, text, level}
 
 class WordsService {
-  static Future<String?> fetchRandomWord(String level) async {
+  /// Fetch up to 10 random words of a given level from server, 
+  /// then pick one at random, and return it as a `Word`.
+  static Future<Word?> fetchRandomWord(String level) async {
     final client = await GraphQLService.getClient();
 
     final QueryOptions options = QueryOptions(
@@ -23,23 +26,19 @@ class WordsService {
       return null;
     }
 
-    // The data from result.data?['getWordForExercise'] 
-    // is typically a List of Maps
     final data = result.data?['getWordForExercise'];
+    // data should be a list of word objects: [{ _id, word, level }, ...]
+
     if (data == null || data.isEmpty) {
+      // No words returned
       return null;
     }
 
-    // data might be up to 10 words from your Mongo aggregation.
-    // Pick one at random:
+    // Choose one random doc from the list
     final randomIndex = Random().nextInt(data.length);
-    final Map<String, dynamic> randomWord = data[randomIndex];
+    final Map<String, dynamic> randomWordJson = data[randomIndex];
 
-    // If you had a model:
-    final Word model = Word.fromJson(randomWord);
-    return model.text;
-
-    // Otherwise, just return the raw string:
-    // return randomWord['word'];
+    // Convert it to your `Word` model
+    return Word.fromJson(randomWordJson);
   }
 }
