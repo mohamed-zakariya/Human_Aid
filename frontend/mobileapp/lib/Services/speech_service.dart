@@ -4,10 +4,15 @@ import 'package:http/http.dart' as http;
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../graphql/graphql_client.dart';
 import 'package:mobileapp/graphql/queries/speech_query.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SpeechService {
-  /// 1) Upload the audio via REST
+  /// 1) Upload the audio via REST (with JWT in headers)
   static Future<String?> _uploadAudioFile(String audioFilePath) async {
+    // Retrieve the token from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("accessToken");
+
     final uri = Uri.parse('http://10.0.2.2:5500/upload-audio');
     
     // Create a MultipartRequest
@@ -16,17 +21,21 @@ class SpeechService {
         'audio', // must match `upload.single('audio')` in Node
         audioFilePath,
       ));
-
+    
+    // Add the Authorization header if the token exists
+    if (token != null) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+    
     // Send the request
     var streamedResponse = await request.send();
     var responseString = await streamedResponse.stream.bytesToString();
-
+    
     if (streamedResponse.statusCode == 200) {
-      // Parse JSON
+      // Parse JSON response and return the fileUrl
       final Map<String, dynamic> jsonResponse = json.decode(responseString);
-      return jsonResponse['fileUrl']; // "http://localhost:5500/uploads/filename..."
+      return jsonResponse['fileUrl']; // e.g., "http://localhost:5500/uploads/filename..."
     } else {
-      // Error
       print('Failed to upload audio. Status code: ${streamedResponse.statusCode}');
       print('Response: $responseString');
       return null;
@@ -41,13 +50,13 @@ class SpeechService {
     required String audioFilePath,
   }) async {
     try {
-      // Step A: First, upload the audio file to Node.js via REST
+      // Step A: Upload the audio file to the Node.js server via REST
       String? fileUrl = await _uploadAudioFile(audioFilePath);
       if (fileUrl == null) {
         throw Exception('Audio upload failed – no fileUrl received');
       }
 
-      // Step B: Then call GraphQL mutation with the fileUrl
+      // Step B: Call the GraphQL mutation with the fileUrl
       final client = await GraphQLService.getClient();
       final MutationOptions options = MutationOptions(
         document: gql(processSpeechMutation),
@@ -55,7 +64,7 @@ class SpeechService {
           'userId': userId,
           'exerciseId': exerciseId,
           'wordId': wordId,
-          // IMPORTANT: pass the fileUrl here (not the raw file bytes)
+          // IMPORTANT: pass the fileUrl here (not raw file bytes)
           'audioFile': fileUrl,
         },
       );
@@ -66,7 +75,7 @@ class SpeechService {
         return null;
       }
 
-      return result.data?['processSpeech'];
+      return result.data?['wordsExercise'];
     } catch (e) {
       print("Error processing speech: $e");
       return null;

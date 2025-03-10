@@ -1,6 +1,6 @@
 const String processSpeechMutation = r'''
-  mutation ProcessSpeech($userId: ID!, $exerciseId: ID!, $wordId: ID!, $audioFile: Upload!) {
-    processSpeech(
+  mutation wordsExercise($userId: ID!, $exerciseId: ID!, $wordId: ID!, $audioFile: Upload!) {
+    wordsExercise(
       userId: $userId,
       exerciseId: $exerciseId,
       wordId: $wordId,

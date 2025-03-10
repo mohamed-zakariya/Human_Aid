@@ -42,7 +42,7 @@ app.use(async (req, res, next) => {
     const operationName = operationMatch ? operationMatch[1] : null;
 
     const publicOperations = ["loginParent",
-       "signUpParent", "refreshTokenParent",
+       "signUpParent", "refreshTokenParent","refreshTokenUser",
          "loginUser", "signUpChild",
           "signUpAdult", "googleLogin",
            "checkUserUsernameExists", "checkParentEmailExists",
