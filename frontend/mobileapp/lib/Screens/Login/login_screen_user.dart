@@ -49,8 +49,8 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
       // Navigate to the WordPronunciationScreen instead of learnerHome
       Navigator.pushReplacementNamed(
           context,
-          '/wordPronunciation',
-          arguments: learner); // Pass the learner object as arguments
+          '/learnerMain',
+          arguments: learner);
     }
     else{
       // Show error message to the user instead of just printing

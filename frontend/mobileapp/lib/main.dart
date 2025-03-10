@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobileapp/Screens/IntroductoryScreen/intro_screen.dart';
 import 'package:mobileapp/Screens/IntroductoryScreen/onboarding_screen.dart';
-import 'package:mobileapp/Screens/LearnerScreen/LearnerHome.dart';
+import 'package:mobileapp/Screens/LearnerScreen/LearnerMain.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
 import 'package:mobileapp/Screens/SignUp/signupadult.dart';
@@ -74,9 +74,9 @@ class _MyAppState extends State<MyApp> {
             final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
             return Parenthome(parent: parent);
           },
-          '/learnerHome': (context) {
+          '/learnerMain': (context) {
             final Learner learner = ModalRoute.of(context)!.settings.arguments as Learner;
-            return LearnerHome(learner: learner);
+            return LearnerMain(learner: learner, onLocaleChange: _setLocale,);
           },
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
