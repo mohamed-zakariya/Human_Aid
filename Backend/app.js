@@ -34,27 +34,35 @@ app.use(googleAuthController);
 
 
 app.use(async (req, res, next) => {
-  if (req.path === "/graphql" && req.body?.query) {
-    const { query } = req.body;
+  if (
+    (req.path === "/graphql" && req.body?.query) ||
+    (req.path === "/auth/google" && req.method === "POST")
+  ) {
+    if (req.path === "/graphql") {
+      const { query } = req.body;
+      const operationMatch = query.match(/\bmutation\s+(\w+)/);
+      const operationName = operationMatch ? operationMatch[1] : null;
 
-    // Extract operation name from the query string
-    const operationMatch = query.match(/\bmutation\s+(\w+)/);
-    const operationName = operationMatch ? operationMatch[1] : null;
+      const publicOperations = [
+        "loginParent", "signUpParent", "refreshTokenParent",
+        "refreshTokenUser", "loginUser", "signUpChild",
+        "signUpAdult", "checkUserUsernameExists",
+         "checkParentEmailExists", "checkUserEmailExists"
+      ];
 
-    const publicOperations = ["loginParent",
-       "signUpParent", "refreshTokenParent","refreshTokenUser",
-         "loginUser", "signUpChild",
-          "signUpAdult", "googleLogin",
-           "checkUserUsernameExists", "checkParentEmailExists",
-            "checkUserEmailExists"];
+      if (operationName && publicOperations.includes(operationName)) {
+        return next(); // Skip authentication for these GraphQL operations
+      }
+    }
 
-    if (operationName && publicOperations.includes(operationName)) {
-      return next(); // Allow unauthenticated access
+    if (req.path === "/auth/google" && req.method === "POST") {
+      return next(); // Skip authentication for Google sign-in route
     }
   }
 
   authenticateJWT(req, res, next);
 });
+
 
 
 // app.use(authenticateJWT)
