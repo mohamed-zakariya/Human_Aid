@@ -47,7 +47,7 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
       print(learner.name);
       Navigator.pushReplacementNamed(
           context,
-          '/learnerHome',
+          '/learnerMain',
           arguments: learner);
     }
     else{

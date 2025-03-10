@@ -43,6 +43,7 @@ dependencies:
 #  connectivity_plus: ^5.0.2  # Use the latest version
   google_sign_in: ^6.1.6
   pinput: ^2.2.30
+  flutter_svg: ^2.0.9
 
 
 
@@ -78,6 +79,8 @@ flutter:
     - assets/images/child2.png
     - assets/images/boy.jpeg
     - assets/images/girl.jpeg
+    - assets/images/boy2.png
+    - assets/images/girl2.png
     - assets/images/1.jpg
     - assets/images/read.png
     - assets/images/image1.png
@@ -93,6 +96,15 @@ flutter:
     - assets/images/guardian.png
     - assets/images/user.png
     - assets/images/back.jpeg
+    - assets/arcades/coins.png
+    - assets/arcades/charaters/flash-head.png
+    - assets/arcades/charaters/batman.png
+    - assets/arcades/charaters/joker-dc.png
+    - assets/arcades/charaters/knight-helmet.png
+    - assets/arcades/charaters/deadpool.png
+    - assets/arcades/charaters/captain-america.png
+    - assets/arcades/flags/egypt.png
+    - assets/arcades/flags/usa.png
 
     
   # An image asset can refer to one or more resolution-specific "variants", see
