@@ -41,7 +41,7 @@ class AuthParentService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', data['accessToken']);
+        await prefs.setString('accessToken', data['accessToken']);   // match the key
         await prefs.setString('refreshToken', data['refreshToken']);
         return data;
       } else {
