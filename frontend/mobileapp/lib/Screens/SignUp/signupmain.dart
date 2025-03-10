@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mobileapp/Screens/widgets/MaleFemale.dart';
 import 'package:mobileapp/Screens/SignUp/ProgressBar.dart';
 import 'package:mobileapp/Screens/widgets/SignupEmailInputField.dart';
 import 'package:mobileapp/Screens/widgets/SignupInputField.dart';
 import 'package:mobileapp/Screens/SignUp/SignupPhoneNumberField.dart';
-import 'package:mobileapp/Screens/widgets/successSnackBar.dart';
 import 'package:mobileapp/classes/validators.dart';
-import 'package:mobileapp/Services/signup_service.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/models/parent.dart';
-
 import '../widgets/date.dart';
 
 
