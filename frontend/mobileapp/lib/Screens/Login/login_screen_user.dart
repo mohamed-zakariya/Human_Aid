@@ -45,12 +45,18 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
     Learner? learner = await AuthService.loginLearner(username, password);
     if(learner != null){
       print(learner.name);
+      
+      // Navigate to the WordPronunciationScreen instead of learnerHome
       Navigator.pushReplacementNamed(
           context,
           '/learnerMain',
           arguments: learner);
     }
     else{
+      // Show error message to the user instead of just printing
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Invalid username or password")),
+      );
       print("Enter the right username && password");
     }
   }
@@ -155,7 +161,6 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: Implement normal login logic
                     handleLoginUser();
                   },
                   style: ElevatedButton.styleFrom(

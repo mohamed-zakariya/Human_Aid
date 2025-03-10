@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobileapp/Services/auth_service.dart';
+import 'package:mobileapp/Services/google_auth_parent_service.dart';
 
 import '../../generated/l10n.dart';
 import '../../models/parent.dart';
@@ -182,7 +183,35 @@ class _LoginScreenGaurdianState extends State<LoginScreenGaurdian> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                        final authService = AuthParentService();
+                        // user is a Map<String, dynamic> from the backend if successful
+                        final user = await authService.signInWithGoogle();
+
+                        if (user != null) {
+                          // Extract the 'parent' part of the response
+                          final parentJson = user['parent'] as Map<String, dynamic>?;
+                          if (parentJson != null) {
+                            // Convert JSON to your Parent model
+                            final parent = Parent.fromJson({
+                              "id":          parentJson["_id"],
+                              "name":        parentJson["name"],
+                              "email":       parentJson["email"],
+                              "phoneNumber": parentJson["phoneNumber"] ?? "",
+                              "birthdate":   parentJson["birthdate"] ?? "",
+                              "nationality": parentJson["nationality"] ?? "",
+                              "gender":      parentJson["gender"] ?? "",
+                            });
+
+                            // Pass `parent` as arguments to the route
+                            Navigator.pushReplacementNamed(
+                              context,
+                              '/parentHome',
+                              arguments: parent,
+                            );
+                          }
+                        }
+                      },
                     icon: const FaIcon(FontAwesomeIcons.google),
                     color: Colors.red,
                   ),
