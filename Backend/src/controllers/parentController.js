@@ -94,14 +94,11 @@ export const refreshTokenParent = async (refreshToken) => {
         if (!parent) {
             throw new Error("Invalid refresh token");
         }
-
-        // Remove old refresh token
-        parent.refreshTokens = parent.refreshTokens.filter(rt => rt.token !== refreshToken);
-        
         // Generate new tokens
         const newAccessToken = generateAccessToken({ id: parent.id, username: parent.username });
         const newRefreshToken = generateRefreshToken({ id: parent.id, username: parent.username });
-
+        // Remove old refresh token
+        parent.refreshTokens = parent.refreshTokens.filter(rt => rt.token !== refreshToken);
         // Save new refresh token
         parent.refreshTokens.push({ token: newRefreshToken, expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) });
         await parent.save();
