@@ -1,8 +1,70 @@
+
+import mongoose from "mongoose";
 import { mockTranscribeAudio } from "../services/mockSTT.js";
 import fs from "fs";
 import Words from "../models/Words.js";
 import Exercisesprogress from "../models/Exercisesprogress.js";
+export const startExercise = async (userId, exerciseId) => {
+  try {
+    let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
 
+    if (!progress) {
+      progress = new Exercisesprogress({
+        user_id: userId,
+        exercise_id: exerciseId,
+        start_time: new Date(),
+        correct_words: [],
+        incorrect_words: [],
+        exercise_time_spent: [],
+        accuracy_percentage: 0,
+        score: 0,
+      });
+
+      await progress.save();
+      console.log("Exercise progress created:", progress);
+    } else {
+      progress.start_time = new Date(); // Reset start time when re-entering the exercise
+      await progress.save();
+      console.log("Exercise progress updated:", progress);
+    }
+
+    return { message: "Exercise started", startTime: progress.start_time };
+  } catch (error) {
+    console.error("Error in startExercise:", error);
+    throw new Error("Failed to start exercise.");
+  }
+};
+
+
+export const endExercise = async (userId, exerciseId) => {
+  try {
+    let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
+
+    if (!progress || !progress.start_time) {
+      throw new Error("No active session found for this exercise.");
+    }
+
+    const endTime = new Date();
+    const timeSpent = Math.floor((endTime - progress.start_time) / (1000*60)); // Time in seconds
+
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+    const existingEntry = progress.exercise_time_spent.find((entry) => entry.date.toISOString().split("T")[0] === today);
+
+    if (existingEntry) {
+      existingEntry.time_spent += timeSpent;
+    } else {
+      progress.exercise_time_spent.push({ date: new Date(), time_spent: timeSpent });
+    }
+
+    progress.start_time = null; // Reset start time
+
+    await progress.save();
+    return { message: "Exercise ended", timeSpent };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to end exercise.");
+  }
+};
 export const wordsExercise = async (userId, exerciseId, wordId, audioFile) => {
   try {
     if (!audioFile || typeof audioFile !== "string") {
@@ -25,22 +87,21 @@ export const wordsExercise = async (userId, exerciseId, wordId, audioFile) => {
 
     const isCorrect = spokenWord.toLowerCase().trim() === expectedWord.word.toLowerCase().trim();
 
-    let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
+    // Convert userId and exerciseId to ObjectId
+    const progress = await Exercisesprogress.findOne({
+      user_id: new mongoose.Types.ObjectId(userId),
+      exercise_id: new mongoose.Types.ObjectId(exerciseId),
+    });
 
+    console.log("Progress before wordsExercise:", progress);
     if (!progress) {
-      progress = new Exercisesprogress({
-        user_id: userId,
-        exercise_id: exerciseId,
-        correct_words: [],
-        incorrect_words: [],
-        exercise_time_spent: [],
-        accuracy_percentage: 0,
-        score: 0,
-      });
+      throw new Error("Exercise not started yet.");
     }
 
     if (isCorrect) {
-      progress.correct_words.push(spokenWord);
+      if (!progress.correct_words.includes(spokenWord)) {
+        progress.correct_words.push(spokenWord);
+      }
     } else {
       const incorrectWordIndex = progress.incorrect_words.findIndex(
         (w) => w.word_id.toString() === wordId

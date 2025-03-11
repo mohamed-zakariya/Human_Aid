@@ -12,6 +12,18 @@ export const userTypeDefs = `#graphql
     currentStage: String
     lastActiveDate: String
 }
+type Exercise {
+  id: ID!
+  name: String!
+  type: String!
+  progress: Progress
+}
+
+type Progress {
+  accuracyPercentage: Float!
+  score: Int!
+}
+
 
 type signUpChildResponse{
     parentId: ID!
@@ -33,6 +45,7 @@ type signUpAdultdResponse{
   type LogoutResponse {
     message: String!
   }
+
 
   type ForgotPasswordResponse {
     message: String!
@@ -62,13 +75,9 @@ type signUpAdultdResponse{
   extend type Query {
     users: [User!]
     checkUserUsernameExists(username: String!): UsernameCheckResponse!
-  }
-  extend type Query {
-    users: [User!]
     checkUserEmailExists(email: String!): EmailCheckResponse!
+    learnerHomePage(userId: ID!): [Exercise!]!
   }
-
-
 
   extend type Mutation {
     login(

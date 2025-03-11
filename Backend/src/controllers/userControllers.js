@@ -15,6 +15,8 @@ export const login = async (username, password) => {
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new Error('Invalid password');
 
+    user.lastActiveDate = new Date();
+
     // Generate tokens
     const accessToken = generateAccessToken({ id: user.id, username: user.username });
     const refreshToken = generateRefreshToken({ id: user.id, username: user.username });

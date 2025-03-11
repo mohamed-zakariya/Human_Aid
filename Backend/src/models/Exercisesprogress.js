@@ -28,6 +28,7 @@ const exerciseprogressSchema = new mongoose.Schema({
     exercise_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Exercises', required: true },
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
     exercise_time_spent: [ExerciseTimeSpentSchema],
+    start_time: { type: Date },  // Temporarily store when user starts 
     correct_words: [{ type: String }],
     incorrect_words: [IncorrectWordSchema],
     story: {
