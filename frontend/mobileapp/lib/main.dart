@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobileapp/Screens/IntroductoryScreen/intro_screen.dart';
 import 'package:mobileapp/Screens/IntroductoryScreen/onboarding_screen.dart';
-import 'package:mobileapp/Screens/LearnerScreen/LearnerHome.dart';
+import 'package:mobileapp/Screens/LearnerScreen/LearnerMain.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
 import 'package:mobileapp/Screens/SignUp/signupadult.dart';
 import 'package:mobileapp/Screens/SignUp/signupmain.dart';
+import 'package:mobileapp/Screens/word_pronunciation_screen.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/parent.dart';
@@ -62,6 +63,7 @@ class _MyAppState extends State<MyApp> {
           '/forgot-password': (context) => ForgotPasswordPage(onLocaleChange: _setLocale),
           '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
           '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
+          '/wordPronunciation': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
           '/signup2': (context) {
@@ -72,9 +74,9 @@ class _MyAppState extends State<MyApp> {
             final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
             return Parenthome(parent: parent);
           },
-          '/learnerHome': (context) {
+          '/learnerMain': (context) {
             final Learner learner = ModalRoute.of(context)!.settings.arguments as Learner;
-            return LearnerHome(learner: learner);
+            return LearnerMain(learner: learner, onLocaleChange: _setLocale,);
           },
       },
       onUnknownRoute: (settings) => MaterialPageRoute(

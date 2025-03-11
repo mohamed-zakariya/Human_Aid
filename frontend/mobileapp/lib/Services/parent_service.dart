@@ -1,7 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mobileapp/graphql/graphql_client.dart';
 import 'package:mobileapp/graphql/queries/delete_learner_query.dart';
-import 'package:mobileapp/graphql/queries/get_children_data.dart';
+import 'package:mobileapp/graphql/queries/get_children_data_query.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mobileapp/graphql/graphql_client.dart';
@@ -77,9 +75,10 @@ class AuthService {
 
     final Map<String, dynamic> learnerData = data["user"];
     final String accessToken = data["accessToken"];
+    final String refreshToken = data["refreshToken"];
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("token", accessToken);
+
+    GraphQLService.saveTokens(accessToken, refreshToken);
     print("Token Saved: $accessToken");
     print("auth service $learnerData");
 
