@@ -1,4 +1,4 @@
-import { loginParent, signUpParent, refreshTokenParent, logout,forgotParentPassword,resetParentPassword,verifyParentOTP } from "../controllers/parentController.js";
+import { loginParent, signUpParent, refreshTokenParent, logout,forgotParentPassword,resetParentPassword,verifyParentOTP, getLearnerProgressbyDate } from "../controllers/parentController.js";
 import Parents from "../models/Parents.js";
 
 export const parentResolvers = {
@@ -14,6 +14,9 @@ export const parentResolvers = {
       const parent = await Parents.findById(parentId).populate('linkedChildren');
       console.log(parent.linkedChildren);
       return  parent.linkedChildren;
+    },
+    getLearnerProgressbyDate: async(_, {parentId}) => {
+      return await getLearnerProgressbyDate(parentId);
     }
   },
   Mutation: {

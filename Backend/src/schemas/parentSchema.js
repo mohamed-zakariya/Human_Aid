@@ -38,9 +38,15 @@ type EmailCheckResponse {
     emailExists: Boolean!
 }
 
+  type LearnerProgress {
+    id: ID! 
+    progress: [Exercisesprogress] 
+  }
+
 extend type Query {
     parents: [Parent!]
     checkParentEmailExists(email: String!): EmailCheckResponse!
+    getLearnerProgressbyDate(parentId: ID!): LearnerProgress
     getParentChildren(parentId: ID!): [User!]
 }
 
