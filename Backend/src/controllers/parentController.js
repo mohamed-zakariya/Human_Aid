@@ -3,6 +3,8 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from ".
 import Parents from "../models/Parents.js";
 import { sendWelcomeEmail } from '../config/emailConfig.js';
 import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
+import mongoose from "mongoose";
+
 // Parent Login
 export const loginParent = async (email, password) => {
     if (!email || !password) {
@@ -139,8 +141,49 @@ export const verifyParentOTP = async (email, otp) => {
   
   
   
-  export const resetParentPassword = async (token, newPassword) => {
-    return await resetPassword(token, newPassword, "parent");
-  };
+export const resetParentPassword = async (token, newPassword) => {
+return await resetPassword(token, newPassword, "parent");
+};
+
+
+export const getLearnerProgressbyDate = async (parentId) => {
+    try {
+        const result = await Parents.aggregate([
+            {
+                $match: { _id: new mongoose.Types.ObjectId(parentId) } // Ensure parentId is an ObjectId
+            },
+            {
+                $lookup: {
+                    from: "exercisesprogresses", // Collection name should be lowercase and plural
+                    localField: "linkedChildren",
+                    foreignField: "user_id",
+                    as: "progress"
+                }
+            },
+            {
+                $project: {
+                    id: "$_id",
+                    progress: {
+                        user_id: 1, // Child ID
+                        exercise_id: 1, // Exercise ID
+                        correct_words: 1, // Correct words
+                        incorrect_words: 1, // Incorrect words
+                        accuracy_percentage: 1, // Accuracy score
+                        score: 1, // Total score
+                        exercise_time_spent: 1 // Time spent on exercise
+                    }
+                }
+            }
+        ]);
+
+        if (!result.length) throw new Error("Parent not found");
+
+        return result[0]; // Return the parent with linked progress
+    } catch (error) {
+        console.error("Error fetching learner progress:", error);
+        throw new Error(`Error fetching learner progress: ${error.message}`);
+    }
+};
+
 
 

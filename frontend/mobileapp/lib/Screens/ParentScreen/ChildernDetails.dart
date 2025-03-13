@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobileapp/Services/parent_service.dart';
@@ -10,6 +12,7 @@ import '../../models/parent.dart';
 import '../widgets/MaleFemale.dart';
 import '../widgets/SignupInputField.dart';
 import '../widgets/date.dart';
+
 
 class ChildrenDetails extends StatefulWidget {
   const ChildrenDetails({super.key, required this.parent});
@@ -200,7 +203,20 @@ class _ChildrenDetailsState extends State<ChildrenDetails> {
 
   @override
   Widget build(BuildContext context) {
+    List<Color> colors = [
+      Colors.redAccent,
+      Colors.orangeAccent,
+      Colors.blueAccent,
+      Colors.greenAccent
+    ];
+
+    Color getRandomColor() {
+      final Random random = Random();
+      return colors[random.nextInt(colors.length)];
+    }
+
     return Container(
+      width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         color: Colors.white,
       ),
@@ -224,15 +240,15 @@ class _ChildrenDetailsState extends State<ChildrenDetails> {
                 children: [
                   isLoading
                       ? const Center(child: CircularProgressIndicator())
-                      : children == null || children!.isEmpty
-                      ? const Center(child: Text("No learners found."))
                       : Wrap(
                     spacing: 15,
                     runSpacing: 15,
                     alignment: WrapAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: showAddChildDialog,
+                        onTap: () {
+                          showAddChildDialog();
+                        }, // showAddChildDialog
                         child: Column(
                           children: [
                             Container(
@@ -241,81 +257,142 @@ class _ChildrenDetailsState extends State<ChildrenDetails> {
                               decoration: BoxDecoration(
                                 color: Colors.redAccent,
                                 borderRadius: BorderRadius.circular(15),
-                                border: Border.all(color: Colors.white, width: 1.5),
+                                border: Border.all(
+                                    color: Colors.white, width: 1.5),
                               ),
-                              child: const Icon(Icons.add, color: Colors.white, size: 40),
+                              child: const Icon(Icons.add,
+                                  color: Colors.white, size: 40),
                             ),
                             const SizedBox(height: 4),
                             const Text(
                               "Add",
-                              style: TextStyle(color: Colors.black, fontSize: 16),
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 16),
                             ),
                           ],
                         ),
                       ),
-                      ...children!.map(
-                            (learner) => Column(
-                          children: [
-                            Stack(
-                              children: [
-                                (learner?.gender == 'male')
-                                    ? const CircleAvatar(
-                                  backgroundImage: AssetImage("assets/images/boy.jpeg"),
-                                  radius: 40,
-                                )
-                                    : const CircleAvatar(
-                                  backgroundImage: AssetImage("assets/images/girl.jpeg"),
-                                  radius: 40,
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: GestureDetector(
-                                    onTap: () => showDeleteConfirmation(context, learner),
-                                    child: Container(
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.red,
-                                      ),
-                                      child: const Icon(Icons.remove, color: Colors.white, size: 18),
+                      if (children != null && children!.isNotEmpty)
+                        ...children!.map(
+                              (learner) {
+                                // learner["progress"] ??
+                            double progress =  55.0;
+                            // learner["wordsLearned"] ??
+                            int wordsLearned = 0;
+                            // learner["sentencesCompleted"] ??
+                            int sentencesCompleted = 0;
+                            // learner["booksRead"] ??
+                            int booksRead =  0;
+
+                            return Card(
+                              color: getRandomColor(),
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundImage: AssetImage(
+                                            learner?.gender == 'male'
+                                                ? "assets/images/boy.jpeg"
+                                                : "assets/images/girl.jpeg",
+                                          ),
+                                          radius: 40,
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showDeleteConfirmation(context, learner);
+                                            }, // showDeleteConfirmation
+                                            child: Container(
+                                              decoration:
+                                              const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.red,
+                                              ),
+                                              child: const Icon(
+                                                  Icons.remove,
+                                                  color: Colors.white,
+                                                  size: 18),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      learner?.name ?? "Unknown",
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text("Grade 5 • Age 28",
+                                        style:
+                                        TextStyle(color: Colors.white)),
+
+                                    // **Progress Bar**
+                                    const SizedBox(height: 10),
+                                    LinearProgressIndicator(
+                                      value: progress/100,
+                                      backgroundColor: Colors.grey[300],
+                                      color: Colors.deepPurpleAccent,
+                                      minHeight: 8,
+                                    ),
+                                    const SizedBox(height: 8),
+
+                                    // **Stats**
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                      children: [
+                                        _buildStatCard(
+                                            "Words", wordsLearned),
+                                        _buildStatCard(
+                                            "Sentences", sentencesCompleted),
+                                        _buildStatCard(
+                                            "Books", booksRead),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              learner?.name ?? "Unknown",
-                              style: const TextStyle(color: Colors.black, fontSize: 18),
-                            ),
-                          ],
-                        ),
-                      ).toList(),
+                              ),
+                            );
+                          },
+                        ).toList(),
                     ],
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Make a New Learner Join the Community",
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                    ),
                   ),
                 ],
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: FloatingActionButton(
-              onPressed: fetchChildren,
-              backgroundColor: Colors.redAccent,
-              child: const Icon(Icons.refresh),
-            ),
-          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStatCard(String title, int count) {
+    return Column(
+      children: [
+        Text(
+          "$count",
+          style: const TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 14, color: Colors.white70),
+        ),
+      ],
     );
   }
 
@@ -407,4 +484,7 @@ class _ChildrenDetailsState extends State<ChildrenDetails> {
     });
   }
 
+
 }
+
+

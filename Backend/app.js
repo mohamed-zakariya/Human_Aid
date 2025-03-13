@@ -24,44 +24,44 @@ app.use(passport.initialize());
 // Google OAuth routes
 app.use(googleAuthController);
 
-// app.use((req, res, next) => {
-//   if (req.path !== "/graphql" && req.path !== "/upload-audio") {
-//     authenticateJWT(req, res, next);
-//   } else {
-//     next();
-//   }  
-// });
-
-
-app.use(async (req, res, next) => {
-  if (
-    (req.path === "/graphql" && req.body?.query) ||
-    (req.path === "/auth/google" && req.method === "POST")
-  ) {
-    if (req.path === "/graphql") {
-      const { query } = req.body;
-      const operationMatch = query.match(/\bmutation\s+(\w+)/);
-      const operationName = operationMatch ? operationMatch[1] : null;
-
-      const publicOperations = [
-        "loginParent", "signUpParent", "refreshTokenParent",
-        "refreshTokenUser", "loginUser", "signUpChild",
-        "signUpAdult", "checkUserUsernameExists",
-         "checkParentEmailExists", "checkUserEmailExists"
-      ];
-
-      if (operationName && publicOperations.includes(operationName)) {
-        return next(); // Skip authentication for these GraphQL operations
-      }
-    }
-
-    if (req.path === "/auth/google" && req.method === "POST") {
-      return next(); // Skip authentication for Google sign-in route
-    }
-  }
-
-  authenticateJWT(req, res, next);
+app.use((req, res, next) => {
+  if (req.path !== "/graphql" && req.path !== "/upload-audio") {
+    authenticateJWT(req, res, next);
+  } else {
+    next();
+  }  
 });
+
+
+// app.use(async (req, res, next) => {
+//   if (
+//     (req.path === "/graphql" && req.body?.query) ||
+//     (req.path === "/auth/google" && req.method === "POST")
+//   ) {
+//     if (req.path === "/graphql") {
+//       const { query } = req.body;
+//       const operationMatch = query.match(/\bmutation\s+(\w+)/);
+//       const operationName = operationMatch ? operationMatch[1] : null;
+
+//       const publicOperations = [
+//         "loginParent", "signUpParent", "refreshTokenParent",
+//         "refreshTokenUser", "loginUser", "signUpChild",
+//         "signUpAdult", "checkUserUsernameExists",
+//          "checkParentEmailExists", "checkUserEmailExists"
+//       ];
+
+//       if (operationName && publicOperations.includes(operationName)) {
+//         return next(); // Skip authentication for these GraphQL operations
+//       }
+//     }
+
+//     if (req.path === "/auth/google" && req.method === "POST") {
+//       return next(); // Skip authentication for Google sign-in route
+//     }
+//   }
+
+//   authenticateJWT(req, res, next);
+// });
 
 
 

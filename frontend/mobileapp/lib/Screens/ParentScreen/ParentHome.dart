@@ -32,6 +32,7 @@ class _ParenthomeState extends State<Parenthome> {
 
 
     return Scaffold(
+      backgroundColor: Colors.white,
       key: _scaffoldKey,
       drawer: NavBarParent(
           parent: widget.parent!,
@@ -49,23 +50,11 @@ class _ParenthomeState extends State<Parenthome> {
           children: [
             // Top Half: Illustration & Background
             Container(
-              width: MediaQuery.of(context).size.width,
-              height: screenHeight * 0.37, // Takes 40% of the screen
               decoration: const BoxDecoration(
-                color: Colors.white,
-                image: DecorationImage(
-                  image: AssetImage("assets/images/back.jpeg"), // Change to your image path
-                  fit: BoxFit.cover,
-                  opacity: 1, // Slight transparency for better blending
-                ),
-              ),
-              child: Container(
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30)
-                    )
-                ),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30)
+                  )
               ),
             ),
 
