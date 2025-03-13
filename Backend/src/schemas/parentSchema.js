@@ -23,18 +23,18 @@ type LogoutResponse {
 
 type ForgotPasswordResponse {
     message: String!
-  }
+}
 
-  type VerifyOTPResponse {
+type VerifyOTPResponse {
     message: String!
     token: String
-  }
+}
 
-  type ResetPasswordResponse {
+type ResetPasswordResponse {
     message: String!
-  }
+}
 
-  type EmailCheckResponse {
+type EmailCheckResponse {
     emailExists: Boolean!
 }
 
@@ -75,9 +75,9 @@ extend type Mutation {
       token: String!
       newPassword: String!
     ): ResetPasswordResponse!
-
 }
-input AddParentData{
+
+input AddParentData {
   name: String!
   email: String!
   password: String
