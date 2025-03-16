@@ -113,6 +113,15 @@ flutter:
     - assets/arcades/charaters/captain-america.png
     - assets/arcades/flags/egypt.png
     - assets/arcades/flags/usa.png
+    - assets/images/teach.png
+    - assets/images/teacher.png
+    - assets/images/progress.png
+    - assets/images/tips.png
+    - assets/images/educators.png
+    - assets/images/progress2.png
+    - assets/images/addWord.jpg
+    - assets/images/LearnerMembers.png
+    - assets/images/guardianhome.png
 
     
   # An image asset can refer to one or more resolution-specific "variants", see

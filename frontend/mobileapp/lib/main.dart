@@ -3,7 +3,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobileapp/Screens/IntroductoryScreen/intro_screen.dart';
 import 'package:mobileapp/Screens/IntroductoryScreen/onboarding_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/LearnerMain.dart';
-import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
+import 'package:mobileapp/Screens/ParentScreen/LearnerData.dart';
+import 'package:mobileapp/Screens/ParentScreen/LearnerDetails.dart';
+import 'package:mobileapp/Screens/ParentScreen/ParentMain.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
 import 'package:mobileapp/Screens/SignUp/signupadult.dart';
 import 'package:mobileapp/Screens/SignUp/signupmain.dart';
@@ -72,12 +74,21 @@ class _MyAppState extends State<MyApp> {
           },
           '/parentHome': (context) {
             final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
-            return Parenthome(parent: parent);
+            return ParentMain(parent: parent);
           },
           '/learnerMain': (context) {
             final Learner learner = ModalRoute.of(context)!.settings.arguments as Learner;
             return LearnerMain(learner: learner, onLocaleChange: _setLocale,);
           },
+          '/parentLearnerInfo': (context) {
+            final Learner learner = ModalRoute.of(context)!.settings.arguments as Learner;
+            return Learnerdata(learner: learner);
+          },
+          '/parentLearnerDetails': (context) {
+            final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
+            return LearnerDetails(parent: parent);
+          }
+
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(

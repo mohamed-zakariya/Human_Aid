@@ -39,7 +39,7 @@ type ForgotPasswordResponse {
 }
 
   type LearnerProgress {
-    id: ID! 
+    id: ID!
     progress: [Exercisesprogress] 
   }
 
