@@ -49,7 +49,7 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
       // Navigate to the WordPronunciationScreen instead of learnerHome
       Navigator.pushReplacementNamed(
           context,
-          '/learnerMain',
+          '/Learner-Home',
           arguments: learner);
     }
     else{
