@@ -4,7 +4,7 @@ import fs from "fs";
 import Words from "../models/Words.js";
 import Exercisesprogress from "../models/Exercisesprogress.js";
 import UserDailyAttempts from "../models/UserDailyAttempts.js";
-
+import { azureTranscribeAudio } from "../config/azureapiConfig.js";
 export const startExercise = async (userId, exerciseId) => {
   try {
     let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
@@ -77,7 +77,7 @@ export const wordsExercise = async (userId, exerciseId, wordId, audioFile) => {
       ? audioFile.replace("http://localhost:5500/", "")
       : `uploads/${audioFile}`;
 
-    const spokenWord = await mockTranscribeAudio(filePath);
+    const spokenWord = await azureTranscribeAudio(filePath);
     if (!spokenWord || typeof spokenWord !== "string") {
       throw new Error("Speech-to-text processing failed.");
     }
