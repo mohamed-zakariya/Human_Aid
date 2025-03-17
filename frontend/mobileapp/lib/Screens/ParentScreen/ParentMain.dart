@@ -5,8 +5,9 @@ import 'ParentHome.dart';
 
 class ParentMain extends StatefulWidget {
   final Parent? parent;
+  final Function(Locale) onLocaleChange;
 
-  const ParentMain({super.key, this.parent});
+  const ParentMain({super.key, this.parent, required this.onLocaleChange});
 
   @override
   _ParentMainState createState() => _ParentMainState();
@@ -41,6 +42,7 @@ class _ParentMainState extends State<ParentMain> {
       drawer: NavBarParent(
           parent: widget.parent!,
           onSelectScreen: _navigateTo,
+          onLocaleChange: widget.onLocaleChange,
       ),
       appBar: AppBar(
         foregroundColor: Colors.white,

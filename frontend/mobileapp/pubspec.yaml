@@ -87,7 +87,6 @@ flutter:
     - assets/videos/
     - assets/audio/
     - assets/arcades/flags/
-#    - assets/audio/1.wav
 
     
   # An image asset can refer to one or more resolution-specific "variants", see

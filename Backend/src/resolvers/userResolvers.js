@@ -52,6 +52,10 @@ export const userResolvers = {
       const user = await Users.findOne({ email });
       return { emailExists: !!user };
     },
+    getLearntWordsbyId: async (_, {userId}) => {
+      const learnerProgress = await Exercisesprogress.findOne({userId});
+      console.log(learnerProgress);
+    }
   },
   Mutation: {
     login: async (_, { username, password }) => {

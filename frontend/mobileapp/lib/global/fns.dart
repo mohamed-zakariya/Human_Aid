@@ -60,3 +60,4 @@ Route createRouteParentHome(Widget Function() screenBuilder) {
     },
   );
 }
+

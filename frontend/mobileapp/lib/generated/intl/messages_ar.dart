@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("إِنْشَاءُ حِسَابٍ كمتعلم"),
         "button1": MessageLookupByLibrary.simpleMessage("ابدأ"),
         "button2": MessageLookupByLibrary.simpleMessage("استمرار"),
+        "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
         "changePasswordTitle": MessageLookupByLibrary.simpleMessage(
             "تَغْيِيرُ كَلِمَةِ المَرُورِ"),
         "changepasswordHint":

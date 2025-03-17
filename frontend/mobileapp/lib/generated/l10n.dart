@@ -410,6 +410,16 @@ class S {
     );
   }
 
+  /// `Cancel`
+  String get cancel {
+    return Intl.message(
+      'Cancel',
+      name: 'cancel',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Welcome to your special world\nwhere learning is fun`
   String get title1 {
     return Intl.message(

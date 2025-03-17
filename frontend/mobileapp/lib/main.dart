@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
           },
           '/parentHome': (context) {
             final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
-            return ParentMain(parent: parent);
+            return ParentMain(parent: parent, onLocaleChange: _setLocale,);
           },
           '/learnerMain': (context) {
             final Learner learner = ModalRoute.of(context)!.settings.arguments as Learner;

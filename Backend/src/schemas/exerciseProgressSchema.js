@@ -44,6 +44,7 @@ export const ExercisesprogressTypeDefs = `#graphql
     type Query {
         getExercisesprogress(userId: ID!): Exercisesprogress
         getAllExercisesprogress: [Exercisesprogress]
+        getLearntWordsbyId(userId: ID!):  [String]
     }
     
     type Mutation {
