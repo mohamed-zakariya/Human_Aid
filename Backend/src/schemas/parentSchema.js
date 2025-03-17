@@ -39,7 +39,7 @@ type EmailCheckResponse {
 }
 
   type LearnerProgress {
-    id: ID! 
+    id: ID!
     progress: [Exercisesprogress] 
   }
 

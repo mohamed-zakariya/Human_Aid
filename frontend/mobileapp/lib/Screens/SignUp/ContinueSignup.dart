@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
+import 'package:mobileapp/Screens/ParentScreen/ParentMain.dart';
 import 'package:mobileapp/Screens/widgets/MaleFemale.dart';
 import 'package:mobileapp/Screens/SignUp/ProgressBar.dart';
 import 'package:mobileapp/Screens/widgets/SignupInputField.dart';
@@ -275,7 +275,7 @@ class _ContinuesignupState extends State<Continuesignup> {
             ),
             DateTimePicker(
               controller: birthdateControllers[id]!,
-              flag: false,
+              quardian: false,
             ),
             Malefemale(
               onGenderSelected: (gender) => _updateGender(id, gender),

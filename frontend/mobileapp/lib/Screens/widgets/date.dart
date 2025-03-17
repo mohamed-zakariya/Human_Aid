@@ -8,10 +8,10 @@ import 'package:mobileapp/generated/l10n.dart';
 class DateTimePicker extends StatefulWidget {
 
 
-  const DateTimePicker({required this.controller, required this.flag, super.key});
+  const DateTimePicker({required this.controller, required this.quardian, super.key});
 
   final TextEditingController controller;
-  final bool flag;
+  final bool quardian;
 
 
   @override
@@ -30,7 +30,7 @@ class _DateTimePickerState extends State<DateTimePicker> {
   @override
   Widget build(BuildContext context) {
 
-    bool flag = widget.flag;
+    bool flag = !widget.quardian;
 
     return  Container(
       width: 300,
@@ -66,14 +66,14 @@ class _DateTimePickerState extends State<DateTimePicker> {
   Future<void> _selectDate() async {
     DateTime now = DateTime.now();
 
-    DateTime fifteenYearsAgo = now.subtract(const Duration(days: 15 * 365));
-
+    DateTime maxDate = widget.quardian ? now.subtract(const Duration(days: 15 * 365)) : now.subtract(const Duration(days: 4 * 365));
+    DateTime minDate = DateTime(1980);
 
     DateTime? _picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1980),
-      lastDate: DateTime.now(), // Fix: Ensure lastDate matches the 15-year limit
+      initialDate: maxDate,
+      firstDate: minDate,
+      lastDate: maxDate,
     );
 
     if(_picked != null){

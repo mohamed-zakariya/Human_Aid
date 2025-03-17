@@ -56,6 +56,10 @@ dependencies:
   permission_handler: ^11.4.0
   http: 1.3.0
   http_parser: ^4.0.2
+  carousel_slider: ^5.0.0  # Downgrade to avoid conflict
+  audioplayers: ^6.4.0
+  video_player: ^2.9.3
+
 
 dev_dependencies:
   flutter_test:
@@ -79,40 +83,11 @@ flutter:
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/parent.png
-    - assets/images/child1.png
-    - assets/images/child2.png
-    - assets/images/boy.jpeg
-    - assets/images/girl.jpeg
-    - assets/images/boy2.png
-    - assets/images/girl2.png
-    - assets/images/1.jpg
-    - assets/images/read.png
-    - assets/images/image1.png
-    - assets/images/image2.png
-    - assets/images/image3.png
-    - assets/images/image4.png
-    - assets/images/image5.png
-    - assets/images/image6.png
-    - assets/images/image7.png
-    - assets/images/image8.png
-    - assets/images/image9.png
-    - assets/images/image10.png
-    - assets/images/image11.png
-    - assets/images/image12.png
-    - assets/images/Apple.png
-    - assets/images/guardian.png
-    - assets/images/user.png
-    - assets/images/back.jpeg
-    - assets/arcades/coins.png
-    - assets/arcades/charaters/flash-head.png
-    - assets/arcades/charaters/batman.png
-    - assets/arcades/charaters/joker-dc.png
-    - assets/arcades/charaters/knight-helmet.png
-    - assets/arcades/charaters/deadpool.png
-    - assets/arcades/charaters/captain-america.png
-    - assets/arcades/flags/egypt.png
-    - assets/arcades/flags/usa.png
+    - assets/images/
+    - assets/videos/
+    - assets/audio/
+    - assets/arcades/flags/
+#    - assets/audio/1.wav
 
     
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -5,7 +5,7 @@ import 'package:mobileapp/graphql/graphql_client.dart';
 import 'package:mobileapp/graphql/queries/auth_login_query.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/parent.dart';
-import 'package:mobileapp/models/user.dart';
+
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -82,9 +82,16 @@ class AuthService {
     print("Token Saved: $accessToken");
     print("auth service $learnerData");
 
-    return Learner.fromJson(learnerData);
 
-  }
+    
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("userId", learnerData["id"] ?? "");
+
+    print("Stored userId: ${learnerData["id"]}");
+
+  return Learner.fromJson(learnerData);
+}
 
   // remove token
   void logoutLearner(BuildContext context) async {

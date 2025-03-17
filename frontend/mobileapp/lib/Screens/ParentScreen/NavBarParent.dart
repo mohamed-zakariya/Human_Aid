@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/Screens/ParentScreen/ChildernDetails.dart';
-import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
+import 'package:mobileapp/Screens/ParentScreen/LearnerDetails.dart';
+import 'package:mobileapp/Screens/ParentScreen/ParentMain.dart';
 
 import '../../Services/auth_service.dart';
 import '../../generated/l10n.dart';
 import '../../models/parent.dart';
+import 'ParentHome.dart';
 import 'ProgressDetails.dart';
 
 class NavBarParent extends StatefulWidget {
@@ -22,6 +23,7 @@ class _NavBarParentState extends State<NavBarParent> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      elevation: 5,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -34,21 +36,27 @@ class _NavBarParentState extends State<NavBarParent> {
               ),
             ),
             decoration: const BoxDecoration(
-              color: Colors.redAccent
+              color: Colors.black87,
             ),
           ),
           ListTile(
             leading: const Icon(Icons.home),
             title: Text(S.of(context).ParentNavBarHome),
-            onTap: () => widget.onSelectScreen(const ProgressDetails()), // Update content
+            onTap: () => widget.onSelectScreen(HomeScreen(parent: widget.parent!,)), // Update content
           ),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.people),
-            title: const Text("Children"),
-            onTap: () => widget.onSelectScreen(ChildrenDetails(parent: widget.parent,)), // Change content
-          ),
-          const Divider(),
+          // ListTile(
+          //   leading: const Icon(Icons.people),
+          //   title: const Text("Learners Progress"),
+          //   onTap: () => widget.onSelectScreen(ProgressDetails(parent: widget.parent,)), // Change content
+          // ),
+          // const Divider(),
+          // ListTile(
+          //   leading: const Icon(Icons.people),
+          //   title: const Text("Learners Members"),
+          //   onTap: () => widget.onSelectScreen(LearnerDetails(parent: widget.parent,)), // Change content
+          // ),
+          // const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text("Logout"),
@@ -71,12 +79,3 @@ class _NavBarParentState extends State<NavBarParent> {
 //   }
 // }
 
-// Example placeholder screens
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const  Center(child: Text("Home Screen"));
-  }
-}
