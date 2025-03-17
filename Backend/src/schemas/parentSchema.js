@@ -43,11 +43,24 @@ type EmailCheckResponse {
     progress: [Exercisesprogress] 
   }
 
+  type LearnerDailyAttempts {
+    date: String!
+    correct_words: [WordAttempt!]!
+    incorrect_words: [WordAttempt!]!
+}
+
+type WordAttempt {
+    word_id: ID!
+    spoken_word: String!
+}
+
+
 extend type Query {
     parents: [Parent!]
     checkParentEmailExists(email: String!): EmailCheckResponse!
-    getLearnerProgressbyDate(parentId: ID!): LearnerProgress
+    getLearnerProgress(parentId: ID!): LearnerProgress
     getParentChildren(parentId: ID!): [User!]
+    getLearnerDailyAttempts(parentId: ID!): [LearnerDailyAttempts!]!
 }
 
 extend type Mutation {
@@ -93,3 +106,5 @@ input AddParentData {
   gender: String
 }
 `;
+
+

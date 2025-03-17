@@ -3,7 +3,7 @@ export const mockTranscribeAudio = async (audioFilePath) => {
   
     // Predefined mock words (your given words)
     const mockWords = [
-      "تفاحة", "قمر"
+      "تفاحة", "مدرسة"
     ];
   
     // Select a random word to simulate AI response

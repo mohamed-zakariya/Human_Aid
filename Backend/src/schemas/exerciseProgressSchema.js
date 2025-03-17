@@ -1,3 +1,4 @@
+
 export const ExercisesprogressTypeDefs = `#graphql
 
     type ExerciseTimeSpent {
@@ -85,5 +86,5 @@ export const ExercisesprogressTypeDefs = `#graphql
         story_id: ID
         story_questions: [StoryQuestionInput]
         summary_evaluation: SummaryEvaluationInput
-    }
+}
 `;

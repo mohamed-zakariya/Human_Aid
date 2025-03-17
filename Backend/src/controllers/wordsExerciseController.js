@@ -1,9 +1,10 @@
-
 import mongoose from "mongoose";
 import { mockTranscribeAudio } from "../services/mockSTT.js";
 import fs from "fs";
 import Words from "../models/Words.js";
 import Exercisesprogress from "../models/Exercisesprogress.js";
+import UserDailyAttempts from "../models/UserDailyAttempts.js";
+
 export const startExercise = async (userId, exerciseId) => {
   try {
     let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
@@ -13,19 +14,15 @@ export const startExercise = async (userId, exerciseId) => {
         user_id: userId,
         exercise_id: exerciseId,
         start_time: new Date(),
-        correct_words: [],
-        incorrect_words: [],
         exercise_time_spent: [],
         accuracy_percentage: 0,
         score: 0,
       });
 
       await progress.save();
-      console.log("Exercise progress created:", progress);
     } else {
-      progress.start_time = new Date(); // Reset start time when re-entering the exercise
+      progress.start_time = new Date(); // Reset start time
       await progress.save();
-      console.log("Exercise progress updated:", progress);
     }
 
     return { message: "Exercise started", startTime: progress.start_time };
@@ -34,7 +31,6 @@ export const startExercise = async (userId, exerciseId) => {
     throw new Error("Failed to start exercise.");
   }
 };
-
 
 export const endExercise = async (userId, exerciseId) => {
   try {
@@ -45,10 +41,16 @@ export const endExercise = async (userId, exerciseId) => {
     }
 
     const endTime = new Date();
-    const timeSpent = Math.floor((endTime - progress.start_time) / (1000*60)); // Time in seconds
+    const timeSpent = Math.floor((endTime - progress.start_time) / 60000); // Convert ms to minutes
 
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
-    const existingEntry = progress.exercise_time_spent.find((entry) => entry.date.toISOString().split("T")[0] === today);
+    let startOfDay = new Date();
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    let endOfDay = new Date();
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
+    const existingEntry = progress.exercise_time_spent.find((entry) => 
+      entry.date >= startOfDay && entry.date <= endOfDay
+    );
 
     if (existingEntry) {
       existingEntry.time_spent += timeSpent;
@@ -56,8 +58,7 @@ export const endExercise = async (userId, exerciseId) => {
       progress.exercise_time_spent.push({ date: new Date(), time_spent: timeSpent });
     }
 
-    progress.start_time = null; // Reset start time
-
+    progress.start_time = null;
     await progress.save();
     return { message: "Exercise ended", timeSpent };
   } catch (error) {
@@ -65,6 +66,7 @@ export const endExercise = async (userId, exerciseId) => {
     throw new Error("Failed to end exercise.");
   }
 };
+
 export const wordsExercise = async (userId, exerciseId, wordId, audioFile) => {
   try {
     if (!audioFile || typeof audioFile !== "string") {
@@ -77,51 +79,98 @@ export const wordsExercise = async (userId, exerciseId, wordId, audioFile) => {
 
     const spokenWord = await mockTranscribeAudio(filePath);
     if (!spokenWord || typeof spokenWord !== "string") {
-      throw new Error("Speech-to-text processing failed or returned an invalid result.");
+      throw new Error("Speech-to-text processing failed.");
     }
 
     const expectedWord = await Words.findById(wordId);
     if (!expectedWord || !expectedWord.word) {
-      throw new Error("Word not found or invalid.");
+      throw new Error("Word not found.");
     }
 
     const isCorrect = spokenWord.toLowerCase().trim() === expectedWord.word.toLowerCase().trim();
 
-    // Convert userId and exerciseId to ObjectId
-    const progress = await Exercisesprogress.findOne({
+    let startOfDay = new Date();
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    let endOfDay = new Date();
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
+    let userAttempt = await UserDailyAttempts.findOne({
+      user_id: new mongoose.Types.ObjectId(userId),
+      exercise_id: new mongoose.Types.ObjectId(exerciseId),
+      date: { $gte: startOfDay, $lte: endOfDay },
+    });
+
+    if (!userAttempt) {
+      userAttempt = new UserDailyAttempts({
+        user_id: new mongoose.Types.ObjectId(userId),
+        exercise_id: new mongoose.Types.ObjectId(exerciseId),
+        date: new Date(),
+        attempts: [],
+      });
+    }
+
+    const wordAttempt = userAttempt.attempts.find((a) => a.word_id.toString() === wordId);
+
+    if (!wordAttempt) {
+      userAttempt.attempts.push({
+        word_id: wordId,
+        correct_word: expectedWord.word,
+        spoken_word: spokenWord,
+        is_correct: isCorrect,
+        attempts_number: 1,
+      });
+    } else {
+      wordAttempt.attempts_number += 1;
+      wordAttempt.spoken_word = spokenWord;
+      wordAttempt.is_correct = isCorrect;
+    }
+
+    await userAttempt.save();
+
+    let progress = await Exercisesprogress.findOne({
       user_id: new mongoose.Types.ObjectId(userId),
       exercise_id: new mongoose.Types.ObjectId(exerciseId),
     });
 
-    console.log("Progress before wordsExercise:", progress);
     if (!progress) {
-      throw new Error("Exercise not started yet.");
+      progress = new Exercisesprogress({
+        user_id: new mongoose.Types.ObjectId(userId),
+        exercise_id: new mongoose.Types.ObjectId(exerciseId),
+        correct_words: [],
+        incorrect_words: [],
+        score: 0,
+        accuracy_percentage: 0,
+      });
     }
 
     if (isCorrect) {
       if (!progress.correct_words.includes(spokenWord)) {
         progress.correct_words.push(spokenWord);
+        progress.score += 10;
       }
     } else {
-      const incorrectWordIndex = progress.incorrect_words.findIndex(
-        (w) => w.word_id.toString() === wordId
-      );
-      if (incorrectWordIndex !== -1) {
-        progress.incorrect_words[incorrectWordIndex].frequency += 1;
-      } else {
-        progress.incorrect_words.push({
-          word_id: wordId,
-          incorrect_word: spokenWord,
-          frequency: 1,
-        });
+      if (wordAttempt.attempts_number >= 3) {
+        const incorrectEntry = progress.incorrect_words.find(
+          (w) => w.word_id.toString() === wordId
+        );
+
+        if (incorrectEntry) {
+          incorrectEntry.frequency += 1;
+        } else {
+          progress.incorrect_words.push({
+            word_id: wordId,
+            incorrect_word: spokenWord,
+            frequency: 1,
+          });
+        }
+
+        progress.score = Math.max(progress.score - 5, 0);
       }
     }
 
     const totalAttempts = progress.correct_words.length + progress.incorrect_words.length;
     progress.accuracy_percentage =
       totalAttempts > 0 ? (progress.correct_words.length / totalAttempts) * 100 : 0;
-
-    progress.score += isCorrect ? 10 : -5;
 
     await progress.save();
 

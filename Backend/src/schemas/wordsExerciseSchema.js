@@ -8,6 +8,12 @@ type ProcessedSpeech {
   message: String!
 }
 
+type Word {
+    _id: ID!
+    word: String!
+    level: String!
+}
+
 type ExerciseSession {
   message: String!
   startTime: String
@@ -16,6 +22,10 @@ type ExerciseSession {
 type ExerciseEnd {
   message: String!
   timeSpent: Int!
+}
+
+type Query {
+  getWordForExercise(level: String!): [Word]
 }
 
 type Mutation {
