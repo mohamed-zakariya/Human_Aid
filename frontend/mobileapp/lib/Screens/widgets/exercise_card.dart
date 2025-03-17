@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../LearnerScreen/exercise_structure.dart';
+
 /// The "Exercise Card" design for the Exercises section.
 class ExerciseCard extends StatelessWidget {
   final String imageUrl;
@@ -20,6 +22,10 @@ class ExerciseCard extends StatelessWidget {
         // Handle card tap
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Tapped on $title')),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>  Exercisestructure()),
         );
       },
       child: SizedBox(

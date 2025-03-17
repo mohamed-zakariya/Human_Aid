@@ -210,7 +210,10 @@ class _LearnerDetailsState extends State<LearnerDetails> {
       Colors.redAccent,
       Colors.orangeAccent,
       Colors.blueAccent,
-      Colors.greenAccent
+      Colors.greenAccent,
+      Colors.teal,
+      Colors.deepPurple,
+
     ];
 
     Color getColorForIndex(int index) {
@@ -308,83 +311,85 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                         if (children != null && children!.isNotEmpty)
                           ...children!.map(
                                 (learner) {
-
-                              return Card(
-                                color: getColorForIndex(children!.indexOf(learner)),
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    children: [
-                                      Stack(
-                                        children: [
-                                          CircleAvatar(
-                                            backgroundImage: AssetImage(
-                                              learner?.gender == 'male'
-                                                  ? "assets/images/boy.jpeg"
-                                                  : "assets/images/girl.jpeg",
+                              return Container(
+                                width: MediaQuery.of(context).size.width * 0.44,
+                                child: Card(
+                                  color: getColorForIndex(children!.indexOf(learner)),
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      children: [
+                                        Stack(
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundImage: AssetImage(
+                                                learner?.gender == 'male'
+                                                    ? "assets/images/boy.jpeg"
+                                                    : "assets/images/girl.jpeg",
+                                              ),
+                                              radius: 40,
                                             ),
-                                            radius: 40,
-                                          ),
-                                          Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                showDeleteConfirmation(context, learner);
-                                              }, // showDeleteConfirmation
-                                              child: Container(
-                                                decoration:
-                                                const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.red,
+                                            Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  showDeleteConfirmation(context, learner);
+                                                }, // showDeleteConfirmation
+                                                child: Container(
+                                                  decoration:
+                                                  const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.red,
+                                                  ),
+                                                  child: const Icon(
+                                                      Icons.remove,
+                                                      color: Colors.white,
+                                                      size: 18),
                                                 ),
-                                                child: const Icon(
-                                                    Icons.remove,
-                                                    color: Colors.white,
-                                                    size: 18),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        learner?.name ?? "Unknown",
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text("Age ${calculateAge(learner!.birthdate)}",
-                                          style:
-                                          const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
-                                      ElevatedButton.icon(
-                                        onPressed: () {
-                                          Navigator.of(context).push(createRouteLearnerData(learner));
-                                          // Add your logic to show more details
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.black54, // Button color
-                                          foregroundColor: Colors.white, // Text and icon color
-                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12), // Rounded corners
-                                          ),
-                                          elevation: 3, // Shadow effect
+                                          ],
                                         ),
-                                        icon: const Icon(Icons.arrow_right, size: 20), // Info icon
-                                        label: const Text(
-                                          "Show more",
-                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          learner?.name ?? "Unknown",
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      )
+                                        const SizedBox(height: 8),
+                                        Text("Age ${calculateAge(learner!.birthdate)}",
+                                            style:
+                                            const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                                        ElevatedButton.icon(
+                                          onPressed: () {
+                                            Navigator.of(context).push(createRouteLearnerData(learner));
+                                            // Add your logic to show more details
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.black54, // Button color
+                                            foregroundColor: Colors.white, // Text and icon color
+                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(12), // Rounded corners
+                                            ),
+                                            elevation: 3, // Shadow effect
+                                          ),
+                                          icon: const Icon(Icons.arrow_right, size: 20), // Info icon
+                                          label: const Text(
+                                            "Show more",
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                          ),
+                                        )
 
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );

@@ -8,7 +8,7 @@ class GraphQLService {
     String? accessToken = prefs.getString("accessToken");
     print("checkkkkkkkkk $accessToken");
 
-    final HttpLink httpLink = HttpLink("http://10.0.2.2:5500/graphql");
+    final HttpLink httpLink = HttpLink("http://192.168.1.2:5500/graphql");
 
     final AuthLink authLink = AuthLink(
       getToken: () async => accessToken != null ? "Bearer $accessToken" : null,

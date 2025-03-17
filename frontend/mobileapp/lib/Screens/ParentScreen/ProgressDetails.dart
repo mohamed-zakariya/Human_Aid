@@ -124,6 +124,19 @@ class _ProgressDetailsState extends State<ProgressDetails> {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
 
+    List<Color> colors = [
+      // Colors.redAccent,
+      // Colors.greenAccent,
+      Colors.deepPurple,
+      Colors.orangeAccent,
+      Colors.blueAccent,
+      Colors.teal,
+    ];
+
+    Color getColorForIndex(int index) {
+      return colors[index % colors.length];
+    }
+
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -142,6 +155,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
               children: [
                 Expanded(
                   child: Container(
+                    width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
@@ -195,48 +209,52 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                             ),
                           ),
                           const SizedBox(height: 30),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: days.map((day) {
-                              bool isSelected = day == selectedDay;
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedDay = day;
-                                  });
-                                },
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: isSelected ? Colors.orange.withOpacity(0.2) : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Text(
-                                        day,
-                                        style: TextStyle(
-                                          color: isSelected ? Colors.orange : Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: days.map((day) {
+                                bool isSelected = day == selectedDay;
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedDay = day;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width / 5.4,
+                                    padding: const EdgeInsets.symmetric(vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: isSelected ? Colors.orange.withOpacity(0.2) : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    if (isSelected)
-                                      Container(
-                                        margin: const EdgeInsets.only(top: 5),
-                                        height: 5,
-                                        width: 15,
-                                        decoration: BoxDecoration(
-                                          color: Colors.orange,
-                                          borderRadius: BorderRadius.circular(5),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          day,
+                                          style: TextStyle(
+                                            color: isSelected ? Colors.orange : Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
+                                        if (isSelected)
+                                          Container(
+                                            margin: const EdgeInsets.only(top: 5),
+                                            height: 5,
+                                            width: 15,
+                                            decoration: BoxDecoration(
+                                              color: Colors.orange,
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                           ),
+
 
                           const SizedBox(height: 20),
 
@@ -252,7 +270,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                                   incorrectWords: progress["incorrect_words"],
                                   dailyQuestCompleted: progress["completed_daily_quest"],
                                   awardReceived: progress["awards_taken"],
-                                  color: progress["completed_daily_quest"] ? Colors.green : Colors.red,
+                                  color: getColorForIndex(learnerProgress[selectedDay]!.indexOf(progress)),
                                   icon: progress["awards_taken"] ? Icons.emoji_events : Icons.cancel,
                                 );
                               }).toList() ?? [],

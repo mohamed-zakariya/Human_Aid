@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:mobileapp/Screens/LearnerScreen/NavBarLearner.dart';
 import 'package:mobileapp/Services/learner_home_service.dart';
 import 'package:mobileapp/models/learner.dart';
 import '../widgets/exercise_card.dart';
 import '../widgets/progress_card.dart';
 
 class LearnerHomeScreen extends StatefulWidget {
-  final void Function(Locale locale)? onLocaleChange;
+  final Function(Locale) onLocaleChange;
 
   /// The [Learner] object passed in from a previous screen
   final Learner? learner;
 
   const LearnerHomeScreen({
     super.key,
-    this.onLocaleChange,
+    required this.onLocaleChange,
     required this.learner,
   });
 
@@ -43,6 +44,10 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
     const Color primaryColor = Color.fromARGB(255, 238, 190, 198);
 
     return Scaffold(
+      drawer: NavBarLearner(learner: widget.learner, onLocaleChange: widget.onLocaleChange,),
+      appBar: AppBar(
+
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: FutureBuilder<List<Map<String, dynamic>>>(
