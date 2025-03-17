@@ -1,6 +1,5 @@
 import {userTypeDefs}from './userSchema.js'
 import { parentTypeDefs } from "./parentSchema.js";
-import { wordsTypeDefs } from './wordsSchema.js';
 import { wordsExerciseTypeDefs } from './wordsExerciseSchema.js';
 import { ExercisesprogressTypeDefs } from './exerciseProgressSchema.js';
 export const baseTypeDefs = `#graphql
@@ -18,7 +17,6 @@ export const typeDefs = [
     baseTypeDefs,
     userTypeDefs,
     parentTypeDefs,
-    wordsTypeDefs,
     wordsExerciseTypeDefs,
     ExercisesprogressTypeDefs,
   ];

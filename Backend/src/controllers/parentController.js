@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../config/jwtConfig.js";
 import Parents from "../models/Parents.js";
 import { sendWelcomeEmail } from '../config/emailConfig.js';
+import UserDailyAttempts from "../models/UserDailyAttempts.js";
 import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
 import mongoose from "mongoose";
 
@@ -145,8 +146,7 @@ export const resetParentPassword = async (token, newPassword) => {
 return await resetPassword(token, newPassword, "parent");
 };
 
-
-export const getLearnerProgressbyDate = async (parentId) => {
+export const getLearnerProgress = async (parentId) => {
     try {
         const result = await Parents.aggregate([
             {
@@ -184,6 +184,77 @@ export const getLearnerProgressbyDate = async (parentId) => {
         throw new Error(`Error fetching learner progress: ${error.message}`);
     }
 };
+export const getLearnerDailyAttempts = async (parentId, days = 7) => {
+    try {
+        const parent = await Parents.findById(parentId).lean();
+        if (!parent) throw new Error("Parent not found");
 
+        const childIds = parent.linkedChildren;
+        if (!childIds.length) throw new Error("No linked children found");
 
+        const endDate = new Date();
+        endDate.setHours(23, 59, 59, 999);
 
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - (days - 1));
+        startDate.setHours(0, 0, 0, 0);
+
+        const result = await UserDailyAttempts.aggregate([
+            {
+                $match: {
+                    user_id: { $in: childIds.map(id => new mongoose.Types.ObjectId(id)) },
+                    date: { $gte: startDate, $lte: endDate }
+                }
+            },
+            {
+                $sort: { date: 1 }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    user_id: 1,
+                    date: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                    correct_words: {
+                        $filter: {
+                            input: "$attempts",
+                            as: "attempt",
+                            cond: { $eq: ["$$attempt.is_correct", true] }
+                        }
+                    },
+                    incorrect_words: {
+                        $filter: {
+                            input: "$attempts",
+                            as: "attempt",
+                            cond: { $eq: ["$$attempt.is_correct", false] }
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    user_id: 1,
+                    date: 1,
+                    correct_words: { 
+                        $map: { 
+                            input: "$correct_words", 
+                            as: "cw", 
+                            in: { word_id: "$$cw.word_id", spoken_word: "$$cw.spoken_word" }
+                        }
+                    },
+                    incorrect_words: { 
+                        $map: { 
+                            input: "$incorrect_words", 
+                            as: "iw", 
+                            in: { word_id: "$$iw.word_id", spoken_word: "$$iw.spoken_word" }
+                        }
+                    }
+                }
+            }
+        ]);
+
+        return result;
+    } catch (error) {
+        console.error("Error fetching learner daily attempts:", error);
+        throw new Error(`Error fetching learner daily attempts: ${error.message}`);
+    }
+};

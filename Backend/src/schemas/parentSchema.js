@@ -23,18 +23,18 @@ type LogoutResponse {
 
 type ForgotPasswordResponse {
     message: String!
-  }
+}
 
-  type VerifyOTPResponse {
+type VerifyOTPResponse {
     message: String!
     token: String
-  }
+}
 
-  type ResetPasswordResponse {
+type ResetPasswordResponse {
     message: String!
-  }
+}
 
-  type EmailCheckResponse {
+type EmailCheckResponse {
     emailExists: Boolean!
 }
 
@@ -43,11 +43,24 @@ type ForgotPasswordResponse {
     progress: [Exercisesprogress] 
   }
 
+  type LearnerDailyAttempts {
+    date: String!
+    correct_words: [WordAttempt!]!
+    incorrect_words: [WordAttempt!]!
+}
+
+type WordAttempt {
+    word_id: ID!
+    spoken_word: String!
+}
+
+
 extend type Query {
     parents: [Parent!]
     checkParentEmailExists(email: String!): EmailCheckResponse!
-    getLearnerProgressbyDate(parentId: ID!): LearnerProgress
+    getLearnerProgress(parentId: ID!): LearnerProgress
     getParentChildren(parentId: ID!): [User!]
+    getLearnerDailyAttempts(parentId: ID!): [LearnerDailyAttempts!]!
 }
 
 extend type Mutation {
@@ -81,9 +94,9 @@ extend type Mutation {
       token: String!
       newPassword: String!
     ): ResetPasswordResponse!
-
 }
-input AddParentData{
+
+input AddParentData {
   name: String!
   email: String!
   password: String
@@ -93,3 +106,5 @@ input AddParentData{
   gender: String
 }
 `;
+
+
