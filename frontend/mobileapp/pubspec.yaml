@@ -40,6 +40,7 @@ dependencies:
   intl_phone_field: ^3.1.0
   graphql_flutter: ^5.1.2
   shared_preferences: ^2.5.2
+  ffmpeg_kit_flutter_full_gpl: ^6.0.3
 #  connectivity_plus: ^5.0.2  # Use the latest version
   google_sign_in: ^6.1.6
   pinput: ^2.2.30
