@@ -6,9 +6,12 @@ import { connectDB } from './src/config/dbConfig.js';
 import { authenticateJWT } from './src/middleware/authMiddleware.js';
 import { resolvers } from './src/resolvers/combineResolvers.js';
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import { convertToWav } from './src/services/audioConvertor.js';
 import googleAuthController from './src/controllers/googleAuthController.js';
 import passport from 'passport';
 import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 import './src/config/googleStrategy.js';
 
 const app = express();
@@ -75,18 +78,27 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+app.post('/upload-audio', upload.single('audio'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-// Speech Upload Route
-app.post('/upload-audio', upload.single('audio'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
+  const inputPath = req.file.path;
+  const ext = path.extname(inputPath).toLowerCase();
+  let outputFilename = req.file.filename;
+  
+  // If already WAV, skip conversion
+  if (ext !== '.wav') {
+    outputFilename = `${Date.now()}-${path.basename(req.file.filename, ext)}.wav`;
+    const outputPath = path.join('uploads', outputFilename);
+    await convertToWav(inputPath, outputPath);
+    // Optionally delete original if you don't need it
+    fs.unlinkSync(inputPath);
   }
 
-  // Return public URL instead of file path
-  const fileUrl = `http://localhost:5500/uploads/${req.file.filename}`;
-  console.log("Received audio file:", fileUrl);
-  res.json({ message: "Audio received", fileUrl });
+  const fileUrl = `http://localhost:5500/uploads/${outputFilename}`;
+  console.log("Processed audio file:", fileUrl);
+  res.json({ message: "Audio uploaded and processed", fileUrl });
 });
+
 
 // Apollo Plugin for Logging Response Time
 const responseTimePlugin = {
