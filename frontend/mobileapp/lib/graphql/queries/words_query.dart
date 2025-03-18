@@ -8,3 +8,18 @@ const String fetchWordsQuery = r'''
     }
   }
 ''';
+
+
+const String getCorrectWordsbyId = """
+
+query getLearntWordsbyId(\$userId: ID!){
+  getLearntWordsbyId(userId: \$userId){
+    correct_words
+    incorrect_words {
+      word_id
+      incorrect_word
+      frequency
+    }
+  }
+}
+""";

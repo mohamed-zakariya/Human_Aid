@@ -207,49 +207,68 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                 }
             },
             {
-                $sort: { date: 1 }
+                $lookup: {
+                    from: "users",
+                    localField: "user_id",
+                    foreignField: "_id",
+                    as: "user"
+                }
+            },
+            {
+                $unwind: "$user"
+            },
+            {
+                $group: {
+                    _id: "$date",
+                    users: {
+                        $push: {
+                            user_id: "$user._id",
+                            name: "$user.name",
+                            username: "$user.username",
+                            correct_words: {
+                                $filter: {
+                                    input: "$attempts",
+                                    as: "attempt",
+                                    cond: { $eq: ["$$attempt.is_correct", true] }
+                                }
+                            },
+                            incorrect_words: {
+                                $filter: {
+                                    input: "$attempts",
+                                    as: "attempt",
+                                    cond: { $eq: ["$$attempt.is_correct", false] }
+                                }
+                            }
+                        }
+                    }
+                }
             },
             {
                 $project: {
                     _id: 0,
-                    user_id: 1,
-                    date: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
-                    correct_words: {
-                        $filter: {
-                            input: "$attempts",
-                            as: "attempt",
-                            cond: { $eq: ["$$attempt.is_correct", true] }
-                        }
-                    },
-                    incorrect_words: {
-                        $filter: {
-                            input: "$attempts",
-                            as: "attempt",
-                            cond: { $eq: ["$$attempt.is_correct", false] }
+                    date: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
+                    users: {
+                        user_id: 1,
+                        name: 1,
+                        username: 1,
+                        correct_words: {
+                            $map: {
+                                input: "$users.correct_words",
+                                as: "cw",
+                                in: { word_id: "$$cw.word_id", spoken_word: "$$cw.spoken_word" }
+                            }
+                        },
+                        incorrect_words: {
+                            $map: {
+                                input: "$users.incorrect_words",
+                                as: "iw",
+                                in: { word_id: "$$iw.word_id", spoken_word: "$$iw.spoken_word" }
+                            }
                         }
                     }
                 }
             },
-            {
-                $project: {
-                    user_id: 1,
-                    date: 1,
-                    correct_words: { 
-                        $map: { 
-                            input: "$correct_words", 
-                            as: "cw", 
-                            in: { word_id: "$$cw.word_id", spoken_word: "$$cw.spoken_word" }
-                        }
-                    },
-                    incorrect_words: { 
-                        $map: { 
-                            input: "$incorrect_words", 
-                            as: "iw", 
-                            in: { word_id: "$$iw.word_id", spoken_word: "$$iw.spoken_word" }
-                        }
-                    }
-                }
-            }
+            { $sort: { date: 1 } }
         ]);
 
         return result;
@@ -258,3 +277,5 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
         throw new Error(`Error fetching learner daily attempts: ${error.message}`);
     }
 };
+
+

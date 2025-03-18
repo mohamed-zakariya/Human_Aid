@@ -1,10 +1,13 @@
 import 'dart:math';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mobileapp/graphql/queries/words_query.dart';
+import 'package:mobileapp/models/exercices_progress.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../graphql/graphql_client.dart';
 // import '../graphql/queries/words_query.dart'  <-- Your actual query strings or placeholders
 import '../models/word.dart';
+
 
 class WordsService {
   /// Fetches up to 10 random words of a given level from the server,
@@ -57,5 +60,66 @@ class WordsService {
     final Map<String, dynamic> randomWordJson = data[randomIndex];
 
     return Word.fromJson(randomWordJson);
+  }
+
+
+
+  // get learnt data by specific learner
+
+  static Future<ExerciseProgress?> getLearntDataById(String? userId) async {
+    final client = await GraphQLService.getClient();
+
+    final prefs = await SharedPreferences.getInstance();
+    String? refreshToken = prefs.getString("refreshToken");
+    print("tokkennnn $refreshToken");
+
+    final QueryResult result = await client.query(
+      QueryOptions(
+        document: gql(getCorrectWordsbyId),
+        variables: {"userId": userId},
+      ),
+    );
+
+    // Handle auth errors & retry if needed
+    QueryResult? finalResult = await GraphQLService.handleAuthErrors(
+        result: result,
+        role: "learner",
+        retryRequest: () async {
+          final client = await GraphQLService.getClient();
+          return await client.query( // ✅ Removed the extra comma
+            QueryOptions(
+              document: gql(getCorrectWordsbyId),
+              variables: {"userId": userId},
+            ),
+          );
+        }
+    );
+
+    // Use finalResult instead of result
+    if (finalResult != null) {
+      // Process successful response
+      if (finalResult.hasException) {
+        print("Login Error: ${finalResult.exception.toString()}");
+        return null;
+      }
+      print(finalResult.data);
+      final ExerciseProgress exerciseProgress = ExerciseProgress.fromJson(finalResult.data?["getLearntWordsbyId"]);
+
+      if (exerciseProgress == null) {
+        print("Login Failed: No data returned.");
+        return null;
+      }
+
+      print(exerciseProgress.correctWords);
+      print("done");
+      return exerciseProgress;
+
+    } else {
+
+      print("Request still failed even after retry.");
+      return null;
+
+    }
+
   }
 }

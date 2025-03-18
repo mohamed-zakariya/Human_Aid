@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:mobileapp/Services/words_service.dart';
+import 'package:mobileapp/models/exercices_progress.dart';
+import 'package:mobileapp/models/learner.dart';
 import 'package:video_player/video_player.dart';
 
 class Exercisestructure extends StatefulWidget {
-  const Exercisestructure({super.key});
+  const Exercisestructure({super.key, required this.learner});
+  final Learner learner;
 
   @override
   State<Exercisestructure> createState() => _ExercisestructureState();
@@ -16,18 +20,26 @@ class _ExercisestructureState extends State<Exercisestructure> {
   int _currentIndex = 0;
   late VideoPlayerController _videoController;
   bool _isVideoPlaying = false;
+  bool isLoading = true, isLoading2 = true;
 
-  List<String> correctWords = ["تفاحة", "مانجو", "الموز"];
+
+  late List<String> correctWords = [];
 
   @override
   void initState() {
     super.initState();
+
     _videoController = VideoPlayerController.asset('assets/videos/1.mp4')
       ..initialize().then((_) {
-        setState(() {});
+        setState(() {
+          isLoading2 = false; // ✅ Video loaded, stop loading indicator
+        });
         _videoController.setLooping(false);
       }).catchError((error) {
         print("Video load error: $error");
+        setState(() {
+          isLoading2 = false; // ✅ Ensure UI updates even if video fails
+        });
       });
 
     _videoController.addListener(() {
@@ -38,7 +50,26 @@ class _ExercisestructureState extends State<Exercisestructure> {
         });
       }
     });
+
+    getLearntData(); // ✅ Fetch the correct words
   }
+
+
+  void getLearntData() async {
+    try {
+      ExerciseProgress? exerciseProgress = await WordsService.getLearntDataById(widget.learner.id);
+      setState(() {
+        correctWords = exerciseProgress?.correctWords ?? [];
+        isLoading = false; // ✅ Stop loading after fetching words
+      });
+    } catch (e) {
+      print("Error fetching data: $e");
+      setState(() {
+        isLoading = false; // ✅ Ensure UI updates even if an error occurs
+      });
+    }
+  }
+
 
   @override
   void dispose() {
@@ -83,7 +114,9 @@ class _ExercisestructureState extends State<Exercisestructure> {
           centerTitle: true,
           title: const Text("Word Exercise"),
         ),
-        body: Padding(
+        body: (isLoading || isLoading2)?
+        const Center(child: CircularProgressIndicator())
+        :Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,24 +266,6 @@ class _ExercisestructureState extends State<Exercisestructure> {
                                           ),
                                         ),
 
-                                        // const SizedBox(height: 10),
-
-                                        // // ✅ **Mark as Learned Button**
-                                        // ElevatedButton(
-                                        //   onPressed: () {
-                                        //     setState(() {
-                                        //       correctWords.removeAt(_currentIndex);
-                                        //       _currentIndex = (_currentIndex - 1).clamp(0, correctWords.length - 1);
-                                        //     });
-                                        //   },
-                                        //   style: ElevatedButton.styleFrom(
-                                        //     backgroundColor: Colors.green,
-                                        //     shape: RoundedRectangleBorder(
-                                        //       borderRadius: BorderRadius.circular(8),
-                                        //     ),
-                                        //   ),
-                                        //   child: const Text("Mark as Learned", style: TextStyle(color: Colors.white)),
-                                        // ),
                                       ],
                                     ),
                                   ),

@@ -251,6 +251,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                                   title: title,
                                   // We'll treat accuracy as lecturesCount for display
                                   lecturesCount: accuracy.toInt(),
+                                  learner: widget.learner!,
                                 ),
                               );
                             },

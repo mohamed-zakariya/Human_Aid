@@ -43,10 +43,17 @@ type EmailCheckResponse {
     progress: [Exercisesprogress] 
   }
 
-  type LearnerDailyAttempts {
-    date: String!
+  type UserProgress {
+    user_id: ID!
+    name: String
+    username: String!
     correct_words: [WordAttempt!]!
     incorrect_words: [WordAttempt!]!
+}
+
+type LearnerDailyAttempts {
+    date: String!
+    users: [UserProgress!]!
 }
 
 type WordAttempt {

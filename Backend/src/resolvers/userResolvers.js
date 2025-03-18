@@ -1,4 +1,5 @@
 import { login, signUpAdult, signUpChild, refreshTokenUser, logout,forgotUserPassword,verifyUserOTP,resetUserPassword, deleteChild ,learnerHomePage} from "../controllers/userControllers.js"
+import Exercisesprogress from "../models/Exercisesprogress.js";
 import Users from "../models/Users.js";
 export const userResolvers = {
   Query: {
@@ -16,10 +17,15 @@ export const userResolvers = {
       const user = await Users.findOne({ email });
       return { emailExists: !!user };
     },
-    getLearntWordsbyId: async (_, {userId}) => {
-      const learnerProgress = await Exercisesprogress.findOne({userId});
-      console.log(learnerProgress);
-    }
+    getLearntWordsbyId: async (_, { userId }) => {
+      const learnerProgress = await Exercisesprogress.findOne({ user_id: userId });
+    
+      if (!learnerProgress) {
+          throw new Error(`No progress found for user with ID: ${userId}`);
+      }
+  
+      return learnerProgress;
+  },  
   },
   Mutation: {
     login: async (_, { username, password }) => {

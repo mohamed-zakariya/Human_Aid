@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobileapp/models/learner.dart';
 
 import '../LearnerScreen/exercise_structure.dart';
 
@@ -7,12 +8,14 @@ class ExerciseCard extends StatelessWidget {
   final String imageUrl;
   final String title;
   final int lecturesCount;
+  final Learner learner;
 
   const ExerciseCard({
     Key? key,
     required this.imageUrl,
     required this.title,
     required this.lecturesCount,
+    required this.learner,
   }) : super(key: key);
 
   @override
@@ -25,7 +28,7 @@ class ExerciseCard extends StatelessWidget {
         );
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) =>  Exercisestructure()),
+          MaterialPageRoute(builder: (context) =>  Exercisestructure(learner: learner,)),
         );
       },
       child: SizedBox(
