@@ -9,12 +9,13 @@ class LearnerDailyAttempts {
 
   factory LearnerDailyAttempts.fromJson(Map<String, dynamic> json) {
     return LearnerDailyAttempts(
-      date: json["date"],
-      users: (json["users"] as List<dynamic>)
-          .map((user) => UserProgress.fromJson(user))
-          .toList(),
+      date: json["date"] ?? "",  // Ensure a non-null string
+      users: (json["users"] as List<dynamic>?)
+          ?.map((user) => UserProgress.fromJson(user as Map<String, dynamic>))
+          .toList() ?? [],
     );
   }
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -41,17 +42,18 @@ class UserProgress {
 
   factory UserProgress.fromJson(Map<String, dynamic> json) {
     return UserProgress(
-      userId: json["user_id"],
-      name: json["name"],
-      username: json["username"],
-      correctWords: (json["correct_words"] as List<dynamic>)
-          .map((word) => WordAttempt.fromJson(word))
-          .toList(),
-      incorrectWords: (json["incorrect_words"] as List<dynamic>)
-          .map((word) => WordAttempt.fromJson(word))
-          .toList(),
+      userId: json["user_id"] ?? "",  // Ensure a string is always present
+      name: json["name"] ?? "Unknown",  // Fallback name
+      username: json["username"] ?? "Unknown",
+      correctWords: (json["correct_words"] as List<dynamic>?)
+          ?.map((word) => WordAttempt.fromJson(word as Map<String, dynamic>))
+          .toList() ?? [],  // Default to an empty list if null
+      incorrectWords: (json["incorrect_words"] as List<dynamic>?)
+          ?.map((word) => WordAttempt.fromJson(word as Map<String, dynamic>))
+          .toList() ?? [],
     );
   }
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -75,10 +77,11 @@ class WordAttempt {
 
   factory WordAttempt.fromJson(Map<String, dynamic> json) {
     return WordAttempt(
-      wordId: json["word_id"],
-      spokenWord: json["spoken_word"],
+      wordId: json["word_id"] ?? "",  // Default empty string if null
+      spokenWord: json["spoken_word"] ?? "",  // Default empty string if null
     );
   }
+
 
   Map<String, dynamic> toJson() {
     return {

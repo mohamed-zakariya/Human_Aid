@@ -382,7 +382,10 @@ class _ExercisestructureState extends State<Exercisestructure> {
                 ),
                 onPressed: () {
                   setState(() {
-                    correctWords.add("Grapes");
+                          Navigator.pushReplacementNamed(
+                            context,
+                            '/wordPronunciation',
+                            arguments: widget.learner);
                   });
                 },
                 child: Text(correctWords.isEmpty ? "Start Now" : "Continue",

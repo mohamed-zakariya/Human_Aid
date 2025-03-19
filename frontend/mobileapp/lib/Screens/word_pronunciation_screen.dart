@@ -173,8 +173,8 @@ Future<void> _loadWord() async {
     }
   }
 
-  /// Process the speech recording
-  Future<void> _processSpeech(String audioPath) async {
+/// Process the speech recording
+Future<void> _processSpeech(String audioPath) async {
     setState(() {
       _isProcessing = true;
       _feedbackMessage = "جاري معالجة التسجيل...";
@@ -226,6 +226,7 @@ Future<void> _loadWord() async {
       });
     }
   }
+
 
   /// When "التالي" is pressed, fetch a new word
   void _onNextButtonPressed() {

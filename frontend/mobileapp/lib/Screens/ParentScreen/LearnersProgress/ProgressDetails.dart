@@ -29,137 +29,56 @@ class _ProgressDetailsState extends State<ProgressDetails> {
   void initState() {
     super.initState();
     selectedDay = days.last; // Set default to most recent day
+    // getDummyData();
     getData();
-    getDummyData();
   }
 
   void getData() async {
     if (widget.parent == null) return; // Ensure parent is not null
+
     List<LearnerDailyAttempts>? attempts = await ParentService.getProgressWithDate(widget.parent!.id);
-    print(attempts);
-  }
 
-  void getDummyData() {
-    learnerProgressData = [
-      {
-        "date": "2025-03-15",
-        "users": [
-          {
-            "user_id": "67c84373e6128ad8a1e98bd9",
-            "name": "Joe",
-            "username": "joe3mhima",
-            "correct_words": [
-              {"word_id": "67c4d4b8e1b54f012e19bf8a", "spoken_word": "تفاحة"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-            ],
-            "incorrect_words": [
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "تفاحة"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2025-03-17",
-        "users": [
-          {
-            "user_id": "67c84373e6128ad8a1e98bd9",
-            "name": "Mohamed",
-            "username": "mhdzikoo",
-            "correct_words": [],
-            "incorrect_words": [
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2025-03-16",
-        "users": [
-          {
-            "user_id": "67c84373e6128ad8a1e98bd9",
-            "name": "ibrahim",
-            "username": "hima",
-            "correct_words": [
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-              {"word_id": "67c4d4b8e1b54f012e19bf85", "spoken_word": "مدرسه"},
-              {"word_id": "67c4d4b8e1b54f012e19bf91", "spoken_word": "متقار"},
-            ],
-            "incorrect_words": []
-          }
-        ]
-      }
-    ];
+    if (attempts == null) {
+      print("No progress data found.");
+      return;
+    }
 
-    learnerProgress.clear();
-    for (var entry in learnerProgressData) {
-      DateTime parsedDate = DateTime.parse(entry["date"]);
+    for (var entry in attempts) {
+      DateTime parsedDate = DateTime.parse(entry.date);
       String formattedDate = DateFormat("EEE d").format(parsedDate);
 
-      for (var user in entry['users']) {
-        int wordsRead = user['correct_words'].length + user['incorrect_words'].length;
-        int correctWords = user['correct_words'].length;
-        int incorrectWords = user['incorrect_words'].length;
+      for (var user in entry.users) {
+        int wordsRead = user.correctWords.length + user.incorrectWords.length;
+        int correctWords = user.correctWords.length;
+        int incorrectWords = user.incorrectWords.length;
 
-        if (!learnerProgress.containsKey(formattedDate)) {
-          learnerProgress[formattedDate] = [];
-        }
+        learnerProgress.putIfAbsent(formattedDate, () => []);
 
         learnerProgress[formattedDate]!.add({
-          "name": user["name"],
-          "username": user["username"],
+          "name": user.name,
+          "username": user.username,
           "words_read": wordsRead,
           "correct_words": correctWords,
           "incorrect_words": incorrectWords,
-          "correct_words_list": List<Map<String, String>>.from(user['correct_words'].map((word) => {
-            "word_id": word["word_id"].toString(),
-            "spoken_word": word["spoken_word"].toString()
-          })),
-          "incorrect_words_list": List<Map<String, String>>.from(user['incorrect_words'].map((word) => {
-            "word_id": word["word_id"].toString(),
-            "spoken_word": word["spoken_word"].toString()
-          })),
+          "correct_words_list": user.correctWords.map((word) => {
+            "word_id": word.wordId,
+            "spoken_word": word.spokenWord
+          }).toList(),
+          "incorrect_words_list": user.incorrectWords.map((word) => {
+            "word_id": word.wordId,
+            "spoken_word": word.spokenWord
+          }).toList(),
           "completed_daily_quest": true,
           "awards_taken": true
         });
       }
     }
 
-
     print(learnerProgress);
 
     setState(() {});
   }
+
 
   @override
   Widget build(BuildContext context) {
