@@ -1,14 +1,33 @@
-import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'package:http/io_client.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class TimeoutHttpClient extends http.BaseClient {
-  final http.Client _inner = http.Client();
-  final Duration _timeout;
+class GraphQLService {
+  static Future<GraphQLClient> getClient() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString("accessToken");
 
-  TimeoutHttpClient({required Duration timeout}) : _timeout = timeout;
+    // Create an IOClient with a custom HttpClient that has a bigger timeout.
+    final customIOClient = IOClient(
+      HttpClient()..connectionTimeout = const Duration(seconds: 30),
+    );
 
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
-    // Apply a timeout to every request
-    return _inner.send(request).timeout(_timeout);
+    final HttpLink httpLink = HttpLink(
+      "http://10.0.2.2:5500/graphql",
+      httpClient: customIOClient, 
+    );
+
+    final AuthLink authLink = AuthLink(
+      getToken: () async => accessToken != null ? "Bearer $accessToken" : null,
+    );
+
+    // Combine auth and HTTP links
+    final Link link = authLink.concat(httpLink);
+
+    return GraphQLClient(
+      link: link,
+      cache: GraphQLCache(),
+    );
   }
 }

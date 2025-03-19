@@ -374,7 +374,7 @@ packages:
     source: hosted
     version: "1.1.1-alpha+1699813812660"
   gql_http_link:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: gql_http_link
       sha256: ef6ad24d31beb5a30113e9b919eec20876903cc4b0ee0d31550047aaaba7d5dd

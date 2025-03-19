@@ -60,6 +60,7 @@ dependencies:
   carousel_slider: ^5.0.0  # Downgrade to avoid conflict
   audioplayers: ^6.4.0
   video_player: ^2.9.3
+  gql_http_link: ^1.1.0
 
 
 dev_dependencies:
