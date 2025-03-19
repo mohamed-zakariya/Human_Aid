@@ -159,63 +159,63 @@ class ParentService {
   }
 
 
-  static Future<List<Learner?>?> getProgressWithDate(String? parentId) async {
-    final client = await GraphQLService.getClient();
+  // static Future<List<Learner?>?> getProgressWithDate(String? parentId) async {
+  //   final client = await GraphQLService.getClient();
 
-    final prefs = await SharedPreferences.getInstance();
-    String? refreshToken = prefs.getString("refreshToken");
-    print("tokkennnn $refreshToken");
+  //   final prefs = await SharedPreferences.getInstance();
+  //   String? refreshToken = prefs.getString("refreshToken");
+  //   print("tokkennnn $refreshToken");
 
-    final QueryResult result = await client.query(
-      QueryOptions(
-        document: gql(getLearnerProgressbyDateQuery),
-        variables: {"parentId": parentId},
-      ),
-    );
+  //   final QueryResult result = await client.query(
+  //     QueryOptions(
+  //       document: gql(getLearnerProgressbyDateQuery),
+  //       variables: {"parentId": parentId},
+  //     ),
+  //   );
 
-    // Handle auth errors & retry if needed
-    QueryResult? finalResult = await GraphQLService.handleAuthErrors(
-        result: result,
-        role: "parent",
-        retryRequest: () async {
-          final client = await GraphQLService.getClient();
-          return await client.query( // ✅ Removed the extra comma
-            QueryOptions(
-              document: gql(getLearnerProgressbyDateQuery),
-              variables: {"parentId": parentId},
-            ),
-          );
-        }
-    );
+  //   // Handle auth errors & retry if needed
+  //   QueryResult? finalResult = await GraphQLService.handleAuthErrors(
+  //       result: result,
+  //       role: "parent",
+  //       retryRequest: () async {
+  //         final client = await GraphQLService.getClient();
+  //         return await client.query( // ✅ Removed the extra comma
+  //           QueryOptions(
+  //             document: gql(getLearnerProgressbyDateQuery),
+  //             variables: {"parentId": parentId},
+  //           ),
+  //         );
+  //       }
+  //   );
 
-    // Use finalResult instead of result
-    if (finalResult != null) {
-      // Process successful response
-      if (finalResult.hasException) {
-        print("Login Error: ${finalResult.exception.toString()}");
-        return null;
-      }
+  //   // Use finalResult instead of result
+  //   if (finalResult != null) {
+  //     // Process successful response
+  //     if (finalResult.hasException) {
+  //       print("Login Error: ${finalResult.exception.toString()}");
+  //       return null;
+  //     }
 
-      final UserDailyAttempts userDailyAttempts = finalResult.data?["getLearnerDailyAttempts"];
+  //     final UserDailyAttempts userDailyAttempts = finalResult.data?["getLearnerDailyAttempts"];
 
-      if (userDailyAttempts == null) {
-        print("Login Failed: No data returned.");
-        return null;
-      }
+  //     if (userDailyAttempts == null) {
+  //       print("Login Failed: No data returned.");
+  //       return null;
+  //     }
 
-      final List<Learner> data = rawData.map((item) => Learner.fromJson(item)).toList();
-      print("done");
-      return data;
+  //     final List<Learner> data = rawData.map((item) => Learner.fromJson(item)).toList();
+  //     print("done");
+  //     return data;
 
-    } else {
+  //   } else {
 
-      print("Request still failed even after retry.");
-      return null;
+  //     print("Request still failed even after retry.");
+  //     return null;
 
-    }
+  //   }
 
 
-  }
+  // }
 
 }
 
