@@ -58,7 +58,7 @@ type LearnerDailyAttempts {
 
 type WordAttempt {
     word_id: ID!
-    spoken_word: String!
+    spoken_word: [String!]!
 }
 
 

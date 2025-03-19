@@ -173,7 +173,6 @@ export const wordsExercise = async (userId, exerciseId, wordId, audioFile) => {
       totalAttempts > 0 ? (progress.correct_words.length / totalAttempts) * 100 : 0;
 
     await progress.save();
-
     try {
       fs.unlinkSync(filePath);
     } catch (error) {
