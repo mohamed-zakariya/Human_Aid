@@ -23,11 +23,17 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "ParentNavBarHome": MessageLookupByLibrary.simpleMessage("القائمة"),
+        "ParentNavBarLogout":
+            MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
+        "ParentNavBarSettings":
+            MessageLookupByLibrary.simpleMessage("الإعدادات"),
+        "add_word": MessageLookupByLibrary.simpleMessage("إضافة كلمة"),
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("إِنْشَاءُ حِسَابٍ كمتعلم"),
         "button1": MessageLookupByLibrary.simpleMessage("ابدأ"),
         "button2": MessageLookupByLibrary.simpleMessage("استمرار"),
         "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
+        "categories": MessageLookupByLibrary.simpleMessage("الفئات"),
         "changePasswordTitle": MessageLookupByLibrary.simpleMessage(
             "تَغْيِيرُ كَلِمَةِ المَرُورِ"),
         "changepasswordHint":
@@ -45,6 +51,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("إنشاء حساب مستخدم"),
         "createaccountbutton":
             MessageLookupByLibrary.simpleMessage("إنشاء الحساب"),
+        "dashboard_title":
+            MessageLookupByLibrary.simpleMessage("لوحة معلومات "),
         "desc1": MessageLookupByLibrary.simpleMessage(
             "أنا صديقك (التطبيق) دعني أخذك معي في رحلة يومية نحو التقدم و التطوير"),
         "desc2": MessageLookupByLibrary.simpleMessage(
@@ -63,6 +71,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "لا يمكن ترك البريد الإلكتروني فارغًا"),
         "errorEmptyPassword": MessageLookupByLibrary.simpleMessage(
             "لا يمكن ترك كلمة المرور فارغة"),
+        "explore_message":
+            MessageLookupByLibrary.simpleMessage("لنستكشف بعض الأفكار اليوم"),
         "forgotPassword":
             MessageLookupByLibrary.simpleMessage("نسيت كلمة المرور؟"),
         "forgotPasswordHint": MessageLookupByLibrary.simpleMessage(
@@ -81,9 +91,15 @@ class MessageLookup extends MessageLookupByLibrary {
             "كَيْفَ تُوَدُّ التَّسْجِيلَ؟"),
         "invalidCredentials": MessageLookupByLibrary.simpleMessage(
             "اسم المستخدم أو كلمة المرور غير صحيحة. حاول مرة أخرى."),
+        "learner_members":
+            MessageLookupByLibrary.simpleMessage("أعضاء المتعلمين"),
+        "learner_progress":
+            MessageLookupByLibrary.simpleMessage("تقدّم المتعلّمين"),
         "loginButton": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("تسجيل الدُّخول"),
         "noAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
+        "no_progress_data":
+            MessageLookupByLibrary.simpleMessage("لا توجد بيانات متاحة"),
         "orContinueWith":
             MessageLookupByLibrary.simpleMessage("أو اكمل بواسطة"),
         "otpPrompt": MessageLookupByLibrary.simpleMessage(
@@ -130,6 +146,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "submitbutton": MessageLookupByLibrary.simpleMessage("تم"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول بنجاح"),
+        "tips": MessageLookupByLibrary.simpleMessage("نصائح"),
         "title": MessageLookupByLibrary.simpleMessage("إِنْشَاءُ حِسَابٍٍ"),
         "title1": MessageLookupByLibrary.simpleMessage(
             "مرحباً بك في عالمك الخاص\nحيث متعة التعلم"),
@@ -146,6 +163,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "usernameRequired":
             MessageLookupByLibrary.simpleMessage("يجب إدخال اسم المستخدم"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(
-            "يجب أن يكون اسم المستخدم على الأقل 3 أحرف")
+            "يجب أن يكون اسم المستخدم على الأقل 3 أحرف"),
+        "view_details": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
+        "welcome_message":
+            MessageLookupByLibrary.simpleMessage("مرحبًا بعودتك، ")
       };
 }

@@ -300,6 +300,26 @@ class S {
     );
   }
 
+  /// `Settings`
+  String get ParentNavBarSettings {
+    return Intl.message(
+      'Settings',
+      name: 'ParentNavBarSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get ParentNavBarLogout {
+    return Intl.message(
+      'Logout',
+      name: 'ParentNavBarLogout',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Username must be entered`
   String get usernameRequired {
     return Intl.message(
@@ -415,6 +435,106 @@ class S {
     return Intl.message(
       'Cancel',
       name: 'cancel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `'s Dashboard`
+  String get dashboard_title {
+    return Intl.message(
+      '\'s Dashboard',
+      name: 'dashboard_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome Back, `
+  String get welcome_message {
+    return Intl.message(
+      'Welcome Back, ',
+      name: 'welcome_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Let's explore some insights today`
+  String get explore_message {
+    return Intl.message(
+      'Let\'s explore some insights today',
+      name: 'explore_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Categories`
+  String get categories {
+    return Intl.message(
+      'Categories',
+      name: 'categories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tips`
+  String get tips {
+    return Intl.message(
+      'Tips',
+      name: 'tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learner Members`
+  String get learner_members {
+    return Intl.message(
+      'Learner Members',
+      name: 'learner_members',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Word`
+  String get add_word {
+    return Intl.message(
+      'Add Word',
+      name: 'add_word',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learners Progress`
+  String get learner_progress {
+    return Intl.message(
+      'Learners Progress',
+      name: 'learner_progress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data available.`
+  String get no_progress_data {
+    return Intl.message(
+      'No data available.',
+      name: 'no_progress_data',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `view Detials`
+  String get view_details {
+    return Intl.message(
+      'view Detials',
+      name: 'view_details',
       desc: '',
       args: [],
     );

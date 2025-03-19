@@ -2,7 +2,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mobileapp/graphql/graphql_client.dart';
 import 'package:mobileapp/graphql/queries/parent_service_query.dart';
 import 'package:mobileapp/models/learner.dart';
-import 'package:mobileapp/models/user_daily_attempts.dart';
+import 'package:mobileapp/models/learner_daily_attempts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/exercices_progress.dart';
@@ -159,12 +159,12 @@ class ParentService {
   }
 
 
-  static Future<List<Learner?>?> getProgressWithDate(String? parentId) async {
+  static Future<List<LearnerDailyAttempts>?> getProgressWithDate(String? parentId) async {
     final client = await GraphQLService.getClient();
 
     final prefs = await SharedPreferences.getInstance();
     String? refreshToken = prefs.getString("refreshToken");
-    print("tokkennnn $refreshToken");
+    print("Token: $refreshToken");
 
     final QueryResult result = await client.query(
       QueryOptions(
@@ -173,49 +173,44 @@ class ParentService {
       ),
     );
 
-    // Handle auth errors & retry if needed
+    // Handle authentication errors & retry if needed
     QueryResult? finalResult = await GraphQLService.handleAuthErrors(
-        result: result,
-        role: "parent",
-        retryRequest: () async {
-          final client = await GraphQLService.getClient();
-          return await client.query( // ✅ Removed the extra comma
-            QueryOptions(
-              document: gql(getLearnerProgressbyDateQuery),
-              variables: {"parentId": parentId},
-            ),
-          );
-        }
+      result: result,
+      role: "parent",
+      retryRequest: () async {
+        final client = await GraphQLService.getClient();
+        return await client.query(
+          QueryOptions(
+            document: gql(getLearnerProgressbyDateQuery),
+            variables: {"parentId": parentId},
+          ),
+        );
+      },
     );
 
-    // Use finalResult instead of result
-    if (finalResult != null) {
-      // Process successful response
-      if (finalResult.hasException) {
-        print("Login Error: ${finalResult.exception.toString()}");
-        return null;
-      }
-
-      final UserDailyAttempts userDailyAttempts = finalResult.data?["getLearnerDailyAttempts"];
-
-      if (userDailyAttempts == null) {
-        print("Login Failed: No data returned.");
-        return null;
-      }
-
-      final List<Learner> data = rawData.map((item) => Learner.fromJson(item)).toList();
-      print("done");
-      return data;
-
-    } else {
-
-      print("Request still failed even after retry.");
+    // Check if finalResult is null
+    if (finalResult == null || finalResult.hasException) {
+      print("Error: ${finalResult?.exception?.toString()}");
       return null;
-
     }
 
+    final List<dynamic>? rawData = finalResult.data?["getLearnerDailyAttempts"];
 
+    if (rawData == null) {
+      print("No data returned.");
+      return null;
+    }
+
+    // Convert JSON response into Dart objects
+    final List<LearnerDailyAttempts> data = rawData
+        .map((item) => LearnerDailyAttempts.fromJson(item as Map<String, dynamic>))
+        .toList();
+
+    print("Data processing complete.");
+    print(data);
+    return data;
   }
+
 
 }
 
