@@ -184,6 +184,8 @@ export const getLearnerProgress = async (parentId) => {
         throw new Error(`Error fetching learner progress: ${error.message}`);
     }
 };
+
+
 export const getLearnerDailyAttempts = async (parentId, days = 7) => {
     try {
         const parent = await Parents.findById(parentId).lean();
@@ -235,6 +237,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                                     as: "cw",
                                     in: {
                                         word_id: { $ifNull: ["$$cw.word_id", "UNKNOWN"] },
+                                        correct_word: "$$cw.correct_word",
                                         spoken_word: "$$cw.spoken_word"
                                     }
                                 }
@@ -251,6 +254,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                                     as: "iw",
                                     in: {
                                         word_id: { $ifNull: ["$$iw.word_id", "UNKNOWN"] },
+                                        correct_word: "$$iw.correct_word",
                                         spoken_word: "$$iw.spoken_word"
                                     }
                                 }
@@ -263,7 +267,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                 $project: {
                     _id: 0,
                     date: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
-                    users: 1 // No need for additional mapping since word_id is already correctly structured
+                    users: 1
                 }
             },
             { $sort: { date: 1 } }
@@ -275,6 +279,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
         throw new Error(`Error fetching learner daily attempts: ${error.message}`);
     }
 };
+
 
 
 

@@ -58,6 +58,7 @@ type LearnerDailyAttempts {
 
 type WordAttempt {
     word_id: ID!
+    correct_word: String!  # Added missing field
     spoken_word: String!
 }
 
