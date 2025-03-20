@@ -77,10 +77,10 @@ class _MyAppState extends State<MyApp> {
             final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
             return ParentMain(parent: parent, onLocaleChange: _setLocale,);
           },
-          '/learnerMain': (context) {
-            final Learner learner = ModalRoute.of(context)!.settings.arguments as Learner;
-            return LearnerMain(learner: learner, onLocaleChange: _setLocale,);
-          },
+          // '/learnerMain': (context) {
+          //   final Learner learner = ModalRoute.of(context)!.settings.arguments as Learner;
+          //   return LearnerMain(learner: learner, onLocaleChange: _setLocale,);
+          // },
           '/Learner-Home': (context) {
             final learner = ModalRoute.of(context)!.settings.arguments as Learner;
             return LearnerHomeScreen(

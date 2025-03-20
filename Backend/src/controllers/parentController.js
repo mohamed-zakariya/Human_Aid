@@ -214,9 +214,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                     as: "user"
                 }
             },
-            {
-                $unwind: "$user"
-            },
+            { $unwind: "$user" },
             {
                 $group: {
                     _id: "$date",
@@ -226,17 +224,35 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                             name: "$user.name",
                             username: "$user.username",
                             correct_words: {
-                                $filter: {
-                                    input: "$attempts",
-                                    as: "attempt",
-                                    cond: { $eq: ["$$attempt.is_correct", true] }
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: "$attempts",
+                                            as: "attempt",
+                                            cond: { $eq: ["$$attempt.is_correct", true] }
+                                        }
+                                    },
+                                    as: "cw",
+                                    in: {
+                                        word_id: { $ifNull: ["$$cw.word_id", "UNKNOWN"] },
+                                        spoken_word: "$$cw.spoken_word"
+                                    }
                                 }
                             },
                             incorrect_words: {
-                                $filter: {
-                                    input: "$attempts",
-                                    as: "attempt",
-                                    cond: { $eq: ["$$attempt.is_correct", false] }
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: "$attempts",
+                                            as: "attempt",
+                                            cond: { $eq: ["$$attempt.is_correct", false] }
+                                        }
+                                    },
+                                    as: "iw",
+                                    in: {
+                                        word_id: { $ifNull: ["$$iw.word_id", "UNKNOWN"] },
+                                        spoken_word: "$$iw.spoken_word"
+                                    }
                                 }
                             }
                         }
@@ -265,7 +281,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                                 in: { word_id: "$$iw.word_id", spoken_word: "$$iw.spoken_word",correct_word: "$$iw.correct_word"}
                             }
                         }
-                    }
+                    },users: 1 // No need for additional mapping since word_id is already correctly structured
                 }
             },
             { $sort: { date: 1 } }
@@ -277,5 +293,6 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
         throw new Error(`Error fetching learner daily attempts: ${error.message}`);
     }
 };
+
 
 

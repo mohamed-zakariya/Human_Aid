@@ -21,22 +21,21 @@ const String deleteLearnerQuery = """
 
 const String getLearnerProgressbyDateQuery= """
 
-query getLearnerProgressbyDate(\$getLearnerDailyAttemptsParentId2: ID!){
-  getLearnerDailyAttempts(parentId: \$getLearnerDailyAttemptsParentId2) {
+query getLearnerProgressbyDate(\$parentId: ID!){
+  getLearnerDailyAttempts(parentId: \$parentId) {
     date
-    user_id
-    username
-    name
-    correct_words {
-      spoken_word
-      word_id
+    users {
+      username
+      name
+      correct_words {
+        word_id
+        spoken_word
+      }
+      incorrect_words {
+        spoken_word
+        word_id
+      }
     }
-    incorrect_words {
-      __typename
-      word_id
-      spoken_word
-    }
-  
   }
 }
 

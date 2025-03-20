@@ -99,7 +99,7 @@ class _SignupadultState extends State<Signupadult> {
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.pushNamedAndRemoveUntil(
           context,
-          '/learnerMain',
+          '/Learner-Home',
               (route) => false, // Removes all previous routes
           arguments: learner, // Passing the parent object
         );
