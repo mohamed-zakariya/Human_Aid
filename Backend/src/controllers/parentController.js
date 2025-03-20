@@ -255,14 +255,14 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                             $map: {
                                 input: "$users.correct_words",
                                 as: "cw",
-                                in: { word_id: "$$cw.word_id", spoken_word: "$$cw.spoken_word" }
+                                in: { word_id: "$$cw.word_id", spoken_word: "$$cw.spoken_word",correct_word: "$$cw.correct_word"}
                             }
                         },
                         incorrect_words: {
                             $map: {
                                 input: "$users.incorrect_words",
                                 as: "iw",
-                                in: { word_id: "$$iw.word_id", spoken_word: "$$iw.spoken_word" }
+                                in: { word_id: "$$iw.word_id", spoken_word: "$$iw.spoken_word",correct_word: "$$iw.correct_word"}
                             }
                         }
                     }
