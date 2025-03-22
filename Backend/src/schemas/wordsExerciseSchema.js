@@ -6,12 +6,14 @@ type ProcessedSpeech {
   expectedWord: String!
   isCorrect: Boolean!
   message: String!
+  score: Int!
+  accuracy: Float!
 }
 
 type Word {
-    _id: ID!
-    word: String!
-    level: String!
+  _id: ID!
+  word: String!
+  level: String!
 }
 
 type ExerciseSession {
@@ -31,11 +33,20 @@ type Query {
 type Mutation {
   startExercise(userId: ID!, exerciseId: ID!): ExerciseSession!
   endExercise(userId: ID!, exerciseId: ID!): ExerciseEnd!
+
   wordsExercise(
     userId: ID!
     exerciseId: ID!
     wordId: ID!
     audioFile: Upload!
+  ): ProcessedSpeech!
+
+  updateUserProgress(
+    userId: ID!
+    exerciseId: ID!
+    wordId: ID!
+    audioFile: Upload
+    spokenWord: String!
   ): ProcessedSpeech!
 }
 `;

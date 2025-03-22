@@ -1,4 +1,4 @@
-import { wordsExercise , startExercise , endExercise } from "../controllers/wordsExerciseController.js";
+import { wordsExercise , startExercise , endExercise,updateUserProgress } from "../controllers/wordsExerciseController.js";
 import Words from "../models/Words.js"
 export const speechResolvers = {
   Query: {
@@ -18,6 +18,9 @@ export const speechResolvers = {
     },
     wordsExercise: async (_, { userId, exerciseId, wordId, audioFile }) => {
       return await wordsExercise(userId, exerciseId, wordId, audioFile);
+    },
+    updateUserProgress: async (_, { userId, exerciseId, wordId, audioFile,spokenWord}) => {
+      return await updateUserProgress(userId, exerciseId, wordId, audioFile,spokenWord);
     },
     endExercise: async (_, { userId, exerciseId }) => {
       return await endExercise(userId, exerciseId);
