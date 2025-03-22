@@ -98,7 +98,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(response)),
                       );
-                      Navigator.pushNamed(context, '/login_screen_gaurdian');
+                      Navigator.pushNamed(context, '/intro');
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Error: ${e.toString()}")),
