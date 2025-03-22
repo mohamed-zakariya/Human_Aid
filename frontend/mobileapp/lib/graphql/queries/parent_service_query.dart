@@ -30,9 +30,11 @@ query getLearnerProgressbyDate(\$parentId: ID!){
       correct_words {
         word_id
         spoken_word
+        correct_word
       }
       incorrect_words {
         spoken_word
+        correct_word
         word_id
       }
     }

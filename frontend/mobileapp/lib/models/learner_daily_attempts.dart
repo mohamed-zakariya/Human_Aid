@@ -42,17 +42,22 @@ class UserProgress {
 
   factory UserProgress.fromJson(Map<String, dynamic> json) {
     return UserProgress(
-      userId: json["user_id"] ?? "",  // Ensure a string is always present
-      name: json["name"] ?? "Unknown",  // Fallback name
-      username: json["username"] ?? "Unknown",
-      correctWords: (json["correct_words"] as List<dynamic>?)
-          ?.map((word) => WordAttempt.fromJson(word as Map<String, dynamic>))
-          .toList() ?? [],  // Default to an empty list if null
-      incorrectWords: (json["incorrect_words"] as List<dynamic>?)
-          ?.map((word) => WordAttempt.fromJson(word as Map<String, dynamic>))
-          .toList() ?? [],
+      userId: json["user_id"]?.toString() ?? "",
+      name: json["name"]?.toString() ?? "Unknown",
+      username: json["username"]?.toString() ?? "Unknown",
+      correctWords: (json["correct_words"] is List)
+          ? (json["correct_words"] as List)
+          .map((word) => WordAttempt.fromJson(word as Map<String, dynamic>))
+          .toList()
+          : [],
+      incorrectWords: (json["incorrect_words"] is List)
+          ? (json["incorrect_words"] as List)
+          .map((word) => WordAttempt.fromJson(word as Map<String, dynamic>))
+          .toList()
+          : [],
     );
   }
+
 
 
   Map<String, dynamic> toJson() {
@@ -69,16 +74,19 @@ class UserProgress {
 class WordAttempt {
   final String wordId;
   final String spokenWord;
+  final String? correctWord; // Nullable since it's only for incorrect words
 
   WordAttempt({
     required this.wordId,
     required this.spokenWord,
+    this.correctWord, // Optional
   });
 
   factory WordAttempt.fromJson(Map<String, dynamic> json) {
     return WordAttempt(
-      wordId: json["word_id"] ?? "",  // Default empty string if null
-      spokenWord: json["spoken_word"] ?? "",  // Default empty string if null
+      wordId: json["word_id"]?.toString() ?? "", // Ensure it's always a String
+      spokenWord: json["spoken_word"]?.toString() ?? "", // Force empty string if null
+      correctWord: json["correct_word"]?.toString(), // This remains nullable
     );
   }
 
@@ -87,6 +95,8 @@ class WordAttempt {
     return {
       "word_id": wordId,
       "spoken_word": spokenWord,
+      if (correctWord != null) "correct_word": correctWord, // Only include if available
     };
   }
 }
+

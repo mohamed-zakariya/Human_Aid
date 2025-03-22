@@ -62,11 +62,13 @@ class _ProgressDetailsState extends State<ProgressDetails> {
           "incorrect_words": incorrectWords,
           "correct_words_list": user.correctWords.map((word) => {
             "word_id": word.wordId,
-            "spoken_word": word.spokenWord
+            "spoken_word": word.spokenWord,
+            "correct_word": word.correctWord // Display the correct word
           }).toList(),
           "incorrect_words_list": user.incorrectWords.map((word) => {
             "word_id": word.wordId,
-            "spoken_word": word.spokenWord
+            "spoken_word": word.spokenWord,
+            "correct_word": word.correctWord // Display the correct word
           }).toList(),
           "completed_daily_quest": true,
           "awards_taken": true
@@ -162,7 +164,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
-                      Icons.bar_chart,  // You can change this to Icons.insert_chart or any relevant icon
+                      Icons.bar_chart, // You can change this to Icons.insert_chart or any relevant icon
                       size: 80,
                       color: Colors.grey,
                     ),
@@ -177,15 +179,16 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                     ),
                   ],
                 ),
-              ) : ListView.builder(
+              )
+                  : ListView.builder(
                 itemCount: learnerProgress[selectedDay]!.length,
                 itemBuilder: (context, index) {
                   var progress = learnerProgress[selectedDay]![index];
 
                   return Childcard(
                     title: "Progress Summary",
-                    learnerName: progress['name'],
-                    username: progress['username'],
+                    learnerName: progress['name'] ?? "Unknown",
+                    username: progress['username'] ?? "Unknown",
                     wordsRead: progress["words_read"] ?? 0,
                     correctWords: progress["correct_words"] ?? 0,
                     incorrectWords: progress["incorrect_words"] ?? 0,
@@ -193,8 +196,27 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                     awardReceived: progress["awards_taken"] ?? false,
                     color: colors[index % colors.length],
                     icon: (progress["awards_taken"] ?? false) ? Icons.emoji_events : Icons.cancel,
-                    correctWordList: progress["correct_words_list"],
-                    incorrectWordList: progress["incorrect_words_list"],
+
+                    // ✅ Ensuring correct type conversion for lists
+                    correctWordList: (progress["correct_words_list"] as List<dynamic>?)
+                        ?.map((word) => {
+                      "word_id": word["word_id"]?.toString() ?? "",
+                      "spoken_word": word["spoken_word"]?.toString() ?? "",
+                    })
+                        .toList() ?? [],
+
+                    incorrectWordList: (progress["incorrect_words_list"] as List<dynamic>?)
+                        ?.map((word) {
+                      Map<String, String> map = {
+                        "word_id": word["word_id"]?.toString() ?? "",
+                        "spoken_word": word["spoken_word"]?.toString() ?? "",
+                      };
+                      if (word["correct_word"] != null) {
+                        map["correct_word"] = word["correct_word"]!.toString();
+                      }
+                      return map;
+                    })
+                        .toList() ?? [],
                   );
                 },
               ),
