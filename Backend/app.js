@@ -5,8 +5,8 @@ import { typeDefs } from './src/schemas/typeDefs.js';
 import { connectDB } from './src/config/dbConfig.js';
 import { authenticateJWT } from './src/middleware/authMiddleware.js';
 import { resolvers } from './src/resolvers/combineResolvers.js';
-import { makeExecutableSchema } from "@graphql-tools/schema";
 import { convertToWav } from './src/services/audioConvertor.js';
+import { azureTranscribeAudio } from './src/config/azureapiConfig.js';
 import googleAuthController from './src/controllers/googleAuthController.js';
 import passport from 'passport';
 import multer from 'multer';
@@ -28,7 +28,7 @@ app.use(passport.initialize());
 app.use(googleAuthController);
 
 app.use((req, res, next) => {
-  if (req.path !== "/graphql" && req.path !== "/upload-audio") {
+  if (req.path !== "/graphql" && req.path !== "/upload-audio" && req.path !== "/api/transcribe") {
     authenticateJWT(req, res, next);
   } else {
     next();
@@ -78,6 +78,7 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+
 app.post('/upload-audio', upload.single('audio'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
@@ -99,6 +100,18 @@ app.post('/upload-audio', upload.single('audio'), async (req, res) => {
   res.json({ message: "Audio uploaded and processed", fileUrl });
 });
 
+app.post('/api/transcribe', async (req, res) => {
+  const { filePath } = req.body;
+  if (!filePath) return res.status(400).json({ error: 'filePath is required' });
+
+  try {
+    const transcript = await azureTranscribeAudio(filePath);
+    res.json({ transcript });
+  } catch (err) {
+    console.error('Transcription Error:', err.message);
+    res.status(500).json({ error: 'Azure Transcription Failed' });
+  }
+});
 
 // Apollo Plugin for Logging Response Time
 const responseTimePlugin = {

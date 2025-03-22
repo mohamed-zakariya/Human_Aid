@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobileapp/Screens/ParentScreen/NavBarParent.dart';
+import '../../generated/l10n.dart';
 import '../../models/parent.dart';
 import 'ParentHome.dart';
 
@@ -48,7 +49,7 @@ class _ParentMainState extends State<ParentMain> {
         foregroundColor: Colors.white,
         backgroundColor: Colors.black87, // Match with the illustration background
         elevation: 0, // Removes shadow for a seamless look
-        title: Text("${widget.parent!.name} Dashboard",style: const TextStyle(
+        title: Text("${widget.parent!.name} ${S.of(context).dashboard_title}",style: const TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.white
         ),),

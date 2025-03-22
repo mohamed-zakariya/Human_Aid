@@ -1,8 +1,10 @@
   import 'package:flutter/material.dart';
   import 'package:mobileapp/Screens/ParentScreen/LearnerDetails.dart';
-import 'package:mobileapp/Screens/ParentScreen/ProgressDetails.dart';
+import 'package:mobileapp/Screens/ParentScreen/LearnersProgress/ProgressDetails.dart';
 import 'package:mobileapp/global/fns.dart';
   import 'package:mobileapp/models/parent.dart';
+
+import '../../generated/l10n.dart';
 
   class HomeScreen extends StatefulWidget {
     const HomeScreen({super.key, required this.parent});
@@ -26,6 +28,13 @@ import 'package:mobileapp/global/fns.dart';
 
     @override
     Widget build(BuildContext context) {
+      final List<Map<String, dynamic>> categoryItems = [
+        {"title": S.of(context).tips, "imagePath": "assets/images/tips.png", "color": Colors.white, "screen": () => const TipsScreen()},
+        {"title": S.of(context).learner_members, "imagePath": "assets/images/LearnerMembers.png", "color": Colors.deepOrangeAccent.shade100, "screen": () => LearnerDetails(parent: parent)},
+        {"title": S.of(context).add_word, "imagePath": "assets/images/addWord.jpg", "color": const Color(0xFFBCEFEA), "screen": () => const AddWordScreen()},
+        {"title": S.of(context).learner_progress, "imagePath": "assets/images/progress2.png", "color": const Color(0xFFE5DDD2), "screen": () => ProgressDetails(parent: parent)},
+      ];
+
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -37,9 +46,9 @@ import 'package:mobileapp/global/fns.dart';
             const SizedBox(height: 20),
 
             // Title
-            const Text(
-              "Categories",
-              style: TextStyle(
+            Text(
+              S.of(context).categories,  // Localized string for "Categories"
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -92,27 +101,27 @@ import 'package:mobileapp/global/fns.dart';
               ),
             ],
           ),
-          child: const Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 30,
                 backgroundImage: AssetImage("assets/images/boy.jpeg",),
               ),
-              SizedBox(height: 15), // Fixed spacing issue
+              const SizedBox(height: 15), // Fixed spacing issue
               Text(
-                "Welcome Back, Mohamed!",
-                style: TextStyle(
+                "${S.of(context).welcome_message}, ${parent!.name}!",
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 5),
-              Text(
-                "Let's explore some insights today",
-                style: TextStyle(
+              const SizedBox(height: 5),
+               Text(
+                S.of(context).explore_message,
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.white70,
                 ),
@@ -180,12 +189,7 @@ import 'package:mobileapp/global/fns.dart';
     );
   }
 
-  final List<Map<String, dynamic>> categoryItems = [
-    {"title": "Tips", "imagePath": "assets/images/tips.png", "color": Colors.white, "screen": () => const TipsScreen()},
-    {"title": "Learner Members", "imagePath": "assets/images/LearnerMembers.png", "color": Colors.deepOrangeAccent.shade100, "screen": () => LearnerDetails(parent: parent)},
-    {"title": "Add Word", "imagePath": "assets/images/addWord.jpg", "color": const Color(0xFFBCEFEA), "screen": () => const AddWordScreen()},
-    {"title": "Learner Progress", "imagePath": "assets/images/progress2.png", "color": const Color(0xFFE5DDD2), "screen": () => ProgressDetails(parent: parent)},
-  ];
+
 
 
   // Dummy Screens for Each Category

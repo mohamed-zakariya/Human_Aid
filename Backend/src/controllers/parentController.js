@@ -184,6 +184,8 @@ export const getLearnerProgress = async (parentId) => {
         throw new Error(`Error fetching learner progress: ${error.message}`);
     }
 };
+
+
 export const getLearnerDailyAttempts = async (parentId, days = 7) => {
     try {
         const parent = await Parents.findById(parentId).lean();
@@ -214,9 +216,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                     as: "user"
                 }
             },
-            {
-                $unwind: "$user"
-            },
+            { $unwind: "$user" },
             {
                 $group: {
                     _id: "$date",
@@ -226,17 +226,37 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                             name: "$user.name",
                             username: "$user.username",
                             correct_words: {
-                                $filter: {
-                                    input: "$attempts",
-                                    as: "attempt",
-                                    cond: { $eq: ["$$attempt.is_correct", true] }
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: "$attempts",
+                                            as: "attempt",
+                                            cond: { $eq: ["$$attempt.is_correct", true] }
+                                        }
+                                    },
+                                    as: "cw",
+                                    in: {
+                                        word_id: { $ifNull: ["$$cw.word_id", "UNKNOWN"] },
+                                        correct_word: "$$cw.correct_word",
+                                        spoken_word: "$$cw.spoken_word"
+                                    }
                                 }
                             },
                             incorrect_words: {
-                                $filter: {
-                                    input: "$attempts",
-                                    as: "attempt",
-                                    cond: { $eq: ["$$attempt.is_correct", false] }
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: "$attempts",
+                                            as: "attempt",
+                                            cond: { $eq: ["$$attempt.is_correct", false] }
+                                        }
+                                    },
+                                    as: "iw",
+                                    in: {
+                                        word_id: { $ifNull: ["$$iw.word_id", "UNKNOWN"] },
+                                        correct_word: "$$iw.correct_word",
+                                        spoken_word: "$$iw.spoken_word"
+                                    }
                                 }
                             }
                         }
@@ -247,25 +267,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                 $project: {
                     _id: 0,
                     date: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
-                    users: {
-                        user_id: 1,
-                        name: 1,
-                        username: 1,
-                        correct_words: {
-                            $map: {
-                                input: "$users.correct_words",
-                                as: "cw",
-                                in: { word_id: "$$cw.word_id", spoken_word: "$$cw.spoken_word" }
-                            }
-                        },
-                        incorrect_words: {
-                            $map: {
-                                input: "$users.incorrect_words",
-                                as: "iw",
-                                in: { word_id: "$$iw.word_id", spoken_word: "$$iw.spoken_word" }
-                            }
-                        }
-                    }
+                    users: 1
                 }
             },
             { $sort: { date: 1 } }
@@ -277,5 +279,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
         throw new Error(`Error fetching learner daily attempts: ${error.message}`);
     }
 };
+
+
 
 

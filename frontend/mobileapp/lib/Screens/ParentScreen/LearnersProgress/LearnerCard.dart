@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../generated/l10n.dart';
+import '../../../global/fns.dart';
+import 'learner_progress_details_page.dart';
+
 class Childcard extends StatelessWidget {
   final String title;
   final String learnerName;
@@ -12,8 +16,11 @@ class Childcard extends StatelessWidget {
   final bool awardReceived;
   final Color color;
   final IconData icon;
+  final List<Map<String, String>> correctWordList; // New: List of correct words
+  final List<Map<String, String>> incorrectWordList; // New: List of incorrect words
 
   const Childcard({
+    super.key,
     required this.title,
     required this.learnerName,
     required this.username,
@@ -24,6 +31,8 @@ class Childcard extends StatelessWidget {
     required this.awardReceived,
     required this.color,
     required this.icon,
+    required this.correctWordList, // New
+    required this.incorrectWordList, // New
   });
 
   @override
@@ -129,9 +138,35 @@ class Childcard extends StatelessWidget {
                 ),
               ],
             ),
+
+            const SizedBox(height: 10),
+
+            // Details Button
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    createRouteParentLearnerProgress(LearnerProgressDetailsPage(
+                      learnerName: learnerName,
+                      username: username,
+                      correctWords: correctWordList,
+                      incorrectWords: incorrectWordList,
+                    )),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                ),
+                child: Text(S.of(context).view_details),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
+

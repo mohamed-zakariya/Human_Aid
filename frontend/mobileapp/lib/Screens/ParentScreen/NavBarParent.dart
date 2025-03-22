@@ -7,7 +7,7 @@ import '../../Services/auth_service.dart';
 import '../../generated/l10n.dart';
 import '../../models/parent.dart';
 import 'ParentHome.dart';
-import 'ProgressDetails.dart';
+import 'LearnersProgress/ProgressDetails.dart';
 
 class NavBarParent extends StatefulWidget {
 
@@ -61,7 +61,7 @@ class _NavBarParentState extends State<NavBarParent> {
           // const Divider(),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text("Settings"),
+            title: Text(S.of(context).ParentNavBarSettings),
             onTap: () {
               _showLanguageDialog(context);
             },
@@ -69,7 +69,7 @@ class _NavBarParentState extends State<NavBarParent> {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),
-            title: const Text("Logout"),
+            title: Text(S.of(context).ParentNavBarLogout),
             onTap: () {
               AuthService.logoutParent(context);
             },

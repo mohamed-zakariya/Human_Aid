@@ -24,6 +24,8 @@
     "createaccountbutton": "إنشاء الحساب",
     "signupbutton": "استمرار",
     "ParentNavBarHome": "القائمة",
+    "ParentNavBarSettings": "الإعدادات",
+    "ParentNavBarLogout": "تسجيل الخروج",
     "usernameRequired": "يجب إدخال اسم المستخدم",
     "usernameShort": "يجب أن يكون اسم المستخدم على الأقل 3 أحرف",
     "usernameExist": "اسم المستخدم مأخوذ بالفعل",
@@ -36,6 +38,16 @@
     "passwordMismatch": "كلمتا المرور غير متطابقتين",
     "adultSignupTitle": "إِنْشَاءُ حِسَابٍ كمتعلم",
     "cancel": "إلغاء",
+    "dashboard_title": "لوحة معلومات ",
+    "welcome_message": "مرحبًا بعودتك، ",
+    "explore_message": "لنستكشف بعض الأفكار اليوم",
+    "categories": "الفئات",
+    "tips": "نصائح",
+    "learner_members": "أعضاء المتعلمين",
+    "add_word": "إضافة كلمة",
+    "learner_progress": "تقدّم المتعلّمين",
+    "no_progress_data": "لا توجد بيانات متاحة",
+    "view_details": "عرض التفاصيل",
 
 
 

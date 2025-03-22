@@ -24,6 +24,8 @@
     "createaccountbutton": "Create Account",
     "signupbutton": "Continue",
     "ParentNavBarHome": "Home",
+    "ParentNavBarSettings": "Settings",
+    "ParentNavBarLogout": "Logout",
     "usernameRequired": "Username must be entered",
     "usernameShort": "Username must be at least 3 characters",
     "usernameExist": "This username is already taken",
@@ -36,6 +38,17 @@
     "passwordMismatch": "Passwords do not match",
     "adultSignupTitle": "Create Account",
     "cancel": "Cancel",
+    "dashboard_title": "'s Dashboard",
+    "welcome_message": "Welcome Back, ",
+    "explore_message": "Let's explore some insights today",
+    "categories": "Categories",
+    "tips": "Tips",
+    "learner_members": "Learner Members",
+    "add_word": "Add Word",
+    "learner_progress": "Learners Progress",
+    "no_progress_data": "No data available.",
+    "view_details": "view Detials",
+
 
 
 

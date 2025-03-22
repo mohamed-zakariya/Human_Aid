@@ -23,11 +23,16 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "ParentNavBarHome": MessageLookupByLibrary.simpleMessage("Home"),
+        "ParentNavBarLogout": MessageLookupByLibrary.simpleMessage("Logout"),
+        "ParentNavBarSettings":
+            MessageLookupByLibrary.simpleMessage("Settings"),
+        "add_word": MessageLookupByLibrary.simpleMessage("Add Word"),
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("Create Account"),
         "button1": MessageLookupByLibrary.simpleMessage("Start"),
         "button2": MessageLookupByLibrary.simpleMessage("Continue"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "categories": MessageLookupByLibrary.simpleMessage("Categories"),
         "changePasswordTitle":
             MessageLookupByLibrary.simpleMessage("Change Password"),
         "changepasswordHint": MessageLookupByLibrary.simpleMessage("Password"),
@@ -44,6 +49,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Create a user account"),
         "createaccountbutton":
             MessageLookupByLibrary.simpleMessage("Create Account"),
+        "dashboard_title":
+            MessageLookupByLibrary.simpleMessage("\'s Dashboard"),
         "desc1": MessageLookupByLibrary.simpleMessage(
             "I\'m your friend (the app). Let me take you on a daily journey of progress and growth."),
         "desc2": MessageLookupByLibrary.simpleMessage(
@@ -62,6 +69,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Email cannot be empty"),
         "errorEmptyPassword":
             MessageLookupByLibrary.simpleMessage("Password cannot be empty"),
+        "explore_message": MessageLookupByLibrary.simpleMessage(
+            "Let\'s explore some insights today"),
         "forgotPassword":
             MessageLookupByLibrary.simpleMessage("Forgot Password?"),
         "forgotPasswordHint": MessageLookupByLibrary.simpleMessage(
@@ -81,10 +90,16 @@ class MessageLookup extends MessageLookupByLibrary {
             "How would you like to register?"),
         "invalidCredentials": MessageLookupByLibrary.simpleMessage(
             "Invalid username or password. Please try again."),
+        "learner_members":
+            MessageLookupByLibrary.simpleMessage("Learner Members"),
+        "learner_progress":
+            MessageLookupByLibrary.simpleMessage("Learners Progress"),
         "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("Login"),
         "noAccount":
             MessageLookupByLibrary.simpleMessage("Don’t have an account?"),
+        "no_progress_data":
+            MessageLookupByLibrary.simpleMessage("No data available."),
         "orContinueWith":
             MessageLookupByLibrary.simpleMessage("or continue with"),
         "otpPrompt": MessageLookupByLibrary.simpleMessage(
@@ -128,6 +143,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "submitbutton": MessageLookupByLibrary.simpleMessage("Done"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("Login successful"),
+        "tips": MessageLookupByLibrary.simpleMessage("Tips"),
         "title": MessageLookupByLibrary.simpleMessage("Create Account"),
         "title1": MessageLookupByLibrary.simpleMessage(
             "Welcome to your special world\nwhere learning is fun"),
@@ -145,6 +161,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "usernameRequired":
             MessageLookupByLibrary.simpleMessage("Username must be entered"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(
-            "Username must be at least 3 characters")
+            "Username must be at least 3 characters"),
+        "view_details": MessageLookupByLibrary.simpleMessage("view Detials"),
+        "welcome_message":
+            MessageLookupByLibrary.simpleMessage("Welcome Back, ")
       };
 }
