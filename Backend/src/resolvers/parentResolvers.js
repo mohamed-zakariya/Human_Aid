@@ -1,4 +1,4 @@
-import { loginParent, signUpParent, refreshTokenParent, logout,forgotParentPassword,resetParentPassword,verifyParentOTP, getLearnerProgress,getLearnerDailyAttempts } from "../controllers/parentController.js";
+import { loginParent, signUpParent, refreshTokenParent, logout,forgotParentPassword,resetParentPassword,verifyParentOTP, getLearnerProgress,getLearnerDailyAttempts,getLearnerOverallProgress } from "../controllers/parentController.js";
 import Parents from "../models/Parents.js";
 
 export const parentResolvers = {
@@ -18,6 +18,10 @@ export const parentResolvers = {
     getLearnerProgress: async(_, {parentId}) => {
       return await getLearnerProgress(parentId);
     },
+    getLearnerOverallProgress: async(_, {parentId}) => {
+      return await getLearnerOverallProgress(parentId);
+    },
+    
     getLearnerDailyAttempts: async(_, {parentId}) => {
       return await getLearnerDailyAttempts(parentId);
     },

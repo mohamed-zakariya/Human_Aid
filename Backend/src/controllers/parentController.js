@@ -280,6 +280,44 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
     }
 };
 
+export const getLearnerOverallProgress = async (parentId) => {
+    try {
+        const result = await Parents.aggregate([
+            {
+                $match: { _id: new mongoose.Types.ObjectId(parentId) } // Ensure parentId is an ObjectId
+            },
+            {
+                $lookup: {
+                    from: "overallprogresses", // Collection name should be lowercase and plural
+                    localField: "linkedChildren",
+                    foreignField: "user_id",
+                    as: "progress"
+                }
+            },
+            {
+                $project: {
+                    id: "$_id",
+                    progress: {
+                        user_id: 1, 
+                        progress_id: 1, 
+                        completed_exercises: 1, 
+                        total_time_spent: 1, 
+                        average_accuracy: 1, 
+                        total_correct_words: 1, 
+                        total_incorrect_words: 1,
+                        rewards:1
+                    }
+                }
+            }
+        ]);
 
+        if (!result.length) throw new Error("Parent not found");
+
+        return result[0]; // Return the parent with linked progress
+    } catch (error) {
+        console.error("Error fetching learner overall progress:", error);
+        throw new Error(`Error fetching learner overall progress: ${error.message}`);
+    }
+};
 
 
