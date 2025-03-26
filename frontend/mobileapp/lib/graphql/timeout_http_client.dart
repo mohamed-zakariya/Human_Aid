@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'package:graphql/client.dart';
 import 'package:http/io_client.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+// import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GraphQLService {
