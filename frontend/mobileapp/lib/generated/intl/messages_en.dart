@@ -20,17 +20,12 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(name) => "${name} Dashboard";
-
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "ParentNavBarHome": MessageLookupByLibrary.simpleMessage("Home"),
         "ParentNavBarLogout": MessageLookupByLibrary.simpleMessage("Logout"),
         "ParentNavBarSettings":
             MessageLookupByLibrary.simpleMessage("Settings"),
-        "add": MessageLookupByLibrary.simpleMessage("Add"),
-        "addNewLearner":
-            MessageLookupByLibrary.simpleMessage("Add New Learner"),
         "add_word": MessageLookupByLibrary.simpleMessage("Add Word"),
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("Create Account"),
@@ -41,12 +36,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "changePasswordTitle":
             MessageLookupByLibrary.simpleMessage("Change Password"),
         "changepasswordHint": MessageLookupByLibrary.simpleMessage("Password"),
-        "clickToAddLearners": MessageLookupByLibrary.simpleMessage(
-            "Click the + button to add learners."),
         "confirmPasswordHint":
             MessageLookupByLibrary.simpleMessage("Confirm Password"),
         "confirmPasswordRequired": MessageLookupByLibrary.simpleMessage(
-            "Confirm password is required"),
+            "Confirm password must be entered"),
         "continueButton": MessageLookupByLibrary.simpleMessage("Continue"),
         "continuesignuptitle":
             MessageLookupByLibrary.simpleMessage("Child Registration"),
@@ -56,7 +49,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Create a user account"),
         "createaccountbutton":
             MessageLookupByLibrary.simpleMessage("Create Account"),
-        "dashboardTitle": m0,
         "dashboard_title":
             MessageLookupByLibrary.simpleMessage("\'s Dashboard"),
         "desc1": MessageLookupByLibrary.simpleMessage(
@@ -121,7 +113,6 @@ class MessageLookup extends MessageLookupByLibrary {
             "Password must be at least 8 characters"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("search"),
-        "showMore": MessageLookupByLibrary.simpleMessage("Show more"),
         "signup_password_mismatch":
             MessageLookupByLibrary.simpleMessage("Don\'t Match"),
         "signupbutton": MessageLookupByLibrary.simpleMessage("Continue"),

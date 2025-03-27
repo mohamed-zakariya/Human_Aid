@@ -969,6 +969,296 @@ class S {
       args: [],
     );
   }
+
+  /// `Stage 2 • Level 1`
+  String get levelLabel {
+    return Intl.message(
+      'Stage 2 • Level 1',
+      name: 'levelLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hello {name}`
+  String greeting(Object name) {
+    return Intl.message(
+      'Hello $name',
+      name: 'greeting',
+      desc: 'Greeting for the user with their name',
+      args: [name],
+    );
+  }
+
+  /// `Don’t worry, it’s okay`
+  String get dontWorry {
+    return Intl.message(
+      'Don’t worry, it’s okay',
+      name: 'dontWorry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} attempts left`
+  String attemptsLeft(Object count) {
+    return Intl.message(
+      '$count attempts left',
+      name: 'attemptsLeft',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `No words available at this level.`
+  String get noWordsAvailable {
+    return Intl.message(
+      'No words available at this level.',
+      name: 'noWordsAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recording time limit reached!`
+  String get recordingTimeout {
+    return Intl.message(
+      'Recording time limit reached!',
+      name: 'recordingTimeout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error starting recording: {error}`
+  String recordingStartError(Object error) {
+    return Intl.message(
+      'Error starting recording: $error',
+      name: 'recordingStartError',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Recording ignored`
+  String get ignoredRecording {
+    return Intl.message(
+      'Recording ignored',
+      name: 'ignoredRecording',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Processing your recording...`
+  String get processingRecording {
+    return Intl.message(
+      'Processing your recording...',
+      name: 'processingRecording',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `An error occurred while processing`
+  String get processingError {
+    return Intl.message(
+      'An error occurred while processing',
+      name: 'processingError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No attempts left! Moving to the next word...`
+  String get outOfTries {
+    return Intl.message(
+      'No attempts left! Moving to the next word...',
+      name: 'outOfTries',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next`
+  String get nextButton {
+    return Intl.message(
+      'Next',
+      name: 'nextButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Transcript`
+  String get transcriptLabel {
+    return Intl.message(
+      'Transcript',
+      name: 'transcriptLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error: {error}`
+  String recordingError(Object error) {
+    return Intl.message(
+      'Error: $error',
+      name: 'recordingError',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message(
+      'Confirm',
+      name: 'confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyzing...`
+  String get feedbackWidgetAnalyzing {
+    return Intl.message(
+      'Analyzing...',
+      name: 'feedbackWidgetAnalyzing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{percent}% completed`
+  String progressCompleted(Object percent) {
+    return Intl.message(
+      '$percent% completed',
+      name: 'progressCompleted',
+      desc: 'Shows how much progress has been completed',
+      args: [percent],
+    );
+  }
+
+  /// `{points} pts`
+  String progressPoints(Object points) {
+    return Intl.message(
+      '$points pts',
+      name: 'progressPoints',
+      desc: 'Shows how many points or lessons completed',
+      args: [points],
+    );
+  }
+
+  /// `Progress`
+  String get exerciseProgressLabel {
+    return Intl.message(
+      'Progress',
+      name: 'exerciseProgressLabel',
+      desc: 'Label for progress bar',
+      args: [],
+    );
+  }
+
+  /// `{percent}%`
+  String exerciseProgressPercent(Object percent) {
+    return Intl.message(
+      '$percent%',
+      name: 'exerciseProgressPercent',
+      desc: 'Format string for progress percentage',
+      args: [percent],
+    );
+  }
+
+  /// `Hello,`
+  String get helloLabel {
+    return Intl.message(
+      'Hello,',
+      name: 'helloLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search courses...`
+  String get searchCoursesHint {
+    return Intl.message(
+      'Search courses...',
+      name: 'searchCoursesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue Learning`
+  String get continueLearning {
+    return Intl.message(
+      'Continue Learning',
+      name: 'continueLearning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available Exercises`
+  String get availableExercises {
+    return Intl.message(
+      'Available Exercises',
+      name: 'availableExercises',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See All`
+  String get seeAll {
+    return Intl.message(
+      'See All',
+      name: 'seeAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No exercises available`
+  String get noExercisesAvailable {
+    return Intl.message(
+      'No exercises available',
+      name: 'noExercisesAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Home`
+  String get bottomNavHome {
+    return Intl.message(
+      'Home',
+      name: 'bottomNavHome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Courses`
+  String get bottomNavCourses {
+    return Intl.message(
+      'Courses',
+      name: 'bottomNavCourses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile`
+  String get bottomNavProfile {
+    return Intl.message(
+      'Profile',
+      name: 'bottomNavProfile',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

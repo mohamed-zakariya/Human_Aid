@@ -1,51 +1,54 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../services/words_service.dart';
-import '../services/audio_service.dart';
-import '../services/speech_service.dart';
-import '../models/learner.dart';
-import '../models/word.dart';
+import 'package:mobileapp/Screens/widgets/feedback_widget.dart';
+import 'package:mobileapp/Screens/widgets/letters_widget.dart';
+import 'package:mobileapp/Screens/widgets/recording_controls.dart';
+import 'package:mobileapp/Screens/widgets/timer_widget.dart';
+
+// Models
+import '../../models/learner.dart';
+import '../../models/word.dart';
+
+// Services
+import '../../services/words_service.dart';
+import '../../services/audio_service.dart';
+import '../../services/speech_service.dart';
+
+// Generated Localization
+import '../../generated/l10n.dart';
 
 class WordPronunciationScreen extends StatefulWidget {
   final Function(Locale)? onLocaleChange;
-  
-  const WordPronunciationScreen({ 
-    super.key, 
+
+  const WordPronunciationScreen({
+    Key? key,
     this.onLocaleChange,
-  });
+  }) : super(key: key);
 
   @override
-  _WordPronunciationScreenState createState() => _WordPronunciationScreenState();
+  _WordPronunciationScreenState createState() =>
+      _WordPronunciationScreenState();
 }
 
 class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
-  // The list of letters that make up the current word
   List<String> _wordLetters = [];
-
-  // The current word fetched from the database
   String _currentWord = "";
-  String _currentWordId = ""; // Add ID to track the current word
-
+  String _currentWordId = "";
   int _attemptsLeft = 3;
-  
-  // User info
+
   Learner? _learner;
   String _username = "";
-  String _userId = ""; // Add user ID for backend requests
+  String _userId = "user123";
 
-  // Audio service
   final AudioService _audioService = AudioService();
-  
-  // Exercise info
-  String _exerciseId = "67c66a0e3387a31ba1ee4a72"; // Replace with actual exercise ID from navigation args
 
-  // Recording configuration
+  final String _exerciseId = "67c66a0e3387a31ba1ee4a72";
+
   static const int _maxRecordingSeconds = 30;
   int _timerSeconds = 0;
   Timer? _timer;
   bool _isRecording = false;
-  
-  // Feedback state
+
   bool _isProcessing = false;
   String _feedbackMessage = "";
   bool? _isCorrect;
@@ -53,16 +56,16 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   @override
   void initState() {
     super.initState();
-    _loadWord(); // Fetch the first word on screen load
-    
-    // Get the learner info passed as arguments
+    _loadWord();
+
+    // Capture any learner info passed in
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)?.settings.arguments;
       if (args != null && args is Learner) {
         setState(() {
           _learner = args;
           _username = _learner?.name ?? "User";
-          _userId = _learner?.id ?? "user123"; // Get user ID from learner model
+          _userId = _learner?.id ?? "user123";
         });
       }
     });
@@ -76,44 +79,39 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   }
 
   /// Fetch a random word from the database
-// In WordPronunciationScreen
-
-Future<void> _loadWord() async {
-  setState(() {
-    _isProcessing = true;
-    _feedbackMessage = "";
-    _isCorrect = null;
-  });
-  
-  // This now returns a Word? instead of a String?
-  final Word? fetchedWord = await WordsService.fetchRandomWord("Beginner");
-
-  if (fetchedWord == null) {
-    // Handle "no words" scenario
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("لا توجد كلمات في هذا المستوى.")),
-    );
+  Future<void> _loadWord() async {
     setState(() {
+      _isProcessing = true;
+      _feedbackMessage = "";
+      _isCorrect = null;
+    });
+
+    final Word? fetchedWord = await WordsService.fetchRandomWord("Beginner");
+
+    if (fetchedWord == null) {
+      // Handle "no words" scenario
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.of(context).noWordsAvailable)),
+      );
+      setState(() {
+        _isProcessing = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _currentWord = fetchedWord.text;
+      _currentWordId = fetchedWord.id;
+      _wordLetters = fetchedWord.text.split('');
       _isProcessing = false;
     });
-    return;
   }
-
-  // We got a valid Word with real MongoDB _id
-  setState(() {
-    _currentWord = fetchedWord.text;    // text = "قمر" or "تفاحة", etc.
-    _currentWordId = fetchedWord.id;    // e.g. "6427fae2fd720055f811029d"
-    _wordLetters = fetchedWord.text.split('');
-    _isProcessing = false;
-  });
-}
-
 
   /// Start recording + timer
   void _startRecording() async {
     try {
       await _audioService.startRecording();
-      
+
       setState(() {
         _isRecording = true;
         _timerSeconds = 0;
@@ -126,13 +124,13 @@ Future<void> _loadWord() async {
         if (_timerSeconds >= _maxRecordingSeconds) {
           _stopRecording();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("انتهى الوقت المسموح للتسجيل!")),
+            SnackBar(content: Text(S.of(context).recordingTimeout)),
           );
         }
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("خطأ في بدء التسجيل: $e")),
+        SnackBar(content: Text(S.of(context).recordingStartError('$e'))),
       );
     }
   }
@@ -155,10 +153,9 @@ Future<void> _loadWord() async {
   void _onWrongButtonPressed() async {
     // Discard recording if needed
     if (_isRecording) {
-      final audioPath = await _stopRecording();
-      // We don't process the audio in this case, just discard it
+      await _stopRecording();
       setState(() {
-        _feedbackMessage = "تم تجاهل التسجيل";
+        _feedbackMessage = S.of(context).ignoredRecording;
       });
     }
   }
@@ -173,11 +170,11 @@ Future<void> _loadWord() async {
     }
   }
 
-/// Process the speech recording
-Future<void> _processSpeech(String audioPath) async {
+  /// Process the speech recording
+  Future<void> _processSpeech(String audioPath) async {
     setState(() {
       _isProcessing = true;
-      _feedbackMessage = "جاري معالجة التسجيل...";
+      _feedbackMessage = S.of(context).processingRecording;
     });
 
     try {
@@ -185,54 +182,55 @@ Future<void> _processSpeech(String audioPath) async {
         userId: _userId,
         exerciseId: _exerciseId,
         wordId: _currentWordId,
+        correctWord: _currentWord,
         audioFilePath: audioPath,
       );
 
+      setState(() {
+        _isProcessing = false;
+      });
+
       if (result != null) {
+        final bool isCorrect = result['isCorrect'] as bool;
+        final String transcript = result['transcript'] as String;
+        final String message = result['message'] as String;
+
         setState(() {
-          _isProcessing = false;
-          _feedbackMessage = result['message'];
-          _isCorrect = result['isCorrect'];
-          
-          // Update attempts if incorrect
-          if (!result['isCorrect']) {
-            _attemptsLeft = _attemptsLeft > 0 ? _attemptsLeft - 1 : 0;
-          }
+          // Using transcriptLabel for "Transcript:" or you can build your own
+          _feedbackMessage = "${S.of(context).transcriptLabel}: $transcript\n$message";
+          _isCorrect = isCorrect;
         });
-        
-        // If out of attempts, show message and load next word after delay
-        if (_attemptsLeft == 0) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("انتهت المحاولات! سننتقل للكلمة التالية...")),
-          );
-          
-          Future.delayed(const Duration(seconds: 3), () {
-            _loadWord();
-            setState(() {
-              _attemptsLeft = 3; // Reset attempts for next word
-            });
+
+        if (!isCorrect) {
+          setState(() {
+            _attemptsLeft = _attemptsLeft > 0 ? _attemptsLeft - 1 : 0;
           });
+          if (_attemptsLeft == 0) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(S.of(context).outOfTries)),
+            );
+            await Future.delayed(const Duration(seconds: 2));
+            _loadWord();
+          }
         }
       } else {
         setState(() {
-          _isProcessing = false;
-          _feedbackMessage = "حدث خطأ أثناء معالجة التسجيل";
+          _feedbackMessage = S.of(context).processingError;
         });
       }
     } catch (e) {
       setState(() {
         _isProcessing = false;
-        _feedbackMessage = "خطأ: $e";
+        _feedbackMessage = S.of(context).recordingError('$e');
       });
     }
   }
 
-
   /// When "التالي" is pressed, fetch a new word
   void _onNextButtonPressed() {
-    _loadWord(); 
+    _loadWord();
     setState(() {
-      _attemptsLeft = 3; // Reset attempts
+      _attemptsLeft = 3;
     });
   }
 
@@ -243,84 +241,27 @@ Future<void> _processSpeech(String audioPath) async {
     return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
-  /// Single method to build each letter card
-  Widget _buildLetterCard(String letter) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: SizedBox(
-        width: 50,
-        height: 50,
-        child: Center(
-          child: Text(
-            letter,
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Build feedback widget based on processing state
-  Widget _buildFeedback() {
-    if (_isProcessing) {
-      return const CircularProgressIndicator();
-    }
-    
-    if (_feedbackMessage.isNotEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: _isCorrect == true 
-              ? Colors.green.withOpacity(0.2) 
-              : _isCorrect == false 
-                  ? Colors.red.withOpacity(0.2) 
-                  : Colors.grey.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          _feedbackMessage,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: _isCorrect == true 
-                ? Colors.green 
-                : _isCorrect == false 
-                    ? Colors.red 
-                    : Colors.black87,
-          ),
-        ),
-      );
-    }
-    
-    return const SizedBox.shrink();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // AppBar
       appBar: AppBar(
-        backgroundColor: const Color(0xFFD6E3EB),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         elevation: 0,
         title: Column(
           children: [
-            const Text(
-              'المرحلة الثانية • المستوى الأول',
+            // Replaced with S.of(context).levelLabel
+            Text(
+              S.of(context).levelLabel,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            // Display username
+            // Display username using greeting
             Text(
-              'مرحباً $_username',
+              S.of(context).greeting(_username),
               style: const TextStyle(
                 color: Colors.black54,
                 fontSize: 14,
@@ -332,9 +273,7 @@ Future<void> _processSpeech(String audioPath) async {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       extendBodyBehindAppBar: true,
@@ -343,8 +282,8 @@ Future<void> _processSpeech(String audioPath) async {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFFD6E3EB),
-              Color(0xFFF2B3B4),
+              Color.fromARGB(255, 255, 255, 255),
+              Color.fromARGB(255, 255, 255, 255),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -367,8 +306,9 @@ Future<void> _processSpeech(String audioPath) async {
                 ),
               ),
 
-              // Word text
               const SizedBox(height: 10),
+
+              // Word text
               Text(
                 _currentWord,
                 style: const TextStyle(
@@ -383,14 +323,14 @@ Future<void> _processSpeech(String audioPath) async {
               // Attempts text
               Column(
                 children: [
-                  const Text(
-                    'لا تخف لا داعي للقلق',
+                  Text(
+                    S.of(context).dontWorry,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'متبقي لك $_attemptsLeft محاولات',
+                    S.of(context).attemptsLeft(_attemptsLeft),
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
@@ -398,119 +338,41 @@ Future<void> _processSpeech(String audioPath) async {
               ),
 
               const SizedBox(height: 10),
-              
+
               // Feedback message
-              _buildFeedback(),
+              FeedbackWidget(
+                isProcessing: _isProcessing,
+                isCorrect: _isCorrect,
+                feedbackMessage: _feedbackMessage,
+              ),
 
               const SizedBox(height: 10),
 
               // Timer + Progress
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: _isRecording
-                            ? (_timerSeconds / _maxRecordingSeconds)
-                            : 0,
-                        minHeight: 8,
-                        backgroundColor: Colors.white,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          Colors.blueGrey,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _formatTime(_timerSeconds),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
+              TimerWidget(
+                isRecording: _isRecording,
+                timerSeconds: _timerSeconds,
+                maxRecordingSeconds: _maxRecordingSeconds,
+                formatTime: _formatTime,
               ),
 
               const SizedBox(height: 30),
 
-              // Letters displayed right-to-left
+              // Letters
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Wrap(
-                  textDirection: TextDirection.rtl, // Ensures RTL layout
-                  spacing: 8,                       // Horizontal space
-                  runSpacing: 12,                   // Vertical space if wrapping
-                  alignment: WrapAlignment.center,
-                  children: _wordLetters
-                      .map((letter) => _buildLetterCard(letter))
-                      .toList(),
-                ),
+                child: LettersWidget(letters: _wordLetters),
               ),
 
               const SizedBox(height: 30),
 
               // Control buttons (Wrong, Record, Correct)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Wrong (X) if recording
-                  if (_isRecording)
-                    OutlinedButton(
-                      onPressed: _onWrongButtonPressed,
-                      style: OutlinedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        side: const BorderSide(width: 2, color: Colors.red),
-                        padding: const EdgeInsets.all(16),
-                      ),
-                      child: const Icon(
-                        Icons.close,
-                        color: Colors.red,
-                        size: 32,
-                      ),
-                    ),
-
-                  if (_isRecording) const SizedBox(width: 24),
-
-                  // Record or Stop
-                  ElevatedButton(
-                    onPressed: _isProcessing ? null : _onRecordButtonPressed,
-                    style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(20),
-                      backgroundColor: Colors.white,
-                      elevation: 3,
-                      foregroundColor: Colors.grey,
-                      disabledBackgroundColor: Colors.grey.shade300,
-                    ),
-                    child: Icon(
-                      _isRecording ? Icons.stop : Icons.fiber_manual_record,
-                      color: _isRecording ? Colors.black : Colors.red,
-                      size: 32,
-                    ),
-                  ),
-
-                  if (_isRecording) const SizedBox(width: 24),
-
-                  // Correct (✓) if recording
-                  if (_isRecording)
-                    OutlinedButton(
-                      onPressed: _onCorrectButtonPressed,
-                      style: OutlinedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        side: const BorderSide(width: 2, color: Colors.green),
-                        padding: const EdgeInsets.all(16),
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.green,
-                        size: 32,
-                      ),
-                    ),
-                ],
+              RecordingControls(
+                isRecording: _isRecording,
+                isProcessing: _isProcessing,
+                onWrongButtonPressed: _onWrongButtonPressed,
+                onRecordButtonPressed: _onRecordButtonPressed,
+                onCorrectButtonPressed: _onCorrectButtonPressed,
               ),
 
               const Spacer(),
@@ -530,9 +392,9 @@ Future<void> _processSpeech(String audioPath) async {
                     elevation: 2,
                     disabledBackgroundColor: Colors.grey.shade300,
                   ),
-                  child: const Text(
-                    'التالي',
-                    style: TextStyle(
+                  child: Text(
+                    S.of(context).nextButton,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
