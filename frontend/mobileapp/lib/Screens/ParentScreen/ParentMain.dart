@@ -8,7 +8,7 @@ class ParentMain extends StatefulWidget {
   final Parent? parent;
   final Function(Locale) onLocaleChange;
 
-  const ParentMain({super.key, this.parent, required this.onLocaleChange});
+  const ParentMain({super.key,required this.parent, required this.onLocaleChange});
 
   @override
   _ParentMainState createState() => _ParentMainState();
@@ -49,10 +49,13 @@ class _ParentMainState extends State<ParentMain> {
         foregroundColor: Colors.white,
         backgroundColor: Colors.black87, // Match with the illustration background
         elevation: 0, // Removes shadow for a seamless look
-        title: Text("${widget.parent!.name} ${S.of(context).dashboard_title}",style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.white
-        ),),
+        title: Text(
+          widget.parent != null ? S.of(context).dashboardTitle(widget.parent!.name) : S.of(context).dashboardTitle(""),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
       ),
       body: Column(

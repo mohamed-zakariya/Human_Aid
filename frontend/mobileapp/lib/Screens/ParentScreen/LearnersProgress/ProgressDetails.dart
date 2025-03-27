@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Services/parent_service.dart';
 import 'package:mobileapp/models/parent.dart';
 import '../../../generated/l10n.dart';
@@ -93,7 +94,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
         backgroundColor: Colors.black87,
         elevation: 0,
         title: Text(
-          "${widget.parent!.name} ${S.of(context).dashboard_title}",
+          S.of(context).dashboardTitle(parent!.name),
           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,

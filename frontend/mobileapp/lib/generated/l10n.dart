@@ -400,10 +400,10 @@ class S {
     );
   }
 
-  /// `Confirm password must be entered`
+  /// `Confirm password is required`
   String get confirmPasswordRequired {
     return Intl.message(
-      'Confirm password must be entered',
+      'Confirm password is required',
       name: 'confirmPasswordRequired',
       desc: '',
       args: [],
@@ -425,16 +425,6 @@ class S {
     return Intl.message(
       'Create Account',
       name: 'adultSignupTitle',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Cancel`
-  String get cancel {
-    return Intl.message(
-      'Cancel',
-      name: 'cancel',
       desc: '',
       args: [],
     );
@@ -537,6 +527,66 @@ class S {
       name: 'view_details',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Add New Learner`
+  String get addNewLearner {
+    return Intl.message(
+      'Add New Learner',
+      name: 'addNewLearner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message(
+      'Cancel',
+      name: 'cancel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add`
+  String get add {
+    return Intl.message(
+      'Add',
+      name: 'add',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click the + button to add learners.`
+  String get clickToAddLearners {
+    return Intl.message(
+      'Click the + button to add learners.',
+      name: 'clickToAddLearners',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show more`
+  String get showMore {
+    return Intl.message(
+      'Show more',
+      name: 'showMore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{name} Dashboard`
+  String dashboardTitle(Object name) {
+    return Intl.message(
+      '$name Dashboard',
+      name: 'dashboardTitle',
+      desc: '',
+      args: [name],
     );
   }
 

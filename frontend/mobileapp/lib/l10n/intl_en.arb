@@ -34,10 +34,9 @@
     "emailExist": "This email is already registered",
     "passwordRequired": "Password must be entered",
     "passwordShort": "Password must be at least 8 characters",
-    "confirmPasswordRequired": "Confirm password must be entered",
+    "confirmPasswordRequired": "Confirm password is required",
     "passwordMismatch": "Passwords do not match",
     "adultSignupTitle": "Create Account",
-    "cancel": "Cancel",
     "dashboard_title": "'s Dashboard",
     "welcome_message": "Welcome Back, ",
     "explore_message": "Let's explore some insights today",
@@ -48,6 +47,14 @@
     "learner_progress": "Learners Progress",
     "no_progress_data": "No data available.",
     "view_details": "view Detials",
+    "addNewLearner": "Add New Learner",
+    "cancel": "Cancel",
+    "add": "Add",
+    "clickToAddLearners": "Click the + button to add learners.",
+    "showMore": "Show more",
+    "dashboardTitle": "{name} Dashboard",
+
+
 
 
 

@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 import '../Screens/ParentScreen/LearnerData.dart';
+import '../models/learner.dart';
+import '../models/overall_progress.dart';
 
 
 bool isArabic(){
@@ -23,13 +25,15 @@ int calculateAge(String birthdate) {
   return age;
 }
 
-Route createRouteLearnerData(learner) {
+Route createRouteLearnerData(Learner learner, [UserExerciseProgress? userProgress]) { // ✅ userProgress is now optional
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => Learnerdata(learner: learner),
+    pageBuilder: (context, animation, secondaryAnimation) => userProgress != null
+        ? Learnerdata(learner: learner, progress: userProgress)
+        : Learnerdata(learner: learner), // ✅ Don't pass progress if it's null
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(1.0, 0.0); // Start from right
+      const begin = Offset(1.0, 0.0);
       const end = Offset.zero;
-      const curve = Curves.easeInOut; // Smooth animation
+      const curve = Curves.easeInOut;
 
       var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
       var offsetAnimation = animation.drive(tween);
@@ -41,6 +45,10 @@ Route createRouteLearnerData(learner) {
     },
   );
 }
+
+
+
+
 
 Route createRouteParentHome(Widget Function() screenBuilder) {
   return PageRouteBuilder(

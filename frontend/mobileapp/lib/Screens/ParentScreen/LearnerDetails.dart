@@ -6,6 +6,7 @@ import 'package:mobileapp/Screens/ParentScreen/LearnerData.dart';
 import 'package:mobileapp/Services/parent_service.dart';
 import 'package:mobileapp/classes/validators.dart';
 import 'package:mobileapp/global/fns.dart';
+import 'package:mobileapp/models/overall_progress.dart';
 
 import '../../Services/signup_service.dart';
 import '../../generated/l10n.dart';
@@ -17,7 +18,7 @@ import '../widgets/date.dart';
 
 
 class LearnerDetails extends StatefulWidget {
-  const LearnerDetails({super.key, required this.parent});
+  const LearnerDetails({super.key, this.parent});
 
   final Parent? parent;
 
@@ -34,11 +35,11 @@ class _LearnerDetailsState extends State<LearnerDetails> {
   void initState() {
     super.initState();
     parent = widget.parent;
-    fetchChildren();
+    fetchLearners();
   }
 
 
-  Future<void> fetchChildren() async {
+  Future<void> fetchLearners() async {
     if (parent == null) {
       print("Parent is null");
       return;
@@ -60,6 +61,52 @@ class _LearnerDetailsState extends State<LearnerDetails> {
       Navigator.pushReplacementNamed(context, "/intro");
     }
   }
+
+  Future<void> fetchProgressLearner(BuildContext context, Learner learner) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      OverallProgress? overallProgress = await ParentService.getLearnersProgress(parent!.id);
+
+      // Find user progress, returns null if not found
+      UserExerciseProgress? userProgress;
+      if (overallProgress != null) {
+        userProgress = overallProgress.progress.cast<UserExerciseProgress?>().firstWhere(
+              (progress) => progress?.userId == learner.id,
+          orElse: () => null, // Fix: Return null properly
+        );
+      }
+
+      print(userProgress != null ? "Navigating with progress data..." : "No progress found, navigating anyway.");
+
+      // Close loading dialog
+      Navigator.of(context, rootNavigator: true).pop();
+
+      // Navigate without passing userProgress if it's null
+      if (userProgress != null) {
+        Navigator.of(context).push(createRouteLearnerData(learner, userProgress));
+      } else {
+        Navigator.of(context).push(createRouteLearnerData(learner));
+      }
+    } catch (error) {
+      // Close loading dialog if an error occurs
+      Navigator.of(context, rootNavigator: true).pop();
+
+      print("Error fetching learner progress: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to load learner progress, please try again.")),
+      );
+    }
+  }
+
+
+
+
 
   String selectedGender = '';
 
@@ -83,7 +130,7 @@ class _LearnerDetailsState extends State<LearnerDetails> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Add New Learner"),
+          title: Text(S.of(context).addNewLearner),
           content: SizedBox(
             // height: 250,
             child: Form(
@@ -142,10 +189,10 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                       confirmPasswordControllers,
                           (value) {
                         if (value!.isEmpty) {
-                          return 'Confirm password is required';
+                          return S.of(context).confirmPasswordRequired;
                         }
                         if (value != passwordControllers.text) {
-                          return 'Passwords do not match';
+                          return S.of(context).passwordMismatch;
                         }
                         return null;
                       },
@@ -166,7 +213,7 @@ class _LearnerDetailsState extends State<LearnerDetails> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
+              child: Text(S.of(context).cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -190,12 +237,12 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                       selectedGender,
                       "child",
                     );
-                    fetchChildren();
+                    fetchLearners();
                     Navigator.pop(context);
                   });
                 }
               },
-              child: const Text("Add"),
+              child: Text(S.of(context).add),
             ),
           ],
         );
@@ -226,7 +273,7 @@ class _LearnerDetailsState extends State<LearnerDetails> {
       foregroundColor: Colors.white,
       backgroundColor: Colors.black87, // Match with the illustration background
       elevation: 0, // Removes shadow for a seamless look
-      title: Text("${widget.parent!.name} Dashboard",style: const TextStyle(
+      title: Text(S.of(context).dashboardTitle(parent!.name),style: const TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.white
       ),),
@@ -286,9 +333,9 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                             crossAxisAlignment: CrossAxisAlignment.center, // Center alignment
                             mainAxisAlignment: MainAxisAlignment.spaceBetween, // Evenly space elements
                             children: [
-                              const Expanded(
+                              Expanded(
                                 child: Text(
-                                  "Learner Members",
+                                  S.of(context).learner_members,
                                   style: const TextStyle(
                                     color: Colors.white, // Changed to white for contrast
                                     fontSize: 20,
@@ -369,7 +416,7 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                                             const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
                                         ElevatedButton.icon(
                                           onPressed: () {
-                                            Navigator.of(context).push(createRouteLearnerData(learner));
+                                            fetchProgressLearner(context, learner);
                                             // Add your logic to show more details
                                           },
                                           style: ElevatedButton.styleFrom(
@@ -382,9 +429,9 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                                             elevation: 3, // Shadow effect
                                           ),
                                           icon: const Icon(Icons.arrow_right, size: 20), // Info icon
-                                          label: const Text(
-                                            "Show more",
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                          label: Text(
+                                            S.of(context).showMore,
+                                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                           ),
                                         )
 
@@ -396,23 +443,23 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                             },
                           ).toList()
                         else
-                          const Padding(
+                           Padding(
                             padding: EdgeInsets.all(16.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Icon(Icons.person_add, size: 60, color: Colors.grey),
-                                SizedBox(height: 10),
-                                Text(
+                                const Icon(Icons.person_add, size: 60, color: Colors.grey),
+                                const SizedBox(height: 10),
+                                const Text(
                                   "No learners found!",
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54),
                                   textAlign: TextAlign.center,
                                 ),
-                                SizedBox(height: 5),
+                                const SizedBox(height: 5),
                                 Text(
-                                  "Click the + button to add learners.",
-                                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                                  S.of(context).clickToAddLearners,
+                                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                                   textAlign: TextAlign.center,
                                 ),
                               ],
@@ -522,7 +569,7 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                         parent!.id, passwordController.text, learner.username);
 
                     if (childDeleted) {
-                      fetchChildren();
+                      fetchLearners();
                       Navigator.pop(context);
                     } else {
                       setState(() {

@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:mobileapp/models/learner.dart';
+import 'package:mobileapp/models/learner_daily_attempts.dart';
+import '../../models/overall_progress.dart';
 
 class LearnerProfileWidget extends StatelessWidget {
   final Learner learner;
+  final UserExerciseProgress? userProgress; // Nullable now
 
-  // Dummy words learned by the user
-  final List<String> wordsLearned = [
-    "Apple", "Banana", "Carrot", "Dragonfruit", "Elephant",
-    "Football", "Giraffe", "Hamburger", "Ice Cream", "Jellyfish",
-    "Kangaroo", "Lemon", "Mountain", "Notebook", "Octopus"
-  ];
-
-  LearnerProfileWidget({super.key, required this.learner});
+  LearnerProfileWidget({super.key, required this.learner, this.userProgress});
 
   @override
   Widget build(BuildContext context) {
-    double progress = wordsLearned.length / 50.0; // Example dynamic progress
+    double progress = userProgress?.accuracyPercentage ?? 0.0; // ✅ Use null-aware operator
 
     return Column(
       children: [
@@ -26,7 +22,7 @@ class LearnerProfileWidget extends StatelessWidget {
               width: 130,
               height: 130,
               child: CircularProgressIndicator(
-                value: progress,
+                value: progress > 0 ? progress : 0.0, // ✅ Prevent null values
                 strokeWidth: 15,
                 backgroundColor: Colors.grey[300],
                 valueColor: const AlwaysStoppedAnimation<Color>(Colors.orangeAccent),
@@ -44,60 +40,59 @@ class LearnerProfileWidget extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        // ✍️ Handwritten Username Style
+        // Learner name and username
         Text(
           learner.name,
-          style: const TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black87),
         ),
         Text(
           learner.username,
-          style: const TextStyle(
-            fontSize: 20,
-            color: Colors.black38,
-            fontStyle: FontStyle.italic
-          ),
+          style: const TextStyle(fontSize: 20, color: Colors.black38, fontStyle: FontStyle.italic),
         ),
 
-        // ✅ Stylish Words Learned Display
+        // Words Learned Section
         Container(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Colors.blue, Colors.purple],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            gradient: const LinearGradient(colors: [Colors.blue, Colors.purple]),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            "Words Learned: ${wordsLearned.length}",
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+            userProgress != null
+                ? "Words Learned: ${userProgress!.correctWords.length}"
+                : "No progress data available",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
 
         const SizedBox(height: 15),
 
-        // 📜 Additional Stats in Beautiful Cards
+        // Stats section
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildStatCard("📜 Daily Quests Completed", 3),
-            _buildStatCard("🏆 Rewards Quests Claimed", 5),
+            _buildStatCard("📜 Daily Quests Completed", 5),
+            _buildStatCard("🏆 Rewards Claimed", 3),
           ],
         ),
 
         const SizedBox(height: 20),
 
-        // 📖 Learned Words Section
-        _buildWordsLearnedSection(),
+        // Learned Words Section
+        if (userProgress != null && userProgress!.correctWords.isNotEmpty)
+          _buildWordsLearnedSection(userProgress!.correctWords.map((w) => w.spokenWord).toList())
+        else
+          const Column(
+            children: [
+              Icon(Icons.menu_book, size: 40, color: Colors.grey), // Book icon 📖
+              SizedBox(height: 8),
+              Text(
+                "No learnt words yet.",
+                style: TextStyle(fontSize: 16, color: Colors.black54, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+
       ],
     );
   }
@@ -128,64 +123,54 @@ class LearnerProfileWidget extends StatelessWidget {
       ),
     );
   }
-  // 📝 Learned Words List Section
-  Widget _buildWordsLearnedSection() {
-    return Container(
-        decoration: const BoxDecoration(
+
+  Widget _buildWordsLearnedSection(List<String> words) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Learned Words:",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
         ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Learned Words:",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 250, // Set a fixed height to allow smooth scrolling
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: wordsLearned.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.green.shade100, Colors.green.shade50], // Subtle gradient
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 250,
+          child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: words.length,
+            itemBuilder: (context, index) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [Colors.green.shade100, Colors.green.shade50]),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      blurRadius: 5,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 3),
                     ),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                        offset: const Offset(0, 3),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check_circle, color: Colors.green, size: 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        words[index],
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.check_circle, color: Colors.green, size: 24),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          wordsLearned[index],
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
-
 }

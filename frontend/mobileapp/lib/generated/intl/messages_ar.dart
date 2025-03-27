@@ -20,6 +20,8 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ar';
 
+  static String m0(name) => "لوحة تحكم ${name}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "ParentNavBarHome": MessageLookupByLibrary.simpleMessage("القائمة"),
@@ -27,6 +29,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
         "ParentNavBarSettings":
             MessageLookupByLibrary.simpleMessage("الإعدادات"),
+        "add": MessageLookupByLibrary.simpleMessage("إضافة"),
+        "addNewLearner":
+            MessageLookupByLibrary.simpleMessage("إضافة متعلم جديد"),
         "add_word": MessageLookupByLibrary.simpleMessage("إضافة كلمة"),
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("إِنْشَاءُ حِسَابٍ كمتعلم"),
@@ -38,6 +43,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "تَغْيِيرُ كَلِمَةِ المَرُورِ"),
         "changepasswordHint":
             MessageLookupByLibrary.simpleMessage("كلمة المرور"),
+        "clickToAddLearners": MessageLookupByLibrary.simpleMessage(
+            "اضغط على زر + لإضافة المتعلمين."),
         "confirmPasswordHint":
             MessageLookupByLibrary.simpleMessage("تأكيد كلمة المرور"),
         "confirmPasswordRequired":
@@ -51,6 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("إنشاء حساب مستخدم"),
         "createaccountbutton":
             MessageLookupByLibrary.simpleMessage("إنشاء الحساب"),
+        "dashboardTitle": m0,
         "dashboard_title":
             MessageLookupByLibrary.simpleMessage("لوحة معلومات "),
         "desc1": MessageLookupByLibrary.simpleMessage(
@@ -113,6 +121,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("ابحث"),
+        "showMore": MessageLookupByLibrary.simpleMessage("عرض المزيد"),
         "signup_password_mismatch":
             MessageLookupByLibrary.simpleMessage("ليس  متماشث"),
         "signupbutton": MessageLookupByLibrary.simpleMessage("استمرار"),
