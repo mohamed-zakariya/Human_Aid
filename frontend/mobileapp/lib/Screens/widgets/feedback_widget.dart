@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+// Import your generated localization class (S)
+import '../../generated/l10n.dart';
+
+class FeedbackWidget extends StatelessWidget {
+  final bool? isCorrect;
+  final String feedbackMessage;
+  final bool isProcessing;
+
+  const FeedbackWidget({
+    Key? key,
+    required this.isCorrect,
+    required this.feedbackMessage,
+    required this.isProcessing,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      child: _buildContent(context),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    if (isProcessing) {
+      return _buildProcessingIndicator(context);
+    }
+
+    if (feedbackMessage.isNotEmpty) {
+      return _buildFeedbackMessage();
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildProcessingIndicator(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircularProgressIndicator(
+            strokeWidth: 2.5,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            S.of(context).feedbackWidgetAnalyzing, // Localized string
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedbackMessage() {
+    final Color primaryColor = isCorrect == true
+        ? Colors.green
+        : isCorrect == false
+            ? Colors.red
+            : Colors.blueGrey;
+
+    final IconData icon = isCorrect == true
+        ? Icons.check_circle_rounded
+        : isCorrect == false
+            ? Icons.error_rounded
+            : Icons.info_rounded;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Container(
+        key: ValueKey(feedbackMessage),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: primaryColor.withOpacity(0.3),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: primaryColor,
+              size: 28,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                feedbackMessage,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: primaryColor,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.start,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

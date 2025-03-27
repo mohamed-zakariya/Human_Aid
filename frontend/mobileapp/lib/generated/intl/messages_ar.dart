@@ -20,6 +20,20 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ar';
 
+  static String m0(count) => "متبقي لك ${count} محاولات";
+
+  static String m1(percent) => "%${percent}";
+
+  static String m2(name) => "مرحباً ${name}";
+
+  static String m3(percent) => "${percent}% تم الإنجاز";
+
+  static String m4(points) => "${points} نقطة";
+
+  static String m5(error) => "خطأ: ${error}";
+
+  static String m6(error) => "خطأ في بدء التسجيل: ${error}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "ParentNavBarHome": MessageLookupByLibrary.simpleMessage("القائمة"),
@@ -30,6 +44,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "add_word": MessageLookupByLibrary.simpleMessage("إضافة كلمة"),
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("إِنْشَاءُ حِسَابٍ كمتعلم"),
+        "attemptsLeft": m0,
+        "availableExercises":
+            MessageLookupByLibrary.simpleMessage("التمارين المتاحة"),
+        "bottomNavCourses": MessageLookupByLibrary.simpleMessage("الدورات"),
+        "bottomNavHome": MessageLookupByLibrary.simpleMessage("الرئيسية"),
+        "bottomNavProfile":
+            MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
         "button1": MessageLookupByLibrary.simpleMessage("ابدأ"),
         "button2": MessageLookupByLibrary.simpleMessage("استمرار"),
         "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
@@ -38,11 +59,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "تَغْيِيرُ كَلِمَةِ المَرُورِ"),
         "changepasswordHint":
             MessageLookupByLibrary.simpleMessage("كلمة المرور"),
+        "confirm": MessageLookupByLibrary.simpleMessage("تأكيد"),
         "confirmPasswordHint":
             MessageLookupByLibrary.simpleMessage("تأكيد كلمة المرور"),
         "confirmPasswordRequired":
             MessageLookupByLibrary.simpleMessage("يجب تأكيد كلمة المرور"),
         "continueButton": MessageLookupByLibrary.simpleMessage("استمرار"),
+        "continueLearning":
+            MessageLookupByLibrary.simpleMessage("واصل التعلُّم"),
         "continuesignuptitle": MessageLookupByLibrary.simpleMessage(
             "تَسْجِيلُ بَيَانَاتِ الطِّفْلِ"),
         "createAccountGaurdian":
@@ -58,6 +82,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "desc2": MessageLookupByLibrary.simpleMessage(
             "ستكون رحلة مليئة بالمرح لكن لا داعي للقلق سنتعلم خطوة بخطوة حتى تصبح محترفاً."),
         "desc3": MessageLookupByLibrary.simpleMessage("فلا شيء يستطيع إيقافك"),
+        "dontWorry":
+            MessageLookupByLibrary.simpleMessage("لا تخف لا داعي للقلق"),
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "هذا البريد الإلكتروني مسجّل بالفعل"),
         "emailHint": MessageLookupByLibrary.simpleMessage("humanid@gmail.com"),
@@ -71,8 +97,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "لا يمكن ترك البريد الإلكتروني فارغًا"),
         "errorEmptyPassword": MessageLookupByLibrary.simpleMessage(
             "لا يمكن ترك كلمة المرور فارغة"),
+        "exerciseProgressLabel": MessageLookupByLibrary.simpleMessage("التقدم"),
+        "exerciseProgressPercent": m1,
         "explore_message":
             MessageLookupByLibrary.simpleMessage("لنستكشف بعض الأفكار اليوم"),
+        "feedbackWidgetAnalyzing":
+            MessageLookupByLibrary.simpleMessage("جاري التحليل..."),
         "forgotPassword":
             MessageLookupByLibrary.simpleMessage("نسيت كلمة المرور؟"),
         "forgotPasswordHint": MessageLookupByLibrary.simpleMessage(
@@ -83,10 +113,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "genderMale": MessageLookupByLibrary.simpleMessage("ذكر"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("اختار النوع"),
         "genderSelected": MessageLookupByLibrary.simpleMessage(":اختار"),
+        "greeting": m2,
         "guardianButton": MessageLookupByLibrary.simpleMessage("ولي أمر"),
         "guardianDescription": MessageLookupByLibrary.simpleMessage(
             "تسجيلك كولي أمر يمكنك من تسجيل و متابعة تقدم أحيانك، سواء كالوا أبناءك، طلابك، أو أي شخص تحت مسئوليتك"),
         "guardianTitle": MessageLookupByLibrary.simpleMessage("سجل لمن تحب"),
+        "helloLabel": MessageLookupByLibrary.simpleMessage("مرحباً،"),
+        "ignoredRecording":
+            MessageLookupByLibrary.simpleMessage("تم تجاهل التسجيل"),
         "introTitle": MessageLookupByLibrary.simpleMessage(
             "كَيْفَ تُوَدُّ التَّسْجِيلَ؟"),
         "invalidCredentials": MessageLookupByLibrary.simpleMessage(
@@ -95,15 +129,24 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("أعضاء المتعلمين"),
         "learner_progress":
             MessageLookupByLibrary.simpleMessage("تقدّم المتعلّمين"),
+        "levelLabel": MessageLookupByLibrary.simpleMessage(
+            "المرحلة الثانية • المستوى الأول"),
         "loginButton": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("تسجيل الدُّخول"),
+        "nextButton": MessageLookupByLibrary.simpleMessage("التالي"),
         "noAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
+        "noExercisesAvailable":
+            MessageLookupByLibrary.simpleMessage("لا توجد تمارين متاحة"),
+        "noWordsAvailable": MessageLookupByLibrary.simpleMessage(
+            "لا توجد كلمات في هذا المستوى."),
         "no_progress_data":
             MessageLookupByLibrary.simpleMessage("لا توجد بيانات متاحة"),
         "orContinueWith":
             MessageLookupByLibrary.simpleMessage("أو اكمل بواسطة"),
         "otpPrompt": MessageLookupByLibrary.simpleMessage(
             "بِرَجَاءِإدْخَالِ رَمْزِالتَّحْقق"),
+        "outOfTries": MessageLookupByLibrary.simpleMessage(
+            "انتهت المحاولات! سننتقل للكلمة التالية..."),
         "passwordHint": MessageLookupByLibrary.simpleMessage("●●●●●●●"),
         "passwordMismatch":
             MessageLookupByLibrary.simpleMessage("كلمتا المرور غير متطابقتين"),
@@ -113,6 +156,19 @@ class MessageLookup extends MessageLookupByLibrary {
             "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("ابحث"),
+        "processingError": MessageLookupByLibrary.simpleMessage(
+            "حدث خطأ أثناء معالجة التسجيل"),
+        "processingRecording":
+            MessageLookupByLibrary.simpleMessage("جاري معالجة التسجيل..."),
+        "progressCompleted": m3,
+        "progressPoints": m4,
+        "recordingError": m5,
+        "recordingStartError": m6,
+        "recordingTimeout": MessageLookupByLibrary.simpleMessage(
+            "انتهى الوقت المسموح للتسجيل!"),
+        "searchCoursesHint":
+            MessageLookupByLibrary.simpleMessage("ابحث عن الدورات..."),
+        "seeAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
         "signup_password_mismatch":
             MessageLookupByLibrary.simpleMessage("ليس  متماشث"),
         "signupbutton": MessageLookupByLibrary.simpleMessage("استمرار"),
@@ -154,6 +210,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "معاً سنتعلم كيف نقرأ\nونكتب اللغة العربية بشكل سليم"),
         "title3": MessageLookupByLibrary.simpleMessage(
             "لا تخف من التجربة،\nحاول بلا توقف حتى تكسر حاجز الخوف"),
+        "transcriptLabel": MessageLookupByLibrary.simpleMessage("النص المدخل"),
         "userButton": MessageLookupByLibrary.simpleMessage("مستخدم"),
         "userDescription": MessageLookupByLibrary.simpleMessage(
             "إذا كان عمرك يزيد عن 12 سنة. يمكنك الآن التسجيل بنفسك بسهولة فقط اضغط على زر مستخدم البدء."),

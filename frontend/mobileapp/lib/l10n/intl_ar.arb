@@ -1,4 +1,5 @@
 {
+    "@@locale": "ar",
     "title": "إِنْشَاءُ حِسَابٍٍ",
     "signuptitlename": "الاسم",
     "signupinputfieldname": "مثال:ابراهيم مصطفي",
@@ -94,5 +95,80 @@
     "errorEmptyEmail": "لا يمكن ترك البريد الإلكتروني فارغًا",
     "errorEmptyPassword": "لا يمكن ترك كلمة المرور فارغة",
     "successLogin": "تم تسجيل الدخول بنجاح",
-    "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة. حاول مرة أخرى."
+    "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة. حاول مرة أخرى.",
+    "levelLabel": "المرحلة الثانية • المستوى الأول",
+    "greeting": "مرحباً {name}",
+    "@greeting": {
+        "description": "Greeting for the user with their name",
+        "placeholders": {
+        "name": {}
+        }
+    },
+    "dontWorry": "لا تخف لا داعي للقلق",
+    "attemptsLeft": "متبقي لك {count} محاولات",
+    "@attemptsLeft": {
+        "description": "Shows how many attempts are left",
+        "placeholders": {
+        "count": {}
+        }
+    },
+    "noWordsAvailable": "لا توجد كلمات في هذا المستوى.",
+    "recordingTimeout": "انتهى الوقت المسموح للتسجيل!",
+    "recordingStartError": "خطأ في بدء التسجيل: {error}",
+    "@recordingStartError": {
+        "placeholders": {
+        "error": {}
+        }
+    },
+    "ignoredRecording": "تم تجاهل التسجيل",
+    "processingRecording": "جاري معالجة التسجيل...",
+    "processingError": "حدث خطأ أثناء معالجة التسجيل",
+    "outOfTries": "انتهت المحاولات! سننتقل للكلمة التالية...",
+    "nextButton": "التالي",
+    "transcriptLabel": "النص المدخل",
+    "recordingError": "خطأ: {error}",
+    "@recordingError": {
+        "placeholders": {
+        "error": {}
+        }
+    },
+    "confirm": "تأكيد",
+    "feedbackWidgetAnalyzing": "جاري التحليل...",
+    "progressCompleted": "{percent}% تم الإنجاز",
+    "@progressCompleted": {
+      "description": "Shows how much progress has been completed",
+      "placeholders": {
+        "percent": {}
+      }
+    },
+    "progressPoints": "{points} نقطة",
+    "@progressPoints": {
+      "description": "Shows how many points or lessons completed",
+      "placeholders": {
+        "points": {}
+      }
+    },
+    "exerciseProgressLabel": "التقدم",
+    "@exerciseProgressLabel": {
+      "description": "Label for progress bar"
+    },
+    "exerciseProgressPercent": "%{percent}",
+    "@exerciseProgressPercent": {
+      "description": "Format string for progress percentage",
+      "placeholders": {
+        "percent": {}
+      }
+    },
+    "helloLabel": "مرحباً،",
+    "searchCoursesHint": "ابحث عن الدورات...",
+    "continueLearning": "واصل التعلُّم",
+    "availableExercises": "التمارين المتاحة",
+    "seeAll": "عرض الكل",
+    "noExercisesAvailable": "لا توجد تمارين متاحة",
+    "bottomNavHome": "الرئيسية",
+    "bottomNavCourses": "الدورات",
+    "bottomNavProfile": "الملف الشخصي"
+    
+      
+      
 }

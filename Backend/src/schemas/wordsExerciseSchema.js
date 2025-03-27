@@ -45,7 +45,7 @@ type Mutation {
     userId: ID!
     exerciseId: ID!
     wordId: ID!
-    audioFile: Upload
+    audioFile: String
     spokenWord: String!
   ): ProcessedSpeech!
 }

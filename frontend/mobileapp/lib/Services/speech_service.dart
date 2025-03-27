@@ -1,81 +1,145 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:graphql_flutter/graphql_flutter.dart';
-import '../graphql/graphql_client.dart';
-import 'package:mobileapp/graphql/queries/speech_query.dart';
+
+import 'package:mobileapp/graphql/graphql_client.dart';
+import 'package:mobileapp/graphql/queries/speech_query.dart'; 
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SpeechService {
-  /// 1) Upload the audio via REST (with JWT in headers)
+  /// (A) Uploads the audio file to `/upload-audio`.
+  /// Returns the `fileUrl` on success, else null.
   static Future<String?> _uploadAudioFile(String audioFilePath) async {
-    // Retrieve the token from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString("accessToken");
+    final token = prefs.getString("accessToken");
 
     final uri = Uri.parse('http://10.0.2.2:5500/upload-audio');
-    
-    // Create a MultipartRequest
     var request = http.MultipartRequest('POST', uri)
-      ..files.add(await http.MultipartFile.fromPath(
-        'audio', // must match `upload.single('audio')` in Node
-        audioFilePath,
-      ));
-    
-    // Add the Authorization header if the token exists
+      ..files.add(await http.MultipartFile.fromPath('audio', audioFilePath));
+
     if (token != null) {
       request.headers['Authorization'] = 'Bearer $token';
     }
-    
-    // Send the request
-    var streamedResponse = await request.send();
-    var responseString = await streamedResponse.stream.bytesToString();
-    
+
+    final streamedResponse = await request.send();
+    final responseString = await streamedResponse.stream.bytesToString();
+
     if (streamedResponse.statusCode == 200) {
-      // Parse JSON response and return the fileUrl
       final Map<String, dynamic> jsonResponse = json.decode(responseString);
-      return jsonResponse['fileUrl']; // e.g., "http://localhost:5500/uploads/filename..."
+      return jsonResponse['fileUrl']; 
     } else {
-      print('Failed to upload audio. Status code: ${streamedResponse.statusCode}');
-      print('Response: $responseString');
+      print('Upload Error: ${streamedResponse.statusCode}');
+      print('Upload Response: $responseString');
       return null;
     }
   }
 
-  /// 2) Use the returned `fileUrl` to call the GraphQL mutation
-  static Future<Map<String, dynamic>?> processSpeech({
+  /// (B) Transcribes the uploaded audio by calling `/api/transcribe` 
+  /// with JSON body `{ filePath: fileUrl }`. Returns the transcript or null.
+  static Future<String?> _transcribeAudio(String fileUrl) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("accessToken");
+
+    final uri = Uri.parse('http://10.0.2.2:5500/api/transcribe');
+    final response = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      body: json.encode({'filePath': fileUrl}),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      return jsonResponse['transcript'] as String?;
+    } else {
+      print('Transcription Error: ${response.statusCode}');
+      print('Transcription Body: ${response.body}');
+      return null;
+    }
+  }
+
+  /// (C) Calls the GraphQL `updateUserProgress` mutation with the final result.
+  /// This returns the GraphQL response data (or null on error).
+  static Future<Map<String, dynamic>?> _callUpdateUserProgress({
     required String userId,
     required String exerciseId,
     required String wordId,
-    required String audioFilePath,
+    required String fileUrl,
+    required String spokenWord,
   }) async {
     try {
-      // Step A: Upload the audio file to the Node.js server via REST
-      String? fileUrl = await _uploadAudioFile(audioFilePath);
-      if (fileUrl == null) {
-        throw Exception('Audio upload failed – no fileUrl received');
-      }
-
-      // Step B: Call the GraphQL mutation with the fileUrl
       final client = await GraphQLService.getClient();
       final MutationOptions options = MutationOptions(
-        document: gql(processSpeechMutation),
+        document: gql(updateUserProgressMutation),
         variables: {
           'userId': userId,
           'exerciseId': exerciseId,
           'wordId': wordId,
-          // IMPORTANT: pass the fileUrl here (not raw file bytes)
           'audioFile': fileUrl,
+          'spokenWord': spokenWord,
         },
       );
 
       final result = await client.mutate(options);
       if (result.hasException) {
-        print("GraphQL Exception: ${result.exception}");
+        print("GraphQL updateUserProgress exception: ${result.exception}");
         return null;
       }
 
-      return result.data?['wordsExercise'];
+      return result.data?['updateUserProgress'];
+    } catch (e) {
+      print("GraphQL error calling updateUserProgress: $e");
+      return null;
+    }
+  }
+
+  /// (D) High-level function that ties everything together:
+  ///     1. Upload audio
+  ///     2. Transcribe
+  ///     3. Compare with correctWord locally
+  ///     4. (If desired) call updateUserProgress
+  ///
+  /// Returns a Map with: { 'isCorrect': bool, 'message': String } etc.
+  static Future<Map<String, dynamic>?> processSpeech({
+    required String userId,
+    required String exerciseId,
+    required String wordId,
+    required String correctWord,
+    required String audioFilePath,
+  }) async {
+    try {
+      // Step 1: Upload
+      final fileUrl = await _uploadAudioFile(audioFilePath);
+      if (fileUrl == null) {
+        throw Exception('Audio upload failed – no fileUrl received.');
+      }
+
+      // Step 2: Transcribe
+      final transcript = await _transcribeAudio(fileUrl);
+      if (transcript == null) {
+        throw Exception('Transcription failed – no transcript received.');
+      }
+
+      // Step 3: Compare the transcript with correctWord
+      final bool isCorrect = transcript.trim().toLowerCase() == correctWord.trim().toLowerCase();
+
+      // Step 4: Call updateUserProgress mutation (optional)
+      final updatedData = await _callUpdateUserProgress(
+        userId: userId,
+        exerciseId: exerciseId,
+        wordId: wordId,
+        fileUrl: fileUrl,
+        spokenWord: transcript,
+      );
+
+      return {
+        'isCorrect': isCorrect,
+        'transcript': transcript,
+        'message': isCorrect ? 'أحسنت!' : 'حاول مرة أخرى',
+        'updatedData': updatedData,
+      };
     } catch (e) {
       print("Error processing speech: $e");
       return null;

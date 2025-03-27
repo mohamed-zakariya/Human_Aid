@@ -1,4 +1,5 @@
 {
+    "@@locale": "en",
     "title": "Create Account",
     "signuptitlename": "Name",
     "signupinputfieldname": "ex:MohamedZakaria",
@@ -94,6 +95,78 @@
     "errorEmptyEmail": "Email cannot be empty",
     "errorEmptyPassword": "Password cannot be empty",
     "successLogin": "Login successful",
-    "invalidCredentials": "Invalid username or password. Please try again."
+    "invalidCredentials": "Invalid username or password. Please try again.",
+    "levelLabel": "Stage 2 • Level 1",
+    "greeting": "Hello {name}",
+    "@greeting": {
+        "description": "Greeting for the user with their name",
+        "placeholders": {
+        "name": {}
+        }
+    },
+    "dontWorry": "Don’t worry, it’s okay",
+    "attemptsLeft": "{count} attempts left",
+    "@attemptsLeft": {
+        "placeholders": {
+        "count": {}
+        }
+    },
+    "noWordsAvailable": "No words available at this level.",
+    "recordingTimeout": "Recording time limit reached!",
+    "recordingStartError": "Error starting recording: {error}",
+    "@recordingStartError": {
+        "placeholders": {
+        "error": {}
+        }
+    },
+    "ignoredRecording": "Recording ignored",
+    "processingRecording": "Processing your recording...",
+    "processingError": "An error occurred while processing",
+    "outOfTries": "No attempts left! Moving to the next word...",
+    "nextButton": "Next",
+    "transcriptLabel": "Transcript",
+    "recordingError": "Error: {error}",
+    "@recordingError": {
+        "placeholders": {
+        "error": {}
+        }
+    },
+    "confirm": "Confirm",
+    "feedbackWidgetAnalyzing": "Analyzing...",
+    "progressCompleted": "{percent}% completed",
+    "@progressCompleted": {
+      "description": "Shows how much progress has been completed",
+      "placeholders": {
+        "percent": {}
+      }
+    },
+    "progressPoints": "{points} pts",
+    "@progressPoints": {
+      "description": "Shows how many points or lessons completed",
+      "placeholders": {
+        "points": {}
+      }
+    },
+    "exerciseProgressLabel": "Progress",
+    "@exerciseProgressLabel": {
+      "description": "Label for progress bar"
+    },
+    "exerciseProgressPercent": "{percent}%",
+    "@exerciseProgressPercent": {
+      "description": "Format string for progress percentage",
+      "placeholders": {
+        "percent": {}
+      }
+    },
+    "helloLabel": "Hello,",
+    "searchCoursesHint": "Search courses...",
+    "continueLearning": "Continue Learning",
+    "availableExercises": "Available Exercises",
+    "seeAll": "See All",
+    "noExercisesAvailable": "No exercises available",
+    "bottomNavHome": "Home",
+    "bottomNavCourses": "Courses",
+    "bottomNavProfile": "Profile"
+
 
 }

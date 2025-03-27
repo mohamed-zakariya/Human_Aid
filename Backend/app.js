@@ -105,7 +105,11 @@ app.post('/api/transcribe', async (req, res) => {
   if (!filePath) return res.status(400).json({ error: 'filePath is required' });
 
   try {
-    const transcript = await azureTranscribeAudio(filePath);
+    // Convert from URL to local path
+    const filename = path.basename(filePath); // extract filename from URL
+    const localPath = path.join('uploads', filename); // build local path
+
+    const transcript = await azureTranscribeAudio(localPath); // use local path
     res.json({ transcript });
   } catch (err) {
     console.error('Transcription Error:', err.message);
