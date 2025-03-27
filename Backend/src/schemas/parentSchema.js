@@ -42,6 +42,10 @@ type EmailCheckResponse {
     id: ID!
     progress: [Exercisesprogress] 
   }
+  type LearneroverallProgress {
+    id: ID!
+    progress: [OverallProgress] 
+  }
 
   type UserProgress {
     user_id: ID!
@@ -67,6 +71,7 @@ extend type Query {
     parents: [Parent!]
     checkParentEmailExists(email: String!): EmailCheckResponse!
     getLearnerProgress(parentId: ID!): LearnerProgress
+    getLearnerOverallProgress(parentId: ID!): LearneroverallProgress
     getParentChildren(parentId: ID!): [User!]
     getLearnerDailyAttempts(parentId: ID!): [LearnerDailyAttempts!]!
 }
