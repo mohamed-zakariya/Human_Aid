@@ -1,3 +1,5 @@
+// word_pronunciation_screen.dart
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/Screens/widgets/feedback_widget.dart';
@@ -13,9 +15,11 @@ import '../../models/word.dart';
 import '../../services/words_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/speech_service.dart';
-
-// Generated Localization
 import '../../generated/l10n.dart';
+
+// NEW: Import GraphQL + the service we wrote
+import '../Services/word_exercise_service.dart';
+import '../graphql/graphql_client.dart';
 
 class WordPronunciationScreen extends StatefulWidget {
   final Function(Locale)? onLocaleChange;
@@ -26,8 +30,7 @@ class WordPronunciationScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _WordPronunciationScreenState createState() =>
-      _WordPronunciationScreenState();
+  _WordPronunciationScreenState createState() => _WordPronunciationScreenState();
 }
 
 class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
@@ -53,13 +56,16 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   String _feedbackMessage = "";
   bool? _isCorrect;
 
+  // NEW: We'll store the ExerciseService
+  late ExerciseService _exerciseService;
+
   @override
   void initState() {
     super.initState();
     _loadWord();
 
     // Capture any learner info passed in
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final args = ModalRoute.of(context)?.settings.arguments;
       if (args != null && args is Learner) {
         setState(() {
@@ -68,11 +74,32 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
           _userId = _learner?.id ?? "user123";
         });
       }
+
+      // NEW: Get the GraphQLClient and create an ExerciseService
+      final client = await GraphQLService.getClient();
+      _exerciseService = ExerciseService(client: client);
+
+      // Now call startExercise
+      final startResult = await _exerciseService.startExercise(_userId, _exerciseId);
+      if (startResult != null) {
+        print("Exercise started: $startResult");
+        // If you want, you can store the startTime or message in state.
+      }
     });
   }
 
   @override
   void dispose() {
+    // NEW: Call endExercise
+    _exerciseService.endExercise(_userId, _exerciseId).then((endResult) {
+      if (endResult != null) {
+        print("Exercise ended: $endResult");
+        // If you want, store or display timeSpent, etc.
+      }
+    }).catchError((err) {
+      print("Error while ending exercise: $err");
+    });
+
     _timer?.cancel();
     _audioService.dispose();
     super.dispose();
@@ -196,8 +223,8 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
         final String message = result['message'] as String;
 
         setState(() {
-          // Using transcriptLabel for "Transcript:" or you can build your own
-          _feedbackMessage = "${S.of(context).transcriptLabel}: $transcript\n$message";
+          _feedbackMessage =
+              "${S.of(context).transcriptLabel}: $transcript\n$message";
           _isCorrect = isCorrect;
         });
 
@@ -250,7 +277,6 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
         elevation: 0,
         title: Column(
           children: [
-            // Replaced with S.of(context).levelLabel
             Text(
               S.of(context).levelLabel,
               textAlign: TextAlign.center,
@@ -259,7 +285,6 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            // Display username using greeting
             Text(
               S.of(context).greeting(_username),
               style: const TextStyle(

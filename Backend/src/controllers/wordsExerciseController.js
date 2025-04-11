@@ -115,7 +115,7 @@ export const wordsExercise = async (userId, exerciseId, wordId, audioFile) => {
     if (!wordAttempt) {
       userAttempt.attempts.push({
         word_id: wordId,
-        correct_word: expectedWord.word,
+        correct_word: expectedWord,
         spoken_word: spokenWord,
         is_correct: isCorrect,
         attempts_number: 1,
@@ -160,7 +160,7 @@ export const wordsExercise = async (userId, exerciseId, wordId, audioFile) => {
         } else {
           progress.incorrect_words.push({
             word_id: wordId,
-            correct_word: expectedWord,
+            correct_word: expectedWord.word,
             incorrect_word: spokenWord,
             frequency: 1,
           });
