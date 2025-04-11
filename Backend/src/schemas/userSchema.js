@@ -15,7 +15,10 @@ export const userTypeDefs = `#graphql
 type Exercise {
   id: ID!
   name: String!
+  arabic_name: String!
   type: String!
+  english_description:String!
+  arabic_description:String!
   progress: Progress
 }
 
