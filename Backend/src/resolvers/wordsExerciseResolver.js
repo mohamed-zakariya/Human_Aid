@@ -1,4 +1,4 @@
-import { wordsExercise , startExercise , endExercise,updateUserProgress } from "../controllers/wordsExerciseController.js";
+import {startExercise , endExercise,updateUserProgress } from "../controllers/wordsExerciseController.js";
 import Words from "../models/Words.js"
 export const speechResolvers = {
   Query: {
