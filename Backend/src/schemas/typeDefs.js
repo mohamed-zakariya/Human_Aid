@@ -3,6 +3,7 @@ import { parentTypeDefs } from "./parentSchema.js";
 import { wordsExerciseTypeDefs } from './wordsExerciseSchema.js';
 import { ExercisesprogressTypeDefs } from './exerciseProgressSchema.js';
 import { OverallProgressTypeDefs } from './overallProgressSchema.js';
+import { sentencesExerciseTypeDefs } from './sentencesExerciseSchema.js';
 export const baseTypeDefs = `#graphql
 
 type Query {
@@ -20,5 +21,6 @@ export const typeDefs = [
     parentTypeDefs,
     wordsExerciseTypeDefs,
     ExercisesprogressTypeDefs,
-    OverallProgressTypeDefs
+    OverallProgressTypeDefs,
+    sentencesExerciseTypeDefs
   ];

@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const sentenceSchema = new Schema({
-    word: { type: String, required: true },
+    sentence: { type: String, required: true },
     level: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], required: true },
 });
 
