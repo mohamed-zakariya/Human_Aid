@@ -102,11 +102,12 @@ export const updateUserProgress = async (userId, exerciseId, wordId, audioFile, 
         user_id: userId,
         exercise_id: exerciseId,
         date: new Date(),
-        attempts: [],
+        words_attempts: [],
+        sentences_attempts: [],
       });
     }
 
-    let wordAttempt = userAttempt.attempts.find(
+    let wordAttempt = userAttempt.words_attempts.find(
       (attempt) => attempt.word_id.toString() === wordId
     );
     
@@ -119,7 +120,7 @@ export const updateUserProgress = async (userId, exerciseId, wordId, audioFile, 
         is_correct: isCorrect,
         attempts_number: 1,
       };
-      userAttempt.attempts.push(wordAttempt);
+      userAttempt.words_attempts.push(wordAttempt);
     } else {
       // Safe increment if found
       wordAttempt.attempts_number += 1;
