@@ -9,7 +9,7 @@ const ExerciseTimeSpentSchema = new mongoose.Schema({
 
 const IncorrectWordSchema = new mongoose.Schema({
   word_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Words', required: true },
-  correct_word:{ type: String, required: true },
+  correct_word:{ type: String, required: false },
   incorrect_word: { type: String, required: true },
   frequency: { type: Number, required: true },
 });
