@@ -4,21 +4,21 @@ import '../../generated/l10n.dart';
 
 class ProgressCard extends StatelessWidget {
   final String title;
-  final String author;
+  final String description;
   final int lessonCount;
   final double progressValue;
   final Color backgroundColor;
   final String imageUrl;
 
   const ProgressCard({
-    Key? key,
+    super.key,
     required this.title,
-    required this.author,
+    required this.description,
     required this.lessonCount,
     required this.backgroundColor,
     required this.imageUrl,
     required this.progressValue,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class ProgressCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.4),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -39,7 +39,7 @@ class ProgressCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Background pattern or decorative element
+          // Background image (optional decorative element)
           Positioned(
             bottom: 0,
             right: 0,
@@ -77,9 +77,9 @@ class ProgressCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
 
-                // Author
+                // Description
                 Text(
-                  author,
+                  description,
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.8),
                     fontSize: 12,
