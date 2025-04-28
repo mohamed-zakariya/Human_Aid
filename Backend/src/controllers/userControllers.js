@@ -279,7 +279,11 @@ export const forgotUserPassword = async (email) => {
           return {
             id: exercise._id,
             name: exercise.name,
+            arabic_name: exercise.arabic_name,
             type: exercise.exercise_type,
+            english_description:exercise.english_description,
+            arabic_description:exercise.arabic_description,
+
             progress: progress
               ? {
                   accuracyPercentage: progress.accuracy_percentage,

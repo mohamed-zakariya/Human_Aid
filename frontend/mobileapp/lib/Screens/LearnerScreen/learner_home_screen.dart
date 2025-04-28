@@ -23,22 +23,36 @@ class LearnerHomeScreen extends StatefulWidget {
 }
 
 class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
-  late Future<List<Map<String, dynamic>>> _exercisesFuture;
+  // We'll store the Future in a nullable variable
+  Future<List<Map<String, dynamic>>>? _exercisesFuture;
+
+  // To ensure we only load data once
+  bool _hasLoadedData = false;
+
   final Color _primaryColor = const Color(0xFF6C63FF); // Primary color
   final Color _secondaryColor = const Color(0xFFF8F9FA); // Light background color
 
+  /// Use didChangeDependencies to safely read locale.
   @override
-  void initState() {
-    super.initState();
-    if (widget.learner?.id != null && widget.learner!.id!.isNotEmpty) {
-      _exercisesFuture = LearnerHomeService.fetchLearnerHomeData(widget.learner!.id!);
-    } else {
-      _exercisesFuture = Future.value([]);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Only do this once (in case of multiple rebuilds)
+    if (!_hasLoadedData && widget.learner?.id != null && widget.learner!.id!.isNotEmpty) {
+      // Kick off the future (no locale passed; we fetch all fields)
+      _exercisesFuture = LearnerHomeService.fetchLearnerHomeData(
+        widget.learner!.id!,
+      );
+
+      _hasLoadedData = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Check if the UI language is Arabic
+    final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       drawer: NavBarLearner(
         learner: widget.learner,
@@ -80,7 +94,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            S.of(context).helloLabel, // Localized "Hello,"
+                            S.of(context).helloLabel, // e.g. "Hello,"
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 16,
@@ -97,12 +111,12 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                           ),
                         ],
                       ),
-                      CircleAvatar(
+                      const CircleAvatar(
                         radius: 24,
                         backgroundColor: Colors.white,
                         child: CircleAvatar(
                           radius: 22,
-                          backgroundImage: const NetworkImage(
+                          backgroundImage: NetworkImage(
                             'https://images.pexels.com/photos/5428148/pexels-photo-5428148.jpeg',
                           ),
                         ),
@@ -116,7 +130,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
-                      hintText: S.of(context).searchCoursesHint, // Localized "Search courses..."
+                      hintText: S.of(context).searchCoursesHint, // e.g. "Search courses..."
                       prefixIcon: const Icon(Icons.search, color: Colors.grey),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -128,7 +142,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                 ],
               ),
             ),
-            
+
             // Main Content
             Expanded(
               child: Container(
@@ -144,8 +158,9 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                       if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       }
-                      
+
                       final exercises = snapshot.data ?? [];
+                      // Filter out only those with progress for "In Progress" section
                       final inProgressExercises = exercises
                           .where((exercise) => exercise['progress'] != null)
                           .toList();
@@ -174,10 +189,22 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                                 itemCount: inProgressExercises.length,
                                 itemBuilder: (context, index) {
                                   final exercise = inProgressExercises[index];
-                                  final title = exercise['name'] ?? 'Unknown';
+
+                                  // Decide which name to show (arabic_name vs. name)
+                                  final title = isArabic
+                                      ? exercise['arabic_name']
+                                      : exercise['name'];
+
+                                  // Choose the correct description
+                                  final desc = isArabic
+                                      ? exercise['arabic_description']
+                                      : exercise['english_description'];
+
                                   final progress = exercise['progress'];
                                   final score = progress?['score'] ?? 0;
-                                  final accuracy = (progress?['accuracyPercentage'] ?? 0.0).toDouble();
+                                  final accuracy =
+                                      (progress?['accuracyPercentage'] ?? 0.0).toDouble();
+
                                   final colors = [
                                     const Color(0xFF6C63FF),
                                     const Color(0xFF4A80F0),
@@ -187,11 +214,12 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                                   return Padding(
                                     padding: const EdgeInsets.only(right: 16),
                                     child: ProgressCard(
-                                      title: title,
-                                      author: 'Exercise Description',
+                                      title: title ?? 'Unknown',
+                                      description: desc ?? 'No description',
                                       lessonCount: score,
                                       backgroundColor: colors[index % colors.length],
-                                      imageUrl: 'https://drive.google.com/uc?export=download&id=1xy93PTPBA7SShsbbxS56bBlEPuKav85p',
+                                      imageUrl:
+                                          'https://drive.google.com/uc?export=download&id=1xy93PTPBA7SShsbbxS56bBlEPuKav85p',
                                       progressValue: accuracy / 100,
                                     ),
                                   );
@@ -200,7 +228,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                             ),
                             const SizedBox(height: 24),
                           ],
-                          
+
                           // All Exercises Section
                           Padding(
                             padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
@@ -239,16 +267,31 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                               itemCount: exercises.length,
                               itemBuilder: (context, index) {
                                 final exercise = exercises[index];
-                                final title = exercise['name'] ?? 'Unknown';
+
+                                // Decide which name to show (arabic_name vs. name)
+                                final title = isArabic
+                                    ? exercise['arabic_name']
+                                    : exercise['name'];
+
+                                // If we want to display a description, pick Arabic vs English
+                                final desc = isArabic
+                                    ? exercise['arabic_description']
+                                    : exercise['english_description'];
+
                                 final progress = exercise['progress'];
-                                final accuracy = (progress?['accuracyPercentage'] ?? 0.0).toDouble();
+                                final accuracy =
+                                    (progress?['accuracyPercentage'] ?? 0.0).toDouble();
 
                                 return ExerciseCard(
-                                  imageUrl: 'https://drive.google.com/uc?export=view&id=1IS7-4KoNMd5WgBGHdOvyhs2XWb4VA4RC',
-                                  title: title,
+                                  imageUrl:
+                                      'https://drive.google.com/uc?export=view&id=1IS7-4KoNMd5WgBGHdOvyhs2XWb4VA4RC',
+                                  title: title ?? 'Unknown',
+                                  // We'll pass the accuracy as "lecturesCount" just as an example
                                   lecturesCount: accuracy.toInt(),
                                   learner: widget.learner!,
                                   color: _primaryColor,
+                                  // If your ExerciseCard needs a description, you can pass it here
+                                  // e.g. desc: desc
                                 );
                               },
                             ),
@@ -305,17 +348,17 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
             BottomNavigationBarItem(
               icon: const Icon(Icons.home_outlined),
               activeIcon: const Icon(Icons.home),
-              label: S.of(context).bottomNavHome,       // Localized "Home"
+              label: S.of(context).bottomNavHome, // "Home"
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.menu_book_outlined),
               activeIcon: const Icon(Icons.menu_book),
-              label: S.of(context).bottomNavCourses,    // Localized "Courses"
+              label: S.of(context).bottomNavCourses, // "Courses"
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.person_outline),
               activeIcon: const Icon(Icons.person),
-              label: S.of(context).bottomNavProfile,    // Localized "Profile"
+              label: S.of(context).bottomNavProfile, // "Profile"
             ),
           ],
         ),

@@ -9,10 +9,25 @@ const ExerciseTimeSpentSchema = new mongoose.Schema({
 
 const IncorrectWordSchema = new mongoose.Schema({
   word_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Words', required: true },
-  correct_word:{ type: String, required: true },
+  correct_word:{ type: String, required: false },
   incorrect_word: { type: String, required: true },
   frequency: { type: Number, required: true },
 });
+
+
+const SentenceAttemptSchema = new mongoose.Schema({
+  sentence_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Sentences', required: true },
+  sentence_text: { type: String, required: true },
+  spoken_sentence: { type: String, required: true },
+  is_correct: { type: Boolean, required: true },
+  incorrect_words: [{
+    incorrect_word: { type: String, required: true },
+    frequency: { type: Number, required: true },
+    sentence_context: { type: String },  // Optional: Sentence where the word appeared
+  }],
+  attempts_number: { type: Number, default: 1 },
+});
+
 
 const StoryQuestionSchema = new mongoose.Schema({
   question_id: { type: mongoose.Schema.Types.ObjectId},
@@ -32,6 +47,7 @@ const exerciseprogressSchema = new mongoose.Schema({
     start_time: { type: Date },  // Temporarily store when user starts 
     correct_words: [{ type: String }],
     incorrect_words: [IncorrectWordSchema],
+    sentence_attempts: [SentenceAttemptSchema],
     story: {
         story_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Stories' },
         story_questions: [StoryQuestionSchema],
