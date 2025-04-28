@@ -20,15 +20,40 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(count) => "${count} attempts left";
+
+  static String m1(name) => "${name} Dashboard";
+
+  static String m2(percent) => "${percent}%";
+
+  static String m3(name) => "Hello ${name}";
+
+  static String m4(percent) => "${percent}% completed";
+
+  static String m5(points) => "${points} pts";
+
+  static String m6(error) => "Error: ${error}";
+
+  static String m7(error) => "Error starting recording: ${error}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "ParentNavBarHome": MessageLookupByLibrary.simpleMessage("Home"),
         "ParentNavBarLogout": MessageLookupByLibrary.simpleMessage("Logout"),
         "ParentNavBarSettings":
             MessageLookupByLibrary.simpleMessage("Settings"),
+        "add": MessageLookupByLibrary.simpleMessage("Add"),
+        "addNewLearner":
+            MessageLookupByLibrary.simpleMessage("Add New Learner"),
         "add_word": MessageLookupByLibrary.simpleMessage("Add Word"),
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("Create Account"),
+        "attemptsLeft": m0,
+        "availableExercises":
+            MessageLookupByLibrary.simpleMessage("Available Exercises"),
+        "bottomNavCourses": MessageLookupByLibrary.simpleMessage("Courses"),
+        "bottomNavHome": MessageLookupByLibrary.simpleMessage("Home"),
+        "bottomNavProfile": MessageLookupByLibrary.simpleMessage("Profile"),
         "button1": MessageLookupByLibrary.simpleMessage("Start"),
         "button2": MessageLookupByLibrary.simpleMessage("Continue"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
@@ -36,11 +61,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "changePasswordTitle":
             MessageLookupByLibrary.simpleMessage("Change Password"),
         "changepasswordHint": MessageLookupByLibrary.simpleMessage("Password"),
+        "clickToAddLearners": MessageLookupByLibrary.simpleMessage(
+            "Click the + button to add learners."),
+        "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "confirmPasswordHint":
             MessageLookupByLibrary.simpleMessage("Confirm Password"),
         "confirmPasswordRequired": MessageLookupByLibrary.simpleMessage(
-            "Confirm password must be entered"),
+            "Confirm password is required"),
         "continueButton": MessageLookupByLibrary.simpleMessage("Continue"),
+        "continueLearning":
+            MessageLookupByLibrary.simpleMessage("Continue Learning"),
         "continuesignuptitle":
             MessageLookupByLibrary.simpleMessage("Child Registration"),
         "createAccountGaurdian":
@@ -49,6 +79,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Create a user account"),
         "createaccountbutton":
             MessageLookupByLibrary.simpleMessage("Create Account"),
+        "dashboardTitle": m1,
         "dashboard_title":
             MessageLookupByLibrary.simpleMessage("\'s Dashboard"),
         "desc1": MessageLookupByLibrary.simpleMessage(
@@ -56,6 +87,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "desc2": MessageLookupByLibrary.simpleMessage(
             "It will be a fun journey, step by step, until you become an expert."),
         "desc3": MessageLookupByLibrary.simpleMessage("Nothing can stop you."),
+        "dontWorry":
+            MessageLookupByLibrary.simpleMessage("Don’t worry, it’s okay"),
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "This email is already registered"),
         "emailHint": MessageLookupByLibrary.simpleMessage("humanid@gmail.com"),
@@ -69,8 +102,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Email cannot be empty"),
         "errorEmptyPassword":
             MessageLookupByLibrary.simpleMessage("Password cannot be empty"),
+        "exerciseProgressLabel":
+            MessageLookupByLibrary.simpleMessage("Progress"),
+        "exerciseProgressPercent": m2,
         "explore_message": MessageLookupByLibrary.simpleMessage(
             "Let\'s explore some insights today"),
+        "feedbackWidgetAnalyzing":
+            MessageLookupByLibrary.simpleMessage("Analyzing..."),
         "forgotPassword":
             MessageLookupByLibrary.simpleMessage("Forgot Password?"),
         "forgotPasswordHint": MessageLookupByLibrary.simpleMessage(
@@ -81,11 +119,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "genderMale": MessageLookupByLibrary.simpleMessage("Male"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("Select Gender"),
         "genderSelected": MessageLookupByLibrary.simpleMessage("Selected:"),
+        "greeting": m3,
         "guardianButton": MessageLookupByLibrary.simpleMessage("Guardian"),
         "guardianDescription": MessageLookupByLibrary.simpleMessage(
             "Registering as a guardian allows you to track and follow the progress of your loved ones, whether they are your children, students, or anyone under your responsibility."),
         "guardianTitle": MessageLookupByLibrary.simpleMessage(
             "Register for someone you care about"),
+        "helloLabel": MessageLookupByLibrary.simpleMessage("Hello,"),
+        "ignoredRecording":
+            MessageLookupByLibrary.simpleMessage("Recording ignored"),
         "introTitle": MessageLookupByLibrary.simpleMessage(
             "How would you like to register?"),
         "invalidCredentials": MessageLookupByLibrary.simpleMessage(
@@ -94,16 +136,24 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Learner Members"),
         "learner_progress":
             MessageLookupByLibrary.simpleMessage("Learners Progress"),
+        "levelLabel": MessageLookupByLibrary.simpleMessage("Stage 2 • Level 1"),
         "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("Login"),
+        "nextButton": MessageLookupByLibrary.simpleMessage("Next"),
         "noAccount":
             MessageLookupByLibrary.simpleMessage("Don’t have an account?"),
+        "noExercisesAvailable":
+            MessageLookupByLibrary.simpleMessage("No exercises available"),
+        "noWordsAvailable": MessageLookupByLibrary.simpleMessage(
+            "No words available at this level."),
         "no_progress_data":
             MessageLookupByLibrary.simpleMessage("No data available."),
         "orContinueWith":
             MessageLookupByLibrary.simpleMessage("or continue with"),
         "otpPrompt": MessageLookupByLibrary.simpleMessage(
             "Please enter the verification code"),
+        "outOfTries": MessageLookupByLibrary.simpleMessage(
+            "No attempts left! Moving to the next word..."),
         "passwordHint": MessageLookupByLibrary.simpleMessage("●●●●●●●"),
         "passwordMismatch":
             MessageLookupByLibrary.simpleMessage("Passwords do not match"),
@@ -113,6 +163,20 @@ class MessageLookup extends MessageLookupByLibrary {
             "Password must be at least 8 characters"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("search"),
+        "processingError": MessageLookupByLibrary.simpleMessage(
+            "An error occurred while processing"),
+        "processingRecording": MessageLookupByLibrary.simpleMessage(
+            "Processing your recording..."),
+        "progressCompleted": m4,
+        "progressPoints": m5,
+        "recordingError": m6,
+        "recordingStartError": m7,
+        "recordingTimeout": MessageLookupByLibrary.simpleMessage(
+            "Recording time limit reached!"),
+        "searchCoursesHint":
+            MessageLookupByLibrary.simpleMessage("Search courses..."),
+        "seeAll": MessageLookupByLibrary.simpleMessage("See All"),
+        "showMore": MessageLookupByLibrary.simpleMessage("Show more"),
         "signup_password_mismatch":
             MessageLookupByLibrary.simpleMessage("Don\'t Match"),
         "signupbutton": MessageLookupByLibrary.simpleMessage("Continue"),
@@ -151,6 +215,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Together, we will learn to read\nand write Arabic properly"),
         "title3": MessageLookupByLibrary.simpleMessage(
             "Don\'t fear trying,\nkeep going until you break the fear barrier"),
+        "transcriptLabel": MessageLookupByLibrary.simpleMessage("Transcript"),
         "userButton": MessageLookupByLibrary.simpleMessage("User"),
         "userDescription": MessageLookupByLibrary.simpleMessage(
             "If you are older than 12, you can now easily register for yourself by clicking the user start button."),
