@@ -4,6 +4,7 @@ import 'package:mobileapp/Screens/IntroductoryScreen/intro_screen.dart';
 import 'package:mobileapp/Screens/IntroductoryScreen/onboarding_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/LearnerMain.dart';
 import 'package:mobileapp/Screens/LearnerScreen/learner_home_screen.dart';
+import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
 import 'package:mobileapp/Screens/SignUp/signupadult.dart';
@@ -14,6 +15,7 @@ import 'package:mobileapp/Services/learner_home_service.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/parent.dart';
+import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/quizapp.dart';
 
 import 'Screens/Login/change_password_screen.dart';
 import 'Screens/Login/forgot_password_screen.dart';
@@ -59,9 +61,10 @@ class _MyAppState extends State<MyApp> {
                 GlobalCupertinoLocalizations.delegate,
             ],
         supportedLocales: S.delegate.supportedLocales,
-        initialRoute: '/intro',
+        initialRoute: '/quiz',
         routes: {
           '/intro': (context) => IntroScreen(onLocaleChange: _setLocale),
+          '/quiz': (context) => TestSelectorWidget(userProgress: 0.3),
           '/login_user': (context) => LoginScreenUser(onLocaleChange: _setLocale),
           '/login_gaurdian': (context) => LoginScreenGaurdian(onLocaleChange: _setLocale),
           '/forgot-password': (context) => ForgotPasswordPage(onLocaleChange: _setLocale),
