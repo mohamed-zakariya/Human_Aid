@@ -8,6 +8,7 @@ import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
 import 'package:mobileapp/Screens/SignUp/signupadult.dart';
 import 'package:mobileapp/Screens/SignUp/signupmain.dart';
+import 'package:mobileapp/Screens/scentence_pronunciation_screen.dart';
 import 'package:mobileapp/Screens/word_pronunciation_screen.dart';
 import 'package:mobileapp/Services/learner_home_service.dart';
 import 'package:mobileapp/generated/l10n.dart';
@@ -67,6 +68,7 @@ class _MyAppState extends State<MyApp> {
           '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
           '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
           '/wordPronunciation': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
+          '/ScentencePronunciationScreen': (context) => SentencePronunciationScreen(onLocaleChange: _setLocale),
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
           '/signup2': (context) {

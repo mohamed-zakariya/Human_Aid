@@ -1259,6 +1259,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Menu`
+  String get bottomNavMenu {
+    return Intl.message(
+      'Menu',
+      name: 'bottomNavMenu',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

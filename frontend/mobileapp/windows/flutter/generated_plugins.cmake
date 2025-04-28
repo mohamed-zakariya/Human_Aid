@@ -5,7 +5,9 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
   connectivity_plus
+  flutter_tts
   permission_handler_windows
+  record_windows
   smart_auth
 )
 

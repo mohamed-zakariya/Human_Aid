@@ -54,6 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("التمارين المتاحة"),
         "bottomNavCourses": MessageLookupByLibrary.simpleMessage("الدورات"),
         "bottomNavHome": MessageLookupByLibrary.simpleMessage("الرئيسية"),
+        "bottomNavMenu": MessageLookupByLibrary.simpleMessage("القائمة"),
         "bottomNavProfile":
             MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
         "button1": MessageLookupByLibrary.simpleMessage("ابدأ"),

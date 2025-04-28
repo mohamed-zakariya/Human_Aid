@@ -1,3 +1,4 @@
+// src/resolvers/sentencesExerciseResolver.js
 import {startExercise , endExercise,updateSentenceProgress } from "../controllers/sentencesExerciseController.js";
 import Sentences from "../models/Sentences.js"
 export const sentencesExerciseResolver = {

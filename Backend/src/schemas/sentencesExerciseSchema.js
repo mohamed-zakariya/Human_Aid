@@ -1,3 +1,4 @@
+//src/schemas/sentencesExerciseSchema.js
 export const sentencesExerciseTypeDefs = `#graphql
 scalar Upload
 
