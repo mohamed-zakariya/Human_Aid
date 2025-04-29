@@ -1,11 +1,12 @@
-// queries/learner_home_query.dart
-
 const String getLearnerHomePageQuery = r'''
   query GetLearnerHomePage($userId: ID!) {
     learnerHomePage(userId: $userId) {
       id
       name
+      arabic_name
       type
+      english_description
+      arabic_description
       progress {
         accuracyPercentage
         score

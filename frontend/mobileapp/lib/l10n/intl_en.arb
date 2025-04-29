@@ -173,7 +173,8 @@
     "noExercisesAvailable": "No exercises available",
     "bottomNavHome": "Home",
     "bottomNavCourses": "Courses",
-    "bottomNavProfile": "Profile"
+    "bottomNavProfile": "Profile",
+    "bottomNavMenu": "Menu"
 
 
 }

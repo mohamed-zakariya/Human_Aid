@@ -384,7 +384,7 @@ class _ExercisestructureState extends State<Exercisestructure> {
                   setState(() {
                           Navigator.pushReplacementNamed(
                             context,
-                            '/wordPronunciation',
+                            '/ScentencePronunciationScreen',
                             arguments: widget.learner);
                   });
                 },
