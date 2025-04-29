@@ -101,12 +101,6 @@ class _MyAppState extends State<MyApp> {
               learner: learner,
             );
           },
-          '/letter_level1': (context) => const LetterLevel1(),
-          '/letter_level2': (context) => const LetterLevel2(),
-          '/letter_level3': (context) => const LetterLevel3(),
-          '/letter_level3_Game': (context) => const LetterLevel3Game()
-
-
           '/exercise-levels': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
           return ExerciseLevelsScreen(
@@ -124,6 +118,12 @@ class _MyAppState extends State<MyApp> {
           );
         },
       
+          '/letter_level1': (context) => const LetterLevel1(),
+          '/letter_level2': (context) => const LetterLevel2(),
+          '/letter_level3': (context) => const LetterLevel3(),
+          '/letter_level3_Game': (context) => const LetterLevel3Game()
+
+
 
         },
       onUnknownRoute: (settings) => MaterialPageRoute(
