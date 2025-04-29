@@ -1269,6 +1269,106 @@ class S {
       args: [],
     );
   }
+
+  /// `Levels`
+  String get levels {
+    return Intl.message(
+      'Levels',
+      name: 'levels',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Level`
+  String get level {
+    return Intl.message(
+      'Level',
+      name: 'level',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a level to start playing`
+  String get selectLevelToStart {
+    return Intl.message(
+      'Select a level to start playing',
+      name: 'selectLevelToStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Games`
+  String get games {
+    return Intl.message(
+      'Games',
+      name: 'games',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error loading levels`
+  String get errorLoadingLevels {
+    return Intl.message(
+      'Error loading levels',
+      name: 'errorLoadingLevels',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try Again`
+  String get tryAgain {
+    return Intl.message(
+      'Try Again',
+      name: 'tryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No levels available for this exercise`
+  String get noLevelsAvailable {
+    return Intl.message(
+      'No levels available for this exercise',
+      name: 'noLevelsAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a game to start playing`
+  String get selectGameToPlay {
+    return Intl.message(
+      'Select a game to start playing',
+      name: 'selectGameToPlay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No games available for this level`
+  String get noGamesAvailable {
+    return Intl.message(
+      'No games available for this level',
+      name: 'noGamesAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play Now`
+  String get playGame {
+    return Intl.message(
+      'Play Now',
+      name: 'playGame',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

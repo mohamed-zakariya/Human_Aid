@@ -1,3 +1,4 @@
+// lib/Screens/LearnerScreen/learner_dashboard_page.dart
 import 'package:flutter/material.dart';
 import 'package:mobileapp/Services/learner_home_service.dart';
 import 'package:mobileapp/models/learner.dart';
@@ -8,7 +9,6 @@ import '../../generated/l10n.dart';
 class LearnerDashboardPage extends StatefulWidget {
   final Learner? learner;
   final Function(Locale) onLocaleChange;
-  // Callback: Let the parent switch pages
   final void Function(int) onSelectPage;
 
   const LearnerDashboardPage({
@@ -48,7 +48,7 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
     return SafeArea(
       child: Column(
         children: [
-          // Blue container (header) with curved corners at bottom, containing the search bar only
+          /* ------------- header with search ----------------- */
           Container(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
             decoration: BoxDecoration(
@@ -65,28 +65,22 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                 ),
               ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Search bar
-                TextField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: S.of(context).searchCoursesHint,
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                  ),
+            child: TextField(
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: S.of(context).searchCoursesHint,
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
                 ),
-              ],
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+              ),
             ),
           ),
 
-          // The rest of the content
+          /* ------------- body ----------------- */
           Expanded(
             child: Container(
               color: _secondaryColor,
@@ -110,7 +104,7 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Continue Learning
+                        /* ----- continue learning carousel ----- */
                         if (inProgressExercises.isNotEmpty) ...[
                           Padding(
                             padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
@@ -136,10 +130,11 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                                 final desc = isArabic
                                     ? exercise['arabic_description']
                                     : exercise['english_description'];
-
                                 final progress = exercise['progress'];
                                 final score = progress?['score'] ?? 0;
-                                final accuracy = (progress?['accuracyPercentage'] ?? 0.0).toDouble();
+                                final accuracy =
+                                    (progress?['accuracyPercentage'] ?? 0.0)
+                                        .toDouble();
 
                                 final colors = [
                                   const Color(0xFF6C63FF),
@@ -153,7 +148,8 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                                     title: title ?? 'Unknown',
                                     description: desc ?? 'No description',
                                     lessonCount: score,
-                                    backgroundColor: colors[index % colors.length],
+                                    backgroundColor:
+                                        colors[index % colors.length],
                                     imageUrl:
                                         'https://drive.google.com/uc?export=download&id=13ApwO6STUQtZKqC5cPD5U83QXEOMoBCc',
                                     progressValue: accuracy / 100,
@@ -165,7 +161,7 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                           const SizedBox(height: 24),
                         ],
 
-                        // Available Exercises
+                        /* ----- available exercises ----- */
                         Padding(
                           padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
                           child: Row(
@@ -179,10 +175,7 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                                 ),
                               ),
                               TextButton(
-                                onPressed: () {
-                                  // Go to "Courses" page
-                                  widget.onSelectPage(1);
-                                },
+                                onPressed: () => widget.onSelectPage(1),
                                 child: Text(
                                   S.of(context).seeAll,
                                   style: TextStyle(color: _primaryColor),
@@ -206,19 +199,27 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                             itemCount: exercises.length,
                             itemBuilder: (context, index) {
                               final exercise = exercises[index];
+
                               final title = isArabic
                                   ? exercise['arabic_name']
                                   : exercise['name'];
-                              final desc = isArabic
-                                  ? exercise['arabic_description']
-                                  : exercise['english_description'];
+                              final arabicTitle =
+                                  exercise['arabic_name'] ?? '';
+
+                              /* ---------- FIX #1: use 'id' from GraphQL ---------- */
+                              final exerciseId = exercise['id'] ?? '';
+
                               final progress = exercise['progress'];
-                              final accuracy = (progress?['accuracyPercentage'] ?? 0.0).toDouble();
+                              final accuracy =
+                                  (progress?['accuracyPercentage'] ?? 0.0)
+                                      .toDouble();
 
                               return ExerciseCard(
+                                exerciseId: exerciseId,       // FIX #2
                                 imageUrl:
                                     'https://drive.google.com/uc?export=view&id=1IS7-4KoNMd5WgBGHdOvyhs2XWb4VA4RC',
                                 title: title ?? 'Unknown',
+                                arabicTitle: arabicTitle,
                                 lecturesCount: accuracy.toInt(),
                                 learner: widget.learner!,
                                 color: _primaryColor,

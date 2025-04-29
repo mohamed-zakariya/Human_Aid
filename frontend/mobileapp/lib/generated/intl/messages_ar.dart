@@ -106,6 +106,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "لا يمكن ترك البريد الإلكتروني فارغًا"),
         "errorEmptyPassword": MessageLookupByLibrary.simpleMessage(
             "لا يمكن ترك كلمة المرور فارغة"),
+        "errorLoadingLevels":
+            MessageLookupByLibrary.simpleMessage("خطأ في تحميل المستويات"),
         "exerciseProgressLabel": MessageLookupByLibrary.simpleMessage("التقدم"),
         "exerciseProgressPercent": m2,
         "explore_message":
@@ -118,6 +120,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "أدخل رقم الهاتف أو البريد الإلكتروني المسجل"),
         "forgotPasswordTitle":
             MessageLookupByLibrary.simpleMessage("نَسِيتَ كَلِمَةَ المَرُورِ؟"),
+        "games": MessageLookupByLibrary.simpleMessage("ألعاب"),
         "genderFemale": MessageLookupByLibrary.simpleMessage("انثي"),
         "genderMale": MessageLookupByLibrary.simpleMessage("ذكر"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("اختار النوع"),
@@ -138,14 +141,20 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("أعضاء المتعلمين"),
         "learner_progress":
             MessageLookupByLibrary.simpleMessage("تقدّم المتعلّمين"),
+        "level": MessageLookupByLibrary.simpleMessage("المستوى"),
         "levelLabel": MessageLookupByLibrary.simpleMessage(
             "المرحلة الثانية • المستوى الأول"),
+        "levels": MessageLookupByLibrary.simpleMessage("المستويات"),
         "loginButton": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("تسجيل الدُّخول"),
         "nextButton": MessageLookupByLibrary.simpleMessage("التالي"),
         "noAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
         "noExercisesAvailable":
             MessageLookupByLibrary.simpleMessage("لا توجد تمارين متاحة"),
+        "noGamesAvailable": MessageLookupByLibrary.simpleMessage(
+            "لا توجد ألعاب متاحة لهذا المستوى"),
+        "noLevelsAvailable": MessageLookupByLibrary.simpleMessage(
+            "لا توجد مستويات متاحة لهذا التمرين"),
         "noWordsAvailable": MessageLookupByLibrary.simpleMessage(
             "لا توجد كلمات في هذا المستوى."),
         "no_progress_data":
@@ -165,6 +174,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("ابحث"),
+        "playGame": MessageLookupByLibrary.simpleMessage("العب الآن"),
         "processingError": MessageLookupByLibrary.simpleMessage(
             "حدث خطأ أثناء معالجة التسجيل"),
         "processingRecording":
@@ -178,6 +188,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "searchCoursesHint":
             MessageLookupByLibrary.simpleMessage("ابحث عن الدورات..."),
         "seeAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
+        "selectGameToPlay":
+            MessageLookupByLibrary.simpleMessage("اختر لعبة للبدء"),
+        "selectLevelToStart":
+            MessageLookupByLibrary.simpleMessage("اختر مستوى للبدء باللعب"),
         "showMore": MessageLookupByLibrary.simpleMessage("عرض المزيد"),
         "signup_password_mismatch":
             MessageLookupByLibrary.simpleMessage("ليس  متماشث"),
@@ -221,6 +235,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "title3": MessageLookupByLibrary.simpleMessage(
             "لا تخف من التجربة،\nحاول بلا توقف حتى تكسر حاجز الخوف"),
         "transcriptLabel": MessageLookupByLibrary.simpleMessage("النص المدخل"),
+        "tryAgain": MessageLookupByLibrary.simpleMessage("حاول مرة أخرى"),
         "userButton": MessageLookupByLibrary.simpleMessage("مستخدم"),
         "userDescription": MessageLookupByLibrary.simpleMessage(
             "إذا كان عمرك يزيد عن 12 سنة. يمكنك الآن التسجيل بنفسك بسهولة فقط اضغط على زر مستخدم البدء."),

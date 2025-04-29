@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:mobileapp/models/learner.dart';
-import '../LearnerScreen/exercise_structure.dart';
+import '../exercises_levels_screen.dart';
 
 // Import the generated localization class
 import '../../generated/l10n.dart';
 
 class ExerciseCard extends StatelessWidget {
+  final String exerciseId;
   final String imageUrl;
   final String title;
+  final String arabicTitle;
   final int lecturesCount;
   final Learner learner;
   final Color color;
 
   const ExerciseCard({
     Key? key,
+    required this.exerciseId,
     required this.imageUrl,
     required this.title,
+    this.arabicTitle = '',  // Default empty string for backward compatibility
     required this.lecturesCount,
     required this.learner,
     required this.color,
@@ -25,6 +29,7 @@ class ExerciseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Convert `lecturesCount` to string to pass into placeholder
     final String progressString = lecturesCount.toString();
+    final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return InkWell(
       borderRadius: BorderRadius.circular(12),
@@ -32,7 +37,12 @@ class ExerciseCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Exercisestructure(learner: learner),
+            builder: (context) => ExerciseLevelsScreen(
+              exerciseId: exerciseId,
+              exerciseName: title,
+              exerciseArabicName: arabicTitle.isNotEmpty ? arabicTitle : title,
+              learner: learner,
+            ),
           ),
         );
       },
@@ -63,6 +73,18 @@ class ExerciseCard extends StatelessWidget {
                     height: 100,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 100,
+                        width: double.infinity,
+                        color: color.withOpacity(0.2),
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          color: color,
+                          size: 40,
+                        ),
+                      );
+                    },
                   ),
                   if (lecturesCount > 0)
                     Positioned(
