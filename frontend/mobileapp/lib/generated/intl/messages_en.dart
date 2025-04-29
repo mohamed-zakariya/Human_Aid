@@ -103,6 +103,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Email cannot be empty"),
         "errorEmptyPassword":
             MessageLookupByLibrary.simpleMessage("Password cannot be empty"),
+        "errorLoadingLevels":
+            MessageLookupByLibrary.simpleMessage("Error loading levels"),
         "exerciseProgressLabel":
             MessageLookupByLibrary.simpleMessage("Progress"),
         "exerciseProgressPercent": m2,
@@ -116,6 +118,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Enter your registered phone or email"),
         "forgotPasswordTitle":
             MessageLookupByLibrary.simpleMessage("Forgot Password?"),
+        "games": MessageLookupByLibrary.simpleMessage("Games"),
         "genderFemale": MessageLookupByLibrary.simpleMessage("Female"),
         "genderMale": MessageLookupByLibrary.simpleMessage("Male"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("Select Gender"),
@@ -137,7 +140,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Learner Members"),
         "learner_progress":
             MessageLookupByLibrary.simpleMessage("Learners Progress"),
+        "level": MessageLookupByLibrary.simpleMessage("Level"),
         "levelLabel": MessageLookupByLibrary.simpleMessage("Stage 2 • Level 1"),
+        "levels": MessageLookupByLibrary.simpleMessage("Levels"),
         "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("Login"),
         "nextButton": MessageLookupByLibrary.simpleMessage("Next"),
@@ -145,6 +150,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Don’t have an account?"),
         "noExercisesAvailable":
             MessageLookupByLibrary.simpleMessage("No exercises available"),
+        "noGamesAvailable": MessageLookupByLibrary.simpleMessage(
+            "No games available for this level"),
+        "noLevelsAvailable": MessageLookupByLibrary.simpleMessage(
+            "No levels available for this exercise"),
         "noWordsAvailable": MessageLookupByLibrary.simpleMessage(
             "No words available at this level."),
         "no_progress_data":
@@ -164,6 +173,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Password must be at least 8 characters"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("search"),
+        "playGame": MessageLookupByLibrary.simpleMessage("Play Now"),
         "processingError": MessageLookupByLibrary.simpleMessage(
             "An error occurred while processing"),
         "processingRecording": MessageLookupByLibrary.simpleMessage(
@@ -177,6 +187,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "searchCoursesHint":
             MessageLookupByLibrary.simpleMessage("Search courses..."),
         "seeAll": MessageLookupByLibrary.simpleMessage("See All"),
+        "selectGameToPlay": MessageLookupByLibrary.simpleMessage(
+            "Select a game to start playing"),
+        "selectLevelToStart": MessageLookupByLibrary.simpleMessage(
+            "Select a level to start playing"),
         "showMore": MessageLookupByLibrary.simpleMessage("Show more"),
         "signup_password_mismatch":
             MessageLookupByLibrary.simpleMessage("Don\'t Match"),
@@ -217,6 +231,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "title3": MessageLookupByLibrary.simpleMessage(
             "Don\'t fear trying,\nkeep going until you break the fear barrier"),
         "transcriptLabel": MessageLookupByLibrary.simpleMessage("Transcript"),
+        "tryAgain": MessageLookupByLibrary.simpleMessage("Try Again"),
         "userButton": MessageLookupByLibrary.simpleMessage("User"),
         "userDescription": MessageLookupByLibrary.simpleMessage(
             "If you are older than 12, you can now easily register for yourself by clicking the user start button."),
