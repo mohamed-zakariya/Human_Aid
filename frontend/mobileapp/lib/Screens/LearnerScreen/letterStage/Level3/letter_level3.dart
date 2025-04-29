@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'letter_forms.dart';
+import '../../../../Services/tts_service.dart';
 
 class LetterLevel3 extends StatefulWidget {
   const LetterLevel3({super.key});
@@ -9,36 +12,6 @@ class LetterLevel3 extends StatefulWidget {
 }
 
 class _LetterLevel3State extends State<LetterLevel3> {
-  final Map<String, List<String>> letterForms = {
-    'ا': ['ا', 'ا', 'ـا', 'ـا'],
-    'ب': ['ب', 'بـ', 'ـبـ', 'ـب'],
-    'ت': ['ت', 'تـ', 'ـتـ', 'ـت'],
-    'ث': ['ث', 'ثـ', 'ـثـ', 'ـث'],
-    'ج': ['ج', 'جـ', 'ـجـ', 'ـج'],
-    'ح': ['ح', 'حـ', 'ـحـ', 'ـح'],
-    'خ': ['خ', 'خـ', 'ـخـ', 'ـخ'],
-    'د': ['د', 'د', 'ـد', 'ـد'],
-    'ذ': ['ذ', 'ذ', 'ـذ', 'ـذ'],
-    'ر': ['ر', 'ر', 'ـر', 'ـر'],
-    'ز': ['ز', 'ز', 'ـز', 'ـز'],
-    'س': ['س', 'سـ', 'ـسـ', 'ـس'],
-    'ش': ['ش', 'شـ', 'ـشـ', 'ـش'],
-    'ص': ['ص', 'صـ', 'ـصـ', 'ـص'],
-    'ض': ['ض', 'ضـ', 'ـضـ', 'ـض'],
-    'ط': ['ط', 'طـ', 'ـطـ', 'ـط'],
-    'ظ': ['ظ', 'ظـ', 'ـظـ', 'ـظ'],
-    'ع': ['ع', 'عـ', 'ـعـ', 'ـع'],
-    'غ': ['غ', 'غـ', 'ـغـ', 'ـغ'],
-    'ف': ['ف', 'فـ', 'ـفـ', 'ـف'],
-    'ق': ['ق', 'قـ', 'ـقـ', 'ـق'],
-    'ك': ['ك', 'كـ', 'ـكـ', 'ـك'],
-    'ل': ['ل', 'لـ', 'ـلـ', 'ـل'],
-    'م': ['م', 'مـ', 'ـمـ', 'ـم'],
-    'ن': ['ن', 'نـ', 'ـنـ', 'ـن'],
-    'ه': ['ه', 'هـ', 'ـهـ', 'ـه'],
-    'و': ['و', 'و', 'ـو', 'ـو'],
-    'ي': ['ي', 'يـ', 'ـيـ', 'ـي'],
-  };
 
   final List<String> arabicLetters = [
     'ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د',
@@ -47,171 +20,199 @@ class _LetterLevel3State extends State<LetterLevel3> {
     'ن', 'ه', 'و', 'ي'
   ];
 
-  late String currentLetter;
-  late List<String> draggableForms;
-  Map<String, String?> droppedForms = {
-    'منفصل': null,
-    'متصل': null,
-    'نهائي': null,
-  };
 
-  @override
-  void initState() {
-    super.initState();
-    _loadNewLetter();
-  }
 
-  void _loadNewLetter() {
-    final random = Random();
-    final selected = arabicLetters[random.nextInt(arabicLetters.length)];
-    final forms = letterForms[selected]!;
 
-    setState(() {
-      currentLetter = selected;
-      draggableForms = [forms[0], forms[2], forms[3]]; // منفصل, متصل, نهائي
-      draggableForms.shuffle(); // Randomize the draggable items
-      droppedForms = {
-        'منفصل': null,
-        'متصل': null,
-        'نهائي': null,
-      };
-    });
-  }
 
-  void _checkResult() {
-    final forms = letterForms[currentLetter]!;
+  final List<Color> colors = [
+    Colors.red, Colors.blue, Colors.green, Colors.orange,
+    Colors.purple, Colors.teal, Colors.brown, Colors.pink,
+    Colors.indigo, Colors.amber, Colors.deepOrange, Colors.cyan,
+    Colors.deepPurple, Colors.lime, Colors.lightBlue, Colors.lightGreen,
+    Colors.yellow, Colors.blueGrey, Colors.redAccent, Colors.greenAccent,
+    Colors.orangeAccent, Colors.purpleAccent, Colors.tealAccent, Colors.brown,
+    Colors.pinkAccent, Colors.indigoAccent, Colors.amberAccent, Colors.cyanAccent,
+  ];
 
-    if (droppedForms['منفصل'] == forms[0] &&
-        droppedForms['متصل'] == forms[2] &&
-        droppedForms['نهائي'] == forms[3]) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('أحسنت! 🎉', style: TextStyle(fontSize: 24)),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
+  final CarouselSliderController _controller = CarouselSliderController();
+  int _current = 0;
+
+
+
+  Widget buildLetterCard({
+    required String letter,
+    required Color color,
+    required int index,
+  }) {
+
+
+    return Card(
+      elevation: 16,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [color.withOpacity(0.6), color],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildFormRow('منفصل', letterForms[letter]?['منفصل'] ?? []),
+                      const SizedBox(height: 5),
+                      buildFormRow('متصل', letterForms[letter]?['متصل'] ?? []),
+                      const SizedBox(height: 5),
+                      buildFormRow('نهائي', letterForms[letter]?['نهائي'] ?? [])
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      );
-      Future.delayed(const Duration(seconds: 2), _loadNewLetter);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('حاول مرة أخرى ❌', style: TextStyle(fontSize: 20)),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
+      ),
+    );
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('المستوى الثالث', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF6C63FF),
+        foregroundColor: Colors.white,
+        title: const Text("المستوي التالت"),
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            // Big Letter
-            Text(
-              currentLetter,
-              style: const TextStyle(fontSize: 90, fontWeight: FontWeight.bold, color: Color(0xFF6C63FF)),
+      body: Column(
+        children: [
+          const SizedBox(height: 15),
+          CarouselSlider.builder(
+            carouselController: _controller,
+            itemCount: arabicLetters.length,
+            itemBuilder: (context, index, realIndex) {
+              return buildLetterCard(
+                letter: arabicLetters[index],
+                color: colors[index % colors.length],
+                index: index,
+              );
+            },
+            options: CarouselOptions(
+              height: MediaQuery.of(context).orientation == Orientation.portrait
+                  ? MediaQuery.of(context).size.height * 0.7
+                  : MediaQuery.of(context).size.height * 0.85,
+              enlargeCenterPage: true,
+              enableInfiniteScroll: true,
+              autoPlay: false,
+              viewportFraction: 0.8,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _current = index;
+                });
+              },
             ),
-            const SizedBox(height: 30),
-            // Draggables
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: draggableForms.map((form) => buildDraggable(form)).toList(),
-            ),
-            const SizedBox(height: 40),
-            // Drop Targets
-            Expanded(
-              child: Column(
-                children: [
-                  buildDropTarget('منفصل'),
-                  const SizedBox(height: 20),
-                  buildDropTarget('متصل'),
-                  const SizedBox(height: 20),
-                  buildDropTarget('نهائي'),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: _checkResult,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6C63FF),
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-              ),
-              child: const Text('تحقق', style: TextStyle(fontSize: 24, color: Colors.white)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildDraggable(String form) {
-    return Draggable<String>(
-      data: form,
-      feedback: Material(
-        color: Colors.transparent,
-        child: Text(
-          form,
-          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: Colors.blueAccent),
-        ),
-      ),
-      childWhenDragging: Container(
-        width: 60,
-        height: 60,
-        alignment: Alignment.center,
-        child: const Text(''),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.blueAccent.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          form,
-          style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
-  Widget buildDropTarget(String label) {
-    return DragTarget<String>(
-      onAccept: (data) {
-        setState(() {
-          droppedForms[label] = data;
-        });
-      },
-      builder: (context, candidateData, rejectedData) {
-        return Container(
-          height: 80,
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            border: Border.all(
-              color: candidateData.isNotEmpty ? Colors.blue : Colors.grey,
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(12),
           ),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            '${label}: ${droppedForms[label] ?? ''}',
-            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          // const SizedBox(height: 20),
+          // Arrows
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: () {
+                  _controller.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                icon: const Icon(Icons.arrow_back_ios),
+              ),
+              // const SizedBox(width: 32),
+              IconButton(
+                onPressed: () {
+                  _controller.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                icon: const Icon(Icons.arrow_forward_ios),
+              ),
+            ],
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
+
+
+Widget buildFormRow(String formName, List<Map<String, String>> forms) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double fontSizeLarge = screenWidth * 0.1; // approx 10% of width
+      double fontSizeExample = screenWidth * 0.05;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            formName,
+            style: TextStyle(
+              fontSize: fontSizeExample,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          ...forms.map((formMap) {
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(width: 10),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        formMap['form'] ?? '',
+                        style: TextStyle(
+                          fontSize: fontSizeLarge,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+                Center(
+                  child: Text(
+                    'مثال: ${formMap['example'] ?? ''}',
+                    style: TextStyle(
+                      fontSize: fontSizeExample,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        ],
+      );
+    },
+  );
+}
+
