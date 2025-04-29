@@ -1,5 +1,6 @@
 import { login, signUpAdult, signUpChild, refreshTokenUser, logout,forgotUserPassword,verifyUserOTP,resetUserPassword, deleteChild ,learnerHomePage} from "../controllers/userControllers.js"
 import Exercisesprogress from "../models/Exercisesprogress.js";
+import Exercises from "../models/Exercises.js";
 import Users from "../models/Users.js";
 export const userResolvers = {
   Query: {
@@ -17,13 +18,22 @@ export const userResolvers = {
       const user = await Users.findOne({ email });
       return { emailExists: !!user };
     },
+      getLevelsForExercises: async () => {
+        try {
+          console.log("Fetching exercises with levels");
+          const exercises = await Exercises.find().populate('levels.games'); // Populate the nested games inside levels
+          return exercises;
+        } catch (error) {
+          console.error("Error fetching exercises with levels:", error);
+          throw new Error("Could not fetch exercises and their levels");
+        }
+      },
     getLearntWordsbyId: async (_, { userId }) => {
       const learnerProgress = await Exercisesprogress.findOne({ user_id: userId });
     
       if (!learnerProgress) {
           throw new Error(`No progress found for user with ID: ${userId}`);
       }
-  
       return learnerProgress;
   },  
   },

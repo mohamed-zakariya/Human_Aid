@@ -2,29 +2,39 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const RewardSchema = new mongoose.Schema({
-    reward_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rewards', required: true },
-    date_earned: { type: Date, required: true },
+  reward_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rewards', required: true },
+  date_earned: { type: Date, required: true },
 });
 
 const overallprogressSchema = new mongoose.Schema({
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
-    progress_id: { type: mongoose.Schema.Types.ObjectId, ref: 'ExerciseProgress', required: true },
-    completed_exercises: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'Exercises' }
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
+  progress_id: { type: mongoose.Schema.Types.ObjectId, ref: 'ExerciseProgress', required: true },
+  completed_exercises: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Exercises' }
   ],
-  
-    total_time_spent: { type: Number, required: true }, 
-    average_accuracy: { type: Number, required: true },
-    total_correct_words: { 
-        count: { type: Number, required: true },
-        words: [{ type: String }]
-    },
-    total_incorrect_words: {
-        count: { type: Number, required: true },
-        words: [{ type: String }]
-    },
-    last_updated: { type: Date, default: Date.now },
-    rewards: [RewardSchema],
+  total_time_spent: { type: Number, required: true },
+  average_accuracy: { type: Number, required: true },
+
+  total_correct_words: { 
+    count: { type: Number, required: true },
+    words: [{ type: String }]
+  },
+  total_incorrect_words: {
+    count: { type: Number, required: true },
+    words: [{ type: String }]
+  },
+
+  total_correct_letters: {
+    count: { type: Number, required: true },
+    letters: [{ type: String }]
+  },
+  total_incorrect_letters: {
+    count: { type: Number, required: true },
+    letters: [{ type: String }]
+  },
+
+  last_updated: { type: Date, default: Date.now },
+  rewards: [RewardSchema],
 });
 
 const OverallProgress = mongoose.model('OverallProgress', overallprogressSchema);

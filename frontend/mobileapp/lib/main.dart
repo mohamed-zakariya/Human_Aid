@@ -66,6 +66,7 @@ class _MyAppState extends State<MyApp> {
             ],
         supportedLocales: S.delegate.supportedLocales,
         initialRoute: '/letter_level3_Game',
+
         routes: {
           '/intro': (context) => IntroScreen(onLocaleChange: _setLocale),
           '/quiz': (context) => TestSelectorWidget(userProgress: 0.3),

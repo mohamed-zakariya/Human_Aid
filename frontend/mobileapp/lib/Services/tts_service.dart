@@ -10,7 +10,7 @@ class TTSService {
   bool _isInitialized = false;
 
   /// Initialize the TTS engine with default settings
-  Future<void> initialize({String language = 'ar-SA'}) async {
+  Future<void> initialize({String language = 'ar-EG'}) async {
     if (!_isInitialized) {
       await _tts.setLanguage(language);
       await _tts.setSpeechRate(0.5); // Slightly slower for language learning
