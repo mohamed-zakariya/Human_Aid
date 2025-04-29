@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
                 GlobalCupertinoLocalizations.delegate,
             ],
         supportedLocales: S.delegate.supportedLocales,
-        initialRoute: '/quiz',
+        initialRoute: '/intro',
         routes: {
           '/intro': (context) => IntroScreen(onLocaleChange: _setLocale),
           '/quiz': (context) => TestSelectorWidget(userProgress: 0.3),
