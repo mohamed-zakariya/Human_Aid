@@ -174,7 +174,17 @@
     "bottomNavHome": "Home",
     "bottomNavCourses": "Courses",
     "bottomNavProfile": "Profile",
-    "bottomNavMenu": "Menu"
+    "bottomNavMenu": "Menu",
+    "levels": "Levels",
+    "level": "Level",
+    "selectLevelToStart": "Select a level to start playing",
+    "games": "Games",
+    "errorLoadingLevels": "Error loading levels",
+    "tryAgain": "Try Again",
+    "noLevelsAvailable": "No levels available for this exercise",
+    "selectGameToPlay": "Select a game to start playing",
+    "noGamesAvailable": "No games available for this level",
+    "playGame": "Play Now"
 
 
 }

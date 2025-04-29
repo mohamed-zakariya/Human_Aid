@@ -174,7 +174,18 @@
     "bottomNavHome": "الرئيسية",
     "bottomNavCourses": "الدورات",
     "bottomNavProfile": "الملف الشخصي",
-    "bottomNavMenu": "القائمة"
+    "bottomNavMenu": "القائمة",
+    "levels": "المستويات",
+    "level": "المستوى",
+    "selectLevelToStart": "اختر مستوى للبدء باللعب",
+    "games": "ألعاب",
+    "errorLoadingLevels": "خطأ في تحميل المستويات",
+    "tryAgain": "حاول مرة أخرى",
+    "noLevelsAvailable": "لا توجد مستويات متاحة لهذا التمرين",
+    "selectGameToPlay": "اختر لعبة للبدء",
+    "noGamesAvailable": "لا توجد ألعاب متاحة لهذا المستوى",
+    "playGame": "العب الآن"
+    
     
       
       

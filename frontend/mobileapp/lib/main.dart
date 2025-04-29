@@ -28,6 +28,9 @@ import 'Screens/Login/login_screen_gaurdian.dart';
 import 'Screens/Login/login_screen_user.dart';
 import 'Screens/Login/otp_verification_screen.dart';
 import 'Screens/ParentScreen/ParentMain.dart';
+import 'Screens/exercises_levels_screen.dart';
+import 'Screens/games_screen.dart';
+import 'models/level.dart';
 
 
 void main() {
@@ -99,6 +102,23 @@ class _MyAppState extends State<MyApp> {
               learner: learner,
             );
           },
+          '/exercise-levels': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return ExerciseLevelsScreen(
+            exerciseId: args['exerciseId'] as String,
+            exerciseName: args['exerciseName'] as String,
+            exerciseArabicName: args['exerciseArabicName'] as String,
+            learner: args['learner'] as Learner,
+          );
+        },
+                '/games': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return GamesScreen(
+            level: args['level'] as Level,
+            learner: args['learner'] as Learner,
+          );
+        },
+      
           '/letter_level1': (context) => const LetterLevel1(),
           '/letter_level2': (context) => const LetterLevel2(),
           '/letter_level3': (context) => const LetterLevel3(),
