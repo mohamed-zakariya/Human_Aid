@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-
 const ExerciseTimeSpentSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   time_spent: { type: Number, required: true },
@@ -9,11 +8,17 @@ const ExerciseTimeSpentSchema = new mongoose.Schema({
 
 const IncorrectWordSchema = new mongoose.Schema({
   word_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Words', required: true },
-  correct_word:{ type: String, required: false },
+  correct_word: { type: String },
   incorrect_word: { type: String, required: true },
   frequency: { type: Number, required: true },
 });
 
+const IncorrectLetterSchema = new mongoose.Schema({
+  letter_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Letters', required: true },
+  correct_letter: { type: String },
+  incorrect_letter: { type: String, required: true },
+  frequency: { type: Number, required: true },
+});
 
 const SentenceAttemptSchema = new mongoose.Schema({
   sentence_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Sentences', required: true },
@@ -23,14 +28,13 @@ const SentenceAttemptSchema = new mongoose.Schema({
   incorrect_words: [{
     incorrect_word: { type: String, required: true },
     frequency: { type: Number, required: true },
-    sentence_context: { type: String },  // Optional: Sentence where the word appeared
+    sentence_context: { type: String },
   }],
   attempts_number: { type: Number, default: 1 },
 });
 
-
 const StoryQuestionSchema = new mongoose.Schema({
-  question_id: { type: mongoose.Schema.Types.ObjectId},
+  question_id: { type: mongoose.Schema.Types.ObjectId },
   is_correct: { type: Boolean, required: true },
 });
 
@@ -40,22 +44,23 @@ const SummaryEvaluationSchema = new mongoose.Schema({
 });
 
 const exerciseprogressSchema = new mongoose.Schema({
-    //progress_id: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
-    exercise_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Exercises', required: true },
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
-    exercise_time_spent: [ExerciseTimeSpentSchema],
-    start_time: { type: Date },  // Temporarily store when user starts 
-    correct_words: [{ type: String }],
-    incorrect_words: [IncorrectWordSchema],
-    sentence_attempts: [SentenceAttemptSchema],
-    story: {
-        story_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Stories' },
-        story_questions: [StoryQuestionSchema],
-        summary_evaluation: SummaryEvaluationSchema,
-    },
-    accuracy_percentage: { type: Number, required: true },
-    score: { type: Number, required: true },
+  exercise_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Exercises', required: true },
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
+  exercise_time_spent: [ExerciseTimeSpentSchema],
+  start_time: { type: Date },
+  correct_words: [{ type: String }],
+  incorrect_words: [IncorrectWordSchema],
+  correct_letters: [{ type: String }],
+  incorrect_letters: [IncorrectLetterSchema],
+  sentence_attempts: [SentenceAttemptSchema],
+  story: {
+    story_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Stories' },
+    story_questions: [StoryQuestionSchema],
+    summary_evaluation: SummaryEvaluationSchema,
+  },
+  accuracy_percentage: { type: Number, required: true },
+  score: { type: Number, required: true },
 });
 
-const Exercisesprogress = mongoose.model('Exercisesprogress',exerciseprogressSchema);
+const Exercisesprogress = mongoose.model('Exercisesprogress', exerciseprogressSchema);
 export default Exercisesprogress;

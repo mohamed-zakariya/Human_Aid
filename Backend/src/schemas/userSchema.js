@@ -20,6 +20,20 @@ type Exercise {
   english_description:String!
   arabic_description:String!
   progress: Progress
+  levels: [Level!]!
+}
+type Game {
+  game_id: String!
+  name: String!
+  arabic_name: String!
+}
+
+type Level {
+  level_id: String!
+  level_number: Int!
+  name: String!
+  arabic_name: String!
+  games: [Game!]!
 }
 
 type Progress {
@@ -80,6 +94,7 @@ type signUpAdultdResponse{
     checkUserUsernameExists(username: String!): UsernameCheckResponse!
     checkUserEmailExists(email: String!): EmailCheckResponse!
     learnerHomePage(userId: ID!): [Exercise!]!
+    getLevelsForExercises: [Exercise!]!
   }
 
   extend type Mutation {
