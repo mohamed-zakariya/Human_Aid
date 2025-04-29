@@ -137,7 +137,7 @@ class _LetterLevel2State extends State<LetterLevel2> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF6C63FF),
         foregroundColor: Colors.white,
-        title: const Text("الحروف العربية"),
+        title: const Text("المستوي الثاني"),
         centerTitle: true,
       ),
       backgroundColor: Colors.white,

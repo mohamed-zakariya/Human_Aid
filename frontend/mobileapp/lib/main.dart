@@ -5,12 +5,15 @@ import 'package:mobileapp/Screens/IntroductoryScreen/onboarding_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/LearnerMain.dart';
 import 'package:mobileapp/Screens/LearnerScreen/learner_home_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2.dart';
+import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3.dart';
+import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3_game.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
 import 'package:mobileapp/Screens/SignUp/signupadult.dart';
 import 'package:mobileapp/Screens/SignUp/signupmain.dart';
+import 'package:mobileapp/Screens/scentence_pronunciation_screen.dart';
 import 'package:mobileapp/Screens/word_pronunciation_screen.dart';
 import 'package:mobileapp/Services/learner_home_service.dart';
 import 'package:mobileapp/generated/l10n.dart';
@@ -62,7 +65,7 @@ class _MyAppState extends State<MyApp> {
                 GlobalCupertinoLocalizations.delegate,
             ],
         supportedLocales: S.delegate.supportedLocales,
-        initialRoute: '/letter_level2',
+        initialRoute: '/letter_level3_Game',
         routes: {
           '/intro': (context) => IntroScreen(onLocaleChange: _setLocale),
           '/quiz': (context) => TestSelectorWidget(userProgress: 0.3),
@@ -72,6 +75,7 @@ class _MyAppState extends State<MyApp> {
           '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
           '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
           '/wordPronunciation': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
+          '/ScentencePronunciationScreen': (context) => SentencePronunciationScreen(onLocaleChange: _setLocale),
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
           '/signup2': (context) {
@@ -94,7 +98,11 @@ class _MyAppState extends State<MyApp> {
             );
           },
           '/letter_level1': (context) => const LetterLevel1(),
-          '/letter_level2': (context) => const LetterLevel2()
+          '/letter_level2': (context) => const LetterLevel2(),
+          '/letter_level3': (context) => const LetterLevel3(),
+          '/letter_level3_Game': (context) => const LetterLevel3Game()
+
+
 
         },
       onUnknownRoute: (settings) => MaterialPageRoute(

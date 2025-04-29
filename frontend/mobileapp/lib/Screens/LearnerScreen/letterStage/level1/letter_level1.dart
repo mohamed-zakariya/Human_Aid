@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+import '../../../../Services/tts_service.dart';
+
 class LetterLevel1 extends StatefulWidget {
   const LetterLevel1({super.key});
 
@@ -31,6 +33,30 @@ class _LetterLevel1State extends State<LetterLevel1> {
   int _current = 0;
 
   final AudioPlayer _audioPlayer = AudioPlayer();
+  final TTSService _ttsService = TTSService();
+
+
+  @override
+  void initState() {
+    super.initState();
+    _ttsService.initialize(language: 'ar-SA'); // Arabic (Saudi Arabia)
+  }
+
+
+  Future<void> playLetterSound(String letter) async {
+    try {
+      await _ttsService.speak(letter);
+    } catch (e) {
+      print('Error speaking letter: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _ttsService.dispose();
+    super.dispose();
+  }
+
 
   // Function to build a letter widget inside a card
   Widget buildLetterCard({
@@ -100,14 +126,6 @@ class _LetterLevel1State extends State<LetterLevel1> {
     );
   }
 
-  Future<void> playLetterSound(String letter) async {
-    try {
-      // Example: you must have 'assets/sounds/alef.mp3' etc. configured
-      await _audioPlayer.play(AssetSource('sounds/$letter.mp3'));
-    } catch (e) {
-      print('Error playing sound: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +133,7 @@ class _LetterLevel1State extends State<LetterLevel1> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF6C63FF),
         foregroundColor: Colors.white,
-        title: const Text("الحروف العربية"),
+        title: const Text("المستوي الأول"),
         centerTitle: true,
       ),
       backgroundColor: Colors.white,

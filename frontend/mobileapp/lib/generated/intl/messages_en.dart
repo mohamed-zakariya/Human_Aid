@@ -53,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Available Exercises"),
         "bottomNavCourses": MessageLookupByLibrary.simpleMessage("Courses"),
         "bottomNavHome": MessageLookupByLibrary.simpleMessage("Home"),
+        "bottomNavMenu": MessageLookupByLibrary.simpleMessage("Menu"),
         "bottomNavProfile": MessageLookupByLibrary.simpleMessage("Profile"),
         "button1": MessageLookupByLibrary.simpleMessage("Start"),
         "button2": MessageLookupByLibrary.simpleMessage("Continue"),
