@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'letter_forms.dart';
+import '../letter_forms.dart';
 import '../../../../Services/tts_service.dart';
 
 class LetterLevel3 extends StatefulWidget {

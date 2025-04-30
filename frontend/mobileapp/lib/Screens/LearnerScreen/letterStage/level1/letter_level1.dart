@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:mobileapp/models/letter.dart'; // lowercase 'models'
+
 import '../../../../Services/tts_service.dart';
 import '../../../../Services/letters_service.dart'; // Import your LettersService
-
+import '../letter_forms.dart';
 class LetterLevel1 extends StatefulWidget {
   const LetterLevel1({super.key});
 
@@ -13,15 +14,7 @@ class LetterLevel1 extends StatefulWidget {
 }
 
 class _LetterLevel1State extends State<LetterLevel1> {
-  final List<Color> colors = [
-    Colors.red, Colors.blue, Colors.green, Colors.orange,
-    Colors.purple, Colors.teal, Colors.brown, Colors.pink,
-    Colors.indigo, Colors.amber, Colors.deepOrange, Colors.cyan,
-    Colors.deepPurple, Colors.lime, Colors.lightBlue, Colors.lightGreen,
-    Colors.yellow, Colors.blueGrey, Colors.redAccent, Colors.greenAccent,
-    Colors.orangeAccent, Colors.purpleAccent, Colors.tealAccent, Colors.brown,
-    Colors.pinkAccent, Colors.indigoAccent, Colors.amberAccent, Colors.cyanAccent,
-  ];
+
 
   final CarouselSliderController _controller = CarouselSliderController();
   int _current = 0;
