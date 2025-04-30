@@ -219,9 +219,11 @@ export const startExercise = async (userId, exerciseId) => {
             overall.total_correct_letters.count += 1;
           }
         } else {
-          if (!overall.total_incorrect_letters.letters.includes(expectedLetter.letter)) {
-            overall.total_incorrect_letters.letters.push(expectedLetter.letter);
-            overall.total_incorrect_letters.count += 1;
+          if (letterAttempt.attempts_number >= 3) {
+            if (!overall.total_incorrect_letters.letters.includes(expectedLetter.letter)) {
+              overall.total_incorrect_letters.letters.push(expectedLetter.letter);
+              overall.total_incorrect_letters.count += 1;
+            }
           }
         }
   

@@ -1,59 +1,58 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { MONGO_URL } from "../config/envConfig.js";
-import Letters from "../models/Letters.js"; // Assuming you have a Letters model
+import Letters from "../models/Letters.js"; // Import your Letters model
 
 dotenv.config();
 
 // Arabic letters data with color groupings
 const lettersData = [
-  // Group 1 - Red (ب ت ث ن)
+
+  { letter: "ا", color: "white", group: 15 },
+
   { letter: "ب", color: "red", group: 1 },
   { letter: "ت", color: "red", group: 1 },
   { letter: "ث", color: "red", group: 1 },
-  { letter: "ن", color: "red", group: 1 },
 
-  // Group 2 - Green (ج ح خ)
+
   { letter: "ج", color: "green", group: 2 },
   { letter: "ح", color: "green", group: 2 },
   { letter: "خ", color: "green", group: 2 },
 
-  // Group 3 - Blue (د ذ ر ز و)
   { letter: "د", color: "blue", group: 3 },
   { letter: "ذ", color: "blue", group: 3 },
-  { letter: "ر", color: "blue", group: 3 },
-  { letter: "ز", color: "blue", group: 3 },
-  { letter: "و", color: "blue", group: 3 },
 
-  // Group 4 - Yellow (س ش ص ض)
-  { letter: "س", color: "yellow", group: 4 },
-  { letter: "ش", color: "yellow", group: 4 },
-  { letter: "ص", color: "yellow", group: 4 },
-  { letter: "ض", color: "yellow", group: 4 },
 
-  // Group 5 - Purple (ط ظ)
-  { letter: "ط", color: "purple", group: 5 },
-  { letter: "ظ", color: "purple", group: 5 },
+  { letter: "ر", color: "blue", group: 4 },
+  { letter: "ز", color: "blue", group: 4 },
 
-  // Group 6 - Orange (ع غ)
-  { letter: "ع", color: "orange", group: 6 },
-  { letter: "غ", color: "orange", group: 6 },
+  { letter: "س", color: "yellow", group: 5 },
+  { letter: "ش", color: "yellow", group: 5 },
 
-  // Group 7 - Pink (Unique shapes)
-  { letter: "ا", color: "pink", group: 7 },
-  { letter: "ء", color: "pink", group: 7 },
-  { letter: "ه", color: "pink", group: 7 },
-  { letter: "م", color: "pink", group: 7 },
-  { letter: "ل", color: "pink", group: 7 },
-  { letter: "ك", color: "pink", group: 7 },
-  { letter: "ف", color: "pink", group: 7 },
-  { letter: "ق", color: "pink", group: 7 },
-  { letter: "ي", color: "pink", group: 7 },
-  { letter: "ى", color: "pink", group: 7 },
+  { letter: "ص", color: "purple", group: 6 },
+  { letter: "ض", color: "purple", group: 6 },
+
+  { letter: "ط", color: "purple", group: 7 },
+  { letter: "ظ", color: "purple", group: 7 },
+
+
+  { letter: "ع", color: "orange", group: 8 },
+  { letter: "غ", color: "orange", group: 8 },
+
+  { letter: "ف", color: "pink", group: 9 },
+  { letter: "ق", color: "pink", group: 9 },
+
+  { letter: "ك", color: "pink", group: 10 },
+  { letter: "ل", color: "white", group: 11 },
+  { letter: "م", color: "pink", group: 12 },
+  { letter: "ن", color: "red", group: 13 },
+  { letter: "ه", color: "pink", group: 14 },
+  { letter: "و", color: "blue", group: 16 },
+  { letter: "ي", color: "pink", group: 17 },
 ];
 
-// Function to insert Arabic letters data
-const insertArabicLetters = async () => {
+// Function to completely refresh the letters data
+const refreshArabicLetters = async () => {
   try {
     // Connect to MongoDB
     await mongoose.connect(MONGO_URL, {
@@ -61,24 +60,33 @@ const insertArabicLetters = async () => {
       useUnifiedTopology: true,
     });
 
-    console.log("Database connected...");
+    console.log("Database connected successfully!");
 
-    // Clear existing letters to prevent duplication
+    // Delete ALL existing letters
     await Letters.deleteMany({});
-    console.log("Existing letters deleted...");
+    console.log("All existing letters removed.");
 
-    // Insert new letters
+    // Insert the new letters data
     await Letters.insertMany(lettersData);
-    console.log("Arabic letters inserted successfully!");
+    console.log("New Arabic letters inserted successfully!");
 
-    // Close the database connection
+    // Get count of inserted documents
+    const count = await Letters.countDocuments();
+    console.log(`Total letters in collection: ${count}`);
+
+    // Close the connection
     await mongoose.disconnect();
+    console.log("Database connection closed.");
   } catch (error) {
-    console.error("Error inserting Arabic letters:", error);
-    await mongoose.disconnect();
+    console.error("Error during database operation:", error);
+    
+    // Ensure connection is closed even if error occurs
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.disconnect();
+    }
     process.exit(1);
   }
 };
 
-// Call the function to insert letters
-insertArabicLetters();
+// Execute the function
+refreshArabicLetters();

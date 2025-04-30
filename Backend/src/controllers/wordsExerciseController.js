@@ -189,8 +189,10 @@ export const updateUserProgress = async (userId, exerciseId, wordId, audioFile, 
         completed_exercises: [exerciseId],
         total_time_spent: timeSpent || 0,
         average_accuracy: progress.accuracy_percentage,
-        total_correct_words: { count: isCorrect ? 0 : 0, words: isCorrect ? [] : [] },
-        total_incorrect_words: { count: !isCorrect ? 0 : 0, words: !isCorrect ? [] : [] },
+        total_correct_words: { count: isCorrect ? 1 : 0, words: isCorrect ? [expectedWord.word] : [] },
+        total_incorrect_words: { count: !isCorrect ? 1 : 0, words: !isCorrect ? [expectedWord.word] : [] },
+        total_correct_letters: { count: 0, letters: [] },
+        total_incorrect_letters: { count: 0, letters: [] },
       });
     } else {
       // ✅ Add exerciseId to completed_exercises if not already there
@@ -225,9 +227,11 @@ export const updateUserProgress = async (userId, exerciseId, wordId, audioFile, 
           overall.total_correct_words.count += 1;
         }
       } else {
-        if (!overall.total_incorrect_words.words.includes(expectedWord.word)) {
-          overall.total_incorrect_words.words.push(expectedWord.word);
-          overall.total_incorrect_words.count += 1;
+        if (wordAttempt.attempts_number >= 3) {
+          if (!overall.total_incorrect_words.words.includes(expectedWord.word)) {
+            overall.total_incorrect_words.words.push(expectedWord.word);
+            overall.total_incorrect_words.count += 1;
+          }
         }
       }
     

@@ -27,7 +27,7 @@ type ExerciseEnd {
 }
 
 type Query {
-  getWordForExercise(level: String!): [Word]
+  getWordForExercise(userId: ID!, exerciseId: ID!, level: String!): [Word]
 }
 
 type Mutation {
