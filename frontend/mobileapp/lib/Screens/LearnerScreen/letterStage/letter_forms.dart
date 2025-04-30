@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+
 final Map<String, Map<String, List<Map<String, String>>>> letterForms = {
   'ا': {
     'منفصل': [{'form': 'ا', 'example': 'أسد'}],
@@ -206,3 +210,14 @@ final Map<String, Map<String, List<Map<String, String>>>> letterForms = {
     'نهائي': [{'form': 'ـي', 'example': 'كمي'}],
   },
 };
+
+
+final List<Color> colors = [
+  Colors.red, Colors.blue, Colors.green, Colors.orange,
+  Colors.purple, Colors.teal, Colors.brown, Colors.pink,
+  Colors.indigo, Colors.amber, Colors.deepOrange, Colors.cyan,
+  Colors.deepPurple, Colors.lightBlue, Colors.lightGreen,
+  Colors.blueGrey, Colors.redAccent, Colors.greenAccent,
+  Colors.orangeAccent, Colors.purpleAccent, Colors.tealAccent,
+  Colors.pinkAccent, Colors.indigoAccent, Colors.amberAccent, Colors.cyanAccent,
+];

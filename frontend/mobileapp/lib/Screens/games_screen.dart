@@ -85,7 +85,7 @@ class _GamesScreenState extends State<GamesScreen> {
               ),
             ),
           ),
-          
+
           // Games content
           SliverToBoxAdapter(
             child: Padding(
@@ -110,7 +110,7 @@ class _GamesScreenState extends State<GamesScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Games list
                   if (widget.level.games.isEmpty)
                     Center(
@@ -158,7 +158,7 @@ class _GamesScreenState extends State<GamesScreen> {
     final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final String title = isArabic ? game.arabicName : game.name;
     final String description = isArabic ? game.arabicDescription : game.description;
-    
+
     // Define a list of difficulty colors
     final Map<String, Color> difficultyColors = {
       'easy': Colors.green,
@@ -176,7 +176,7 @@ class _GamesScreenState extends State<GamesScreen> {
       [const Color(0xFFFF6C8F), const Color(0xFFFF4A73)], // Pink
       [const Color(0xFFFFAA33), const Color(0xFFFF8800)], // Orange
     ];
-    
+
     final List<Color> gradient = cardGradients[index % cardGradients.length];
 
     return Card(
@@ -190,7 +190,7 @@ class _GamesScreenState extends State<GamesScreen> {
         onTap: () {
           // Navigate to game
           // Navigator.push(...);
-          
+
           // For now, just print
           print('Starting game: ${game.gameId}');
         },
@@ -230,7 +230,7 @@ class _GamesScreenState extends State<GamesScreen> {
                     },
                   ),
                 ),
-              
+
               // Game info
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -267,9 +267,9 @@ class _GamesScreenState extends State<GamesScreen> {
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // Description
                     Text(
                       description,
@@ -280,9 +280,9 @@ class _GamesScreenState extends State<GamesScreen> {
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Play button
                     Center(
                       child: ElevatedButton.icon(
