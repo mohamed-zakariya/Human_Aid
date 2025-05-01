@@ -3,7 +3,7 @@ import '../models/level.dart';
 import '../models/learner.dart';
 import '../services/level_service.dart';
 import '../../generated/l10n.dart';
-import 'games_screen.dart';
+import 'level_screen.dart';
 import 'widgets/level_card.dart';
 
 class ExerciseLevelsScreen extends StatefulWidget {
@@ -39,9 +39,10 @@ class _ExerciseLevelsScreenState extends State<ExerciseLevelsScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => GamesScreen(
+        builder: (context) => LevelScreen(
           level: level,
           learner: widget.learner,
+          exerciseId: widget.exerciseId,
         ),
       ),
     );

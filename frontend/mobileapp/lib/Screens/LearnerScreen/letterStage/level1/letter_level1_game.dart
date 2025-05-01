@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobileapp/models/letter.dart';
 import '../../../../Services/tts_service.dart';
 import '../../../../Services/letters_service.dart';
-
+import '../letter_forms.dart';
 class LetterLevel1Game extends StatefulWidget {
   const LetterLevel1Game({super.key});
 
@@ -12,15 +12,7 @@ class LetterLevel1Game extends StatefulWidget {
 }
 
 class _LetterLevel1GameState extends State<LetterLevel1Game> {
-  final List<Color> colors = [
-    Colors.red, Colors.blue, Colors.green, Colors.orange,
-    Colors.purple, Colors.teal, Colors.brown, Colors.pink,
-    Colors.indigo, Colors.amber, Colors.deepOrange, Colors.cyan,
-    Colors.deepPurple, Colors.lime, Colors.lightBlue, Colors.lightGreen,
-    Colors.yellow, Colors.blueGrey, Colors.redAccent, Colors.greenAccent,
-    Colors.orangeAccent, Colors.purpleAccent, Colors.tealAccent,
-    Colors.pinkAccent, Colors.indigoAccent, Colors.amberAccent, Colors.cyanAccent,
-  ];
+
 
   final TTSService _ttsService = TTSService();
   List<Letter> allLetters = [];
@@ -61,15 +53,14 @@ class _LetterLevel1GameState extends State<LetterLevel1Game> {
 
     final random = Random();
     final shuffledLetters = [...allLetters]..shuffle();
-    currentOptions = shuffledLetters.take(6).toList();
-    targetLetter = currentOptions[random.nextInt(6)];
+    currentOptions = shuffledLetters.take(10).toList();
+    targetLetter = currentOptions[random.nextInt(10)];
     selectedLetter = null;
     showFeedback = false;
 
     final shuffledColors = [...colors]..shuffle(random);
-    optionColors = shuffledColors.take(6).toList();
+    optionColors = shuffledColors.take(10).toList();
 
-    _ttsService.speak(targetLetter.letter);
     setState(() => currentRound++);
   }
 
@@ -86,27 +77,63 @@ class _LetterLevel1GameState extends State<LetterLevel1Game> {
   void _showGameOverDialog() {
     showDialog(
       context: context,
+      barrierColor: Colors.black.withOpacity(0.6), // Dim the background
       builder: (_) => AlertDialog(
-        title: const Text('انتهت اللعبة'),
+        backgroundColor: const Color(0xFF2C2C2E), // Darker dialog background
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Center(
+          child: Text(
+            '🎮 انتهت اللعبة',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Icon(
+              score >= 8 ? Icons.emoji_events : Icons.sentiment_satisfied,
+              size: 64,
+              color: score >= 8 ? Colors.amber : Colors.blueAccent,
+            ),
+            const SizedBox(height: 16),
             Text(
               score >= 8
                   ? '🎉 أحسنت! عمل رائع!\nدرجتك: $score من $totalRounds'
                   : '😊 لا بأس! حاول مرة أخرى\nدرجتك: $score من $totalRounds',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+                height: 1.5,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
         ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _restartGame();
             },
-            child: const Text('إعادة'),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.deepPurple,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              'إعادة اللعب',
+              style: TextStyle(fontSize: 16),
+            ),
           ),
         ],
       ),
@@ -119,6 +146,34 @@ class _LetterLevel1GameState extends State<LetterLevel1Game> {
       score = 0;
     });
     _startNewRound();
+  }
+
+  void _showInstructionsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF2C2C2E), // Darker dialog background
+        title: const Text(
+          'طريقة اللعب 🎯',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        content: const Text(
+          '1️⃣ اضغط على زر "استمع إلى الحرف" لسماع الحرف المطلوب.\n\n'
+              '2️⃣ اختر الحرف الصحيح من بين الخيارات الملونة.\n\n'
+              '3️⃣ تحصل على نقطة لكل إجابة صحيحة. اجمع أكثر من 8 للفوز!',
+          style: TextStyle(fontSize: 16, color: Colors.white),
+          textAlign: TextAlign.right,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('حسنًا', style: TextStyle(fontSize: 16)),
+          ),
+        ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
   }
 
   @override
@@ -168,51 +223,76 @@ class _LetterLevel1GameState extends State<LetterLevel1Game> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isTablet = screenWidth > 600;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('لعبة الحروف'),
-        backgroundColor: const Color(0xFF6C63FF),
+        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFF2C2C2E), // Darker dialog background
         centerTitle: true,
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Image.asset(
+            //   'assets/images/logo.png', // <-- Add your logo here
+            //   height: 36,
+            // ),
+            SizedBox(width: 8),
+            Text('لعبة الحروف'),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline, color: Colors.white),
+            tooltip: 'تعليمات',
+            onPressed: _showInstructionsDialog,
+          ),
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            Text(
-              'الجولة $currentRound من $totalRounds',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () => _ttsService.speak(targetLetter.letter),
-              icon: const Icon(Icons.volume_up, size: 28),
-              label: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 8),
-                child: Text(
-                  'استمع إلى الحرف',
-                  style: TextStyle(fontSize: 18),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              Text(
+                'الجولة $currentRound من $totalRounds',
+                style: TextStyle(
+                  fontSize: isTablet ? 28 : 22,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => _ttsService.speak(targetLetter.letter),
+                icon: const Icon(Icons.volume_up, size: 28),
+                label: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    'استمع إلى الحرف',
+                    style: TextStyle(fontSize: isTablet ? 20 : 16),
+                  ),
                 ),
-                elevation: 4,
+                style: ElevatedButton.styleFrom(
+                  // backgroundColor: Colors.deepPurple,
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 4,
+                ),
               ),
-            ),
-            const SizedBox(height: 30),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+              const SizedBox(height: 20),
+              Expanded(
                 child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: currentOptions.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: isTablet ? 3 : 2,
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
                     childAspectRatio: 2,
@@ -224,40 +304,42 @@ class _LetterLevel1GameState extends State<LetterLevel1Game> {
                   },
                 ),
               ),
-            ),
-            if (showFeedback)
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  selectedLetter == targetLetter.letter
-                      ? '🎉 صحيح!'
-                      : '❌ خطأ، الصحيح: ${targetLetter.letter}',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: selectedLetter == targetLetter.letter ? Colors.green : Colors.red,
+              if (showFeedback)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    selectedLetter == targetLetter.letter
+                        ? '🎉 صحيح!'
+                        : '❌ خطأ، الصحيح: ${targetLetter.letter}',
+                    style: TextStyle(
+                      fontSize: isTablet ? 24 : 20,
+                      fontWeight: FontWeight.bold,
+                      color: selectedLetter == targetLetter.letter
+                          ? Colors.green
+                          : Colors.red,
+                    ),
                   ),
                 ),
-              ),
-            if (showFeedback)
-              ElevatedButton(
-                onPressed: _startNewRound,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(200, 60), // Bigger width and height
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+              if (showFeedback)
+                ElevatedButton(
+                  onPressed: _startNewRound,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                    minimumSize: Size(isTablet ? 250 : 180, 60),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    textStyle: TextStyle(
+                      fontSize: isTablet ? 24 : 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  textStyle: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  child: const Text('التالي'),
                 ),
-                child: const Text('التالي'),
-              ),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 12),
+            ],
+          ),
         ),
       ),
     );
