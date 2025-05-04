@@ -3,7 +3,7 @@ import { generateAccessToken, generateRefreshToken } from '../config/jwtConfig.j
 import Users from '../models/Users.js';
 import Parents from '../models/Parents.js';
 import Exercises from "../models/Exercises.js";
-import Exercisesprogress from "../models/Exercisesprogress.js"
+import OverallProgress from '../models/OverallProgress.js';
 import { sendWelcomeEmail } from '../config/emailConfig.js';
 import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
 // Login function
@@ -257,48 +257,50 @@ export const forgotUserPassword = async (email) => {
     return await resetPassword(token, newPassword, "user");
   };
 
-  
-  export const learnerHomePage = async (userId) => {
-    try {
-        // Fetch all exercises
-        const exercises = await Exercises.find({});
-    
-        // Fetch all progress records in a single query
-        const progressData = await Exercisesprogress.find({
-          exercise_id: { $in: exercises.map((e) => e._id) },
-          user_id: userId,
-        });
-    
-        // Map progress data by exercise_id for quick lookup
-        const progressMap = new Map(progressData.map((p) => [p.exercise_id.toString(), p]));
-    
-        // Combine exercises with their progress
-        const exercisesWithProgress = exercises.map((exercise) => {
-          const progress = progressMap.get(exercise._id.toString());
-    
-          return {
-            id: exercise._id,
-            name: exercise.name,
-            arabic_name: exercise.arabic_name,
-            type: exercise.exercise_type,
-            english_description:exercise.english_description,
-            arabic_description:exercise.arabic_description,
 
-            progress: progress
-              ? {
-                  accuracyPercentage: progress.accuracy_percentage,
-                  score: progress.score,
-                }
-              : null,
-          };
-        });
-    
-        return exercisesWithProgress;
-      } catch (error) {
-        console.error('Error fetching learner home page data:', error);
-        throw new Error('Failed to fetch learner home page data');
-      }
-  };
-  
+export const learnerHomePage = async (userId) => {
+  try {
+    // Fetch all exercises
+    const exercises = await Exercises.find({});
+
+    // Fetch the overall progress document for the user
+    const overallProgress = await OverallProgress.findOne({ user_id: userId });
+
+    // Create a map from exercise_id to stats for quick lookup
+    const progressMap = new Map();
+
+    if (overallProgress && overallProgress.progress_by_exercise) {
+      overallProgress.progress_by_exercise.forEach((entry) => {
+        progressMap.set(entry.exercise_id.toString(), entry.stats);
+      });
+    }
+
+    // Combine exercises with their progress
+    const exercisesWithProgress = exercises.map((exercise) => {
+      const stats = progressMap.get(exercise._id.toString());
+
+      return {
+        id: exercise._id,
+        name: exercise.name,
+        arabic_name: exercise.arabic_name,
+        type: exercise.exercise_type,
+        english_description: exercise.english_description,
+        arabic_description: exercise.arabic_description,
+
+        progress: stats
+          ? {
+              accuracyPercentage: stats.accuracy_percentage,
+              score: stats.average_game_score,
+            }
+          : null,
+      };
+    });
+
+    return exercisesWithProgress;
+  } catch (error) {
+    console.error('Error fetching learner home page data:', error);
+    throw new Error('Failed to fetch learner home page data');
+  }
+};
 
 

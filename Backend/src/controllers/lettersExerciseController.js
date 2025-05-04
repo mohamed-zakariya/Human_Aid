@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import fs from "fs";
 import Words from "../models/Words.js";
 import Exercisesprogress from "../models/Exercisesprogress.js";
-import UserDailyAttempts from "../models/UserDailyAttempts.js";
+import DailyAttemptTracking from "../models/DailyAttemptTracking.js";
 import { azureTranscribeAudio } from "../config/azureapiConfig.js";
 import OverallProgress from "../models/OverallProgress.js";
 import Letters from "../models/Letters.js";

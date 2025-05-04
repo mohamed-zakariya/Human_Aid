@@ -19,7 +19,7 @@ type Exercise {
   type: String!
   english_description:String!
   arabic_description:String!
-  progress: Progress
+  progress: ExerciseStats
   levels: [Level!]!
 }
 type Game {
@@ -27,7 +27,17 @@ type Game {
   name: String!
   arabic_name: String!
 }
-
+type OverallProgress {
+  combinedAccuracy: Float!
+  averageScoreAll: Float!
+  totalTimeSpent: Int!
+}
+type ExerciseStats {
+  exerciseId: ID!
+  accuracyPercentage: Float!
+  score: Float!
+  timeSpentSeconds: Int!
+}
 type Level {
   level_id: String!
   level_number: Int!
