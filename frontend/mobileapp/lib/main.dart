@@ -8,7 +8,7 @@ import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3_game.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1.dart';
-import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1_game.dart';
+import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2_game.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
             ],
         supportedLocales: S.delegate.supportedLocales,
 
-        initialRoute: '/letter_level1_Game',
+        initialRoute: '/letter_level3_Game',
         routes: {
           '/intro': (context) => IntroScreen(onLocaleChange: _setLocale),
           '/quiz': (context) => TestSelectorWidget(userProgress: 0.3),
@@ -122,7 +122,7 @@ class _MyAppState extends State<MyApp> {
           '/letter_level1': (context) => const LetterLevel1(),
           '/letter_level2': (context) => const LetterLevel2(),
           '/letter_level3': (context) => const LetterLevel3(),
-          '/letter_level1_Game': (context) => const LetterLevel1Game(),
+          '/letter_level2_Game': (context) => const LetterLevel2Game(),
           '/letter_level3_Game': (context) => const LetterLevel3Game()
 
 

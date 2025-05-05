@@ -4,14 +4,14 @@ import 'package:mobileapp/models/letter.dart';
 import '../../../../Services/tts_service.dart';
 import '../../../../Services/letters_service.dart';
 import '../letter_forms.dart';
-class LetterLevel1Game extends StatefulWidget {
-  const LetterLevel1Game({super.key});
+class LetterLevel2Game extends StatefulWidget {
+  const LetterLevel2Game({super.key});
 
   @override
-  State<LetterLevel1Game> createState() => _LetterLevel1GameState();
+  State<LetterLevel2Game> createState() => _LetterLevel2GameState();
 }
 
-class _LetterLevel1GameState extends State<LetterLevel1Game> {
+class _LetterLevel2GameState extends State<LetterLevel2Game> {
 
 
   final TTSService _ttsService = TTSService();
