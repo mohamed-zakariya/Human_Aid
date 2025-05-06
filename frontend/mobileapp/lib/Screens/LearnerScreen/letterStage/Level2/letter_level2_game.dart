@@ -1,9 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:mobileapp/models/letter.dart';
-import '../../../../Services/tts_service.dart';
 import '../../../../Services/letters_service.dart';
 import '../letter_forms.dart';
+
 class LetterLevel2Game extends StatefulWidget {
   const LetterLevel2Game({super.key});
 
@@ -12,9 +13,7 @@ class LetterLevel2Game extends StatefulWidget {
 }
 
 class _LetterLevel2GameState extends State<LetterLevel2Game> {
-
-
-  final TTSService _ttsService = TTSService();
+  final FlutterTts _flutterTts = FlutterTts();
   List<Letter> allLetters = [];
   bool isLoading = true;
 
@@ -31,7 +30,8 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
   @override
   void initState() {
     super.initState();
-    _ttsService.initialize(language: 'ar-SA');
+    _flutterTts.setLanguage('ar-SA'); // Set language to Arabic
+    _flutterTts.setSpeechRate(0.5); // Adjust speech rate
     _loadLetters();
   }
 
@@ -86,7 +86,7 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
         title: const Center(
           child: Text(
             '🎮 انتهت اللعبة',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -148,26 +148,53 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     _startNewRound();
   }
 
-  void _showInstructionsDialog() {
+  void _showHelpDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2C2C2E), // Darker dialog background
+        backgroundColor: Colors.white, // Darker dialog background
         title: const Text(
           'طريقة اللعب 🎯',
           textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
-        content: const Text(
-          '1️⃣ اضغط على زر "استمع إلى الحرف" لسماع الحرف المطلوب.\n\n'
-              '2️⃣ اختر الحرف الصحيح من بين الخيارات الملونة.\n\n'
-              '3️⃣ تحصل على نقطة لكل إجابة صحيحة. اجمع أكثر من 8 للفوز!',
-          style: TextStyle(fontSize: 16, color: Colors.white),
-          textAlign: TextAlign.right,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              '1️⃣ اضغط على زر "استمع إلى الحرف" لسماع الحرف المطلوب.\n\n'
+                  '2️⃣ اختر الحرف الصحيح من بين الخيارات الملونة.\n\n'
+                  '3️⃣ تحصل على نقطة لكل إجابة صحيحة. اجمع أكثر من 8 للفوز!',
+              style: TextStyle(fontSize: 16, color: Colors.black),
+              textAlign: TextAlign.right,
+            ),
+            const SizedBox(height: 20),
+            // Button to listen to instructions
+            ElevatedButton.icon(
+              onPressed: () {
+                _flutterTts.speak('1 اضغط على زر "استمع إلى الحرف" لسماع الحرف المطلوب. 2 اختر الحرف الصحيح من بين الخيارات الملونة. 3 تحصل على نقطة لكل إجابة صحيحة. اجمع أكثر من 8 للفوز!');
+              },
+              icon: const Icon(Icons.volume_up, size: 28), // Add your icon here
+              label: const Text('استمع للتعليمات', style: TextStyle(fontSize: 16)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 4,
+              ),
+            )
+
+          ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              _flutterTts.stop();
+              Navigator.pop(context);
+            },
             child: const Text('حسنًا', style: TextStyle(fontSize: 16)),
           ),
         ],
@@ -176,9 +203,10 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     );
   }
 
+
   @override
   void dispose() {
-    _ttsService.dispose();
+    _flutterTts.stop();
     super.dispose();
   }
 
@@ -235,19 +263,15 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
         title: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Image.asset(
-            //   'assets/images/logo.png', // <-- Add your logo here
-            //   height: 36,
-            // ),
             SizedBox(width: 8),
             Text('لعبة الحروف'),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.info_outline, color: Colors.white),
-            tooltip: 'تعليمات',
-            onPressed: _showInstructionsDialog,
+            icon: const Icon(Icons.help_outline, color: Colors.white),
+            tooltip: 'مساعدة',
+            onPressed: _showHelpDialog,
           ),
         ],
       ),
@@ -268,7 +292,7 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
-                onPressed: () => _ttsService.speak(targetLetter.letter),
+                onPressed: () => _flutterTts.speak(targetLetter.letter),
                 icon: const Icon(Icons.volume_up, size: 28),
                 label: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -278,7 +302,6 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  // backgroundColor: Colors.deepPurple,
                   backgroundColor: Colors.redAccent,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(

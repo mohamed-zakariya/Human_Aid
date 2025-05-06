@@ -1,68 +1,46 @@
-import 'dart:math';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:mobileapp/graphql/queries/letters_query.dart';
-import 'package:mobileapp/graphql/queries/words_query.dart';
-import 'package:mobileapp/models/exercices_progress.dart';
-import 'package:mobileapp/models/letter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../graphql/graphql_client.dart';
-// import '../graphql/queries/words_query.dart'  <-- Your actual query strings or placeholders
-import '../models/word.dart';
-
+import '../graphql/queries/letters_query.dart';
+import '../models/letter.dart';
 
 class LettersService {
+  // ───────── PUBLIC (unchanged signatures) ─────────
 
-  // get learnt data by specific learner
+  static Future<List<Letter>?> getLettersForLevel1() =>
+      _fetchLettersWithAuthRetry();
 
-  static Future<List<Letter>?> getLettersForLevel1() async {
+  // Level-2 uses the same backend query for now
+  static Future<List<Letter>?> getLettersForLevel2() =>
+      _fetchLettersWithAuthRetry();
+
+  /// Old screens called this helper; keep it.
+  static Future<List<Letter>?> fetchLetters() =>
+      _fetchLettersWithAuthRetry();
+
+  // ───────── INTERNAL ─────────
+
+  static Future<List<Letter>?> _fetchLettersWithAuthRetry() async {
     final client = await GraphQLService.getClient();
-    final prefs = await SharedPreferences.getInstance();
-    String? refreshToken = prefs.getString("refreshToken");
-    print("token: $refreshToken");
 
-    final QueryResult result = await client.query(
-      QueryOptions(
-        document: gql(getLettersForExercise),
-      ),
+    Future<QueryResult> _query() =>
+        client.query(QueryOptions(document: gql(getLettersForExercise)));
+
+    // first shot
+    final first = await _query();
+
+    // auto-refresh if token expired
+    final handled = await GraphQLService.handleAuthErrors(
+      result: first,
+      role: 'learner',
+      retryRequest: _query,
     );
 
-    QueryResult? finalResult = await GraphQLService.handleAuthErrors(
-      result: result,
-      role: "learner",
-      retryRequest: () async {
-        final client = await GraphQLService.getClient();
-        return await client.query(
-          QueryOptions(
-            document: gql(getLettersForExercise), // ⚡ Use getLettersForExercise here, not getCorrectWordsbyId
-          ),
-        );
-      },
-    );
-
-    if (finalResult != null) {
-      if (finalResult.hasException) {
-        print("Error fetching letters: ${finalResult.exception.toString()}");
-        return null;
-      }
-
-      print("sssss ${finalResult.data}");
-
-      final List<dynamic>? lettersData = finalResult.data?["getLettersForExercise"];
-      if (lettersData == null) {
-        print("No letters data returned.");
-        return null;
-      }
-
-      List<Letter> letters = lettersData.map((letterJson) => Letter.fromJson(letterJson)).toList();
-
-      print("Fetched ${letters.length} letters");
-      print(letters[0]);
-      return letters;
-    } else {
-      print("Request failed even after retry.");
+    if (handled == null || handled.hasException) {
+      print('[LettersService] fetch failed: ${handled?.exception}');
       return null;
     }
-  }
 
+    final raw = handled.data?['getLettersForExercise'] as List<dynamic>?;
+    return raw?.map((j) => Letter.fromJson(j)).toList();
+  }
 }

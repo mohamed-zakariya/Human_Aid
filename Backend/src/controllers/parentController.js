@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../config/jwtConfig.js";
 import Parents from "../models/Parents.js";
 import { sendWelcomeEmail } from '../config/emailConfig.js';
-import UserDailyAttempts from "../models/UserDailyAttempts.js";
+import DailyAttemptTracking from "../models/DailyAttemptTracking.js";
 import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
 import mongoose from "mongoose";
 
@@ -147,44 +147,106 @@ return await resetPassword(token, newPassword, "parent");
 };
 
 export const getLearnerProgress = async (parentId) => {
+  try {
+    const result = await Parents.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(parentId) }
+      },
+      {
+        $lookup: {
+          from: "exercisesprogresses",
+          localField: "linkedChildren",
+          foreignField: "user_id",
+          as: "progress"
+        }
+      },
+      {
+        $project: {
+          id: "$_id",
+          progress: {
+            user_id: 1,
+            exercise_id: 1,
+            total_time_spent: 1,
+            levels: {
+              level_id: 1,
+              correct_items: 1,
+              incorrect_items: 1,
+              games: {
+                game_id: 1,
+                scores: 1
+              }
+            }
+          }
+        }
+      }
+    ]);
+
+    if (!result.length) throw new Error("Parent not found");
+
+    return result[0]; // Return parent with children’s progress data
+  } catch (error) {
+    console.error("Error fetching learner progress:", error);
+    throw new Error(`Error fetching learner progress: ${error.message}`);
+  }
+};
+
+export const getLearnerOverallProgress = async (parentId) => {
     try {
         const result = await Parents.aggregate([
             {
-                $match: { _id: new mongoose.Types.ObjectId(parentId) } // Ensure parentId is an ObjectId
+                $match: { _id: new mongoose.Types.ObjectId(parentId) }
             },
             {
                 $lookup: {
-                    from: "exercisesprogresses", // Collection name should be lowercase and plural
+                    from: "overallprogresses",
                     localField: "linkedChildren",
                     foreignField: "user_id",
                     as: "progress"
                 }
             },
             {
+                $unwind: "$progress"
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "progress.user_id",
+                    foreignField: "_id",
+                    as: "userData"
+                }
+            },
+            {
+                $unwind: "$userData"
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    progress: {
+                        $push: {
+                            user_id: "$progress.user_id",
+                            name: "$userData.name",
+                            username: "$userData.username",
+                            progress_by_exercise: "$progress.progress_by_exercise",
+                            overall_stats: "$progress.overall_stats"
+                        }
+                    }
+                }
+            },
+            {
                 $project: {
                     id: "$_id",
-                    progress: {
-                        user_id: 1, // Child ID
-                        exercise_id: 1, // Exercise ID
-                        correct_words: 1, // Correct words
-                        incorrect_words: 1, // Incorrect words
-                        accuracy_percentage: 1, // Accuracy score
-                        score: 1, // Total score
-                        exercise_time_spent: 1 // Time spent on exercise
-                    }
+                    progress: 1
                 }
             }
         ]);
 
         if (!result.length) throw new Error("Parent not found");
-
-        return result[0]; // Return the parent with linked progress
+        return result[0];
     } catch (error) {
-        console.error("Error fetching learner progress:", error);
-        throw new Error(`Error fetching learner progress: ${error.message}`);
+        console.error("Error fetching learner overall progress:", error);
+        throw new Error(`Error fetching learner overall progress: ${error.message}`);
     }
 };
-
 
 export const getLearnerDailyAttempts = async (parentId, days = 7) => {
     try {
@@ -201,7 +263,7 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
         startDate.setDate(endDate.getDate() - (days - 1));
         startDate.setHours(0, 0, 0, 0);
 
-        const result = await UserDailyAttempts.aggregate([
+        const result = await DailyAttemptTracking.aggregate([
             {
                 $match: {
                     user_id: { $in: childIds.map(id => new mongoose.Types.ObjectId(id)) },
@@ -223,20 +285,22 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                     users: {
                         $push: {
                             user_id: "$user._id",
-                            name: "$user.name",
-                            username: "$user.username",
+                            name: { $ifNull: ["$user.name", ""] },
+                            username: { $ifNull: ["$user.username", ""] },
+
+                            // Word attempts
                             correct_words: {
                                 $map: {
                                     input: {
                                         $filter: {
-                                            input: "$attempts",
-                                            as: "attempt",
-                                            cond: { $eq: ["$$attempt.is_correct", true] }
+                                            input: { $ifNull: ["$words_attempts", []] },
+                                            as: "wa",
+                                            cond: { $eq: ["$$wa.is_correct", true] }
                                         }
                                     },
                                     as: "cw",
                                     in: {
-                                        word_id: { $ifNull: ["$$cw.word_id", "UNKNOWN"] },
+                                        word_id: "$$cw.word_id",
                                         correct_word: "$$cw.correct_word",
                                         spoken_word: "$$cw.spoken_word"
                                     }
@@ -246,16 +310,101 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
                                 $map: {
                                     input: {
                                         $filter: {
-                                            input: "$attempts",
-                                            as: "attempt",
-                                            cond: { $eq: ["$$attempt.is_correct", false] }
+                                            input: { $ifNull: ["$words_attempts", []] },
+                                            as: "wa",
+                                            cond: { $eq: ["$$wa.is_correct", false] }
                                         }
                                     },
                                     as: "iw",
                                     in: {
-                                        word_id: { $ifNull: ["$$iw.word_id", "UNKNOWN"] },
+                                        word_id: "$$iw.word_id",
                                         correct_word: "$$iw.correct_word",
                                         spoken_word: "$$iw.spoken_word"
+                                    }
+                                }
+                            },
+
+                            // Letter attempts
+                            correct_letters: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: { $ifNull: ["$letters_attempts", []] },
+                                            as: "la",
+                                            cond: { $eq: ["$$la.is_correct", true] }
+                                        }
+                                    },
+                                    as: "cl",
+                                    in: {
+                                        letter_id: "$$cl.letter_id",
+                                        correct_letter: "$$cl.correct_letter",
+                                        spoken_letter: "$$cl.spoken_letter"
+                                    }
+                                }
+                            },
+                            incorrect_letters: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: { $ifNull: ["$letters_attempts", []] },
+                                            as: "la",
+                                            cond: { $eq: ["$$la.is_correct", false] }
+                                        }
+                                    },
+                                    as: "il",
+                                    in: {
+                                        letter_id: "$$il.letter_id",
+                                        correct_letter: "$$il.correct_letter",
+                                        spoken_letter: "$$il.spoken_letter"
+                                    }
+                                }
+                            },
+
+                            // Sentence attempts
+                            correct_sentences: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: { $ifNull: ["$sentences_attempts", []] },
+                                            as: "sa",
+                                            cond: { $eq: ["$$sa.is_correct", true] }
+                                        }
+                                    },
+                                    as: "cs",
+                                    in: {
+                                        sentence_id: "$$cs.sentence_id",
+                                        correct_sentence: "$$cs.correct_sentence",
+                                        spoken_sentence: "$$cs.spoken_sentence"
+                                    }
+                                }
+                            },
+                            incorrect_sentences: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: { $ifNull: ["$sentences_attempts", []] },
+                                            as: "sa",
+                                            cond: { $eq: ["$$sa.is_correct", false] }
+                                        }
+                                    },
+                                    as: "is",
+                                    in: {
+                                        sentence_id: "$$is.sentence_id",
+                                        correct_sentence: "$$is.correct_sentence",
+                                        spoken_sentence: "$$is.spoken_sentence"
+                                    }
+                                }
+                            },
+
+                            // Game attempts (flattened with level_id and scores)
+                            game_attempts: {
+                                $map: {
+                                    input: { $ifNull: ["$game_attempts", []] },
+                                    as: "ga",
+                                    in: {
+                                        game_id: "$$ga.game_id",
+                                        level_id: "$$ga.level_id",
+                                        attempts: "$$ga.attempts"
                                     }
                                 }
                             }
@@ -277,46 +426,6 @@ export const getLearnerDailyAttempts = async (parentId, days = 7) => {
     } catch (error) {
         console.error("Error fetching learner daily attempts:", error);
         throw new Error(`Error fetching learner daily attempts: ${error.message}`);
-    }
-};
-
-export const getLearnerOverallProgress = async (parentId) => {
-    try {
-        const result = await Parents.aggregate([
-            {
-                $match: { _id: new mongoose.Types.ObjectId(parentId) } // Ensure parentId is an ObjectId
-            },
-            {
-                $lookup: {
-                    from: "overallprogresses", // Collection name should be lowercase and plural
-                    localField: "linkedChildren",
-                    foreignField: "user_id",
-                    as: "progress"
-                }
-            },
-            {
-                $project: {
-                    id: "$_id",
-                    progress: {
-                        user_id: 1, 
-                        progress_id: 1, 
-                        completed_exercises: 1, 
-                        total_time_spent: 1, 
-                        average_accuracy: 1, 
-                        total_correct_words: 1, 
-                        total_incorrect_words: 1,
-                        rewards:1
-                    }
-                }
-            }
-        ]);
-
-        if (!result.length) throw new Error("Parent not found");
-
-        return result[0]; // Return the parent with linked progress
-    } catch (error) {
-        console.error("Error fetching learner overall progress:", error);
-        throw new Error(`Error fetching learner overall progress: ${error.message}`);
     }
 };
 

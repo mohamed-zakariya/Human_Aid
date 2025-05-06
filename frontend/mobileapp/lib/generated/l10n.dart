@@ -590,6 +590,266 @@ class S {
     );
   }
 
+  /// `Exercise 2`
+  String get exercise2Title {
+    return Intl.message(
+      'Exercise 2',
+      name: 'exercise2Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fish Game with Letters`
+  String get fishGameTitle {
+    return Intl.message(
+      'Fish Game with Letters',
+      name: 'fishGameTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Round {current} of {total}`
+  String roundLabel(Object current, Object total) {
+    return Intl.message(
+      'Round $current of $total',
+      name: 'roundLabel',
+      desc: '',
+      args: [current, total],
+    );
+  }
+
+  /// `Listen to Letter`
+  String get listenToLetter {
+    return Intl.message(
+      'Listen to Letter',
+      name: 'listenToLetter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How to Play`
+  String get howToPlayTitle {
+    return Intl.message(
+      'How to Play',
+      name: 'howToPlayTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Listen to the letter and find the matching fish. Tap on the correct fish. Earn a point for each correct answer!`
+  String get howToPlayDescription {
+    return Intl.message(
+      'Listen to the letter and find the matching fish. Tap on the correct fish. Earn a point for each correct answer!',
+      name: 'howToPlayDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OK`
+  String get okButton {
+    return Intl.message(
+      'OK',
+      name: 'okButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🎉 Correct!`
+  String get correctAnswer {
+    return Intl.message(
+      '🎉 Correct!',
+      name: 'correctAnswer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `❌ Wrong! The correct letter is: {letter}`
+  String wrongAnswer(Object letter) {
+    return Intl.message(
+      '❌ Wrong! The correct letter is: $letter',
+      name: 'wrongAnswer',
+      desc: '',
+      args: [letter],
+    );
+  }
+
+  /// `🎉 Great job! Your score: {score} out of {total}`
+  String greatJob(Object score, Object total) {
+    return Intl.message(
+      '🎉 Great job! Your score: $score out of $total',
+      name: 'greatJob',
+      desc: '',
+      args: [score, total],
+    );
+  }
+
+  /// `😊 Good try! Your score: {score} out of {total}`
+  String tryAgain2(Object score, Object total) {
+    return Intl.message(
+      '😊 Good try! Your score: $score out of $total',
+      name: 'tryAgain2',
+      desc: '',
+      args: [score, total],
+    );
+  }
+
+  /// `Listen`
+  String get listen {
+    return Intl.message(
+      'Listen',
+      name: 'listen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `📝 Trace this letter: {letter}`
+  String traceThisLetter(Object letter) {
+    return Intl.message(
+      '📝 Trace this letter: $letter',
+      name: 'traceThisLetter',
+      desc: '',
+      args: [letter],
+    );
+  }
+
+  /// `✅ Finish Tracing`
+  String get finishTracing {
+    return Intl.message(
+      '✅ Finish Tracing',
+      name: 'finishTracing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🎉 You've completed all letters!`
+  String get completedAllLetters {
+    return Intl.message(
+      '🎉 You\'ve completed all letters!',
+      name: 'completedAllLetters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `👏 Well done! You traced all 28 Arabic letters!`
+  String get encouragementMessage {
+    return Intl.message(
+      '👏 Well done! You traced all 28 Arabic letters!',
+      name: 'encouragementMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `📚 How to Trace`
+  String get howToTrace {
+    return Intl.message(
+      '📚 How to Trace',
+      name: 'howToTrace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `1. Trace the letter with your finger.\n2. Try to stay on the shape.\n3. Press Done when finished.`
+  String get instructions {
+    return Intl.message(
+      '1. Trace the letter with your finger.\n2. Try to stay on the shape.\n3. Press Done when finished.',
+      name: 'instructions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Got it!`
+  String get gotIt {
+    return Intl.message(
+      'Got it!',
+      name: 'gotIt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `✅ Done`
+  String get done {
+    return Intl.message(
+      '✅ Done',
+      name: 'done',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🧹 Clear`
+  String get clear {
+    return Intl.message(
+      '🧹 Clear',
+      name: 'clear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `✍️ Trace the letter`
+  String get traceTitle {
+    return Intl.message(
+      '✍️ Trace the letter',
+      name: 'traceTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🎉 Great job!`
+  String get greatJob2 {
+    return Intl.message(
+      '🎉 Great job!',
+      name: 'greatJob2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restart`
+  String get restart {
+    return Intl.message(
+      'Restart',
+      name: 'restart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `❌ Try Again`
+  String get tryAgain3 {
+    return Intl.message(
+      '❌ Try Again',
+      name: 'tryAgain3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retry`
+  String get retry {
+    return Intl.message(
+      'Retry',
+      name: 'retry',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Welcome to your special world\nwhere learning is fun`
   String get title1 {
     return Intl.message(

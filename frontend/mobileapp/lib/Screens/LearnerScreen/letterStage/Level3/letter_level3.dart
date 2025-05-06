@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:audioplayers/audioplayers.dart';
-import '../letter_forms.dart';
 import '../../../../Services/tts_service.dart';
+import '../letter_forms.dart';
 
 class LetterLevel3 extends StatefulWidget {
   const LetterLevel3({super.key});
@@ -12,121 +13,61 @@ class LetterLevel3 extends StatefulWidget {
 }
 
 class _LetterLevel3State extends State<LetterLevel3> {
-
   final List<String> arabicLetters = [
-    'ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د',
+    'أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د',
     'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط',
     'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م',
     'ن', 'ه', 'و', 'ي'
   ];
 
-
-
-
-
-  final List<Color> colors = [
-    Colors.red, Colors.blue, Colors.green, Colors.orange,
-    Colors.purple, Colors.teal, Colors.brown, Colors.pink,
-    Colors.indigo, Colors.amber, Colors.deepOrange, Colors.cyan,
-    Colors.deepPurple, Colors.lime, Colors.lightBlue, Colors.lightGreen,
-    Colors.yellow, Colors.blueGrey, Colors.redAccent, Colors.greenAccent,
-    Colors.orangeAccent, Colors.purpleAccent, Colors.tealAccent, Colors.brown,
-    Colors.pinkAccent, Colors.indigoAccent, Colors.amberAccent, Colors.cyanAccent,
-  ];
-
-  final CarouselSliderController _controller = CarouselSliderController();
   int _current = 0;
-
-
-
-  Widget buildLetterCard({
-    required String letter,
-    required Color color,
-    required int index,
-  }) {
-
-
-    return Card(
-      elevation: 16,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [color.withOpacity(0.6), color],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      buildFormRow('منفصل', letterForms[letter]?['منفصل'] ?? []),
-                      const SizedBox(height: 5),
-                      buildFormRow('متصل', letterForms[letter]?['متصل'] ?? []),
-                      const SizedBox(height: 5),
-                      buildFormRow('نهائي', letterForms[letter]?['نهائي'] ?? [])
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-
-
+  final CarouselSliderController _controller = CarouselSliderController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text("المستوي التالت"),
         backgroundColor: const Color(0xFF6C63FF),
         foregroundColor: Colors.white,
-        title: const Text("المستوي التالت"),
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          const SizedBox(height: 15),
-          CarouselSlider.builder(
-            carouselController: _controller,
-            itemCount: arabicLetters.length,
-            itemBuilder: (context, index, realIndex) {
-              return buildLetterCard(
-                letter: arabicLetters[index],
-                color: colors[index % colors.length],
-                index: index,
-              );
-            },
-            options: CarouselOptions(
-              height: MediaQuery.of(context).orientation == Orientation.portrait
-                  ? MediaQuery.of(context).size.height * 0.7
-                  : MediaQuery.of(context).size.height * 0.85,
-              enlargeCenterPage: true,
-              enableInfiniteScroll: true,
-              autoPlay: false,
-              viewportFraction: 0.8,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _current = index;
-                });
+          // const SizedBox(height: 15),
+          Expanded(
+            child: CarouselSlider.builder(
+              carouselController: _controller,
+              itemCount: arabicLetters.length,
+              itemBuilder: (context, index, realIndex) {
+                return buildLetterContent(
+                  letter: arabicLetters[index],
+                  color: colors[index % colors.length],
+                );
               },
+              options: CarouselOptions(
+                autoPlay: true,
+                autoPlayInterval: Duration(seconds: 30), // change slide every 30 seconds
+                autoPlayAnimationDuration: Duration(milliseconds: 800), // transition animation
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enlargeCenterPage: true,
+                enableInfiniteScroll: true,
+                viewportFraction: 0.85,
+                height: MediaQuery.of(context).size.height * 0.98,
+                // enlargeCenterPage: true,
+                // enableInfiniteScroll: false,
+                // autoPlay: false,
+                // viewportFraction: 0.85,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _current = index;
+                  });
+                },
+              ),
             ),
           ),
-          // const SizedBox(height: 20),
-          // Arrows
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -139,7 +80,6 @@ class _LetterLevel3State extends State<LetterLevel3> {
                 },
                 icon: const Icon(Icons.arrow_back_ios),
               ),
-              // const SizedBox(width: 32),
               IconButton(
                 onPressed: () {
                   _controller.nextPage(
@@ -151,68 +91,104 @@ class _LetterLevel3State extends State<LetterLevel3> {
               ),
             ],
           ),
+          const SizedBox(height: 10),
         ],
       ),
     );
   }
-}
 
+  Widget buildLetterContent({
+    required String letter,
+    required Color color,
+  }) {
+    final forms = letterForms2[letter] ?? [];
+    final random = Random();
 
-Widget buildFormRow(String formName, List<Map<String, String>> forms) {
-  return LayoutBuilder(
-    builder: (context, constraints) {
-      double screenWidth = MediaQuery.of(context).size.width;
-      double fontSizeLarge = screenWidth * 0.1; // approx 10% of width
-      double fontSizeExample = screenWidth * 0.05;
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            formName,
-            style: TextStyle(
-              fontSize: fontSizeExample,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Column(
+          children: [
+            Text(
+              letter,
+              style: TextStyle(
+                fontSize: 100,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
-          ),
-          ...forms.map((formMap) {
-            return Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(width: 10),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        formMap['form'] ?? '',
-                        style: TextStyle(
-                          fontSize: fontSizeLarge,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                  ],
-                ),
-                Center(
-                  child: Text(
-                    'مثال: ${formMap['example'] ?? ''}',
-                    style: TextStyle(
-                      fontSize: fontSizeExample,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }).toList(),
-        ],
-      );
-    },
-  );
-}
+            Wrap(
+              spacing: 20,
+              runSpacing: 20,
+              alignment: WrapAlignment.center,
+              children: forms.map<Widget>((formData) {
+                return buildExampleCard(
+                  formData['label'], // dynamic label
+                  {
+                    'form': formData['form'],
+                    'example': formData['example'],
+                    'image': formData['image'],
+                  },
+                  colors[random.nextInt(colors.length)].withOpacity(0.2),
+                );
+              }).toList(),
+            ),
 
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget buildExampleCard(String label, Map<String, String> data, Color backgroundColor) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double cardSize = screenWidth - 10;
+
+    return Container(
+      width: cardSize,
+      height: MediaQuery.of(context).size.height * 0.4,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(2, 2),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              data['form'] ?? '',
+              style: const TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (data['image'] != null && data['image']!.isNotEmpty)
+              Image.asset(
+                data['image']!,
+                width: 160,
+                height: 160,
+                fit: BoxFit.contain,
+              ),
+            const SizedBox(height: 12),
+            Text(
+              data['example'] ?? '',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

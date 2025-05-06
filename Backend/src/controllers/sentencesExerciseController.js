@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import fs from "fs";
 import Sentences from "../models/Sentences.js";
 import Exercisesprogress from "../models/Exercisesprogress.js";
-import UserDailyAttempts from "../models/UserDailyAttempts.js";
+import DailyAttemptTracking from "../models/DailyAttemptTracking.js";
 import { azureTranscribeAudio } from "../config/azureapiConfig.js";
 import OverallProgress from "../models/OverallProgress.js";
 export const startExercise = async (userId, exerciseId) => {

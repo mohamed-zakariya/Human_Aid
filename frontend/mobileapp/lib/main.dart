@@ -5,10 +5,12 @@ import 'package:mobileapp/Screens/IntroductoryScreen/onboarding_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/LearnerMain.dart';
 import 'package:mobileapp/Screens/LearnerScreen/learner_home_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2.dart';
+import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2_game.dart';
+import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2_game_2.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3_game.dart';
+import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/ArabicLetterTracingExercise.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1.dart';
-import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2_game.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
@@ -29,7 +31,7 @@ import 'Screens/Login/login_screen_user.dart';
 import 'Screens/Login/otp_verification_screen.dart';
 import 'Screens/ParentScreen/ParentMain.dart';
 import 'Screens/exercises_levels_screen.dart';
-import 'Screens/games_screen.dart';
+import 'Screens/level_screen.dart';
 import 'models/level.dart';
 
 
@@ -70,7 +72,7 @@ class _MyAppState extends State<MyApp> {
             ],
         supportedLocales: S.delegate.supportedLocales,
 
-        initialRoute: '/letter_level3_Game',
+        initialRoute: '/letters_level_3',
         routes: {
           '/intro': (context) => IntroScreen(onLocaleChange: _setLocale),
           '/quiz': (context) => TestSelectorWidget(userProgress: 0.3),
@@ -113,16 +115,25 @@ class _MyAppState extends State<MyApp> {
         },
                 '/games': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return GamesScreen(
+          return LevelScreen(
             level: args['level'] as Level,
             learner: args['learner'] as Learner,
+            exerciseId: args['exerciseId'] as String,
           );
         },
       
-          '/letter_level1': (context) => const LetterLevel1(),
-          '/letter_level2': (context) => const LetterLevel2(),
-          '/letter_level3': (context) => const LetterLevel3(),
+          '/letters_level_1': (context) => const LetterLevel1(),
+          '/letters_level_2': (context) {
+  final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+  return LetterLevel2(
+    learner: args['learner'] as Learner,
+    exerciseId: args['exerciseId'] as String,
+  );
+},
+          '/letter_level1_Game': (context) =>  const ArabicLetterTracingExercise(),
+          '/letters_level_3': (context) => const LetterLevel3(),
           '/letter_level2_Game': (context) => const LetterLevel2Game(),
+          '/letter_level2_Game2': (context) => const LetterLevel2Game2(),
           '/letter_level3_Game': (context) => const LetterLevel3Game()
 
 

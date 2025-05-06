@@ -10,11 +10,24 @@ type ProcessedLetter {
   accuracy: Float!
 }
 
+type FormExample {
+  form: String!
+  example: String!
+}
+
+type LetterForms {
+  isolated: [FormExample!]!   
+  connected: [FormExample!]!  
+  final: [FormExample!]!      
+}
+
+
 type Letter {
   _id: ID!
   letter: String!
-    color: String!
-    group: String!
+  color: String!
+  group: String!
+  forms: LetterForms!
 }
 
 type ExerciseSession {

@@ -54,6 +54,32 @@
     "clickToAddLearners": "Click the + button to add learners.",
     "showMore": "Show more",
     "dashboardTitle": "{name} Dashboard",
+    "exercise2Title": "Exercise 2",
+    "fishGameTitle": "Fish Game with Letters",
+    "roundLabel": "Round {current} of {total}",
+    "listenToLetter": "Listen to Letter",
+    "howToPlayTitle": "How to Play",
+    "howToPlayDescription": "Listen to the letter and find the matching fish. Tap on the correct fish. Earn a point for each correct answer!",
+    "okButton": "OK",
+    "correctAnswer": "🎉 Correct!",
+    "wrongAnswer": "❌ Wrong! The correct letter is: {letter}",
+    "greatJob": "🎉 Great job! Your score: {score} out of {total}",
+    "tryAgain2": "😊 Good try! Your score: {score} out of {total}",
+    "listen": "Listen",
+    "traceThisLetter": "📝 Trace this letter: {letter}",
+    "finishTracing": "✅ Finish Tracing",
+    "completedAllLetters": "🎉 You've completed all letters!",
+    "encouragementMessage": "👏 Well done! You traced all 28 Arabic letters!",
+    "howToTrace": "📚 How to Trace",
+    "instructions": "1. Trace the letter with your finger.\n2. Try to stay on the shape.\n3. Press Done when finished.",
+    "gotIt": "Got it!",
+    "done": "✅ Done",
+    "clear": "🧹 Clear",
+    "traceTitle": "✍️ Trace the letter",
+    "greatJob2": "🎉 Great job!",
+    "restart": "Restart",
+    "tryAgain3": "❌ Try Again",
+    "retry": "Retry",
 
 
 
@@ -65,7 +91,9 @@
 
 
 
-    "title1": "Welcome to your special world\nwhere learning is fun",
+
+
+"title1": "Welcome to your special world\nwhere learning is fun",
     "desc1": "I'm your friend (the app). Let me take you on a daily journey of progress and growth.",
     "button1": "Start",
     "title2": "Together, we will learn to read\nand write Arabic properly",
