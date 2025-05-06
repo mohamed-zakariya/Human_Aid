@@ -181,6 +181,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Listen to Letter"),
         "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("Login"),
+        "next": MessageLookupByLibrary.simpleMessage("Next"),
         "nextButton": MessageLookupByLibrary.simpleMessage("Next"),
         "noAccount":
             MessageLookupByLibrary.simpleMessage("Don’t have an account?"),
@@ -291,6 +292,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "view_details": MessageLookupByLibrary.simpleMessage("view Detials"),
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("Welcome Back, "),
-        "wrongAnswer": m12
+        "wellDone": MessageLookupByLibrary.simpleMessage("Well done! ✅"),
+        "wrongAnswer": m12,
+        "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
+            "You traced the letter correctly!")
       };
 }

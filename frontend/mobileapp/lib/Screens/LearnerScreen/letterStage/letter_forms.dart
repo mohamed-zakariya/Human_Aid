@@ -212,6 +212,13 @@ final Map<String, Map<String, List<Map<String, String>>>> letterForms = {
 };
 
 
+final List<String> arabicLetters = [
+  'أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د',
+  'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط',
+  'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م',
+  'ن', 'ه', 'و', 'ي'
+];
+
 final List<Color> colors = [
   Colors.red, Colors.blue, Colors.green, Colors.orange,
   Colors.purple, Colors.teal, Colors.brown, Colors.pink,
@@ -226,193 +233,26 @@ final List<Color> colors = [
 // letter_forms.dart
 
 final Map<String, List<Map<String, dynamic>>>  letterForms2 = {
-  // 'أ': {
-  //   'منفصل': [
-  //     {
-  //       'form': 'منفصل',
-  //       'example': 'أب',
-  //       'image': 'assets/images/أ_منفصل.png',
-  //     },
-  //   ],
-  //   'متصل': [
-  //     {
-  //       'form': 'متصل',
-  //       'example': 'أبناء',
-  //       'image': 'assets/images/أ_متصل.png',
-  //     },
-  //   ],
-  //   'نهائي': [
-  //     {
-  //       'form': 'نهائي',
-  //       'example': 'كتاب',
-  //       'image': 'assets/images/أ_نهائي.png',
-  //     },
-  //   ],
-  // },
-  // 'ب': {
-  //   'منفصل': [
-  //     {
-  //       'form': 'منفصل',
-  //       'example': 'باب',
-  //       'image': 'assets/images/ب_منفصل.png',
-  //     },
-  //   ],
-  //   'متصل': [
-  //     {
-  //       'form': 'متصل',
-  //       'example': 'بناء',
-  //       'image': 'assets/images/ب_متصل.png',
-  //     },
-  //   ],
-  //   'نهائي': [
-  //     {
-  //       'form': 'نهائي',
-  //       'example': 'كتاب',
-  //       'image': 'assets/images/ب_نهائي.png',
-  //     },
-  //   ],
-  // },
-  // 'ت': {
-  //   'منفصل': [
-  //     {
-  //       'form': 'منفصل',
-  //       'example': 'تاج',
-  //       'image': 'assets/images/ت_منفصل.png',
-  //     },
-  //   ],
-  //   'متصل': [
-  //     {
-  //       'form': 'متصل',
-  //       'example': 'تنمية',
-  //       'image': 'assets/images/ت_متصل.png',
-  //     },
-  //   ],
-  //   'نهائي': [
-  //     {
-  //       'form': 'نهائي',
-  //       'example': 'كتابة',
-  //       'image': 'assets/images/ت_نهائي.png',
-  //     },
-  //   ],
-  // },
-  // 'ث': {
-  //   'منفصل': [
-  //     {
-  //       'form': 'منفصل',
-  //       'example': 'ثلاثة',
-  //       'image': 'assets/images/ث_منفصل.png',
-  //     },
-  //   ],
-  //   'متصل': [
-  //     {
-  //       'form': 'متصل',
-  //       'example': 'ثقة',
-  //       'image': 'assets/images/ث_متصل.png',
-  //     },
-  //   ],
-  //   'نهائي': [
-  //     {
-  //       'form': 'نهائي',
-  //       'example': 'ثمين',
-  //       'image': 'assets/images/ث_نهائي.png',
-  //     },
-  //   ],
-  // },
-  // // Add other letters similarly...
-  // 'ج': {
-  //   'منفصل': [
-  //     {
-  //       'form': 'منفصل',
-  //       'example': 'جمل',
-  //       'image': 'assets/images/ج_منفصل.png',
-  //     },
-  //   ],
-  //   'متصل': [
-  //     {
-  //       'form': 'متصل',
-  //       'example': 'جدير',
-  //       'image': 'assets/images/ج_متصل.png',
-  //     },
-  //   ],
-  //   'نهائي': [
-  //     {
-  //       'form': 'نهائي',
-  //       'example': 'جار',
-  //       'image': 'assets/images/ج_نهائي.png',
-  //     },
-  //   ],
-  // },
-  // 'ح': {
-  //   'منفصل': [
-  //     {
-  //       'form': 'منفصل',
-  //       'example': 'حجم',
-  //       'image': 'assets/images/ح_منفصل.png',
-  //     },
-  //   ],
-  //   'متصل': [
-  //     {
-  //       'form': 'متصل',
-  //       'example': 'حقيقة',
-  //       'image': 'assets/images/ح_متصل.png',
-  //     },
-  //   ],
-  //   'نهائي': [
-  //     {
-  //       'form': 'نهائي',
-  //       'example': 'حرف',
-  //       'image': 'assets/images/ح_نهائي.png',
-  //     },
-  //   ],
-  // },
-  // // Continue for the rest of the Arabic alphabet...
-  // 'خ': {
-  //   'منفصل': [
-  //     {
-  //       'form': 'منفصل',
-  //       'example': 'خروف',
-  //       'image': 'assets/images/خ_منفصل.png',
-  //     },
-  //   ],
-  //   'متصل': [
-  //     {
-  //       'form': 'متصل',
-  //       'example': 'خطأ',
-  //       'image': 'assets/images/خ_متصل.png',
-  //     },
-  //   ],
-  //   'نهائي': [
-  //     {
-  //       'form': 'نهائي',
-  //       'example': 'خارج',
-  //       'image': 'assets/images/خ_نهائي.png',
-  //     },
-  //   ],
-  // },
-  // 'د': {
-  //   'منفصل': [
-  //     {
-  //       'form': 'منفصل',
-  //       'example': 'دنيا',
-  //       'image': 'assets/images/د_منفصل.png',
-  //     },
-  //   ],
-  //   'متصل': [
-  //     {
-  //       'form': 'متصل',
-  //       'example': 'دليل',
-  //       'image': 'assets/images/د_متصل.png',
-  //     },
-  //   ],
-  //   'نهائي': [
-  //     {
-  //       'form': 'نهائي',
-  //       'example': 'دخول',
-  //       'image': 'assets/images/د_نهائي.png',
-  //     },
-  //   ],
-  // },
-  // Continue for the rest of the Arabic letters...
+  'أ': [
+    {
+      'label': 'بداية', // Beginning form (isolated)
+      'form': 'أ', // Isolated form of أ
+      'example': 'أسد', // Example word with isolated form
+      'image': 'assets/images/letters/أ_منفصل.png',
+    },
+    {
+      'label': 'وسط', // Middle form (connected)
+      'form': 'ـا', // Middle form of أ, when connected to the previous letter
+      'example': 'باب', // Example word where أ is in the middle and connected
+      'image': 'assets/images/letters/أ_متصل.jpg',
+    },
+    {
+      'label': 'نهاية', // Final form
+      'form': 'ـا', // Final form of أ, connected to the previous letter
+      'example': 'عصا', // Example where أ is in the final form at the end
+      'image': 'assets/images/letters/أ_نهائي.png',
+    },
+  ],
   'ه': [
     {
       'label': 'بداية',

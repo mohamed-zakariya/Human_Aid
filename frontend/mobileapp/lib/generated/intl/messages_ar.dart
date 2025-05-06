@@ -181,6 +181,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("استمع إلى الحرف"),
         "loginButton": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("تسجيل الدُّخول"),
+        "next": MessageLookupByLibrary.simpleMessage("التالي"),
         "nextButton": MessageLookupByLibrary.simpleMessage("التالي"),
         "noAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
         "noExercisesAvailable":
@@ -291,6 +292,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "view_details": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("مرحبًا بعودتك، "),
-        "wrongAnswer": m12
+        "wellDone": MessageLookupByLibrary.simpleMessage(" !أحسنت ✅"),
+        "wrongAnswer": m12,
+        "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
+            "لقد قمت بتتبع الحرف بشكل صحيح.")
       };
 }

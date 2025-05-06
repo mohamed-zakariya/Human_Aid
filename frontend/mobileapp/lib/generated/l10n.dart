@@ -850,6 +850,36 @@ class S {
     );
   }
 
+  /// `Well done! ✅`
+  String get wellDone {
+    return Intl.message(
+      'Well done! ✅',
+      name: 'wellDone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You traced the letter correctly!`
+  String get youTracedCorrectly {
+    return Intl.message(
+      'You traced the letter correctly!',
+      name: 'youTracedCorrectly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next`
+  String get next {
+    return Intl.message(
+      'Next',
+      name: 'next',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Welcome to your special world\nwhere learning is fun`
   String get title1 {
     return Intl.message(

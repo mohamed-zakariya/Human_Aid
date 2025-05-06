@@ -14,6 +14,7 @@ class LetterLevel2Game2 extends StatefulWidget {
 
 class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
   final TTSService _ttsService = TTSService();
+
   List<Letter> allLetters = [];
   bool isLoading = true;
 
@@ -33,7 +34,7 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
   @override
   void initState() {
     super.initState();
-    _ttsService.initialize(language: 'ar-SA');
+    _ttsService.initialize(language: 'ar-EG');
     _loadLetters();
   }
 
@@ -155,6 +156,9 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
     final isTablet = MediaQuery.of(context).size.width > 600;
 
     void showInfoDialog() {
+      final currentLocale = Localizations.localeOf(context).languageCode;
+      final isArabic = currentLocale == 'ar';
+
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -163,13 +167,35 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
           content: Text(S.of(context).howToPlayDescription),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                _ttsService.stop(); // Stop TTS before closing dialog
+                Navigator.pop(context);
+              },
               child: Text(S.of(context).okButton),
+            ),
+
+            TextButton(
+              onPressed: () {
+                Localizations.localeOf(context).languageCode == 'ar'?
+                _ttsService.setLanguage('ar-EG'):
+                _ttsService.setLanguage('en-US');
+                _ttsService.speak(S.of(context).howToPlayDescription);
+              },
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.volume_up),
+                  SizedBox(width: 8),
+                  Text("Read Aloud"),
+                ],
+              ),
             ),
           ],
         ),
       );
     }
+
+
 
     return Scaffold(
       appBar: AppBar(
@@ -179,9 +205,10 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.teal,
+        foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(Icons.info_outline),
+            icon: const Icon(Icons.help_outline_rounded),
             onPressed: showInfoDialog,
           ),
         ],
@@ -206,6 +233,7 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
               child: ElevatedButton.icon(
                 onPressed: remainingAttempts > 0
                     ? () {
+                  _ttsService.setLanguage('ar-EG');
                   _ttsService.speak(targetLetter.letter);
                   setState(() {
                     remainingAttempts--;
@@ -213,7 +241,7 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
                 }
                     : null, // Disables the button when attempts are 0
                 icon: const Icon(Icons.volume_up),
-                label: Text('${S.of(context).tryAgain} ($remainingAttempts)'),
+                label: Text('${S.of(context).listen} ($remainingAttempts)'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   foregroundColor: Colors.white,

@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
             ],
         supportedLocales: S.delegate.supportedLocales,
 
-        initialRoute: '/letters_level_3',
+        initialRoute: '/intro',
         routes: {
           '/intro': (context) => IntroScreen(onLocaleChange: _setLocale),
           '/quiz': (context) => TestSelectorWidget(userProgress: 0.3),
@@ -81,8 +81,8 @@ class _MyAppState extends State<MyApp> {
           '/forgot-password': (context) => ForgotPasswordPage(onLocaleChange: _setLocale),
           '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
           '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
-          '/wordPronunciation': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
-          '/ScentencePronunciationScreen': (context) => SentencePronunciationScreen(onLocaleChange: _setLocale),
+          '/words_level_1': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
+          '/sentences_level_1': (context) => SentencePronunciationScreen(onLocaleChange: _setLocale),
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
           '/signup2': (context) {
@@ -130,11 +130,11 @@ class _MyAppState extends State<MyApp> {
     exerciseId: args['exerciseId'] as String,
   );
 },
-          '/letter_level1_Game': (context) =>  const ArabicLetterTracingExercise(),
           '/letters_level_3': (context) => const LetterLevel3(),
-          '/letter_level2_Game': (context) => const LetterLevel2Game(),
-          '/letter_level2_Game2': (context) => const LetterLevel2Game2(),
-          '/letter_level3_Game': (context) => const LetterLevel3Game()
+          '/letters_game_1': (context) => const ArabicLetterTracingExercise(),
+          '/letters_game_3': (context) => const LetterLevel2Game(),
+          '/letters_game_4': (context) => const LetterLevel2Game2(),
+          '/letters_game_5': (context) => const LetterLevel3Game()
 
 
 

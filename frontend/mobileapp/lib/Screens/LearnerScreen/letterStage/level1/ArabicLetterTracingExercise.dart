@@ -107,18 +107,38 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
   Future<void> _onTracingComplete() async {
     bool isCorrect = await _validateTraceAccuracy();
     if (isCorrect) {
-      if (currentLetterIndex < arabicLetters.length - 1) {
-        setState(() {
-          currentLetterIndex++;
-          _userPath.reset();
-        });
-      } else {
-        _showEncouragementMessage();
-      }
+      _showSuccessMessage();
     } else {
       _showTryAgainMessage();
     }
   }
+
+  void _showSuccessMessage() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(S.of(context).wellDone),
+        content: Text(S.of(context).youTracedCorrectly),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              if (currentLetterIndex < arabicLetters.length - 1) {
+                setState(() {
+                  currentLetterIndex++;
+                  _userPath.reset();
+                });
+              } else {
+                _showEncouragementMessage();
+              }
+            },
+            child: Text(S.of(context).next),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Future<bool> _validateTraceAccuracy() async {
     RenderRepaintBoundary boundary = _paintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;

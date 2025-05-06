@@ -13,12 +13,7 @@ class LetterLevel3 extends StatefulWidget {
 }
 
 class _LetterLevel3State extends State<LetterLevel3> {
-  final List<String> arabicLetters = [
-    'أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د',
-    'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط',
-    'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م',
-    'ن', 'ه', 'و', 'ي'
-  ];
+
 
   int _current = 0;
   final CarouselSliderController _controller = CarouselSliderController();

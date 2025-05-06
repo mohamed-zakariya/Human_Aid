@@ -80,6 +80,9 @@
     "restart": "Restart",
     "tryAgain3": "❌ Try Again",
     "retry": "Retry",
+    "wellDone": "Well done! ✅",
+    "youTracedCorrectly": "You traced the letter correctly!",
+    "next": "Next",
 
 
 
