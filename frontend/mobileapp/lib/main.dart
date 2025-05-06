@@ -79,8 +79,8 @@ class _MyAppState extends State<MyApp> {
           '/forgot-password': (context) => ForgotPasswordPage(onLocaleChange: _setLocale),
           '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
           '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
-          '/wordPronunciation': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
-          '/ScentencePronunciationScreen': (context) => SentencePronunciationScreen(onLocaleChange: _setLocale),
+          '/words_level_1': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
+          '/sentences_level_1': (context) => SentencePronunciationScreen(onLocaleChange: _setLocale),
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
           '/signup2': (context) {
@@ -129,8 +129,8 @@ class _MyAppState extends State<MyApp> {
   );
 },
           '/letters_level_3': (context) => const LetterLevel3(),
-          '/letter_level1_Game': (context) => const LetterLevel1Game(),
-          '/letter_level3_Game': (context) => const LetterLevel3Game()
+          '/letters_game_1': (context) => const LetterLevel1Game(),
+          '/letters_game_5': (context) => const LetterLevel3Game()
 
 
 
