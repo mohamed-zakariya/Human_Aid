@@ -880,6 +880,86 @@ class S {
     );
   }
 
+  /// `Spelling Game`
+  String get spellingGame {
+    return Intl.message(
+      'Spelling Game',
+      name: 'spellingGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Help`
+  String get help {
+    return Intl.message(
+      'Help',
+      name: 'help',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How to Play`
+  String get instructionsTitle {
+    return Intl.message(
+      'How to Play',
+      name: 'instructionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drag the letters into the correct order.`
+  String get instruction1 {
+    return Intl.message(
+      'Drag the letters into the correct order.',
+      name: 'instruction1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If the answer is correct, you'll get a new word.`
+  String get instruction2 {
+    return Intl.message(
+      'If the answer is correct, you\'ll get a new word.',
+      name: 'instruction2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try to complete all words and get a high score!`
+  String get instruction3 {
+    return Intl.message(
+      'Try to complete all words and get a high score!',
+      name: 'instruction3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close`
+  String get close {
+    return Intl.message(
+      'Close',
+      name: 'close',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `accuracy`
+  String get accuracy {
+    return Intl.message(
+      'accuracy',
+      name: 'accuracy',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Welcome to your special world\nwhere learning is fun`
   String get title1 {
     return Intl.message(

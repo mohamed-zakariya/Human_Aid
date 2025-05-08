@@ -12,6 +12,7 @@ import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/ArabicLetterTracingExercise.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart';
+import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level1/game1/screens/spelling_game_screen.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
 import 'package:mobileapp/Screens/SignUp/signupadult.dart';
@@ -134,7 +135,8 @@ class _MyAppState extends State<MyApp> {
           '/letters_game_1': (context) => const ArabicLetterTracingExercise(),
           '/letters_game_3': (context) => const LetterLevel2Game(),
           '/letters_game_4': (context) => const LetterLevel2Game2(),
-          '/letters_game_5': (context) => const LetterLevel3Game()
+          '/letters_game_5': (context) => const LetterLevel3Game(),
+          '/words_game_1': (context) => const SpellingGameScreen()
 
 
 

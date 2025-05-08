@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:mobileapp/models/learner.dart';
-import 'package:mobileapp/models/learner_daily_attempts.dart';
+import 'package:mobileapp/models/dailyAttempts/learner_daily_attempts.dart';
 import '../../models/overall_progress.dart';
 
-class LearnerProfileWidget extends StatelessWidget {
+class LearnerProfileWidget extends StatefulWidget {
   final Learner learner;
-  final UserExerciseProgress? userProgress; // Nullable now
+  final UserExerciseProgress? userProgress;
 
   LearnerProfileWidget({super.key, required this.learner, this.userProgress});
 
   @override
+  State<LearnerProfileWidget> createState() => _LearnerProfileWidgetState();
+}
+
+
+class _LearnerProfileWidgetState extends State<LearnerProfileWidget> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    double progress = userProgress?.accuracyPercentage ?? 0.0; // ✅ Use null-aware operator
+    double progress = widget.userProgress?.overallStats.combinedAccuracy ?? 0.0;
+
+    List<String> learnedWords = widget.userProgress?.progressByExercise
+        .expand((e) => e.stats.totalCorrect.items)
+        .toList() ??
+        [];
 
     return Column(
       children: [
@@ -30,7 +48,7 @@ class LearnerProfileWidget extends StatelessWidget {
             ),
             CircleAvatar(
               backgroundImage: AssetImage(
-                learner.gender == 'male'
+                widget.learner.gender == 'male'
                     ? "assets/images/boy.jpeg"
                     : "assets/images/girl.jpeg",
               ),
@@ -42,11 +60,11 @@ class LearnerProfileWidget extends StatelessWidget {
 
         // Learner name and username
         Text(
-          learner.name,
+          widget.learner.name,
           style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black87),
         ),
         Text(
-          learner.username,
+          widget.learner.username,
           style: const TextStyle(fontSize: 20, color: Colors.black38, fontStyle: FontStyle.italic),
         ),
 
@@ -58,8 +76,8 @@ class LearnerProfileWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            userProgress != null
-                ? "Words Learned: ${userProgress!.correctWords.length}"
+            widget.userProgress != null
+                ? "Words Learned: ${learnedWords.length}"
                 : "No progress data available",
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
@@ -79,9 +97,10 @@ class LearnerProfileWidget extends StatelessWidget {
         const SizedBox(height: 20),
 
         // Learned Words Section
-        if (userProgress != null && userProgress!.correctWords.isNotEmpty)
-          _buildWordsLearnedSection(userProgress!.correctWords.map((w) => w.spokenWord).toList())
+        if (learnedWords.isNotEmpty)
+          _buildWordsLearnedSection(learnedWords)
         else
+        // ... show "No learned words yet"
           const Column(
             children: [
               Icon(Icons.menu_book, size: 40, color: Colors.grey), // Book icon 📖

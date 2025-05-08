@@ -54,6 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ParentNavBarLogout": MessageLookupByLibrary.simpleMessage("Logout"),
         "ParentNavBarSettings":
             MessageLookupByLibrary.simpleMessage("Settings"),
+        "accuracy": MessageLookupByLibrary.simpleMessage("accuracy"),
         "add": MessageLookupByLibrary.simpleMessage("Add"),
         "addNewLearner":
             MessageLookupByLibrary.simpleMessage("Add New Learner"),
@@ -77,6 +78,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clear": MessageLookupByLibrary.simpleMessage("🧹 Clear"),
         "clickToAddLearners": MessageLookupByLibrary.simpleMessage(
             "Click the + button to add learners."),
+        "close": MessageLookupByLibrary.simpleMessage("Close"),
         "completedAllLetters": MessageLookupByLibrary.simpleMessage(
             "🎉 You\'ve completed all letters!"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
@@ -157,14 +159,23 @@ class MessageLookup extends MessageLookupByLibrary {
         "guardianTitle": MessageLookupByLibrary.simpleMessage(
             "Register for someone you care about"),
         "helloLabel": MessageLookupByLibrary.simpleMessage("Hello,"),
+        "help": MessageLookupByLibrary.simpleMessage("Help"),
         "howToPlayDescription": MessageLookupByLibrary.simpleMessage(
             "Listen to the letter and find the matching fish. Tap on the correct fish. Earn a point for each correct answer!"),
         "howToPlayTitle": MessageLookupByLibrary.simpleMessage("How to Play"),
         "howToTrace": MessageLookupByLibrary.simpleMessage("📚 How to Trace"),
         "ignoredRecording":
             MessageLookupByLibrary.simpleMessage("Recording ignored"),
+        "instruction1": MessageLookupByLibrary.simpleMessage(
+            "Drag the letters into the correct order."),
+        "instruction2": MessageLookupByLibrary.simpleMessage(
+            "If the answer is correct, you\'ll get a new word."),
+        "instruction3": MessageLookupByLibrary.simpleMessage(
+            "Try to complete all words and get a high score!"),
         "instructions": MessageLookupByLibrary.simpleMessage(
             "1. Trace the letter with your finger.\n2. Try to stay on the shape.\n3. Press Done when finished."),
+        "instructionsTitle":
+            MessageLookupByLibrary.simpleMessage("How to Play"),
         "introTitle": MessageLookupByLibrary.simpleMessage(
             "How would you like to register?"),
         "invalidCredentials": MessageLookupByLibrary.simpleMessage(
@@ -260,6 +271,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signuptitlephonenumber":
             MessageLookupByLibrary.simpleMessage("phone number"),
         "signuptitleusername": MessageLookupByLibrary.simpleMessage("username"),
+        "spellingGame": MessageLookupByLibrary.simpleMessage("Spelling Game"),
         "submitbutton": MessageLookupByLibrary.simpleMessage("Done"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("Login successful"),

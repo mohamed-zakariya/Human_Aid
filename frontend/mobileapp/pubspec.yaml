@@ -95,6 +95,8 @@ flutter:
     - assets/audio/
     - assets/arcades/flags/
     - assets/images/letters/
+    - assets/images/photos/
+    - assets/sounds/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

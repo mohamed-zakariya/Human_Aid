@@ -83,6 +83,14 @@
     "wellDone": "Well done! ✅",
     "youTracedCorrectly": "You traced the letter correctly!",
     "next": "Next",
+    "spellingGame": "Spelling Game",
+    "help": "Help",
+    "instructionsTitle": "How to Play",
+    "instruction1": "Drag the letters into the correct order.",
+    "instruction2": "If the answer is correct, you'll get a new word.",
+    "instruction3": "Try to complete all words and get a high score!",
+    "close": "Close",
+    "accuracy": "accuracy",
 
 
 

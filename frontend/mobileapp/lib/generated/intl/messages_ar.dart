@@ -53,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
         "ParentNavBarSettings":
             MessageLookupByLibrary.simpleMessage("الإعدادات"),
+        "accuracy": MessageLookupByLibrary.simpleMessage("الدقة"),
         "add": MessageLookupByLibrary.simpleMessage("إضافة"),
         "addNewLearner":
             MessageLookupByLibrary.simpleMessage("إضافة متعلم جديد"),
@@ -78,6 +79,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clear": MessageLookupByLibrary.simpleMessage("🧹 مسح"),
         "clickToAddLearners": MessageLookupByLibrary.simpleMessage(
             "اضغط على زر + لإضافة المتعلمين."),
+        "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
         "completedAllLetters":
             MessageLookupByLibrary.simpleMessage("🎉 لقد أنهيت جميع الحروف!"),
         "confirm": MessageLookupByLibrary.simpleMessage("تأكيد"),
@@ -156,14 +158,23 @@ class MessageLookup extends MessageLookupByLibrary {
             "تسجيلك كولي أمر يمكنك من تسجيل و متابعة تقدم أحيانك، سواء كالوا أبناءك، طلابك، أو أي شخص تحت مسئوليتك"),
         "guardianTitle": MessageLookupByLibrary.simpleMessage("سجل لمن تحب"),
         "helloLabel": MessageLookupByLibrary.simpleMessage("مرحباً،"),
+        "help": MessageLookupByLibrary.simpleMessage("مساعدة"),
         "howToPlayDescription": MessageLookupByLibrary.simpleMessage(
             "استمع إلى الحرف وابحث عن السمكة المطابقة. اضغط على السمكة الصحيحة. تحصل على نقطة لكل إجابة صحيحة!"),
         "howToPlayTitle": MessageLookupByLibrary.simpleMessage("كيفية اللعب"),
         "howToTrace": MessageLookupByLibrary.simpleMessage("📚 كيفية التتبع"),
         "ignoredRecording":
             MessageLookupByLibrary.simpleMessage("تم تجاهل التسجيل"),
+        "instruction1": MessageLookupByLibrary.simpleMessage(
+            "اسحب الحروف بالترتيب الصحيح."),
+        "instruction2": MessageLookupByLibrary.simpleMessage(
+            "إذا كانت الإجابة صحيحة، ستحصل على كلمة جديدة."),
+        "instruction3": MessageLookupByLibrary.simpleMessage(
+            "حاول إكمال جميع الكلمات للحصول على أعلى نتيجة!"),
         "instructions": MessageLookupByLibrary.simpleMessage(
             "١. تتبع الحرف بإصبعك.\n٢. حاول البقاء على شكل الحرف.\n٣. اضغط تم عند الانتهاء."),
+        "instructionsTitle":
+            MessageLookupByLibrary.simpleMessage("كيفية اللعب"),
         "introTitle": MessageLookupByLibrary.simpleMessage(
             "كَيْفَ تُوَدُّ التَّسْجِيلَ؟"),
         "invalidCredentials": MessageLookupByLibrary.simpleMessage(
@@ -262,6 +273,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("رقم الهاتف"),
         "signuptitleusername":
             MessageLookupByLibrary.simpleMessage("اسم المستخدم"),
+        "spellingGame": MessageLookupByLibrary.simpleMessage("لعبة التهجئة"),
         "submitbutton": MessageLookupByLibrary.simpleMessage("تم"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول بنجاح"),

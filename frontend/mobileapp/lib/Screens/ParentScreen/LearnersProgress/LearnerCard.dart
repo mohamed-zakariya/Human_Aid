@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobileapp/models/dailyAttempts/learner_daily_attempts.dart';
 
 import '../../../generated/l10n.dart';
 import '../../../global/fns.dart';
 import 'learner_progress_details_page.dart';
 
-class Childcard extends StatelessWidget {
+class Childcard extends StatefulWidget {
   final String title;
   final String learnerName;
   final String username;
@@ -16,8 +17,11 @@ class Childcard extends StatelessWidget {
   final bool awardReceived;
   final Color color;
   final IconData icon;
-  final List<Map<String, String>> correctWordList; // New: List of correct words
-  final List<Map<String, String>> incorrectWordList; // New: List of incorrect words
+  final List<Word> correctWordList; // New: List of correct words
+  final List<Word> incorrectWordList; // New: List of incorrect words
+  final List<Letter> correctLetters;
+  final List<Letter> incorrectLetters;
+  final List<Map<String, dynamic>> gameAttempts;
 
   const Childcard({
     super.key,
@@ -31,14 +35,36 @@ class Childcard extends StatelessWidget {
     required this.awardReceived,
     required this.color,
     required this.icon,
-    required this.correctWordList, // New
-    required this.incorrectWordList, // New
+    required this.correctWordList,
+    required this.incorrectWordList,
+    required this.correctLetters,
+    required this.incorrectLetters,
+    required this.gameAttempts,
   });
+
+  @override
+  State<Childcard> createState() => _ChildcardState();
+}
+
+class _ChildcardState extends State<Childcard> {
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(widget.correctLetters);
+    print(widget.incorrectLetters);
+    print(widget.correctWordList);
+    print(widget.incorrectWordList);
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: color,
+      color: widget.color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -48,11 +74,11 @@ class Childcard extends StatelessWidget {
             // Title and Icon
             Row(
               children: [
-                Icon(icon, color: Colors.white, size: 30),
+                Icon(widget.icon, color: Colors.white, size: 30),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    title,
+                    widget.title,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -66,21 +92,16 @@ class Childcard extends StatelessWidget {
 
             // Learner's Name and Username
             Text(
-              "Learner: $learnerName",
+              "Learner: ${widget.learnerName}",
               style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
-              "Username: @$username",
+              "Username: @${widget.username}",
               style: const TextStyle(color: Colors.white70, fontSize: 16),
             ),
 
             const SizedBox(height: 10),
 
-            // Words Read
-            Text(
-              "Words Read: $wordsRead",
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-            ),
 
             const SizedBox(height: 8),
 
@@ -90,7 +111,7 @@ class Childcard extends StatelessWidget {
                 const Icon(Icons.check_circle, color: Colors.greenAccent, size: 24),
                 const SizedBox(width: 5),
                 Text(
-                  "Correct: $correctWords",
+                  "Correct: ${widget.correctWordList.length + widget.correctLetters.length}",
                   style: const TextStyle(color: Colors.greenAccent, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -101,7 +122,7 @@ class Childcard extends StatelessWidget {
                 const Icon(Icons.cancel, color: Colors.redAccent, size: 24),
                 const SizedBox(width: 5),
                 Text(
-                  "Incorrect: $incorrectWords",
+                  "Incorrect: ${widget.incorrectWordList.length + widget.incorrectLetters.length}",
                   style: const TextStyle(color: Colors.redAccent, fontSize: 18),
                 ),
               ],
@@ -113,12 +134,12 @@ class Childcard extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  dailyQuestCompleted ? Icons.check_circle : Icons.cancel,
-                  color: dailyQuestCompleted ? Colors.greenAccent : Colors.redAccent,
+                  widget.dailyQuestCompleted ? Icons.check_circle : Icons.cancel,
+                  color: widget.dailyQuestCompleted ? Colors.greenAccent : Colors.redAccent,
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  dailyQuestCompleted ? "Daily Quest Completed" : "Daily Quest Incomplete",
+                  widget.dailyQuestCompleted ? "Daily Quest Completed" : "Daily Quest Incomplete",
                   style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ],
@@ -128,12 +149,12 @@ class Childcard extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  awardReceived ? Icons.emoji_events : Icons.lock,
-                  color: awardReceived ? Colors.yellow : Colors.grey,
+                  widget.awardReceived ? Icons.emoji_events : Icons.lock,
+                  color: widget.awardReceived ? Colors.yellow : Colors.grey,
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  awardReceived ? "Award Received" : "No Award",
+                  widget.awardReceived ? "Award Received" : "No Award",
                   style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ],
@@ -149,10 +170,15 @@ class Childcard extends StatelessWidget {
                   Navigator.push(
                     context,
                     createRouteParentLearnerProgress(LearnerProgressDetailsPage(
-                      learnerName: learnerName,
-                      username: username,
-                      correctWords: correctWordList,
-                      incorrectWords: incorrectWordList,
+                      learnerName: widget.learnerName,
+                      username: widget.username,
+                      correctWords: widget.correctWordList,
+                      incorrectWords: widget.incorrectWordList,
+                      correctLetters: widget.correctLetters,
+                      incorrectLetters: widget.incorrectLetters,
+                      // correctSentences: correctSentences,
+                      // incorrectSentences: incorrectSentences,
+                      gameAttempts: widget.gameAttempts,
                     )),
                   );
                 },
