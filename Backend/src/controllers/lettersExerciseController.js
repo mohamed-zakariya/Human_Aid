@@ -9,67 +9,115 @@ import Letters from "../models/Letters.js";
 import Exercises from "../models/Exercises.js";
 
 export const startExercise = async (userId, exerciseId) => {
-    try {
-      let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
-  
-      if (!progress) {
-        progress = new Exercisesprogress({
-          user_id: userId,
-          exercise_id: exerciseId,
-          start_time: new Date(),
-          exercise_time_spent: [],
-          accuracy_percentage: 0,
-          score: 0,
-        });
-  
-        await progress.save();
-      } else {
-        progress.start_time = new Date(); // Reset start time
-        await progress.save();
-      }
-  
-      return { message: "Exercise started", startTime: progress.start_time };
-    } catch (error) {
-      console.error("Error in startExercise:", error);
-      throw new Error("Failed to start exercise.");
-    }
-  };
-  
-  export const endExercise = async (userId, exerciseId) => {
-    try {
-      let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
-  
-      if (!progress || !progress.start_time) {
-        throw new Error("No active session found for this exercise.");
-      }
-  
-      const endTime = new Date();
-      const timeSpent = Math.floor((endTime - progress.start_time) / 60000); // Convert ms to minutes
-  
-      let startOfDay = new Date();
-      startOfDay.setUTCHours(0, 0, 0, 0);
-      let endOfDay = new Date();
-      endOfDay.setUTCHours(23, 59, 59, 999);
-  
-      const existingEntry = progress.exercise_time_spent.find((entry) => 
-        entry.date >= startOfDay && entry.date <= endOfDay
-      );
-  
-      if (existingEntry) {
-        existingEntry.time_spent += timeSpent;
-      } else {
-        progress.exercise_time_spent.push({ date: new Date(), time_spent: timeSpent });
-      }
-  
-      progress.start_time = null;
-      await progress.save();
-      return { message: "Exercise ended", timeSpent };
-    } catch (error) {
-      console.error(error);
-      throw new Error("Failed to end exercise.");
-    }
-  };
+  try {
+    let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
 
+    if (!progress) {
+      progress = new Exercisesprogress({
+        user_id: userId,
+        exercise_id: exerciseId,
+        total_time_spent: 0,
+        session_start: new Date(),
+        levels: [],
+      });
+
+      await progress.save();
+    } else {
+      progress.session_start = new Date(); // Reset session start time
+      await progress.save();
+    }
+
+    // Ensure OverallProgress exists for the user
+    let overall = await OverallProgress.findOne({ user_id: userId });
+    if (!overall) {
+      overall = new OverallProgress({
+        user_id: userId,
+        progress_by_exercise: [],
+        overall_stats: {
+          total_time_spent: 0,
+          combined_accuracy: 0,
+          average_score_all: 0,
+        },
+      });
+      await overall.save();
+    }
+
+    return { message: "Exercise started", startTime: progress.session_start };
+  } catch (error) {
+    console.error("Error in startExercise:", error);
+    throw new Error("Failed to start exercise.");
+  }
+};
+
+export const endExercise = async (userId, exerciseId) => {
+  try {
+    let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
+
+    if (!progress || !progress.session_start) {
+      throw new Error("No active session found for this exercise.");
+    }
+
+    const endTime = new Date();
+    const timeSpent = Math.floor((endTime - progress.session_start) / 1000); // Convert ms to seconds
+
+    // Update total time spent in Exercisesprogress
+    progress.total_time_spent += timeSpent;
+    progress.session_start = null; // Clear session start time
+    await progress.save();
+
+    // Update OverallProgress
+    let overall = await OverallProgress.findOne({ user_id: userId });
+    if (!overall) {
+      throw new Error("Overall progress not found for the user.");
+    }
+
+    // Find or create the exercise-specific progress entry
+    let exerciseProgress = overall.progress_by_exercise.find(
+      (p) => p.exercise_id.toString() === exerciseId.toString()
+    );
+
+    if (!exerciseProgress) {
+      exerciseProgress = {
+        exercise_id: exerciseId,
+        stats: {
+          total_correct: { count: 0, items: [] },
+          total_incorrect: { count: 0, items: [] },
+          total_items_attempted: 0,
+          accuracy_percentage: 0,
+          average_game_score: 0,
+          time_spent_seconds: 0,
+        },
+      };
+      overall.progress_by_exercise.push(exerciseProgress);
+    }
+
+    // Update time spent for this exercise
+    exerciseProgress.stats.time_spent_seconds += timeSpent;
+
+    // Recalculate overall stats
+    let totalCorrect = 0;
+    let totalAttempted = 0;
+    let totalTime = 0;
+
+    for (const ex of overall.progress_by_exercise) {
+      totalCorrect += ex.stats.total_correct.count;
+      totalAttempted += ex.stats.total_items_attempted;
+      totalTime += ex.stats.time_spent_seconds;
+    }
+
+    overall.overall_stats.total_time_spent = totalTime;
+    overall.overall_stats.combined_accuracy = totalAttempted > 0
+      ? (totalCorrect / totalAttempted) * 100
+      : 0;
+
+    await overall.save();
+
+    return { message: "Exercise ended", timeSpent };
+  } catch (error) {
+    console.error("Error in endExercise:", error);
+    throw new Error("Failed to end exercise.");
+  }
+};
   export const updateLetterProgress = async (userId, exerciseId, letterId, audioFile, spokenLetter, timeSpent) => {
     const session = await mongoose.startSession();
     session.startTransaction();

@@ -6,8 +6,8 @@ type ProcessedSpeech {
   expectedWord: String!
   isCorrect: Boolean!
   message: String!
-  score: Int!
-  accuracy: Float!
+  score: Int
+  accuracy: Float
 }
 
 type Word {
@@ -45,6 +45,7 @@ type Mutation {
     userId: ID!
     exerciseId: ID!
     wordId: ID!
+    levelId: ID!
     audioFile: String
     spokenWord: String!
   ): ProcessedSpeech!

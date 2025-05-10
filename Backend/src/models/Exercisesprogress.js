@@ -19,11 +19,12 @@ const levelProgressSchema = new Schema({
 const exercisesProgressSchema = new Schema({
   user_id: { type: Types.ObjectId, ref: 'Users', required: true },
   exercise_id: { type: Types.ObjectId, ref: 'Exercises', required: true },
-  total_time_spent: { type: Number, required: true },
+  total_time_spent: { type: Number, required: true, default: 0 },
+  session_start: { type: Date},
   levels: [levelProgressSchema],
 }, {
   timestamps: true // Automatically adds createdAt and updatedAt
 });
 
-const ExercisesProgress = model('ExercisesProgress', exercisesProgressSchema);
-export default ExercisesProgress;
+const Exercisesprogress = model('Exercisesprogress', exercisesProgressSchema);
+export default Exercisesprogress;
