@@ -1,18 +1,38 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class LearnerProgressDetailsPage extends StatelessWidget {
+import '../../../models/dailyAttempts/learner_daily_attempts.dart';
+
+class LearnerProgressDetailsPage extends StatefulWidget {
   final String learnerName;
   final String username;
-  final List<Map<String, String>> correctWords;
-  final List<Map<String, String>> incorrectWords;
+  final List<Word> correctWords;
+  final List<Word> incorrectWords;
+  final List<Letter> correctLetters; // List of 'Letter' objects
+  final List<Letter> incorrectLetters; // List of 'Letter' objects
+  final List<Map<String, dynamic>> gameAttempts;
 
   const LearnerProgressDetailsPage({
-    super.key,
     required this.learnerName,
     required this.username,
     required this.correctWords,
     required this.incorrectWords,
+    required this.correctLetters,
+    required this.incorrectLetters,
+    required this.gameAttempts,
+    super.key,
   });
+
+  @override
+  State<LearnerProgressDetailsPage> createState() => _LearnerProgressDetailsPageState();
+}
+
+class _LearnerProgressDetailsPageState extends State<LearnerProgressDetailsPage> {
+  @override
+  void initState() {
+    super.initState();
+    print(widget.correctLetters);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +40,7 @@ class LearnerProgressDetailsPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black87,
         foregroundColor: Colors.white,
-        title: Text("$learnerName's Progress"),
+        title: Text("${widget.learnerName}'s Progress"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -28,13 +48,22 @@ class LearnerProgressDetailsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // --- WORDS ---
               _buildSectionTitle("Correct Words", Colors.green),
-              _buildWordList(correctWords, Icons.check_circle, Colors.green, showCorrect: false),
+              _buildGenericList(widget.correctWords, isLetter: false, showCorrect: false),
 
               const SizedBox(height: 20),
-
               _buildSectionTitle("Incorrect Words", Colors.red),
-              _buildWordList(incorrectWords, Icons.cancel, Colors.red, showCorrect: true),
+              _buildGenericList(widget.incorrectWords, isLetter: false, showCorrect: true),
+
+              const SizedBox(height: 30),
+              // --- LETTERS ---
+              _buildSectionTitle("Correct Letters", Colors.green),
+              _buildGenericList(widget.correctLetters, isLetter: true, showCorrect: false),
+
+              const SizedBox(height: 20),
+              _buildSectionTitle("Incorrect Letters", Colors.red),
+              _buildGenericList(widget.incorrectLetters, isLetter: true, showCorrect: true),
             ],
           ),
         ),
@@ -42,28 +71,21 @@ class LearnerProgressDetailsPage extends StatelessWidget {
     );
   }
 
-  /// 🔹 Builds Section Title with Color
-  Widget _buildSectionTitle(String title, Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        title,
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color),
-      ),
-    );
-  }
-
-  /// 🔹 Builds List of Words (Correct & Incorrect) with enhanced card design
-  Widget _buildWordList(List<Map<String, String>> words, IconData icon, Color iconColor, {bool showCorrect = false}) {
-    if (words.isEmpty) {
+  Widget _buildGenericList(List<dynamic> items, {required bool isLetter, bool showCorrect = false}) {
+    if (items.isEmpty) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 8.0),
-        child: Text("No words recorded", style: TextStyle(color: Colors.grey, fontSize: 16)),
+        child: Text("No data recorded", style: TextStyle(color: Colors.grey, fontSize: 16)),
       );
     }
 
     return Column(
-      children: words.map((word) {
+      children: items.map((item) {
+        print(item);
+        String? spoken = isLetter ? item.spokenLetter ?? "" : item.spokenWord ?? "";
+        String? correct = isLetter ? item.correctLetter : item.correctWord;
+        print(correct);
+        spoken = (spoken == "")? correct: spoken;
         return Container(
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -85,30 +107,43 @@ class LearnerProgressDetailsPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
             child: Row(
               children: [
-                Icon(icon, color: iconColor, size: 30),
+                Icon(showCorrect ? Icons.cancel : Icons.check_circle,
+                    color: showCorrect ? Colors.red : Colors.green, size: 28),
                 const SizedBox(width: 12),
                 Expanded(
                   child: showCorrect
                       ? Row(
                     children: [
                       Text(
-                        word["spoken_word"] ?? "",
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.red),
-                      ),
-                      if (word["correct_word"] != null) ...[
-                        const SizedBox(width: 8),
-                        const Icon(Icons.arrow_right_alt, color: Colors.white, size: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          word["correct_word"]!,
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+                        spoken!,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.redAccent,
                         ),
-                      ],
+                      ),
+                      if (correct != null) ...[
+                        const SizedBox(width: 6),
+                        const Icon(Icons.arrow_right_alt, color: Colors.white, size: 20),
+                        const SizedBox(width: 6),
+                        Text(
+                          correct,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent,
+                          ),
+                        ),
+                      ]
                     ],
                   )
                       : Text(
-                    word["spoken_word"] ?? "",
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+                    correct!,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.greenAccent,
+                    ),
                   ),
                 ),
               ],
@@ -116,6 +151,16 @@ class LearnerProgressDetailsPage extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  }
+
+  Widget _buildSectionTitle(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color),
+      ),
     );
   }
 }

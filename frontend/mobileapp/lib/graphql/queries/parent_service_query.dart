@@ -22,21 +22,44 @@ const String deleteLearnerQuery = """
 
 const String getLearnerProgressbyDateQuery= """
 
-query getLearnerProgressbyDate(\$parentId: ID!){
+query getLearnerDailyAttempts(\$parentId: ID!){
   getLearnerDailyAttempts(parentId: \$parentId) {
     date
     users {
+      user_id
       username
       name
+      correct_letters {
+        correct_letter
+      }
+      incorrect_letters {
+        spoken_letter
+        correct_letter
+      }
       correct_words {
-        word_id
-        spoken_word
         correct_word
       }
       incorrect_words {
-        spoken_word
+        __typename
         correct_word
-        word_id
+        spoken_word
+      }
+      correct_sentences {
+        correct_sentence
+      }
+      incorrect_sentences {
+        spoken_sentence
+        incorrect_words {
+          incorrect_word
+          frequency
+        }
+      }
+      game_attempts {
+        game_id
+        level_id
+        attempts {
+          score
+        }
       }
     }
   }
@@ -45,6 +68,46 @@ query getLearnerProgressbyDate(\$parentId: ID!){
 """;
 
 const String getLearnerProgress = """
+query (\$parentId: ID!) {
+  getLearnerOverallProgress(parentId: \$parentId) {
+    id
+    progress {
+      user_id
+      name
+      username
+      progress_by_exercise {
+        exercise_id
+        stats {
+          total_correct {
+            count
+            items
+          }
+          total_incorrect {
+            count
+            items
+          }
+          total_items_attempted
+          accuracy_percentage
+          average_game_score
+          time_spent_seconds
+        }
+      }
+      overall_stats {
+        total_time_spent
+        combined_accuracy
+        average_score_all
+      }
+    }
+  }
+}
+
+
+""";
+
+
+const String getLearnerProgress2 = """
+
+
 query getLearnerOverallProgress(\$getLearnerOverallProgressParentId2: ID!){
   getLearnerOverallProgress(parentId: \$getLearnerOverallProgressParentId2) {
     id
@@ -60,6 +123,5 @@ query getLearnerOverallProgress(\$getLearnerOverallProgressParentId2: ID!){
     }
   } 
 }
-
 
 """;

@@ -2,7 +2,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mobileapp/graphql/graphql_client.dart';
 import 'package:mobileapp/graphql/queries/parent_service_query.dart';
 import 'package:mobileapp/models/learner.dart';
-import 'package:mobileapp/models/learner_daily_attempts.dart';
+import 'package:mobileapp/models/dailyAttempts/learner_daily_attempts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/exercices_progress.dart';
@@ -203,13 +203,14 @@ class ParentService {
     }
 
     // Convert JSON response into Dart objects
-    final List<LearnerDailyAttempts> data = rawData
-        .map((item) => LearnerDailyAttempts.fromJson(item as Map<String, dynamic>))
+    final learnerDailyAttempts = (rawData)
+        .map((e) => LearnerDailyAttempts.fromJson(e))
         .toList();
 
+
     print("Data processing complete.");
-    print(data);
-    return data;
+    print(learnerDailyAttempts);
+    return learnerDailyAttempts;
   }
 
 
@@ -223,7 +224,7 @@ class ParentService {
     final QueryResult result = await client.query(
       QueryOptions(
         document: gql(getLearnerProgress),
-        variables: {"getLearnerOverallProgressParentId2": parentId},
+        variables: {"parentId": parentId},
       ),
     );
 
@@ -236,7 +237,7 @@ class ParentService {
         return await client.query(
           QueryOptions(
             document: gql(getLearnerProgress),
-            variables: {"getLearnerOverallProgressParentId2": parentId},
+            variables: {"parentId": parentId},
           ),
         );
       },

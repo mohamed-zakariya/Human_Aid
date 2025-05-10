@@ -212,12 +212,67 @@ final Map<String, Map<String, List<Map<String, String>>>> letterForms = {
 };
 
 
+final List<String> arabicLetters = [
+  'أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د',
+  'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط',
+  'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م',
+  'ن', 'ه', 'و', 'ي'
+];
+
 final List<Color> colors = [
   Colors.red, Colors.blue, Colors.green, Colors.orange,
   Colors.purple, Colors.teal, Colors.brown, Colors.pink,
   Colors.indigo, Colors.amber, Colors.deepOrange, Colors.cyan,
-  Colors.deepPurple, Colors.lightBlue, Colors.lightGreen,
-  Colors.blueGrey, Colors.redAccent, Colors.greenAccent,
-  Colors.orangeAccent, Colors.purpleAccent, Colors.tealAccent,
+  Colors.deepPurple, Colors.lime, Colors.lightBlue, Colors.lightGreen,
+  Colors.yellow, Colors.blueGrey, Colors.redAccent, Colors.greenAccent,
+  Colors.orangeAccent, Colors.purpleAccent, Colors.tealAccent, Colors.brown,
   Colors.pinkAccent, Colors.indigoAccent, Colors.amberAccent, Colors.cyanAccent,
 ];
+
+
+// letter_forms.dart
+
+final Map<String, List<Map<String, dynamic>>>  letterForms2 = {
+  'أ': [
+    {
+      'label': 'بداية', // Beginning form (isolated)
+      'form': 'أ', // Isolated form of أ
+      'example': 'أسد', // Example word with isolated form
+      'image': 'assets/images/letters/أ_منفصل.png',
+    },
+    {
+      'label': 'وسط', // Middle form (connected)
+      'form': 'ـا', // Middle form of أ, when connected to the previous letter
+      'example': 'باب', // Example word where أ is in the middle and connected
+      'image': 'assets/images/letters/أ_متصل.jpg',
+    },
+    {
+      'label': 'نهاية', // Final form
+      'form': 'ـا', // Final form of أ, connected to the previous letter
+      'example': 'عصا', // Example where أ is in the final form at the end
+      'image': 'assets/images/letters/أ_نهائي.png',
+    },
+  ],
+  'ه': [
+    {
+      'label': 'بداية',
+      'form': 'هـ',
+      'example': 'هامستر',
+      'image': 'assets/images/letters/ه_منفصل.png',
+    },
+    {
+      'label': 'وسط',
+      'form': 'ـهـ',
+      'example': 'فهد',
+      'image': 'assets/images/letters/ه_متصل.png',
+    },
+    {
+      'label': 'نهاية',
+      'form': 'ـه',
+      'example': 'منبه',
+      'image': 'assets/images/letters/ه_نهائي.png',
+    },
+  ],
+};
+
+

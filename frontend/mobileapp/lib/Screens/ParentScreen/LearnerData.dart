@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobileapp/models/learner.dart';
-import 'package:mobileapp/models/learner_daily_attempts.dart';
+import 'package:mobileapp/models/dailyAttempts/learner_daily_attempts.dart';
 import 'package:mobileapp/models/overall_progress.dart';
 
 import 'LearnerProfileWidget.dart';

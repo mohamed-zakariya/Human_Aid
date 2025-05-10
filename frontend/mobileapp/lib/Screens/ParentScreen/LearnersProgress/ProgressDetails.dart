@@ -4,8 +4,8 @@ import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Services/parent_service.dart';
 import 'package:mobileapp/models/parent.dart';
 import '../../../generated/l10n.dart';
-import '../../../models/learner_daily_attempts.dart';
 import 'LearnerCard.dart';
+import '../../../models/dailyAttempts/learner_daily_attempts.dart';
 
 class ProgressDetails extends StatefulWidget {
   const ProgressDetails({super.key, required this.parent});
@@ -17,25 +17,23 @@ class ProgressDetails extends StatefulWidget {
 }
 
 class _ProgressDetailsState extends State<ProgressDetails> {
-  final List<String> days = List.generate(5, (index) {
+  final List<String> days = List.generate(7, (index) {
     DateTime date = DateTime.now().subtract(Duration(days: index));
-    return DateFormat("EEE d").format(date); // Example: "Mon 17"
-  }).reversed.toList();
+    return DateFormat("EEE d").format(date); // Example: "Mon 6"
+  }).reversed.toList(); // Show oldest to newest
 
   Map<String, List<Map<String, dynamic>>> learnerProgress = {};
   late String selectedDay;
-  List<Map<String, dynamic>> learnerProgressData = [];
 
   @override
   void initState() {
     super.initState();
-    selectedDay = days.last; // Set default to most recent day
-    // getDummyData();
+    selectedDay = days.last; // Default: most recent day
     getData();
   }
 
   void getData() async {
-    if (widget.parent == null) return; // Ensure parent is not null
+    if (widget.parent == null) return;
 
     List<LearnerDailyAttempts>? attempts = await ParentService.getProgressWithDate(widget.parent!.id);
 
@@ -44,41 +42,41 @@ class _ProgressDetailsState extends State<ProgressDetails> {
       return;
     }
 
+    learnerProgress.clear();
+
     for (var entry in attempts) {
       DateTime parsedDate = DateTime.parse(entry.date);
       String formattedDate = DateFormat("EEE d").format(parsedDate);
 
+      learnerProgress[formattedDate] = [];
+
       for (var user in entry.users) {
-        int wordsRead = user.correctWords.length + user.incorrectWords.length;
-        int correctWords = user.correctWords.length;
-        int incorrectWords = user.incorrectWords.length;
-
-        learnerProgress.putIfAbsent(formattedDate, () => []);
-
         learnerProgress[formattedDate]!.add({
-          "name": user.name,
+          "user_id": user.userId,
           "username": user.username,
-          "words_read": wordsRead,
-          "correct_words": correctWords,
-          "incorrect_words": incorrectWords,
-          "correct_words_list": user.correctWords.map((word) => {
-            "word_id": word.wordId,
-            "spoken_word": word.spokenWord,
-            "correct_word": word.correctWord // Display the correct word
-          }).toList(),
-          "incorrect_words_list": user.incorrectWords.map((word) => {
-            "word_id": word.wordId,
-            "spoken_word": word.spokenWord,
-            "correct_word": word.correctWord // Display the correct word
-          }).toList(),
-          "completed_daily_quest": true,
-          "awards_taken": true
+          "name": user.name,
+          "correct_letters": user.correctLetters ?? [],
+          "incorrect_letters": user.incorrectLetters ?? [],
+          "correct_words": user.correctWords.map((w) => w.toMap()).toList() ?? [],
+          "incorrect_words": user.incorrectWords.map((w) => w.toMap()).toList() ?? [],
+          "correct_sentences": user.correctSentences ?? [],
+          "incorrect_sentences": user.incorrectSentences ?? [],
+          "game_attempts": user.gameAttempts.map((gameAttempt) => {
+            "game_id": gameAttempt.gameId,
+            "level_id": gameAttempt.levelId,
+            "attempts": gameAttempt.attempts.map((a) => {
+              "score": a.score,
+            }).toList() ?? [],
+          }).toList() ?? [],
+          "words_read": (user.correctWords.length ?? 0) + (user.incorrectWords.length ?? 0),
+          "correct_words_count": user.correctWords.length ?? 0,
+          "incorrect_words_count": user.incorrectWords.length ?? 0,
+          // "completed_daily_quest": user.completedDailyQuest ?? false,
+          // "awards_taken": user.awardsTaken ?? false,
         });
       }
     }
-
     print(learnerProgress);
-
     setState(() {});
   }
 
@@ -94,7 +92,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
         backgroundColor: Colors.black87,
         elevation: 0,
         title: Text(
-          S.of(context).dashboardTitle(parent!.name),
+          S.of(context).dashboardTitle(widget.parent!.name),
           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
@@ -102,7 +100,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
       body: SafeArea(
         child: Column(
           children: [
-             Text(
+            Text(
               S.of(context).learner_progress,
               style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
             ),
@@ -115,7 +113,9 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
+
+            // Horizontal Date Selector
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -164,62 +164,51 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.bar_chart, // You can change this to Icons.insert_chart or any relevant icon
-                      size: 80,
-                      color: Colors.grey,
-                    ),
+                    const Icon(Icons.bar_chart, size: 80, color: Colors.grey),
                     const SizedBox(height: 10),
                     Text(
                       S.of(context).no_progress_data,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey),
                     ),
                   ],
                 ),
               )
-                  : ListView.builder(
+              : ListView.builder(
                 itemCount: learnerProgress[selectedDay]!.length,
-                itemBuilder: (context, index) {
-                  var progress = learnerProgress[selectedDay]![index];
+                  itemBuilder: (context, index) {
+                    var progress = learnerProgress[selectedDay]![index];
+                    return Childcard(
+                      title: "Progress Summary",
+                      learnerName: progress['name'] ?? "Unknown",
+                      username: progress['username'] ?? "Unknown",
+                      wordsRead: progress["words_read"] ?? 0,
+                      correctWords: progress["correct_words_count"] ?? 0,
+                      incorrectWords: progress["incorrect_words_count"] ?? 0,
+                      dailyQuestCompleted: progress["completed_daily_quest"] ?? false,
+                      awardReceived: progress["awards_taken"] ?? false,
+                      color: colors[index % colors.length],
+                      icon: (progress["awards_taken"] ?? false) ? Icons.emoji_events : Icons.cancel,
 
-                  return Childcard(
-                    title: "Progress Summary",
-                    learnerName: progress['name'] ?? "Unknown",
-                    username: progress['username'] ?? "Unknown",
-                    wordsRead: progress["words_read"] ?? 0,
-                    correctWords: progress["correct_words"] ?? 0,
-                    incorrectWords: progress["incorrect_words"] ?? 0,
-                    dailyQuestCompleted: progress["completed_daily_quest"] ?? false,
-                    awardReceived: progress["awards_taken"] ?? false,
-                    color: colors[index % colors.length],
-                    icon: (progress["awards_taken"] ?? false) ? Icons.emoji_events : Icons.cancel,
+                      correctWordList: List<Word>.from(
+                        (progress["correct_words"] ?? []).map((word) => {"word": word}),
+                      ),
+                      incorrectWordList: List<Word>.from(
+                        (progress["incorrect_words"] ?? []).map((word) => {"word": word}),
+                      ),
+                      correctLetters: List<Letter>.from(progress["correct_letters"] ?? []),
+                      incorrectLetters: List<Letter>.from(progress["incorrect_letters"] ?? []),
 
-                    // ✅ Ensuring correct type conversion for lists
-                    correctWordList: (progress["correct_words_list"] as List<dynamic>?)
-                        ?.map((word) => {
-                      "word_id": word["word_id"]?.toString() ?? "",
-                      "spoken_word": word["spoken_word"]?.toString() ?? "",
-                    })
-                        .toList() ?? [],
-
-                    incorrectWordList: (progress["incorrect_words_list"] as List<dynamic>?)
-                        ?.map((word) {
-                      Map<String, String> map = {
-                        "word_id": word["word_id"]?.toString() ?? "",
-                        "spoken_word": word["spoken_word"]?.toString() ?? "",
-                      };
-                      if (word["correct_word"] != null) {
-                        map["correct_word"] = word["correct_word"]!.toString();
-                      }
-                      return map;
-                    })
-                        .toList() ?? [],
-                  );
-                },
+                      gameAttempts: List<Map<String, dynamic>>.from(
+                        (progress['game_attempts'] ?? []).map((gameAttempt) => {
+                          'game_id': gameAttempt['game_id'],
+                          'level_id': gameAttempt['level_id'],
+                          'attempts': List<int>.from(
+                            (gameAttempt['attempts'] ?? []).map((a) => a['score']),
+                          ),
+                        }),
+                      ),
+                    );
+                  },
               ),
             ),
           ],

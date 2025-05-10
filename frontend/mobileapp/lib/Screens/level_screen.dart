@@ -201,10 +201,9 @@ class _LevelScreenState extends State<LevelScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: () {
-          // Navigate to game screen (you already had this)
           Navigator.pushNamed(
             context,
-            '/game', // adjust to your actual route for a single game
+            '/${game.gameId}', // Route directly to the gameId as defined in main.dart
             arguments: {'gameId': game.gameId, 'learner': widget.learner},
           );
         },
@@ -287,7 +286,7 @@ class _LevelScreenState extends State<LevelScreen> {
                         onPressed: () {
                           Navigator.pushNamed(
                             context,
-                            '/game',
+                            '/${game.gameId}',
                             arguments: {
                               'gameId': game.gameId,
                               'learner': widget.learner

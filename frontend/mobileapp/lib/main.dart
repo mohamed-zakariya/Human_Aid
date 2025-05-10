@@ -5,11 +5,14 @@ import 'package:mobileapp/Screens/IntroductoryScreen/onboarding_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/LearnerMain.dart';
 import 'package:mobileapp/Screens/LearnerScreen/learner_home_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2.dart';
+import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2_game.dart';
+import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level2/letter_level2_game_2.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3_game.dart';
+import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/ArabicLetterTracingExercise.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1.dart';
-import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1_game.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart';
+import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level1/game1/screens/spelling_game_screen.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
 import 'package:mobileapp/Screens/SignUp/signupadult.dart';
@@ -79,8 +82,8 @@ class _MyAppState extends State<MyApp> {
           '/forgot-password': (context) => ForgotPasswordPage(onLocaleChange: _setLocale),
           '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
           '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
-          '/wordPronunciation': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
-          '/ScentencePronunciationScreen': (context) => SentencePronunciationScreen(onLocaleChange: _setLocale),
+          '/words_level_1': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
+          '/sentences_level_1': (context) => SentencePronunciationScreen(onLocaleChange: _setLocale),
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
           '/signup2': (context) {
@@ -129,8 +132,11 @@ class _MyAppState extends State<MyApp> {
   );
 },
           '/letters_level_3': (context) => const LetterLevel3(),
-          '/letter_level1_Game': (context) => const LetterLevel1Game(),
-          '/letter_level3_Game': (context) => const LetterLevel3Game()
+          '/letters_game_1': (context) => const ArabicLetterTracingExercise(),
+          '/letters_game_3': (context) => const LetterLevel2Game(),
+          '/letters_game_4': (context) => const LetterLevel2Game2(),
+          '/letters_game_5': (context) => const LetterLevel3Game(),
+          '/words_game_1': (context) => const SpellingGameScreen()
 
 
 
