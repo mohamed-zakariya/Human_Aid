@@ -6,8 +6,8 @@ type ProcessedLetter {
   expectedLetter: String!
   isCorrect: Boolean!
   message: String!
-  score: Int!
-  accuracy: Float!
+  score: Int
+  accuracy: Float
 }
 
 type FormExample {
@@ -51,6 +51,7 @@ type Mutation {
   updateLetterProgress(
     userId: ID!
     exerciseId: ID!
+    levelId: ID!
     letterId: ID!
     audioFile: Upload!
     spokenLetter: String!

@@ -1,4 +1,3 @@
-//src/schemas/sentencesExerciseSchema.js
 export const sentencesExerciseTypeDefs = `#graphql
 scalar Upload
 
@@ -29,8 +28,8 @@ type ProcessedSentence {
   expectedSentence: String!
   isCorrect: Boolean!
   message: String!
-  score: Int!
-  accuracy: Float!
+  score: Int
+  accuracy: Float
 }
 
 type OverallProgress {
@@ -70,12 +69,11 @@ type Mutation {
   updateSentenceProgress(
     userId: ID!
     exerciseId: ID!
-    sentence_id: ID!
-    sentence_text: String!
-    spoken_sentence: String!
-    is_correct: Boolean!
-    incorrect_words: [IncorrectWordInput!]
+    levelId: ID! # Added levelId to match the updated implementation
+    sentenceId: ID! # Renamed to match the function parameter
+    audioFile: Upload! # Updated to accept an audio file
+    spokenSentence: String! # Updated to match the spoken sentence input
+    timeSpent: Int # Optional time spent parameter
   ): ProcessedSentence!
 }
-
 `;

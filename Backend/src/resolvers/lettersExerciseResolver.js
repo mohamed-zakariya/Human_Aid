@@ -19,8 +19,8 @@ export const lettersExerciseResolver = {
     startExercise: async (_, { userId, exerciseId }) => {
       return await startExercise(userId, exerciseId);
     },
-    updateLetterProgress: async (_, { userId, exerciseId, letterId, audioFile,spokenLetter}) => {
-          return await updateLetterProgress(userId, exerciseId, letterId, audioFile,spokenLetter);
+    updateLetterProgress: async (_, { userId, exerciseId,levelId, letterId, audioFile,spokenLetter}) => {
+          return await updateLetterProgress(userId, exerciseId,levelId, letterId, audioFile,spokenLetter);
         },
     endExercise: async (_, { userId, exerciseId }) => {
       return await endExercise(userId, exerciseId);
