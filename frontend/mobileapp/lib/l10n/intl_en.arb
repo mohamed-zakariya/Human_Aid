@@ -91,20 +91,7 @@
     "instruction3": "Try to complete all words and get a high score!",
     "close": "Close",
     "accuracy": "accuracy",
-
-
-
-
-
-
-
-
-
-
-
-
-
-"title1": "Welcome to your special world\nwhere learning is fun",
+    "title1": "Welcome to your special world\nwhere learning is fun",
     "desc1": "I'm your friend (the app). Let me take you on a daily journey of progress and growth.",
     "button1": "Start",
     "title2": "Together, we will learn to read\nand write Arabic properly",
@@ -223,7 +210,34 @@
     "noLevelsAvailable": "No levels available for this exercise",
     "selectGameToPlay": "Select a game to start playing",
     "noGamesAvailable": "No games available for this level",
-    "playGame": "Play Now"
-
-
+    "playGame": "Play Now",
+    "monthsOrderTitle": "Order the Months",
+    "monthsOrderHeader": "Order {count} months of the year",
+    "@monthsOrderHeader": {
+        "description": "Header for how many months to order in the game",
+        "placeholders": {"count": {}}
+    },
+    "monthsOrderHelpDrag": "Drag the months from below and place them in the correct order",
+    "monthsOrderHelpOrder": "Order the months from January to the last month in the level",
+    "monthsOrderHelpListen": "Tap the month to hear its name",
+    "monthsOrderHelpTranslate": "Tap the translate button to switch between Arabic and Levantine names",
+    "translateMonthsTooltip": "Switch month names",
+    "monthsOrderSuccess": "Great job! You've ordered the months correctly.",
+    "playAgain": "Play Again",
+    "all": "all",
+    "monthsOrderList": "يناير, فبراير, مارس, أبريل, مايو, يونيو, يوليو, أغسطس, سبتمبر, أكتوبر, نوفمبر, ديسمبر",
+    "@monthsOrderList": {
+        "description": "Always Arabic month names for the months ordering game."
+    },
+    "gameCompletionTitle": "Game Completed!",
+    "gameCompletionScore": "Your score: {score} out of {total}",
+    "@gameCompletionScore": {
+      "description": "Score message for game completion dialog",
+      "placeholders": {
+        "score": {},
+        "total": {}
+      }
+    },
+    "gameCompleted": "Completed!",
+    "orderMonthsCorrectly": "Order the months correctly."
 }
