@@ -2,19 +2,19 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mobileapp/Screens/ParentScreen/LearnerData.dart';
+import 'package:mobileapp/Screens/ParentScreen/learnerMembersTab/LearnerData.dart';
 import 'package:mobileapp/Services/parent_service.dart';
 import 'package:mobileapp/classes/validators.dart';
 import 'package:mobileapp/global/fns.dart';
 import 'package:mobileapp/models/overall_progress.dart';
 
-import '../../Services/signup_service.dart';
-import '../../generated/l10n.dart';
-import '../../models/learner.dart';
-import '../../models/parent.dart';
-import '../widgets/MaleFemale.dart';
-import '../widgets/SignupInputField.dart';
-import '../widgets/date.dart';
+import '../../../Services/signup_service.dart';
+import '../../../generated/l10n.dart';
+import '../../../models/learner.dart';
+import '../../../models/parent.dart';
+import '../../widgets/MaleFemale.dart';
+import '../../widgets/SignupInputField.dart';
+import '../../widgets/date.dart';
 
 
 class LearnerDetails extends StatefulWidget {

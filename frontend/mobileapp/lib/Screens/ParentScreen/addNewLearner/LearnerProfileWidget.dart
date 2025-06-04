@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/dailyAttempts/learner_daily_attempts.dart';
-import '../../models/overall_progress.dart';
+import '../../../models/overall_progress.dart';
 
 class LearnerProfileWidget extends StatefulWidget {
   final Learner learner;

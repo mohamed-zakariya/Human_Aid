@@ -3,7 +3,7 @@ import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/dailyAttempts/learner_daily_attempts.dart';
 import 'package:mobileapp/models/overall_progress.dart';
 
-import 'LearnerProfileWidget.dart';
+import '../addNewLearner/LearnerProfileWidget.dart';
 
 class Learnerdata extends StatefulWidget {
   const Learnerdata({super.key, required this.learner, this.progress});
@@ -21,7 +21,7 @@ class _LearnerdataState extends State<Learnerdata> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("here1");
+    print("here0");
   }
   @override
   Widget build(BuildContext context) {
