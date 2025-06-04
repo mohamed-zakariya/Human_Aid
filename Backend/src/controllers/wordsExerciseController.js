@@ -14,19 +14,33 @@ export const startExercise = async (userId, exerciseId) => {
       progress = new Exercisesprogress({
         user_id: userId,
         exercise_id: exerciseId,
-        start_time: new Date(),
-        exercise_time_spent: [],
-        accuracy_percentage: 0,
-        score: 0,
+        total_time_spent: 0,
+        session_start: new Date(),
+        levels: [],
       });
 
       await progress.save();
     } else {
-      progress.start_time = new Date(); // Reset start time
+      progress.session_start = new Date(); // Reset session start time
       await progress.save();
     }
 
-    return { message: "Exercise started", startTime: progress.start_time };
+    // Ensure OverallProgress exists for the user
+    let overall = await OverallProgress.findOne({ user_id: userId });
+    if (!overall) {
+      overall = new OverallProgress({
+        user_id: userId,
+        progress_by_exercise: [],
+        overall_stats: {
+          total_time_spent: 0,
+          combined_accuracy: 0,
+          average_score_all: 0,
+        },
+      });
+      await overall.save();
+    }
+
+    return { message: "Exercise started", startTime: progress.session_start };
   } catch (error) {
     console.error("Error in startExercise:", error);
     throw new Error("Failed to start exercise.");
@@ -37,359 +51,365 @@ export const endExercise = async (userId, exerciseId) => {
   try {
     let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId });
 
-    if (!progress || !progress.start_time) {
+    if (!progress || !progress.session_start) {
       throw new Error("No active session found for this exercise.");
     }
 
     const endTime = new Date();
-    const timeSpent = Math.floor((endTime - progress.start_time) / 60000); // Convert ms to minutes
+    const timeSpent = Math.floor((endTime - progress.session_start) / 1000); // Convert ms to seconds
 
-    let startOfDay = new Date();
-    startOfDay.setUTCHours(0, 0, 0, 0);
-    let endOfDay = new Date();
-    endOfDay.setUTCHours(23, 59, 59, 999);
+    // Update total time spent in Exercisesprogress
+    progress.total_time_spent += timeSpent;
+    progress.session_start = null; // Clear session start time
+    await progress.save();
 
-    const existingEntry = progress.exercise_time_spent.find((entry) => 
-      entry.date >= startOfDay && entry.date <= endOfDay
-    );
-
-    if (existingEntry) {
-      existingEntry.time_spent += timeSpent;
-    } else {
-      progress.exercise_time_spent.push({ date: new Date(), time_spent: timeSpent });
+    // Update OverallProgress
+    let overall = await OverallProgress.findOne({ user_id: userId });
+    if (!overall) {
+      throw new Error("Overall progress not found for the user.");
     }
 
-    progress.start_time = null;
-    await progress.save();
+    // Find or create the exercise-specific progress entry
+    let exerciseProgress = overall.progress_by_exercise.find(
+      (p) => p.exercise_id.toString() === exerciseId.toString()
+    );
+
+    if (!exerciseProgress) {
+      exerciseProgress = {
+        exercise_id: exerciseId,
+        stats: {
+          total_correct: { count: 0, items: [] },
+          total_incorrect: { count: 0, items: [] },
+          total_items_attempted: 0,
+          accuracy_percentage: 0,
+          average_game_score: 0,
+          time_spent_seconds: 0,
+        },
+      };
+      overall.progress_by_exercise.push(exerciseProgress);
+    }
+
+    // Update time spent for this exercise
+    exerciseProgress.stats.time_spent_seconds += timeSpent;
+
+    // Recalculate overall stats
+    let totalCorrect = 0;
+    let totalAttempted = 0;
+    let totalTime = 0;
+
+    for (const ex of overall.progress_by_exercise) {
+      totalCorrect += ex.stats.total_correct.count;
+      totalAttempted += ex.stats.total_items_attempted;
+      totalTime += ex.stats.time_spent_seconds;
+    }
+
+    overall.overall_stats.total_time_spent = totalTime;
+    overall.overall_stats.combined_accuracy = totalAttempted > 0
+      ? (totalCorrect / totalAttempted) * 100
+      : 0;
+
+    await overall.save();
+
     return { message: "Exercise ended", timeSpent };
   } catch (error) {
-    console.error(error);
+    console.error("Error in endExercise:", error);
     throw new Error("Failed to end exercise.");
   }
 };
 
-export const updateUserProgress = async (userId, exerciseId, wordId, audioFile, spokenWord, timeSpent) => {
+export const updateUserProgress = async (userId, exerciseId, wordId, levelId, audioFile, spokenWord, timeSpent) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    console.log("Received spokenWord:", spokenWord);
-    if (!spokenWord || typeof spokenWord !== "string") {
-      throw new Error("Spoken word (transcribed text) is required");
-    }
+    validateSpokenWord(spokenWord);
 
-    const filePath = audioFile?.startsWith("http")
-      ? audioFile.replace("http://localhost:5500/", "")
-      : audioFile ? `uploads/${audioFile}` : null;
+    const filePath = resolveFilePath(audioFile);
+    console.log("Resolved file path:", filePath);
+    const expectedWord = await getExpectedWord(wordId, session);
+    const isCorrect = compareWords(spokenWord, expectedWord.word);
 
-    const expectedWord = await Words.findById(wordId).session(session);
-    if (!expectedWord || !expectedWord.word) throw new Error("Word not found.");
-
-    const isCorrect = spokenWord.toLowerCase().trim() === expectedWord.word.toLowerCase().trim();
-
-    // Date range for today's attempt
-    let startOfDay = new Date(); startOfDay.setUTCHours(0, 0, 0, 0);
-    let endOfDay = new Date(); endOfDay.setUTCHours(23, 59, 59, 999);
-
-    // Check or create UserDailyAttempts
-    let userAttempt = await UserDailyAttempts.findOne({
-      user_id: userId,
-      exercise_id: exerciseId,
-      date: { $gte: startOfDay, $lte: endOfDay },
-    }).session(session);
-
-    if (!userAttempt) {
-      userAttempt = new UserDailyAttempts({
-        user_id: userId,
-        exercise_id: exerciseId,
-        date: new Date(),
-        words_attempts: [],
-        sentences_attempts: [],
-      });
-    }
-
-    let wordAttempt = userAttempt.words_attempts.find(
-      (attempt) => attempt.word_id.toString() === wordId
+    const userAttempt = await updateUserDailyAttempts(
+      userId,
+      levelId,
+      wordId,
+      spokenWord,
+      expectedWord.word,
+      isCorrect,
+      session
     );
-    
-    if (!wordAttempt) {
-      // Initialize if not found
-      wordAttempt = {
-        word_id: wordId,
-        correct_word: expectedWord.word,
-        spoken_word: spokenWord,
-        is_correct: isCorrect,
-        attempts_number: 1,
-      };
-      userAttempt.words_attempts.push(wordAttempt);
-    } else {
-      // Safe increment if found
-      wordAttempt.attempts_number += 1;
-      wordAttempt.spoken_word = spokenWord;
-      wordAttempt.is_correct = isCorrect;
-    }
-    
-    await userAttempt.save({ session });
 
-    // Update ExerciseProgress
-    let progress = await Exercisesprogress.findOne({
-      user_id: userId,
-      exercise_id: exerciseId,
-    }).session(session);
+    const progress = await updateExerciseProgress(
+      userId,
+      exerciseId,
+      wordId,
+      levelId,
+      spokenWord,
+      expectedWord.word,
+      isCorrect,
+      userAttempt,
+      session
+    );
 
-    if (!progress) {
-      progress = new Exercisesprogress({
-        user_id: userId,
-        exercise_id: exerciseId,
-        correct_words: [],
-        incorrect_words: [],
-        score: 0,
-        accuracy_percentage: 0,
-      });
-    }
+    const overall = await updateOverallProgress(
+      userId,
+      exerciseId,
+      wordId,
+      spokenWord,
+      expectedWord.word,
+      isCorrect,
+      timeSpent,
+      session
+    );
 
-    if (isCorrect) {
-      // ✅ Remove the word from incorrect_words if it exists
-      const incorrectIndex = progress.incorrect_words.findIndex(w => w.word_id.toString() === wordId);
-      if (incorrectIndex !== -1) {
-        progress.incorrect_words.splice(incorrectIndex, 1);
-      }
-    
-      // ✅ Add to correct_words if not already there
-      if (!progress.correct_words.includes(spokenWord)) {
-        progress.correct_words.push(spokenWord);
-        progress.score += 10;
-      }
-    } else {
-      if (wordAttempt.attempts_number >= 3) {
-        let incorrectEntry = progress.incorrect_words.find(w => w.word_id.toString() === wordId);
-        if (incorrectEntry) {
-          incorrectEntry.frequency += 1;
-        } else {
-          progress.incorrect_words.push({
-            word_id: wordId,
-            correct_word: expectedWord.word,
-            incorrect_word: spokenWord,
-            frequency: 1,
-          });
-        }
-        progress.score = Math.max(progress.score - 5, 0);
-      }
-    }
-
-    const totalAttempts = progress.correct_words.length + progress.incorrect_words.length;
-    progress.accuracy_percentage = totalAttempts > 0 ? (progress.correct_words.length / totalAttempts) * 100 : 0;
-    await progress.save({ session });
-
-    // 🔥 Now handle OverallProgress Update 🔥
-    let overall = await OverallProgress.findOne({ user_id: userId }).session(session);
-    if (!overall) {
-      overall = new OverallProgress({
-        user_id: userId,
-        progress_id: progress._id,
-        completed_exercises: [exerciseId],
-        total_time_spent: timeSpent || 0,
-        average_accuracy: progress.accuracy_percentage,
-        total_correct_words: { count: isCorrect ? 1 : 0, words: isCorrect ? [expectedWord.word] : [] },
-        total_incorrect_words: { count: !isCorrect ? 1 : 0, words: !isCorrect ? [expectedWord.word] : [] },
-        total_correct_letters: { count: 0, letters: [] },
-        total_incorrect_letters: { count: 0, letters: [] },
-      });
-    } else {
-      // ✅ Add exerciseId to completed_exercises if not already there
-      if (!overall.completed_exercises.includes(exerciseId)) {
-        overall.completed_exercises.push(exerciseId);
-      }
-    
-      // 🔄 Recalculate total time spent from all exercise progress
-      const allExerciseProgress = await Exercisesprogress.find({ user_id: userId }).session(session);
-
-      let totalTime = 0;
-      for (const exercise of allExerciseProgress) {
-        for (const timeEntry of exercise.exercise_time_spent) {
-          totalTime += timeEntry.time_spent;
-        }
-      }
-
-      overall.total_time_spent = totalTime;
-
-    
-      if (isCorrect) {
-        // ✅ Remove from incorrect if present
-        const incorrectIdx = overall.total_incorrect_words.words.indexOf(spokenWord);
-        if (incorrectIdx !== -1) {
-          overall.total_incorrect_words.words.splice(incorrectIdx, 1);
-          overall.total_incorrect_words.count = Math.max(overall.total_incorrect_words.count - 1, 0);
-        }
-      
-        // ✅ Add to correct if not already there
-        if (!overall.total_correct_words.words.includes(expectedWord.word)) {
-          overall.total_correct_words.words.push(expectedWord.word);
-          overall.total_correct_words.count += 1;
-        }
-      } else {
-        if (wordAttempt.attempts_number >= 3) {
-          if (!overall.total_incorrect_words.words.includes(expectedWord.word)) {
-            overall.total_incorrect_words.words.push(expectedWord.word);
-            overall.total_incorrect_words.count += 1;
-          }
-        }
-      }
-    
-      const totalWords = overall.total_correct_words.count + overall.total_incorrect_words.count;
-      overall.average_accuracy = totalWords > 0 ? (overall.total_correct_words.count / totalWords) * 100 : 0;
-    }
-    overall.last_updated = new Date();
-    await overall.save({ session });
-    // ✅ Commit the transaction
     await session.commitTransaction();
-    session.endSession();
-
-    // Clean up audio
-    if (filePath) {
-      try { fs.unlinkSync(filePath); } 
-      catch (err) { console.error("Failed to delete audio file:", err.message); }
-    }
-
     return {
       spokenWord,
       expectedWord: expectedWord.word,
       isCorrect,
-      score: progress.score,
-      accuracy: progress.accuracy_percentage,
-      overall_accuracy: overall.average_accuracy,
       message: isCorrect ? "Correct!" : "Try again!",
     };
-
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
     console.error(error);
     throw new Error(error.message || "Failed to update progress");
+  } finally {
+    session.endSession();
+    // Only clean up the audio file if it was resolved earlier
+    try {
+      if (audioFile) {
+        const filePath = resolveFilePath(audioFile);
+        cleanupAudio(filePath);
+      }
+    } catch (cleanupError) {
+      console.warn("Audio cleanup failed:", cleanupError.message);
+    }
   }
 };
 
-// export const wordsExercise = async (userId, exerciseId, wordId, audioFile) => {
-//   try {
-//     if (!audioFile || typeof audioFile !== "string") {
-//       throw new Error("audioFile is required and must be a string");
-//     }
+function validateSpokenWord(spokenWord) {
+  console.log("Spoken Word received:", spokenWord);  // Add this line for debugging
+  if (!spokenWord || typeof spokenWord !== "string") {
+    throw new Error("Spoken word (transcribed text) is required");
+  }
+}
 
-//     const filePath = audioFile.startsWith("http")
-//       ? audioFile.replace("http://localhost:5500/", "")
-//       : `uploads/${audioFile}`;
 
-//     const spokenWord = await azureTranscribeAudio(filePath);
-//     if (!spokenWord || typeof spokenWord !== "string") {
-//       throw new Error("Speech-to-text processing failed.");
-//     }
+function resolveFilePath(audioFile) {
+  return audioFile?.startsWith("http")
+    ? audioFile.replace("http://localhost:5500/", "")
+    : audioFile ? `uploads/${audioFile}` : null;
+}
 
-//     const expectedWord = await Words.findById(wordId);
-//     if (!expectedWord || !expectedWord.word) {
-//       throw new Error("Word not found.");
-//     }
+async function getExpectedWord(wordId, session) {
+  const word = await Words.findById(wordId).session(session);
+  if (!word || !word.word) throw new Error("Word not found.");
+  return word;
+}
 
-//     const isCorrect = spokenWord.toLowerCase().trim() === expectedWord.word.toLowerCase().trim();
+function compareWords(spoken, expected) {
+  return spoken.toLowerCase().trim() === expected.toLowerCase().trim();
+}
+async function updateUserDailyAttempts(userId, levelId, wordId, spokenWord, correctWord, isCorrect, session)
+{
 
-//     let startOfDay = new Date();
-//     startOfDay.setUTCHours(0, 0, 0, 0);
-//     let endOfDay = new Date();
-//     endOfDay.setUTCHours(23, 59, 59, 999);
+  const startOfDay = new Date(); startOfDay.setUTCHours(0, 0, 0, 0);
+  const endOfDay = new Date(); endOfDay.setUTCHours(23, 59, 59, 999);
 
-//     let userAttempt = await UserDailyAttempts.findOne({
-//       user_id: new mongoose.Types.ObjectId(userId),
-//       exercise_id: new mongoose.Types.ObjectId(exerciseId),
-//       date: { $gte: startOfDay, $lte: endOfDay },
-//     });
+  let userAttempt = await DailyAttemptTracking.findOne({
+    user_id: userId,
+    date: { $gte: startOfDay, $lte: endOfDay },
+  }).session(session);
 
-//     if (!userAttempt) {
-//       userAttempt = new UserDailyAttempts({
-//         user_id: new mongoose.Types.ObjectId(userId),
-//         exercise_id: new mongoose.Types.ObjectId(exerciseId),
-//         date: new Date(),
-//         attempts: [],
-//       });
-//     }
+  if (!userAttempt) {
+    userAttempt = new DailyAttemptTracking({
+      user_id: userId,
+      date: new Date(),
+      words_attempts: [],
+      letters_attempts: [],
+      sentences_attempts: [],
+      game_attempts: []
+    });
+  }
 
-//     const wordAttempt = userAttempt.attempts.find((a) => a.word_id.toString() === wordId);
+  let wordAttempt = userAttempt.words_attempts.find(attempt =>
+    attempt.word_id.toString() === wordId && attempt.level_id.toString() === levelId
+  );
 
-//     if (!wordAttempt) {
-//       userAttempt.attempts.push({
-//         word_id: wordId,
-//         correct_word: expectedWord.word,
-//         spoken_word: spokenWord,
-//         is_correct: isCorrect,
-//         attempts_number: 1,
-//       });
-//     } else {
-//       wordAttempt.attempts_number += 1;
-//       wordAttempt.spoken_word = spokenWord;
-//       wordAttempt.is_correct = isCorrect;
-//     }
+  if (!wordAttempt) {
+    wordAttempt = {
+      word_id: wordId,
+      correct_word: correctWord,
+      spoken_word: spokenWord,
+      is_correct: isCorrect,
+      attempts_number: 1,
+      level_id: levelId,
+      timestamp: new Date()
+    };
+    userAttempt.words_attempts.push(wordAttempt);
+  } else {
+    wordAttempt.attempts_number += 1;
+    wordAttempt.spoken_word = spokenWord;
+    wordAttempt.is_correct = isCorrect;
+    wordAttempt.timestamp = new Date();
+  }
 
-//     await userAttempt.save();
+  await userAttempt.save({ session });
+  return userAttempt;
+}
 
-//     let progress = await Exercisesprogress.findOne({
-//       user_id: new mongoose.Types.ObjectId(userId),
-//       exercise_id: new mongoose.Types.ObjectId(exerciseId),
-//     });
+async function updateExerciseProgress(userId, exerciseId, wordId, levelId, spokenWord, correctWord, isCorrect, userAttempt, session)
+ {
+  let progress = await Exercisesprogress.findOne({ user_id: userId, exercise_id: exerciseId }).session(session);
 
-//     if (!progress) {
-//       progress = new Exercisesprogress({
-//         user_id: new mongoose.Types.ObjectId(userId),
-//         exercise_id: new mongoose.Types.ObjectId(exerciseId),
-//         correct_words: [],
-//         incorrect_words: [],
-//         score: 0,
-//         accuracy_percentage: 0,
-//       });
-//     }
+  if (!progress) {
+    progress = new Exercisesprogress({
+      user_id: userId,
+      exercise_id: exerciseId,
+      total_time_spent: 0,
+      session_start: new Date(),
+      levels: []
+    });
+  }
 
-//     if (isCorrect) {
-//       if (!progress.correct_words.includes(spokenWord)) {
-//         progress.correct_words.push(spokenWord);
-//         progress.score += 10;
-//       }
-//     } else {
-//       if (wordAttempt.attempts_number >= 3) {
-//         const incorrectEntry = progress.incorrect_words.find(
-//           (w) => w.word_id.toString() === wordId
-//         );
+  // Find or create the level in progress
+  let levelProgress = progress.levels.find(l => l.level_id.toString() === levelId.toString());
 
-//         if (incorrectEntry) {
-//           incorrectEntry.frequency += 1;
-//         } else {
-//           progress.incorrect_words.push({
-//             word_id: wordId,
-//             correct_word: expectedWord,
-//             incorrect_word: spokenWord,
-//             frequency: 1,
-//           });
-//         }
+if (!levelProgress) {
+  levelProgress = {
+    level_id: levelId,
+    correct_items: [],
+    incorrect_items: [],
+    games: []
+  };
+  progress.levels.push(levelProgress);
+}
 
-//         progress.score = Math.max(progress.score - 5, 0);
-//       }
-//     }
 
-//     const totalAttempts = progress.correct_words.length + progress.incorrect_words.length;
-//     progress.accuracy_percentage =
-//       totalAttempts > 0 ? (progress.correct_words.length / totalAttempts) * 100 : 0;
+  if (isCorrect) {
+    // Remove from incorrect items if present
+    const incorrectIndex = levelProgress.incorrect_items.findIndex(w => w === correctWord);
+    if (incorrectIndex !== -1) levelProgress.incorrect_items.splice(incorrectIndex, 1);
 
-//     await progress.save();
-//     try {
-//       fs.unlinkSync(filePath);
-//     } catch (error) {
-//       console.error("Failed to delete audio file:", error);
-//     }
+    // Add the correct word if not already included
+    const correctWordExists = levelProgress.correct_items.some(item => item === correctWord);
+    if (!correctWordExists) {
+      levelProgress.correct_items.push(correctWord);
+    }
+  } else {
+    // Add the correct word to incorrect_items if not already present
+    const incorrectWordExists = levelProgress.incorrect_items.includes(correctWord);
+    if (!incorrectWordExists) {
+      levelProgress.incorrect_items.push(correctWord);
+    }
+  }
 
-//     return {
-//       spokenWord,
-//       expectedWord: expectedWord.word,
-//       isCorrect,
-//       message: isCorrect ? "Correct!" : "Try again!",
-//     };
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error("Speech processing failed.");
-//   }
-// };
+  // Recalculate accuracy percentage
+  const totalItems = levelProgress.correct_items.length + levelProgress.incorrect_items.length;
+  const accuracyPercentage = totalItems > 0 ? (levelProgress.correct_items.length / totalItems) * 100 : 0;
+
+  // Optionally, you can track time spent (adjust based on your app logic)
+  const timeSpent = 0; // Adjust as needed
+  progress.total_time_spent += timeSpent;
+
+  // Save the progress data
+  await progress.save({ session });
+
+  return {
+    levelProgress,
+    accuracyPercentage
+  };
+}
+
+
+async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, correctWord, isCorrect, timeSpent, session) {
+  let overall = await OverallProgress.findOne({ user_id: userId }).session(session);
+
+  if (!overall) {
+    overall = new OverallProgress({
+      user_id: userId,
+      progress_by_exercise: [],
+      overall_stats: {
+        total_time_spent: timeSpent || 0,
+        combined_accuracy: isCorrect ? 100 : 0,
+        average_score_all: 0
+      }
+    });
+  }
+
+  // Find or create the exercise-specific progress entry
+  let exerciseProgress = overall.progress_by_exercise.find(
+    p => p.exercise_id.toString() === exerciseId.toString()
+  );
+
+  if (!exerciseProgress) {
+    exerciseProgress = {
+      exercise_id: exerciseId,
+      stats: {
+        total_correct: { count: 0, items: [] },
+        total_incorrect: { count: 0, items: [] },
+        total_items_attempted: 0,
+        accuracy_percentage: 0,
+        average_game_score: 0,
+        time_spent_seconds: 0
+      }
+    };
+    overall.progress_by_exercise.push(exerciseProgress);
+  }
+
+  const stats = exerciseProgress.stats;
+
+  // Check if this word has already been attempted (exists in either correct or incorrect)
+  const alreadyAttempted = 
+    stats.total_correct.items.includes(correctWord) || 
+    stats.total_incorrect.items.includes(correctWord);
+
+  // If it's a new word, count it as a new attempt
+  if (!alreadyAttempted) {
+    stats.total_items_attempted += 1;
+  }
+
+  // Remove the word from both lists to clean up state
+  stats.total_correct.items = stats.total_correct.items.filter(w => w !== correctWord);
+  stats.total_incorrect.items = stats.total_incorrect.items.filter(w => w !== correctWord);
+
+  // Add word to correct or incorrect list based on result
+  if (isCorrect) {
+    stats.total_correct.items.push(correctWord);
+  } else {
+    stats.total_incorrect.items.push(correctWord);
+  }
+
+  // Update counts
+  stats.total_correct.count = stats.total_correct.items.length;
+  stats.total_incorrect.count = stats.total_incorrect.items.length;
+
+  // Recalculate accuracy
+  stats.accuracy_percentage = stats.total_items_attempted > 0
+    ? (stats.total_correct.count / stats.total_items_attempted) * 100
+    : 0;
+
+  // Time spent
+  stats.time_spent_seconds += timeSpent || 0;
+
+  // Update overall stats across all exercises
+  let totalCorrect = 0;
+  let totalAttempted = 0;
+  let totalTime = 0;
+
+  for (const ex of overall.progress_by_exercise) {
+    totalCorrect += ex.stats.total_correct.count;
+    totalAttempted += ex.stats.total_items_attempted;
+    totalTime += ex.stats.time_spent_seconds;
+  }
+
+  overall.overall_stats.total_time_spent = totalTime;
+  overall.overall_stats.combined_accuracy = totalAttempted > 0
+    ? (totalCorrect / totalAttempted) * 100
+    : 0;
+
+  await overall.save({ session });
+  return overall;
+}
 

@@ -9,8 +9,9 @@ import '../../services/tts_service.dart';
 
 class SentencePronunciationScreen extends StatefulWidget {
   final Function(Locale)? onLocaleChange;
+  final Learner learner;
 
-  const SentencePronunciationScreen({super.key, this.onLocaleChange});
+  const SentencePronunciationScreen({super.key, this.onLocaleChange, required this.learner});
 
   @override
   State<SentencePronunciationScreen> createState() =>
@@ -23,7 +24,7 @@ class _SentencePronunciationScreenState
   late Learner _learner;
   late String _userId;
   final String _level = 'Beginner'; // or read from learner
-  String _exerciseId = '';
+  late String _exerciseId;
 
   // runtime state
   final TTSService _tts = TTSService();
@@ -62,14 +63,22 @@ class _SentencePronunciationScreenState
 
   void _readArgsAndStart() async {
     final args = ModalRoute.of(context)?.settings.arguments;
-    if (args == null || args is! Learner) {
+    if (args == null || args is! Map<String, dynamic> || args['learner'] == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Learner data missing')),
       );
       Navigator.pop(context);
       return;
     }
-    _learner = args;
+    if (args['exerciseId'] == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Exercise ID missing')),
+      );
+      Navigator.pop(context);
+      return;
+    }
+    _exerciseId = args['exerciseId'] as String;
+    _learner = args['learner'] as Learner;
     _userId = _learner.id!;
     await _startSession();
     _animationController.forward();
@@ -78,7 +87,7 @@ class _SentencePronunciationScreenState
   Future<void> _startSession() async {
     try {
       await _tts.initialize();
-      await SentenceExerciseService.startExercise(_userId, '');
+      await SentenceExerciseService.startExercise(_userId, _exerciseId);
       _sentences = await SentenceExerciseService.fetchSentences(_level);
     } catch (e) {
       if (mounted) {

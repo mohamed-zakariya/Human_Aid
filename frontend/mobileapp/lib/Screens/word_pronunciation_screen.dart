@@ -6,6 +6,7 @@ import 'package:mobileapp/Screens/widgets/feedback_widget.dart';
 import 'package:mobileapp/Screens/widgets/letters_widget.dart';
 import 'package:mobileapp/Screens/widgets/recording_controls.dart';
 import 'package:mobileapp/Screens/widgets/timer_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Models
 import '../../models/learner.dart';
@@ -23,10 +24,12 @@ import '../graphql/graphql_client.dart';
 
 class WordPronunciationScreen extends StatefulWidget {
   final Function(Locale)? onLocaleChange;
+  final Learner initialLearner;
 
   const WordPronunciationScreen({
     Key? key,
     this.onLocaleChange,
+    required this.initialLearner,
   }) : super(key: key);
 
   @override
@@ -38,10 +41,8 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   String _currentWord = "";
   String _currentWordId = "";
   int _attemptsLeft = 3;
-
-  Learner? _learner;
   String _username = "";
-  String _userId = "user123";
+  String _userId = "";
 
   final AudioService _audioService = AudioService();
 
@@ -57,36 +58,30 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   bool? _isCorrect;
 
   // NEW: We'll store the ExerciseService
-  late ExerciseService _exerciseService;
-
-  @override
-  void initState() {
+  late ExerciseService _exerciseService;  @override
+void initState() {
     super.initState();
+    _username = widget.initialLearner.name;
+    _userId = widget.initialLearner.id!;
     _loadWord();
 
-    // Capture any learner info passed in
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final args = ModalRoute.of(context)?.settings.arguments;
-      if (args != null && args is Learner) {
-        setState(() {
-          _learner = args;
-          _username = _learner?.name ?? "User";
-          _userId = _learner?.id ?? "user123";
-        });
-      }
 
-      // NEW: Get the GraphQLClient and create an ExerciseService
-      final client = await GraphQLService.getClient();
-      _exerciseService = ExerciseService(client: client);
+    if (_userId.isEmpty) {
+      print("❗ No valid user ID available. Cannot start exercise.");
+      return;
+    }
 
-      // Now call startExercise
-      final startResult = await _exerciseService.startExercise(_userId, _exerciseId);
-      if (startResult != null) {
-        print("Exercise started: $startResult");
-        // If you want, you can store the startTime or message in state.
-      }
-    });
-  }
+    final client = await GraphQLService.getClient();
+    _exerciseService = ExerciseService(client: client);
+
+    final startResult = await _exerciseService.startExercise(_userId, _exerciseId);
+    if (startResult != null) {
+      print("Exercise started: $startResult");
+    }
+  });
+}
+
 
   @override
   void dispose() {
@@ -113,7 +108,8 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
       _isCorrect = null;
     });
 
-    final Word? fetchedWord = await WordsService.fetchRandomWord("Beginner");
+    final Word? fetchedWord = await WordsService.fetchRandomWord("Beginner", "67c66a0e3387a31ba1ee4a72");
+
 
     if (fetchedWord == null) {
       // Handle "no words" scenario

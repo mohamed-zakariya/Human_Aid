@@ -129,7 +129,7 @@
     "errorEmptyPassword": "لا يمكن ترك كلمة المرور فارغة",
     "successLogin": "تم تسجيل الدخول بنجاح",
     "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة. حاول مرة أخرى.",
-    "levelLabel": "المرحلة الثانية • المستوى الأول",
+    "levelLabel": "انطق الكلمة",
     "greeting": "مرحباً {name}",
     "@greeting": {
         "description": "Greeting for the user with their name",
@@ -241,5 +241,5 @@
     },
     "gameCompleted": "اكتملت!",
     "orderMonthsCorrectly": "رتب الشهور بشكل صحيح",
-    "gameCompleted": "اكتملت!"
+    "wordsGame3Title": "لعبة الشهور"
 }

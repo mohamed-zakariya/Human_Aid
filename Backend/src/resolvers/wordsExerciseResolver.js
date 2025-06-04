@@ -49,8 +49,8 @@ export const speechResolvers = {
     // wordsExercise: async (_, { userId, exerciseId, wordId, audioFile }) => {
     //   return await wordsExercise(userId, exerciseId, wordId, audioFile);
     // },
-    updateUserProgress: async (_, { userId, exerciseId, wordId, audioFile,spokenWord}) => {
-      return await updateUserProgress(userId, exerciseId, wordId, audioFile,spokenWord);
+    updateUserProgress: async (_, { userId, exerciseId, wordId,levelId,audioFile,spokenWord}) => {
+      return await updateUserProgress(userId, exerciseId, wordId,levelId, audioFile,spokenWord);
     },
     endExercise: async (_, { userId, exerciseId }) => {
       return await endExercise(userId, exerciseId);

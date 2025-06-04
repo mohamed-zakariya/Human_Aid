@@ -375,7 +375,7 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  l10n.levelLabel, // Use as a getter, not a function
+                  l10n.wordsGame3Title, // Use as a getter, not a function
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,

@@ -194,7 +194,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "learner_progress":
             MessageLookupByLibrary.simpleMessage("Learners Progress"),
         "level": MessageLookupByLibrary.simpleMessage("Level"),
-        "levelLabel": MessageLookupByLibrary.simpleMessage("Stage 2 • Level 1"),
+        "levelLabel": MessageLookupByLibrary.simpleMessage("spell the word"),
         "levels": MessageLookupByLibrary.simpleMessage("Levels"),
         "listen": MessageLookupByLibrary.simpleMessage("Listen"),
         "listenToLetter":
@@ -334,6 +334,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("Welcome Back, "),
         "wellDone": MessageLookupByLibrary.simpleMessage("Well done! ✅"),
+        "wordsGame3Title": MessageLookupByLibrary.simpleMessage("Months Game"),
         "wrongAnswer": m14,
         "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
             "You traced the letter correctly!")

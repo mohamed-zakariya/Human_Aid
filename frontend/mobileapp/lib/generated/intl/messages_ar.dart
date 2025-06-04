@@ -193,8 +193,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "learner_progress":
             MessageLookupByLibrary.simpleMessage("تقدّم المتعلّمين"),
         "level": MessageLookupByLibrary.simpleMessage("المستوى"),
-        "levelLabel": MessageLookupByLibrary.simpleMessage(
-            "المرحلة الثانية • المستوى الأول"),
+        "levelLabel": MessageLookupByLibrary.simpleMessage("انطق الكلمة"),
         "levels": MessageLookupByLibrary.simpleMessage("المستويات"),
         "listen": MessageLookupByLibrary.simpleMessage("استمع"),
         "listenToLetter":
@@ -334,6 +333,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("مرحبًا بعودتك، "),
         "wellDone": MessageLookupByLibrary.simpleMessage(" !أحسنت ✅"),
+        "wordsGame3Title": MessageLookupByLibrary.simpleMessage("لعبة الشهور"),
         "wrongAnswer": m14,
         "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
             "لقد قمت بتتبع الحرف بشكل صحيح.")

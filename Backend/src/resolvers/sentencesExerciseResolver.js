@@ -17,8 +17,8 @@ Mutation: {
     startExercise: async (_, { userId, exerciseId }) => {
       return await startExercise(userId, exerciseId);
     },
-    updateSentenceProgress: async (_, args) => {
-        return await updateSentenceProgress(args);
+    updateSentenceProgress: async (_, { userId, exerciseId,levelId, sentenceId, audioFile,spokenSentence}) => {
+        return await updateSentenceProgress(userId, exerciseId,levelId, sentenceId, audioFile,spokenSentence);
       },      
     endExercise: async (_, { userId, exerciseId }) => {
       return await endExercise(userId, exerciseId);

@@ -1340,10 +1340,10 @@ class S {
     );
   }
 
-  /// `Stage 2 • Level 1`
+  /// `spell the word`
   String get levelLabel {
     return Intl.message(
-      'Stage 2 • Level 1',
+      'spell the word',
       name: 'levelLabel',
       desc: '',
       args: [],
@@ -1885,6 +1885,16 @@ class S {
     return Intl.message(
       'Order the months correctly.',
       name: 'orderMonthsCorrectly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Months Game`
+  String get wordsGame3Title {
+    return Intl.message(
+      'Months Game',
+      name: 'wordsGame3Title',
       desc: '',
       args: [],
     );

@@ -129,7 +129,7 @@
     "errorEmptyPassword": "Password cannot be empty",
     "successLogin": "Login successful",
     "invalidCredentials": "Invalid username or password. Please try again.",
-    "levelLabel": "Stage 2 • Level 1",
+    "levelLabel": "spell the word",
     "greeting": "Hello {name}",
     "@greeting": {
         "description": "Greeting for the user with their name",
@@ -239,5 +239,6 @@
       }
     },
     "gameCompleted": "Completed!",
-    "orderMonthsCorrectly": "Order the months correctly."
+    "orderMonthsCorrectly": "Order the months correctly.",
+    "wordsGame3Title": "Months Game"
 }
