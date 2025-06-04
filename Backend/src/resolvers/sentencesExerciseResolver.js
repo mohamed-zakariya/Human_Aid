@@ -1,5 +1,5 @@
 // src/resolvers/sentencesExerciseResolver.js
-import {startExercise , endExercise,updateSentenceProgress } from "../controllers/sentencesExerciseController.js";
+import {updateSentenceProgress } from "../controllers/sentencesExerciseController.js";
 import Sentences from "../models/Sentences.js"
 export const sentencesExerciseResolver = {
   Query: {
@@ -14,14 +14,8 @@ export const sentencesExerciseResolver = {
         },
       },
 Mutation: {
-    startExercise: async (_, { userId, exerciseId }) => {
-      return await startExercise(userId, exerciseId);
-    },
     updateSentenceProgress: async (_, { userId, exerciseId,levelId, sentenceId, audioFile,spokenSentence}) => {
         return await updateSentenceProgress(userId, exerciseId,levelId, sentenceId, audioFile,spokenSentence);
       },      
-    endExercise: async (_, { userId, exerciseId }) => {
-      return await endExercise(userId, exerciseId);
-    },
   },
 };

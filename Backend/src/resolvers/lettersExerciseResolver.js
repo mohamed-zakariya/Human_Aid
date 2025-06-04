@@ -1,4 +1,4 @@
-import { startExercise, endExercise, updateLetterProgress } from "../controllers/lettersExerciseController.js";
+import { updateLetterProgress } from "../controllers/lettersExerciseController.js";
 import Letters from "../models/Letters.js";
 
 export const lettersExerciseResolver = {
@@ -16,14 +16,8 @@ export const lettersExerciseResolver = {
         },
       },
   Mutation: {
-    startExercise: async (_, { userId, exerciseId }) => {
-      return await startExercise(userId, exerciseId);
-    },
     updateLetterProgress: async (_, { userId, exerciseId,levelId, letterId, audioFile,spokenLetter}) => {
           return await updateLetterProgress(userId, exerciseId,levelId, letterId, audioFile,spokenLetter);
         },
-    endExercise: async (_, { userId, exerciseId }) => {
-      return await endExercise(userId, exerciseId);
-    },
   },
 };
