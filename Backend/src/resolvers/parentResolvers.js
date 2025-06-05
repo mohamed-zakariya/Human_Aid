@@ -25,6 +25,7 @@ export const parentResolvers = {
     getLearnerDailyAttempts: async(_, {parentId}) => {
       return await getLearnerDailyAttempts(parentId);
     },
+
   },
   Mutation: {
     loginParent: async (_, { email, password }) => {

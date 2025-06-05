@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-
+import fs from "fs";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -168,6 +168,31 @@ export const sendOTPEmail = async (email, otp, name) => {
       </body>
       </html>
     `,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+export const sendEmailWithAttachment = async ({ to, subject, text, attachmentPath, attachmentName }) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  const mailOptions = {
+    from: `"Dyslexia App" <${process.env.EMAIL_USER}>`,
+    to,
+    subject,
+    text,
+    attachments: [
+      {
+        filename: attachmentName,
+        content: fs.createReadStream(attachmentPath)
+      }
+    ]
   };
 
   await transporter.sendMail(mailOptions);
