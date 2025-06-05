@@ -1,4 +1,5 @@
 class Game {
+  final String id;
   final String gameId;
   final String name;
   final String arabicName;
@@ -8,6 +9,7 @@ class Game {
   final String? imageUrl;
   
   Game({
+    required this.id,
     required this.gameId,
     required this.name,
     required this.arabicName,
@@ -19,6 +21,7 @@ class Game {
   
   factory Game.fromJson(Map<String, dynamic> json) {
     return Game(
+      id: json['_id'] ?? '',
       gameId: json['game_id'] ?? '',
       name: json['name'] ?? '',
       arabicName: json['arabic_name'] ?? '',

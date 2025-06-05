@@ -231,6 +231,9 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
   }
 
   void _showGameCompletionDialog() {
+
+
+
     final l10n = S.of(context);
     try {
       _successPlayer.resume();
@@ -299,6 +302,10 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
 
   @override
   Widget build(BuildContext context) {
+
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+
     final l10n = S.of(context);
     // Calculate the appropriate grid settings based on screen size and level
     final size = MediaQuery.of(context).size;
@@ -327,7 +334,7 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(l10n.monthsOrderTitle),
+        title: Text(args['gameName']),
         centerTitle: true,
         backgroundColor: const Color(0xFF7F73FF),
         elevation: 0,

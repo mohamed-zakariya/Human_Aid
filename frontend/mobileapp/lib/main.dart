@@ -13,6 +13,9 @@ import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/ArabicLetterT
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level1/game1/screens/spelling_game_screen.dart';
+import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/first_game/direction_level1_instruction.dart';
+import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/second_game/direction_game2_page.dart';
+import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/second_game/direction_level2_instruction.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Screens/SignUp/ContinueSignup.dart';
 import 'package:mobileapp/Screens/SignUp/signupadult.dart';
@@ -25,6 +28,7 @@ import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/parent.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/quizapp.dart';
 
+import 'Screens/LearnerScreen/wordStage/Level2/first_game/direction_game1_page.dart';
 import 'Screens/LearnerScreen/wordStage/Level3/word_level3_game.dart';
 import 'Screens/Login/change_password_screen.dart';
 import 'Screens/Login/forgot_password_screen.dart';
@@ -149,6 +153,9 @@ class _MyAppState extends State<MyApp> {
           '/letters_game_4': (context) => const LetterLevel2Game2(),
           '/letters_game_5': (context) => const LetterLevel3Game(),
           '/words_game_1': (context) => const SpellingGameScreen(),
+          '/words_game_2': (context) => DirectionInstructionsPage(),
+          '/words_game_3': (context) => DirectionInstructionsSecondPage(),
+
           '/words_game_4': (context) => const MonthsOrderGameScreen(),
 
 

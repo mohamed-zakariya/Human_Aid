@@ -20,9 +20,18 @@ class LearnerDashboardPage extends StatefulWidget {
 
   @override
   State<LearnerDashboardPage> createState() => _LearnerDashboardPageState();
+
+
 }
 
 class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   Future<List<Map<String, dynamic>>>? _exercisesFuture;
   bool _hasLoadedData = false;
 

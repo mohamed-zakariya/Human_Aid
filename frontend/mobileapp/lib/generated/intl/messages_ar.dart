@@ -24,31 +24,37 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(name) => "لوحة تحكم ${name}";
 
-  static String m2(percent) => "%${percent}";
+  static String m2(letter) => "ارسم الحرف \"${letter}\"";
 
-  static String m3(score, total) => "درجتك: ${score} من ${total}";
+  static String m3(percent) => "%${percent}";
 
-  static String m4(score, total) => "🎉 أحسنت! درجتك: ${score} من ${total}";
+  static String m4(score, total) => "درجتك: ${score} من ${total}";
 
-  static String m5(name) => "مرحباً ${name}";
+  static String m5(score, total) => "🎉 أحسنت! درجتك: ${score} من ${total}";
 
-  static String m6(count) => "رتب ${count} شهور السنة";
+  static String m6(name) => "مرحباً ${name}";
 
-  static String m7(percent) => "${percent}% تم الإنجاز";
+  static String m7(count) => "رتب ${count} شهور السنة";
 
-  static String m8(points) => "${points} نقطة";
+  static String m8(count) => "عدد النقاط: ${count}";
 
-  static String m9(error) => "خطأ: ${error}";
+  static String m9(percent) => "${percent}% تم الإنجاز";
 
-  static String m10(error) => "خطأ في بدء التسجيل: ${error}";
+  static String m10(points) => "${points} نقطة";
 
-  static String m11(current, total) => "الجولة ${current} من ${total}";
+  static String m11(error) => "خطأ: ${error}";
 
-  static String m12(letter) => "📝 تتبع هذا الحرف: ${letter}";
+  static String m12(error) => "خطأ في بدء التسجيل: ${error}";
 
-  static String m13(score, total) => "😊 لا بأس! درجتك: ${score} من ${total}";
+  static String m13(current, total) => "الجولة ${current} من ${total}";
 
-  static String m14(letter) => "❌ خطأ! الحرف الصحيح هو: ${letter}";
+  static String m14(count) => "عدد الخطوط: ${count}";
+
+  static String m15(letter) => "📝 تتبع هذا الحرف: ${letter}";
+
+  static String m16(score, total) => "😊 لا بأس! درجتك: ${score} من ${total}";
+
+  static String m17(letter) => "❌ خطأ! الحرف الصحيح هو: ${letter}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -98,6 +104,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "continuesignuptitle": MessageLookupByLibrary.simpleMessage(
             "تَسْجِيلُ بَيَانَاتِ الطِّفْلِ"),
         "correctAnswer": MessageLookupByLibrary.simpleMessage("🎉 صحيح!"),
+        "correctFeedback": MessageLookupByLibrary.simpleMessage("أحسنت! 🎉"),
         "createAccountGaurdian":
             MessageLookupByLibrary.simpleMessage("إنشاء حساب ولي أمر"),
         "createAccountUser":
@@ -115,6 +122,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("✅ تم"),
         "dontWorry":
             MessageLookupByLibrary.simpleMessage("لا تخف لا داعي للقلق"),
+        "drawInstruction": MessageLookupByLibrary.simpleMessage(
+            "المس وارسم في أي مكان على اللوحة"),
+        "drawLetter": m2,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "هذا البريد الإلكتروني مسجّل بالفعل"),
         "emailHint": MessageLookupByLibrary.simpleMessage("humanid@gmail.com"),
@@ -135,7 +145,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "exercise2Title":
             MessageLookupByLibrary.simpleMessage("التدريب التاني"),
         "exerciseProgressLabel": MessageLookupByLibrary.simpleMessage("التقدم"),
-        "exerciseProgressPercent": m2,
+        "exerciseProgressPercent": m3,
+        "exit": MessageLookupByLibrary.simpleMessage("إنهاء"),
         "explore_message":
             MessageLookupByLibrary.simpleMessage("لنستكشف بعض الأفكار اليوم"),
         "feedbackWidgetAnalyzing":
@@ -150,18 +161,23 @@ class MessageLookup extends MessageLookupByLibrary {
         "forgotPasswordTitle":
             MessageLookupByLibrary.simpleMessage("نَسِيتَ كَلِمَةَ المَرُورِ؟"),
         "gameCompleted": MessageLookupByLibrary.simpleMessage("اكتملت!"),
-        "gameCompletionScore": m3,
+        "gameCompletionScore": m4,
         "gameCompletionTitle":
             MessageLookupByLibrary.simpleMessage("اكتملت اللعبة!"),
+        "gameFinished": MessageLookupByLibrary.simpleMessage("انتهت اللعبة!"),
+        "gameOverTitle":
+            MessageLookupByLibrary.simpleMessage("🎮 انتهت اللعبة"),
         "games": MessageLookupByLibrary.simpleMessage("ألعاب"),
         "genderFemale": MessageLookupByLibrary.simpleMessage("انثي"),
         "genderMale": MessageLookupByLibrary.simpleMessage("ذكر"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("اختار النوع"),
         "genderSelected": MessageLookupByLibrary.simpleMessage(":اختار"),
         "gotIt": MessageLookupByLibrary.simpleMessage("فهمت!"),
-        "greatJob": m4,
+        "greatJob": m5,
         "greatJob2": MessageLookupByLibrary.simpleMessage("🎉 عمل رائع!"),
-        "greeting": m5,
+        "greatJobMotivation":
+            MessageLookupByLibrary.simpleMessage("🎉 عمل رائع! أنت مذهل!"),
+        "greeting": m6,
         "guardianButton": MessageLookupByLibrary.simpleMessage("ولي أمر"),
         "guardianDescription": MessageLookupByLibrary.simpleMessage(
             "تسجيلك كولي أمر يمكنك من تسجيل و متابعة تقدم أحيانك، سواء كالوا أبناءك، طلابك، أو أي شخص تحت مسئوليتك"),
@@ -200,7 +216,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("استمع إلى الحرف"),
         "loginButton": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("تسجيل الدُّخول"),
-        "monthsOrderHeader": m6,
+        "monthsOrderHeader": m7,
         "monthsOrderHelpDrag": MessageLookupByLibrary.simpleMessage(
             "اسحب الشهور من الأسفل وضعها في الترتيب الصحيح"),
         "monthsOrderHelpListen":
@@ -248,19 +264,21 @@ class MessageLookup extends MessageLookupByLibrary {
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("ابحث"),
         "playAgain": MessageLookupByLibrary.simpleMessage("العب مرة أخرى"),
         "playGame": MessageLookupByLibrary.simpleMessage("العب الآن"),
+        "pointCount": m8,
         "processingError": MessageLookupByLibrary.simpleMessage(
             "حدث خطأ أثناء معالجة التسجيل"),
         "processingRecording":
             MessageLookupByLibrary.simpleMessage("جاري معالجة التسجيل..."),
-        "progressCompleted": m7,
-        "progressPoints": m8,
-        "recordingError": m9,
-        "recordingStartError": m10,
+        "progressCompleted": m9,
+        "progressPoints": m10,
+        "recordingError": m11,
+        "recordingStartError": m12,
         "recordingTimeout": MessageLookupByLibrary.simpleMessage(
             "انتهى الوقت المسموح للتسجيل!"),
         "restart": MessageLookupByLibrary.simpleMessage("ابدأ من جديد"),
         "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
-        "roundLabel": m11,
+        "roundLabel": m13,
+        "roundLabel2": MessageLookupByLibrary.simpleMessage("الجولة"),
         "searchCoursesHint":
             MessageLookupByLibrary.simpleMessage("ابحث عن الدورات..."),
         "seeAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
@@ -300,9 +318,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "signuptitleusername":
             MessageLookupByLibrary.simpleMessage("اسم المستخدم"),
         "spellingGame": MessageLookupByLibrary.simpleMessage("لعبة التهجئة"),
+        "strokeCount": m14,
         "submitbutton": MessageLookupByLibrary.simpleMessage("تم"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول بنجاح"),
+        "timeLabel": MessageLookupByLibrary.simpleMessage("الوقت"),
         "tips": MessageLookupByLibrary.simpleMessage("نصائح"),
         "title": MessageLookupByLibrary.simpleMessage("إِنْشَاءُ حِسَابٍٍ"),
         "title1": MessageLookupByLibrary.simpleMessage(
@@ -311,14 +331,16 @@ class MessageLookup extends MessageLookupByLibrary {
             "معاً سنتعلم كيف نقرأ\nونكتب اللغة العربية بشكل سليم"),
         "title3": MessageLookupByLibrary.simpleMessage(
             "لا تخف من التجربة،\nحاول بلا توقف حتى تكسر حاجز الخوف"),
-        "traceThisLetter": m12,
+        "traceThisLetter": m15,
         "traceTitle": MessageLookupByLibrary.simpleMessage("✍️ تتبع الحرف"),
         "transcriptLabel": MessageLookupByLibrary.simpleMessage("النص المدخل"),
         "translateMonthsTooltip":
             MessageLookupByLibrary.simpleMessage("تبديل أسماء الشهور"),
         "tryAgain": MessageLookupByLibrary.simpleMessage("حاول مرة أخرى"),
-        "tryAgain2": m13,
+        "tryAgain2": m16,
         "tryAgain3": MessageLookupByLibrary.simpleMessage("❌ حاول مرة أخرى"),
+        "tryAgainMotivation":
+            MessageLookupByLibrary.simpleMessage("💪 استمر! يمكنك فعلها!"),
         "userButton": MessageLookupByLibrary.simpleMessage("مستخدم"),
         "userDescription": MessageLookupByLibrary.simpleMessage(
             "إذا كان عمرك يزيد عن 12 سنة. يمكنك الآن التسجيل بنفسك بسهولة فقط اضغط على زر مستخدم البدء."),
@@ -329,12 +351,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("يجب إدخال اسم المستخدم"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(
             "يجب أن يكون اسم المستخدم على الأقل 3 أحرف"),
+        "verify": MessageLookupByLibrary.simpleMessage("تحقق"),
         "view_details": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("مرحبًا بعودتك، "),
         "wellDone": MessageLookupByLibrary.simpleMessage(" !أحسنت ✅"),
         "wordsGame3Title": MessageLookupByLibrary.simpleMessage("لعبة الشهور"),
-        "wrongAnswer": m14,
+        "wrongAnswer": m17,
+        "wrongFeedback": MessageLookupByLibrary.simpleMessage("حاول مرة أخرى"),
         "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
             "لقد قمت بتتبع الحرف بشكل صحيح.")
       };

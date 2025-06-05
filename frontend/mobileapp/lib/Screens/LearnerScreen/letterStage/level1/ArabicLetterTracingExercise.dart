@@ -331,6 +331,10 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
 
   @override
   Widget build(BuildContext context) {
+
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+
     String currentLetter = arabicLetters[currentLetterIndex];
     return Scaffold(
       appBar: AppBar(
@@ -400,7 +404,7 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Draw the letter \"$currentLetter\"",
+                          S.of(context).drawLetter(currentLetter),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -408,7 +412,7 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "Touch and draw anywhere on the canvas",
+                          S.of(context).drawInstruction,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
@@ -481,11 +485,13 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Strokes: ${strokes.length}",
+                    S.of(context).strokeCount(strokes.length),
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                   Text(
-                    "Points: ${strokes.fold(0, (sum, stroke) => sum + stroke.length) + currentStroke.length}",
+                    S.of(context).pointCount(
+                        strokes.fold(0, (sum, stroke) => sum + stroke.length) + currentStroke.length
+                    ),
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                 ],

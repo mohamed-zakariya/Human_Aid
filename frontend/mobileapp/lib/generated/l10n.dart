@@ -1899,6 +1899,146 @@ class S {
       args: [],
     );
   }
+
+  /// `Verify`
+  String get verify {
+    return Intl.message(
+      'Verify',
+      name: 'verify',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Draw the letter "{letter}"`
+  String drawLetter(Object letter) {
+    return Intl.message(
+      'Draw the letter "$letter"',
+      name: 'drawLetter',
+      desc: '',
+      args: [letter],
+    );
+  }
+
+  /// `Touch and draw anywhere on the canvas`
+  String get drawInstruction {
+    return Intl.message(
+      'Touch and draw anywhere on the canvas',
+      name: 'drawInstruction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Strokes: {count}`
+  String strokeCount(Object count) {
+    return Intl.message(
+      'Strokes: $count',
+      name: 'strokeCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Points: {count}`
+  String pointCount(Object count) {
+    return Intl.message(
+      'Points: $count',
+      name: 'pointCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `🎮 Game Over`
+  String get gameOverTitle {
+    return Intl.message(
+      '🎮 Game Over',
+      name: 'gameOverTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🎉 Great job! You're doing amazing!`
+  String get greatJobMotivation {
+    return Intl.message(
+      '🎉 Great job! You\'re doing amazing!',
+      name: 'greatJobMotivation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `💪 Keep going! You can do it!`
+  String get tryAgainMotivation {
+    return Intl.message(
+      '💪 Keep going! You can do it!',
+      name: 'tryAgainMotivation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Well done! 🎉`
+  String get correctFeedback {
+    return Intl.message(
+      'Well done! 🎉',
+      name: 'correctFeedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try again`
+  String get wrongFeedback {
+    return Intl.message(
+      'Try again',
+      name: 'wrongFeedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Round`
+  String get roundLabel2 {
+    return Intl.message(
+      'Round',
+      name: 'roundLabel2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time`
+  String get timeLabel {
+    return Intl.message(
+      'Time',
+      name: 'timeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit`
+  String get exit {
+    return Intl.message(
+      'Exit',
+      name: 'exit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Game Over!`
+  String get gameFinished {
+    return Intl.message(
+      'Game Over!',
+      name: 'gameFinished',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

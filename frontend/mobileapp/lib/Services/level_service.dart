@@ -8,23 +8,25 @@ class LevelService {
   // lib/services/level_service.dart  (only the query string is different)
   static const String _levelsQuery = r'''
     query GetLevelsForExercises {
-      getLevelsForExercises {
-        id
-        name
-        arabic_name
-        levels {
-          level_id
-          level_number
+        getLevelsForExercises {
+          id
           name
           arabic_name
-          games {
-            game_id
+          levels {
+            _id
+            level_id
+            level_number
             name
             arabic_name
+            games {
+              _id
+              game_id
+              name
+              arabic_name
+            }
           }
         }
       }
-    }
   ''';
 
   /// Public API – returns only the levels for the requested exercise
