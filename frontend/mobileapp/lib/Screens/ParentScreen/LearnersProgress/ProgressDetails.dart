@@ -4,6 +4,7 @@ import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
 import 'package:mobileapp/Services/parent_service.dart';
 import 'package:mobileapp/models/parent.dart';
 import '../../../generated/l10n.dart';
+import '../../../models/dailyAttempts/GameAttempt.dart';
 import 'LearnerCard.dart';
 import '../../../models/dailyAttempts/learner_daily_attempts.dart';
 
@@ -44,39 +45,90 @@ class _ProgressDetailsState extends State<ProgressDetails> {
 
     learnerProgress.clear();
 
+    // Group data by date and user to avoid duplicates
+    Map<String, Map<String, Map<String, dynamic>>> groupedData = {};
+
     for (var entry in attempts) {
       DateTime parsedDate = DateTime.parse(entry.date);
       String formattedDate = DateFormat("EEE d").format(parsedDate);
 
-      learnerProgress[formattedDate] = [];
+      if (!groupedData.containsKey(formattedDate)) {
+        groupedData[formattedDate] = {};
+      }
 
       for (var user in entry.users) {
+        String userKey = user.userId;
+
+        if (!groupedData[formattedDate]!.containsKey(userKey)) {
+          // Initialize user data
+          groupedData[formattedDate]![userKey] = {
+            "user_id": user.userId,
+            "username": user.username,
+            "name": user.name,
+            "correct_letters": <Letter>[],
+            "incorrect_letters": <Letter>[],
+            "correct_words": <Word>[],
+            "incorrect_words": <Word>[],
+            "correct_sentences": <Sentence>[],
+            "incorrect_sentences": <Sentence>[],
+            "game_attempts": <GameAttempt>[],
+          };
+        }
+
+        // Merge data for the same user on the same date
+        var userData = groupedData[formattedDate]![userKey]!;
+        userData["correct_letters"].addAll(user.correctLetters);
+        userData["incorrect_letters"].addAll(user.incorrectLetters);
+        userData["correct_words"].addAll(user.correctWords);
+        userData["incorrect_words"].addAll(user.incorrectWords);
+        userData["correct_sentences"].addAll(user.correctSentences);
+        userData["incorrect_sentences"].addAll(user.incorrectSentences);
+        userData["game_attempts"].addAll(user.gameAttempts);
+      }
+    }
+
+    // Convert grouped data to final format and calculate totals
+    for (var dateEntry in groupedData.entries) {
+      String formattedDate = dateEntry.key;
+      learnerProgress[formattedDate] = [];
+
+      for (var userEntry in dateEntry.value.entries) {
+        var userData = userEntry.value;
+
+        // Calculate totals for all exercises
+        final totalCorrect = (userData["correct_letters"] as List).length +
+            (userData["correct_words"] as List).length +
+            (userData["correct_sentences"] as List).length;
+
+        final totalIncorrect = (userData["incorrect_letters"] as List).length +
+            (userData["incorrect_words"] as List).length +
+            (userData["incorrect_sentences"] as List).length;
+
+        final totalAttempts = totalCorrect + totalIncorrect;
+        final accuracy = totalAttempts > 0
+            ? (totalCorrect / totalAttempts * 100).round()
+            : 0;
+
         learnerProgress[formattedDate]!.add({
-          "user_id": user.userId,
-          "username": user.username,
-          "name": user.name,
-          "correct_letters": user.correctLetters ?? [],
-          "incorrect_letters": user.incorrectLetters ?? [],
-          "correct_words": user.correctWords.map((w) => w.toMap()).toList() ?? [],
-          "incorrect_words": user.incorrectWords.map((w) => w.toMap()).toList() ?? [],
-          "correct_sentences": user.correctSentences ?? [],
-          "incorrect_sentences": user.incorrectSentences ?? [],
-          "game_attempts": user.gameAttempts.map((gameAttempt) => {
-            "game_id": gameAttempt.gameId,
-            "level_id": gameAttempt.levelId,
-            "attempts": gameAttempt.attempts.map((a) => {
-              "score": a.score,
-            }).toList() ?? [],
-          }).toList() ?? [],
-          "words_read": (user.correctWords.length ?? 0) + (user.incorrectWords.length ?? 0),
-          "correct_words_count": user.correctWords.length ?? 0,
-          "incorrect_words_count": user.incorrectWords.length ?? 0,
-          // "completed_daily_quest": user.completedDailyQuest ?? false,
-          // "awards_taken": user.awardsTaken ?? false,
+          "user_id": userData["user_id"],
+          "username": userData["username"],
+          "name": userData["name"],
+          "correct_letters": userData["correct_letters"],
+          "incorrect_letters": userData["incorrect_letters"],
+          "correct_words": userData["correct_words"],
+          "incorrect_words": userData["incorrect_words"],
+          "correct_sentences": userData["correct_sentences"],
+          "incorrect_sentences": userData["incorrect_sentences"],
+          "game_attempts": userData["game_attempts"],
+          "total_correct": totalCorrect,
+          "total_incorrect": totalIncorrect,
+          "total_attempts": totalAttempts,
+          "accuracy": accuracy,
         });
       }
     }
-    print(learnerProgress);
+
+    print("Processed learner progress: $learnerProgress");
     setState(() {});
   }
 
@@ -88,6 +140,8 @@ class _ProgressDetailsState extends State<ProgressDetails> {
       const Color(0xFFFF6B9D),
       const Color(0xFF4ECDC4),
       const Color(0xFFFFD93D),
+      const Color(0xFF8B5CF6),
+      const Color(0xFFFF8A65),
     ];
 
     return Scaffold(
@@ -294,34 +348,20 @@ class _ProgressDetailsState extends State<ProgressDetails> {
               title: "Progress Summary",
               learnerName: progress['name'] ?? "Unknown",
               username: progress['username'] ?? "Unknown",
-              wordsRead: progress["words_read"] ?? 0,
-              correctWords: progress["correct_words_count"] ?? 0,
-              incorrectWords: progress["incorrect_words_count"] ?? 0,
-              dailyQuestCompleted: progress["completed_daily_quest"] ?? false,
-              awardReceived: progress["awards_taken"] ?? false,
+              totalCorrect: progress["total_correct"] ?? 0,
+              totalIncorrect: progress["total_incorrect"] ?? 0,
+              accuracy: progress["accuracy"] ?? 0,
+              dailyQuestCompleted: (progress["total_attempts"] ?? 0) >= 5, // Example condition
+              awardReceived: (progress["accuracy"] ?? 0) >= 90, // Example condition
               color: colors[index % colors.length],
-              icon: (progress["awards_taken"] ?? false) ? Icons.emoji_events : Icons.cancel,
-
-              correctWordList: (progress["correct_words"] ?? [])
-                  .map<Word>((wordMap) => Word.fromJson(wordMap))
-                  .toList(),
-
-              incorrectWordList: (progress["incorrect_words"] ?? [])
-                  .map<Word>((wordMap) => Word.fromJson(wordMap))
-                  .toList(),
+              icon: (progress["accuracy"] ?? 0) >= 80 ? Icons.emoji_events : Icons.school,
+              correctWordList: List<Word>.from(progress["correct_words"] ?? []),
+              incorrectWordList: List<Word>.from(progress["incorrect_words"] ?? []),
               correctLetters: List<Letter>.from(progress["correct_letters"] ?? []),
               incorrectLetters: List<Letter>.from(progress["incorrect_letters"] ?? []),
-              correctSentences: List<Sentence>.from(progress["correct_letters"] ?? []),
-              incorrectSentences: List<Sentence>.from(progress["incorrect_letters"] ?? []),
-              gameAttempts: List<Map<String, dynamic>>.from(
-                (progress['game_attempts'] ?? []).map((gameAttempt) => {
-                  'game_id': gameAttempt['game_id'],
-                  'level_id': gameAttempt['level_id'],
-                  'attempts': List<int>.from(
-                    (gameAttempt['attempts'] ?? []).map((a) => a['score']),
-                  ),
-                }),
-              ),
+              correctSentences: List<Sentence>.from(progress["correct_sentences"] ?? []),
+              incorrectSentences: List<Sentence>.from(progress["incorrect_sentences"] ?? []),
+              gameAttempts: List<GameAttempt>.from(progress['game_attempts'] ?? []),
             ),
           );
         },
