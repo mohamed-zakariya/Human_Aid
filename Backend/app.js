@@ -4,7 +4,7 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs } from './src/schemas/typeDefs.js';
 import { connectDB } from './src/config/dbConfig.js';
-import { authenticateJWT } from './src/middleware/authMiddleware.js';
+import { authenticateJWT,authorizeRole } from './src/middleware/authMiddleware.js';
 import { resolvers } from './src/resolvers/combineResolvers.js';
 import { convertToWav } from './src/services/audioConvertor.js';
 import { azureTranscribeAudio } from './src/config/azureapiConfig.js';
@@ -13,20 +13,22 @@ import passport from 'passport';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { graphqlUploadExpress } from 'graphql-upload';
 import './src/config/googleStrategy.js';
+
 
 const app = express();
 app.use(express.json());
 // Serve uploaded files
 app.use('/uploads', express.static('uploads'));
 
-
-
 // Initialize Passport
 app.use(passport.initialize());
 
 // Google OAuth routes
 app.use(googleAuthController);
+
+app.use(graphqlUploadExpress());
 
 app.use((req, res, next) => {
   if (req.path !== "/graphql" && req.path !== "/upload-audio" && req.path !== "/api/transcribe") {
