@@ -5,6 +5,7 @@ import { generateAccessToken, generateRefreshToken } from '../config/jwtConfig.j
 import cloudinary from '../config/cloudinary.js';
 import { GraphQLUpload } from 'graphql-upload';
 import Sentences from '../models/Sentences.js';
+import Parents from '../models/Parents.js';
 export const adminResolvers = {
   Upload: GraphQLUpload,
   Mutation: {
@@ -144,6 +145,12 @@ async updateWord(_, { id, word, level, image }) {
       const sentence = await Sentences.findById(id);
       if (!sentence) throw new Error('Sentence not found');
       return sentence;
+    },
+    async getUserStats() {
+      const numAdults = await Users.countDocuments({ role: 'adult' });
+      const numChildren = await Users.countDocuments({ role: 'child' });
+      const numParents = await Parents.countDocuments();
+      return { numAdults, numChildren, numParents };
     },
   }
 };

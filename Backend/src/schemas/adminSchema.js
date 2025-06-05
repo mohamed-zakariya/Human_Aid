@@ -13,11 +13,18 @@ type Sentence {
   level: String!
 }
 
+type UserStats {
+  numAdults: Int!
+  numChildren: Int!
+  numParents: Int!
+}
+
 type Query {
   getWords: [Word!]!
   getWord(id: ID!): Word
   getSentences: [Sentence!]!
   getSentence(id: ID!): Sentence
+  getUserStats: UserStats!   # <-- Add this line
 }
 
 type Mutation {
