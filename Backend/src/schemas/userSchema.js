@@ -23,6 +23,7 @@ type Exercise {
   levels: [Level!]!
 }
 type Game {
+  _id: ID!
   game_id: String!
   name: String!
   arabic_name: String!
@@ -39,6 +40,7 @@ type ExerciseStats {
   timeSpentSeconds: Int!
 }
 type Level {
+  _id: ID!
   level_id: String!
   level_number: Int!
   name: String!
