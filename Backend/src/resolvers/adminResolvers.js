@@ -94,8 +94,7 @@ async updateWord(_, { id, word, level, image }) {
       if (!deletedWord) throw new Error('Word not found');
       return deletedWord;
     },
-  },
-  async createSentence(_, { sentence, level }) {
+      async createSentence(_, { sentence, level }) {
       const newSentence = new Sentences({ sentence, level });
       await newSentence.save();
       return newSentence;
@@ -121,6 +120,8 @@ async updateWord(_, { id, word, level, image }) {
       if (!deletedSentence) throw new Error('Sentence not found');
       return deletedSentence;
     },
+  },
+
 
   Query: {
     // Get all words
