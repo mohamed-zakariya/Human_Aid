@@ -19,6 +19,9 @@ export const weeklyReportJob = async () => {
         continue;
       }
 
+      const attachments = [];
+      let hasDataForAtLeastOneChild = false;
+
       for (const learner of parent.linkedChildren) {
         const dailyAttempts = await DailyAttemptTracking.find({
           user_id: learner._id,
@@ -32,7 +35,7 @@ export const weeklyReportJob = async () => {
           continue;
         }
 
-        // 1. Generate PDF
+        hasDataForAtLeastOneChild = true;
         const pdfPath = await generateProgressPDF({
           learner,
           parent,
@@ -40,20 +43,34 @@ export const weeklyReportJob = async () => {
           overallProgress
         });
 
-        // 2. Email parent
-        const subject = `Weekly Report for ${learner.name} - ${new Date().toDateString()}`;
-        const text = `Dear ${parent.name},\n\nPlease find attached the weekly learning report for ${learner.name}.\n\nBest regards,\nDyslexia App Team`;
-
-        await sendEmailWithAttachment({
-          to: parent.email,
-          subject,
-          text,
-          attachmentPath: pdfPath,
-          attachmentName: `${learner.name}_Weekly_Report.pdf`
+        attachments.push({
+          path: pdfPath,
+          name: `${learner.name}_Weekly_Report.pdf`
         });
-
-        console.log(`Report sent for learner ${learner.name} to ${parent.email}`);
       }
+
+      if (!hasDataForAtLeastOneChild) {
+        console.log(`No data for any learners under parent ${parent.email}`);
+        continue;
+      }
+
+      // Send email with all attachments
+      const subject = attachments.length > 1 
+        ? `Weekly Reports for Your Children - ${new Date().toDateString()}`
+        : `Weekly Report for ${parent.linkedChildren[0].name} - ${new Date().toDateString()}`;
+      
+      const text = attachments.length > 1
+        ? `Dear ${parent.name},\n\nPlease find attached the weekly learning reports for your children.\n\nBest regards,\nLexFix App Team`
+        : `Dear ${parent.name},\n\nPlease find attached the weekly learning report for ${parent.linkedChildren[0].name}.\n\nBest regards,\nLexFix App Team`;
+
+      await sendEmailWithAttachment({
+        to: parent.email,
+        subject,
+        text,
+        attachments
+      });
+
+      console.log(`Sent ${attachments.length} report(s) to ${parent.email}`);
     }
   } catch (error) {
     console.error('Error in weeklyReportJob:', error);

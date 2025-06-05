@@ -151,7 +151,7 @@ export const generateProgressPDF = async ({ learner, parent, dailyAttempts, over
   doc.rect(0, 120, 595, 10).fillAndStroke('#3b82f6', '#3b82f6');
   
   // Add logo (if logo file exists)
-  const logoPath = path.join(__dirname, 'lexXfix-logo.png');
+  const logoPath = path.join(__dirname, 'lexXfix-logo.jpg');
   try {
     if (fs.existsSync(logoPath)) {
       doc.image(logoPath, 50, 25, { width: 120, height: 40 });
