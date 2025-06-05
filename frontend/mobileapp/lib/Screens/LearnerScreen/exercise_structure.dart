@@ -28,6 +28,8 @@ class _ExercisestructureState extends State<Exercisestructure> {
   @override
   void initState() {
     super.initState();
+    print("exerciseeeeeee");
+
 
     _videoController = VideoPlayerController.asset('assets/videos/1.mp4')
       ..initialize().then((_) {
