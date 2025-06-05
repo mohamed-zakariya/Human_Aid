@@ -102,11 +102,11 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
   }
 
   Future<void> _initSoundEffects() async {
-    await _correctPlayer.setSource(AssetSource('sounds/correct.mp3'));
-    await _incorrectPlayer.setSource(AssetSource('sounds/incorrect.mp3'));
-    await _clickPlayer.setSource(AssetSource('sounds/click.mp3'));
-    await _dropPlayer.setSource(AssetSource('sounds/drop.mp3'));
-    await _successPlayer.setSource(AssetSource('sounds/success.mp3'));
+    await _correctPlayer.setSource(AssetSource('sounds/correct.wav'));
+    await _incorrectPlayer.setSource(AssetSource('sounds/incorrect.wav'));
+    await _clickPlayer.setSource(AssetSource('sounds/click.wav'));
+    // await _dropPlayer.setSource(AssetSource('sounds/drop.wav'));
+    await _successPlayer.setSource(AssetSource('sounds/success.wav'));
 
     // Initialize TTS service
     await ttsService.initialize(language: "ar:EG");

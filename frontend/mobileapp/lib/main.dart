@@ -25,6 +25,7 @@ import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/parent.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/quizapp.dart';
 
+import 'Screens/LearnerScreen/wordStage/Level3/word_level3_game.dart';
 import 'Screens/Login/change_password_screen.dart';
 import 'Screens/Login/forgot_password_screen.dart';
 import 'Screens/Login/login_screen_gaurdian.dart';
@@ -80,10 +81,21 @@ class _MyAppState extends State<MyApp> {
           '/login_user': (context) => LoginScreenUser(onLocaleChange: _setLocale),
           '/login_gaurdian': (context) => LoginScreenGaurdian(onLocaleChange: _setLocale),
           '/forgot-password': (context) => ForgotPasswordPage(onLocaleChange: _setLocale),
-          '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
-          '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
-          '/words_level_1': (context) => WordPronunciationScreen(onLocaleChange: _setLocale),
-          '/sentences_level_1': (context) => SentencePronunciationScreen(onLocaleChange: _setLocale),
+          '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),          '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
+          '/words_level_1': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return WordPronunciationScreen(
+              onLocaleChange: _setLocale,
+              initialLearner: args['learner'] as Learner,
+            );
+          },
+          '/sentences_level_1': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return SentencePronunciationScreen(
+              onLocaleChange: _setLocale,
+              learner: args['learner'] as Learner,
+            );
+          },
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
           '/signup2': (context) {
@@ -136,7 +148,8 @@ class _MyAppState extends State<MyApp> {
           '/letters_game_3': (context) => const LetterLevel2Game(),
           '/letters_game_4': (context) => const LetterLevel2Game2(),
           '/letters_game_5': (context) => const LetterLevel3Game(),
-          '/words_game_1': (context) => const SpellingGameScreen()
+          '/words_game_1': (context) => const SpellingGameScreen(),
+          '/words_game_4': (context) => const MonthsOrderGameScreen(),
 
 
 

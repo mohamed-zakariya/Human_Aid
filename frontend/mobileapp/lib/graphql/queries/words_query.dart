@@ -1,13 +1,15 @@
 // graphql/queries/words_query.dart
 const String fetchWordsQuery = r'''
-  query getWordForExercise($level: String!) {
-    getWordForExercise(level: $level) {
+  query getWordForExercise($userId: ID!, $level: String!, $exerciseId: ID!) {
+    getWordForExercise(userId: $userId, level: $level, exerciseId: $exerciseId) {
       _id
       word
       level
     }
   }
 ''';
+
+
 
 
 const String getCorrectWordsbyId = """
