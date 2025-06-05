@@ -10,7 +10,7 @@ const userSchema = new Schema({
     nationality: { type: String, required: true },
     birthdate: { type: String, required: true },
     gender: { type: String, enum: ['male', 'female'], required: true },
-    role: { type: String, enum: ['adult', 'child'], required: true },
+    role: { type: String, enum: ['adult', 'child', 'admin'], required: true },
     currentStage: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], required: false },
     otp: { type: String, default: null },
     otpExpires: { type: Date, default: null },
