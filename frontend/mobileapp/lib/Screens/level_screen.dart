@@ -219,23 +219,20 @@ class _LevelScreenState extends State<LevelScreen> {
       child: InkWell(
         onTap: () async {
           print("LocalStorageeeeeeeeee");
-          print(widget.exerciseId);
-          print(widget.level.levelNumber);
-          print(widget.learner.id);
           print(game.gameId);
 
           final prefs = await SharedPreferences.getInstance();
 
           // Save values to local storage
           await prefs.setString('exerciseId', widget.exerciseId ?? '');
-          await prefs.setInt('levelNumber', widget.level.levelNumber);
+          await prefs.setString('levelId', widget.level.id ?? '');
           await prefs.setString('learnerId', widget.learner.id ?? '');
-          await prefs.setString('gameId', game.gameId ?? '');
+          await prefs.setString('gameId', game.id ?? '');
 
           Navigator.pushNamed(
             context,
             '/${game.gameId}', // Route directly to the gameId as defined in main.dart
-            arguments: {'gameId': game.gameId, 'learner': widget.learner},
+            arguments: {'gameId': game.gameId, 'gameName': Localizations.localeOf(context).languageCode == 'en'? game.name:game.arabicName,'learner': widget.learner},
           );
         },
         borderRadius: BorderRadius.circular(16),
@@ -315,6 +312,8 @@ class _LevelScreenState extends State<LevelScreen> {
                     Center(
                       child: ElevatedButton.icon(
                         onPressed: () {
+                          
+
                           Navigator.pushNamed(
                             context,
                             '/${game.gameId}',

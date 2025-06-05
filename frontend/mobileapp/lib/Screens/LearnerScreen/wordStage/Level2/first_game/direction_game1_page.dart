@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+import '../../../../../Services/add_score_service.dart';
+
 class DirectionGamePage extends StatefulWidget {
   final int totalQuestions;
 
@@ -14,6 +16,9 @@ class DirectionGamePage extends StatefulWidget {
 }
 
 class _DirectionGamePageState extends State<DirectionGamePage> {
+
+  int correctAnswers = 0;
+
   final FlutterTts flutterTts = FlutterTts();
   final directions = ['↑', '↓', '→', '←', '↗', '↘', '↖', '↙'];
   final directionLabels = {
@@ -74,9 +79,16 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
 
   void nextQuestion() {
     if (questionIndex >= widget.totalQuestions) {
+      // Submit scaled score out of 10
+      AddScoreService.updateScore(
+        score: correctAnswers,
+        outOf: widget.totalQuestions,
+      );
+
       Navigator.pop(context); // End the game
       return;
     }
+
 
     setState(() {
       // Select a random direction as the answer
@@ -164,6 +176,10 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
   void checkAnswer(String selectedDirection) {
     bool correct = selectedDirection == directionLabels[currentDirection];
 
+    if (correct) {
+      correctAnswers++; // ✅ Track correct answers
+    }
+
     // Stop current timer
     timer?.cancel();
 
@@ -187,6 +203,7 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
       nextQuestion();
     });
   }
+
 
   @override
   void dispose() {

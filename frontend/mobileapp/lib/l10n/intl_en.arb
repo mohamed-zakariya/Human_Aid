@@ -240,5 +240,19 @@
     },
     "gameCompleted": "Completed!",
     "orderMonthsCorrectly": "Order the months correctly.",
-    "wordsGame3Title": "Months Game"
+    "wordsGame3Title": "Months Game",
+    "verify": "Verify",
+    "drawLetter": "Draw the letter \"{letter}\"",
+    "drawInstruction": "Touch and draw anywhere on the canvas",
+    "strokeCount": "Strokes: {count}",
+    "pointCount": "Points: {count}",
+    "gameOverTitle": "🎮 Game Over",
+    "greatJobMotivation": "🎉 Great job! You're doing amazing!",
+    "tryAgainMotivation": "💪 Keep going! You can do it!",
+    "correctFeedback": "Well done! 🎉",
+    "wrongFeedback": "Try again",
+    "roundLabel2": "Round",
+    "timeLabel": "Time",
+    "exit": "Exit",
+    "gameFinished": "Game Over!"
 }

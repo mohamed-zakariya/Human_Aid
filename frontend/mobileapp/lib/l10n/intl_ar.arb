@@ -241,5 +241,19 @@
     },
     "gameCompleted": "اكتملت!",
     "orderMonthsCorrectly": "رتب الشهور بشكل صحيح",
-    "wordsGame3Title": "لعبة الشهور"
+    "wordsGame3Title": "لعبة الشهور",
+    "verify": "تحقق",
+    "drawLetter": "ارسم الحرف \"{letter}\"",
+    "drawInstruction": "المس وارسم في أي مكان على اللوحة",
+    "strokeCount": "عدد الخطوط: {count}",
+    "pointCount": "عدد النقاط: {count}",
+    "gameOverTitle": "🎮 انتهت اللعبة",
+    "greatJobMotivation": "🎉 عمل رائع! أنت مذهل!",
+    "tryAgainMotivation": "💪 استمر! يمكنك فعلها!",
+    "correctFeedback": "أحسنت! 🎉",
+    "wrongFeedback": "حاول مرة أخرى",
+    "roundLabel2": "الجولة",
+    "timeLabel": "الوقت",
+    "exit": "إنهاء",
+    "gameFinished": "انتهت اللعبة!"
 }

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/models/letter.dart';
+import '../../../../Services/add_score_service.dart';
 import '../../../../Services/tts_service.dart';
 import '../../../../Services/letters_service.dart';
 import '../../../../generated/l10n.dart';
@@ -13,6 +14,9 @@ class LetterLevel2Game2 extends StatefulWidget {
 }
 
 class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
+
+
+
   final TTSService _ttsService = TTSService();
 
   List<Letter> allLetters = [];
@@ -72,9 +76,10 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
       currentRound++;
     });
 
-    // ❌ REMOVE automatic audio playback here
-    // _ttsService.speak(targetLetter.letter);
-    // remainingAttempts--;
+    // ✅ ADD automatic audio playback here with Arabic language
+    _ttsService.setLanguage('ar-EG');
+    _ttsService.speak(targetLetter.letter);
+    // Don't decrement remainingAttempts here - let the player use the listen button
   }
 
 
@@ -96,16 +101,25 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
     _startNewRound();
   }
 
-  void _showGameOverDialog() {
+  void _showGameOverDialog() async{
+
+    await AddScoreService.updateScore(
+      score: score,
+      outOf: totalRounds,
+    );
+
+
     showDialog(
       context: context,
       barrierColor: Colors.black54,
       builder: (_) => AlertDialog(
         backgroundColor: Colors.teal.shade800,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Center(
-          child: Text('🎮 انتهت اللعبة',
-              style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+        title: Center(
+          child: Text(
+            S.of(context).gameOverTitle,
+            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -118,8 +132,8 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
             const SizedBox(height: 16),
             Text(
               score >= 8
-                  ? S.of(context).greatJob(score.toString(), totalRounds.toString())
-                  : S.of(context).tryAgain2(score.toString(), totalRounds.toString()),
+                  ? S.of(context).greatJobMotivation
+                  : S.of(context).tryAgainMotivation,
               style: const TextStyle(color: Colors.white, fontSize: 18),
               textAlign: TextAlign.center,
             ),
@@ -138,7 +152,10 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: const Text('إعادة اللعب', style: TextStyle(fontSize: 16)),
+            child: Text(
+              S.of(context).playAgain,
+              style: const TextStyle(fontSize: 16),
+            ),
           ),
         ],
       ),
@@ -153,6 +170,10 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
 
   @override
   Widget build(BuildContext context) {
+
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+
     final isTablet = MediaQuery.of(context).size.width > 600;
 
     void showInfoDialog() {
@@ -181,12 +202,16 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
                 _ttsService.setLanguage('en-US');
                 _ttsService.speak(S.of(context).howToPlayDescription);
               },
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.volume_up),
-                  SizedBox(width: 8),
-                  Text("Read Aloud"),
+                children: [
+                  const Icon(Icons.volume_up),
+                  const SizedBox(width: 8),
+                  Text(
+                    Localizations.localeOf(context).languageCode == 'en'
+                        ? 'Read Aloud'
+                        : 'اقرأ بصوت عالٍ',
+                  ),
                 ],
               ),
             ),
@@ -201,7 +226,7 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          S.of(context).exercise2Title,
+          args['gameName'],
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.teal,

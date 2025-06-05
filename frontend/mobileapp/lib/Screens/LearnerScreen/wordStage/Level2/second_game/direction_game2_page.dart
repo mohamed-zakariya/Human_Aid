@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:math' as math;
 
+import '../../../../../Services/add_score_service.dart';
+
 class DirectionGameSecondPage extends StatefulWidget {
   final int totalQuestions;
 
@@ -13,6 +15,8 @@ class DirectionGameSecondPage extends StatefulWidget {
 }
 
 class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with SingleTickerProviderStateMixin {
+
+
   final FlutterTts flutterTts = FlutterTts();
   late Timer _timer;
   int _currentQuestionIndex = 0;
@@ -295,6 +299,12 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
   }
 
   void _showFinalScore() {
+    print("socresssss");
+    print(_score);
+    AddScoreService.updateScore(
+      score: _score,
+      outOf: widget.totalQuestions,
+    );
     if (!mounted) return;  // Check if widget is still mounted
 
     showDialog(
