@@ -139,6 +139,10 @@ type SentenceAttempt {
 type GameAttempt {
   game_id: ID!
   level_id: ID!
+  game_name: String
+  game_arabic_name: String
+  level_arabic_name: String
+  level_name: String
   attempts: [GameAttemptEntry!]!
 }
 
