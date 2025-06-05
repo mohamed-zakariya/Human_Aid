@@ -16,7 +16,6 @@ import '../../widgets/MaleFemale.dart';
 import '../../widgets/SignupInputField.dart';
 import '../../widgets/date.dart';
 
-
 class LearnerDetails extends StatefulWidget {
   const LearnerDetails({super.key, this.parent});
 
@@ -38,7 +37,6 @@ class _LearnerDetailsState extends State<LearnerDetails> {
     fetchLearners();
   }
 
-
   Future<void> fetchLearners() async {
     if (parent == null) {
       print("Parent is null");
@@ -46,7 +44,7 @@ class _LearnerDetailsState extends State<LearnerDetails> {
     }
     try {
       List<Learner?>? data = await ParentService.getChildrenData(parent!.id);
-      if (data == null){
+      if (data == null) {
         Navigator.pushReplacementNamed(context, "/intro");
       }
       setState(() {
@@ -63,54 +61,54 @@ class _LearnerDetailsState extends State<LearnerDetails> {
   }
 
   Future<void> fetchProgressLearner(BuildContext context, Learner learner) async {
-    // Show loading indicator
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6366F1)),
+        ),
+      ),
     );
 
     try {
       OverallProgress? overallProgress = await ParentService.getLearnersProgress(parent!.id);
 
-      // Find user progress, returns null if not found
+
+
+
       UserExerciseProgress? userProgress;
       if (overallProgress != null) {
         userProgress = overallProgress.progress.cast<UserExerciseProgress?>().firstWhere(
               (progress) => progress?.userId == learner.id,
-          orElse: () => null, // Fix: Return null properly
+          orElse: () => null,
         );
       }
 
-      print(userProgress != null ? "Navigating with progress data..." : "No progress found, navigating anyway.");
-
-      // Close loading dialog
       Navigator.of(context, rootNavigator: true).pop();
 
-      // Navigate without passing userProgress if it's null
       if (userProgress != null) {
+
         Navigator.of(context).push(createRouteLearnerData(learner, userProgress));
       } else {
         Navigator.of(context).push(createRouteLearnerData(learner));
       }
     } catch (error) {
-      // Close loading dialog if an error occurs
       Navigator.of(context, rootNavigator: true).pop();
-
       print("Error fetching learner progress: $error");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to load learner progress, please try again.")),
+        SnackBar(
+          content: const Text("Failed to load learner progress, please try again."),
+          backgroundColor: Colors.red[600],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       );
     }
   }
 
-
-
-
-
   String selectedGender = '';
 
-  // Callback function to update gender
   void _updateGender(String gender) {
     setState(() {
       selectedGender = gender;
@@ -129,385 +127,535 @@ class _LearnerDetailsState extends State<LearnerDetails> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(S.of(context).addNewLearner),
-          content: SizedBox(
-            // height: 250,
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                child: Column(
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFF8FAFC), Color(0xFFE2E8F0)],
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF6366F1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(
+                    Icons.person_add,
+                    color: Colors.white,
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  S.of(context).addNewLearner,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  height: 400,
+                  child: Form(
+                    key: _formKey,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Signupinputfield(
+                            S.of(context).signupinputfieldname,
+                            S.of(context).signuptitlename,
+                            108, 99, 255, 0.1,
+                            255, 255, 255, 1,
+                            true,
+                            false,
+                            nameController,
+                            Validators.validateName,
+                          ),
+                          Signupinputfield(
+                            S.of(context).signupinputfieldusername,
+                            S.of(context).signuptitleusername,
+                            108, 99, 255, 0.1,
+                            255, 255, 255, 1,
+                            true,
+                            false,
+                            usernameController,
+                            Validators.validateUsername,
+                          ),
+                          Signupinputfield(
+                            S.of(context).signupinputfieldnationality,
+                            S.of(context).signuptitlenationality,
+                            108, 99, 255, 0.1,
+                            255, 255, 255, 1,
+                            true,
+                            false,
+                            nationalityControllers,
+                                (value) => value!.isEmpty ? 'Nationality is required' : null,
+                          ),
+                          Signupinputfield(
+                            S.of(context).signupinputfieldpassword,
+                            S.of(context).signuptitlepassword,
+                            108, 99, 255, 0.1,
+                            255, 255, 255, 1,
+                            true,
+                            false,
+                            passwordControllers,
+                            Validators.validatePassword,
+                          ),
+                          Signupinputfield(
+                            S.of(context).signupinputfieldpassword,
+                            S.of(context).signuptitleconfirmpassword,
+                            108, 99, 255, 0.1,
+                            255, 255, 255, 1,
+                            true,
+                            false,
+                            confirmPasswordControllers,
+                                (value) {
+                              if (value!.isEmpty) {
+                                return S.of(context).confirmPasswordRequired;
+                              }
+                              if (value != passwordControllers.text) {
+                                return S.of(context).passwordMismatch;
+                              }
+                              return null;
+                            },
+                          ),
+                          DateTimePicker(
+                            controller: birthdateControllers,
+                            quardian: false,
+                          ),
+                          Malefemale(
+                            onGenderSelected: (gender) => _updateGender(gender),
+                            flag: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
                   children: [
-                    Image.asset('assets/images/girl.jpeg'),
-                    Signupinputfield(
-                      S.of(context).signupinputfieldname,
-                      S.of(context).signuptitlename,
-                      108, 99, 255, 0.1,
-                      255, 255, 255, 1,
-                      true,
-                      false,
-                      nameController,
-                          Validators.validateName,
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: const BorderSide(color: Color(0xFFE2E8F0)),
+                          ),
+                        ),
+                        child: Text(
+                          S.of(context).cancel,
+                          style: const TextStyle(
+                            color: Color(0xFF64748B),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                     ),
-                    Signupinputfield(
-                      S.of(context).signupinputfieldusername,
-                      S.of(context).signuptitleusername,
-                      108, 99, 255, 0.1,
-                      255, 255, 255, 1,
-                      true,
-                      false,
-                      usernameController,
-                          Validators.validateUsername,
-                    ),
-                    Signupinputfield(
-                      S.of(context).signupinputfieldnationality,
-                      S.of(context).signuptitlenationality,
-                      108, 99, 255, 0.1,
-                      255, 255, 255, 1,
-                      true,
-                      false,
-                      nationalityControllers,
-                          (value) => value!.isEmpty ? 'Nationality is required' : null,
-                    ),
-                    Signupinputfield(
-                      S.of(context).signupinputfieldpassword,
-                      S.of(context).signuptitlepassword,
-                      108, 99, 255, 0.1,
-                      255, 255, 255, 1,
-                      true,
-                      false,
-                      passwordControllers,
-                          Validators.validatePassword,
-                    ),
-                    Signupinputfield(
-                      S.of(context).signupinputfieldpassword,
-                      S.of(context).signuptitleconfirmpassword,
-                      108, 99, 255, 0.1,
-                      255, 255, 255, 1,
-                      true,
-                      false,
-                      confirmPasswordControllers,
-                          (value) {
-                        if (value!.isEmpty) {
-                          return S.of(context).confirmPasswordRequired;
-                        }
-                        if (value != passwordControllers.text) {
-                          return S.of(context).passwordMismatch;
-                        }
-                        return null;
-                      },
-                    ),
-                    DateTimePicker(
-                      controller: birthdateControllers,
-                      quardian: false,
-                    ),
-                    Malefemale(
-                      onGenderSelected: (gender) => _updateGender(gender),
-                      flag: false,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (!_formKey.currentState!.validate()) {
+                            print("Form validation failed");
+                            return;
+                          }
+                          selectedGender = (selectedGender == S.of(context).genderMale) ? 'male' : 'female';
+                          await SignupService.signupChild(
+                            parent!.id!,
+                            nameController.text,
+                            usernameController.text,
+                            passwordControllers.text,
+                            nationalityControllers.text,
+                            birthdateControllers.text,
+                            selectedGender,
+                            "child",
+                          );
+                          fetchLearners();
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6366F1),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          S.of(context).add,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(S.of(context).cancel),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                String learnerName = nameController.text.trim();
-                String username = usernameController.text.trim();
-
-                if (!_formKey.currentState!.validate()) {
-                  print("Form validation failed");
-                  return;
-                }
-                else{
-                  selectedGender = (selectedGender == S.of(context).genderMale)? 'male':'female';
-                  setState(() async{
-                    await SignupService.signupChild(
-                      parent!.id!,
-                      nameController.text,
-                      usernameController.text,
-                      passwordControllers.text,
-                      nationalityControllers.text,
-                      birthdateControllers.text,
-                      selectedGender,
-                      "child",
-                    );
-                    fetchLearners();
-                    Navigator.pop(context);
-                  });
-                }
-              },
-              child: Text(S.of(context).add),
-            ),
-          ],
         );
       },
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    List<Color> colors = [
-      Colors.redAccent,
-      Colors.orangeAccent,
-      Colors.blueAccent,
-      Colors.greenAccent,
-      Colors.teal,
-      Colors.deepPurple,
-
-    ];
-
-    Color getColorForIndex(int index) {
-      return colors[index % colors.length];
-    }
-
-
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-      foregroundColor: Colors.white,
-      backgroundColor: Colors.black87, // Match with the illustration background
-      elevation: 0, // Removes shadow for a seamless look
-      title: Text(S.of(context).dashboardTitle(parent!.name),style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.white
-      ),),
-      centerTitle: true,
-    ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFF1E293B),
+        elevation: 0,
+        title: Text(
+          S.of(context).dashboardTitle(parent!.name),
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
-        margin: const EdgeInsets.all(1),
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // const Text(
-            //   "Learner Members",
-            //   style: TextStyle(
-            //     fontSize: 20,
-            //     fontWeight: FontWeight.bold,
-            //     color: Colors.black,
-            //   ),
-            // ),
-            // const SizedBox(height: 12),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : Wrap(
-                      spacing: 15,
-                      runSpacing: 15,
-                      alignment: WrapAlignment.center,
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          // Header Section
+          Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFF1E293B), Color(0xFF334155)],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            gradient: const LinearGradient(
-                              colors: [Colors.black87, Colors.black54], // Gradient effect
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(4, 4), // Adds shadow effect
-                              ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // Adds space inside
-                          width: MediaQuery.of(context).size.width,
-                          height: 180, // Adjusted for better proportions
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center, // Center alignment
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Evenly space elements
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Text(
-                                  S.of(context).learner_members,
-                                  style: const TextStyle(
-                                    color: Colors.white, // Changed to white for contrast
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              Text(
+                                S.of(context).learner_members,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(width: 10),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(15), // Rounded image corners
-                                child: Image.asset(
-                                  "assets/images/teacher.png",
-                                  width: 180,
-                                  fit: BoxFit.cover,
+                              const SizedBox(height: 8),
+                              Text(
+                                "Manage your learners' accounts",
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF6366F1),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  "${children?.length ?? 0} Learners",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        if (children != null && children!.isNotEmpty)
-                          ...children!.map(
-                                (learner) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width * 0.44,
-                                child: Card(
-                                  color: getColorForIndex(children!.indexOf(learner)),
-                                  elevation: 4,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Column(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            CircleAvatar(
-                                              backgroundImage: AssetImage(
-                                                learner?.gender == 'male'
-                                                    ? "assets/images/boy.jpeg"
-                                                    : "assets/images/girl.jpeg",
-                                              ),
-                                              radius: 40,
-                                            ),
-                                            Positioned(
-                                              top: 0,
-                                              right: 0,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  showDeleteConfirmation(context, learner);
-                                                }, // showDeleteConfirmation
-                                                child: Container(
-                                                  decoration:
-                                                  const BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.red,
-                                                  ),
-                                                  child: const Icon(
-                                                      Icons.remove,
-                                                      color: Colors.white,
-                                                      size: 18),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          learner?.name ?? "Unknown",
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text("Age ${calculateAge(learner!.birthdate)}",
-                                            style:
-                                            const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
-                                        ElevatedButton.icon(
-                                          onPressed: () {
-                                            fetchProgressLearner(context, learner);
-                                            // Add your logic to show more details
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.black54, // Button color
-                                            foregroundColor: Colors.white, // Text and icon color
-                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12), // Rounded corners
-                                            ),
-                                            elevation: 3, // Shadow effect
-                                          ),
-                                          icon: const Icon(Icons.arrow_right, size: 20), // Info icon
-                                          label: Text(
-                                            S.of(context).showMore,
-                                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                          ),
-                                        )
+                        const SizedBox(width: 16),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Image.asset(
+                            "assets/images/teacher.png",
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
+          // Content Section
+          Expanded(
+            child: isLoading
+                ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6366F1)),
+              ),
+            )
+                : children != null && children!.isNotEmpty
+                ? Padding(
+              padding: const EdgeInsets.all(24),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.7, // Adjusted for better fit
+                ),
+                itemCount: children!.length,
+                itemBuilder: (context, index) {
+                  final learner = children![index];
+                  final colors = [
+                    const Color(0xFF6366F1),
+                    const Color(0xFF8B5CF6),
+                    const Color(0xFF06B6D4),
+                    const Color(0xFF10B981),
+                    const Color(0xFFF59E0B),
+                    const Color(0xFFEF4444),
+                  ];
+                  final color = colors[index % colors.length];
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withOpacity(0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        // Header with gradient
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                color,
+                                color.withOpacity(0.8),
+                              ],
+                            ),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: CircleAvatar(
+                                    backgroundImage: AssetImage(
+                                      learner?.gender == 'male'
+                                          ? "assets/images/boy.jpeg"
+                                          : "assets/images/girl.jpeg",
+                                    ),
+                                    radius: 30,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: () => showDeleteConfirmation(context, learner),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Content
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              children: [
+                                Text(
+                                  formatLearnerName(learner?.name),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1E293B),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: color.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    "Age ${calculateAge(learner!.birthdate)}",
+                                    style: TextStyle(
+                                      color: color,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                                const Spacer(),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () => fetchProgressLearner(context, learner),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: color,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          S.of(context).showMore,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Icon(Icons.arrow_forward, size: 16),
                                       ],
                                     ),
                                   ),
                                 ),
-                              );
-                            },
-                          ).toList()
-                        else
-                           Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.person_add, size: 60, color: Colors.grey),
-                                const SizedBox(height: 10),
-                                const Text(
-                                  "No learners found!",
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  S.of(context).clickToAddLearners,
-                                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                                  textAlign: TextAlign.center,
-                                ),
                               ],
                             ),
-                          )
+                          ),
+                        ),
                       ],
                     ),
-
-                  ],
-                ),
-
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: FloatingActionButton(
-                onPressed: (){
-                  showAddChildDialog();
+                  );
                 },
-                backgroundColor: Colors.redAccent,
-                child: const Icon(Icons.add),
+              ),
+            )
+                : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF6366F1).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: const Icon(
+                      Icons.school,
+                      size: 64,
+                      color: Color(0xFF6366F1),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    "No learners found!",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E293B),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    S.of(context).clickToAddLearners,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF64748B),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: showAddChildDialog,
+        backgroundColor: const Color(0xFF6366F1),
+        foregroundColor: Colors.white,
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        icon: const Icon(Icons.add),
+        label: const Text(
+          "Add Learner",
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
     );
-
   }
 
-  Widget _buildStatCard(String title, int count) {
-    return Column(
-      children: [
-        Text(
-          "$count",
-          style: const TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          title,
-          style: const TextStyle(fontSize: 14, color: Colors.white70),
-        ),
-      ],
-    );
-  }
-
-  /// Show confirmation dialog before deleting a child
   void showDeleteConfirmation(BuildContext context, learner) {
     TextEditingController passwordController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
@@ -518,68 +666,148 @@ class _LearnerDetailsState extends State<LearnerDetails> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return AlertDialog(
-              title: const Text("Delete Learner"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text("Are you sure you want to delete this learner?"),
-                  const SizedBox(height: 10),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          validator: Validators.validatePassword,
-                          controller: passwordController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: "Enter your password",
-                            hintStyle: TextStyle(color: Colors.grey[400]),
-                          ),
-                        ),
-                        if (errorMessage != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5),
-                            child: Text(
-                              errorMessage!,
-                              style: const TextStyle(color: Colors.red, fontSize: 12),
+            return Dialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Icon(
+                        Icons.warning_amber_rounded,
+                        color: Colors.red[600],
+                        size: 32,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Delete Learner",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Are you sure you want to delete this learner? This action cannot be undone.",
+                      style: TextStyle(
+                        color: Color(0xFF64748B),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            validator: Validators.validatePassword,
+                            controller: passwordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              hintText: "Enter your password",
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: Color(0xFF6366F1)),
+                              ),
                             ),
                           ),
+                          if (errorMessage != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                errorMessage!,
+                                style: TextStyle(
+                                  color: Colors.red[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: const BorderSide(color: Color(0xFFE2E8F0)),
+                              ),
+                            ),
+                            child: const Text(
+                              "Cancel",
+                              style: TextStyle(
+                                color: Color(0xFF64748B),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              if (!_formKey.currentState!.validate()) {
+                                return;
+                              }
+                              bool childDeleted = await ParentService.deleteLearner(
+                                  parent!.id, passwordController.text, learner.username);
+
+                              if (childDeleted) {
+                                fetchLearners();
+                                Navigator.pop(context);
+                              } else {
+                                setState(() {
+                                  errorMessage = (Intl.getCurrentLocale() == 'en')
+                                      ? "Password is incorrect!"
+                                      : "كلمة المرور غير صحيحة!";
+                                });
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[600],
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              "Delete",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    if (!_formKey.currentState!.validate()) {
-                      print("Form validation failed");
-                      return;
-                    }
-                    bool childDeleted = await ParentService.deleteLearner(
-                        parent!.id, passwordController.text, learner.username);
-
-                    if (childDeleted) {
-                      fetchLearners();
-                      Navigator.pop(context);
-                    } else {
-                      setState(() {
-                        errorMessage = (Intl.getCurrentLocale() == 'en')? "Password is incorrect!":"كلمة المرور غير صحيحة!";
-                      });
-                    }
-                  },
-                  child: const Text("Delete", style: TextStyle(color: Colors.red)),
-                ),
-              ],
             );
           },
         );
@@ -587,18 +815,20 @@ class _LearnerDetailsState extends State<LearnerDetails> {
     );
   }
 
+  // Helper function to format names (get first two names only)
+  String formatLearnerName(String? fullName) {
+    if (fullName == null || fullName.trim().isEmpty) {
+      return "Unknown";
+    }
 
-  /// Function to delete a learner from the list
-  void deleteChild(learner) {
-    setState(() {
-      children!.remove(learner);
-    });
+    List<String> nameParts = fullName.trim().split(RegExp(r'\s+'));
+
+    if (nameParts.length == 1) {
+      return nameParts[0];
+    } else if (nameParts.length >= 2) {
+      return "${nameParts[0]} ${nameParts[1]}";
+    }
+
+    return fullName.trim();
   }
-
-
-
-
 }
-
-
-

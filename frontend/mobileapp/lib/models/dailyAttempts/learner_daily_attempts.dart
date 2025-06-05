@@ -75,6 +75,8 @@ class Word {
   String toString() {
     return 'Word{correctWord: $correctWord, spoken_word: $spokenWord}';
   }
+
+
 }
 
 
@@ -83,7 +85,7 @@ class Sentence {
   final String correctSentence;
   // other properties...
 
-  Sentence({required this.correctSentence});
+  Sentence({required this.correctSentence, required spokenSentence, required List<Word> incorrectWords});
 
   // Method to convert Sentence object to a map
   Map<String, dynamic> toMap() {
@@ -94,8 +96,14 @@ class Sentence {
   }
 
   factory Sentence.fromJson(Map<String, dynamic> json) {
-    return Sentence(correctSentence: json['correct_sentence']);
+    return Sentence(
+      spokenSentence: json['spoken_sentence'] ?? '',
+      incorrectWords: (json['incorrect_words'] as List?)
+          ?.map((e) => Word.fromJson(e))
+          .toList() ?? [], correctSentence: '', // fallback to empty list
+    );
   }
+
 
   @override
   String toString() {

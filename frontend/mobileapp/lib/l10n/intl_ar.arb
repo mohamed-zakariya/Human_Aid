@@ -91,16 +91,6 @@
     "instruction3": "حاول إكمال جميع الكلمات للحصول على أعلى نتيجة!",
     "close": "إغلاق",
     "accuracy": "الدقة",
-
-
-
-
-
-
-
-
-
-
     "title1": "مرحباً بك في عالمك الخاص\nحيث متعة التعلم",
     "desc1": "أنا صديقك (التطبيق) دعني أخذك معي في رحلة يومية نحو التقدم و التطوير",
     "button1": "ابدأ",
@@ -139,7 +129,7 @@
     "errorEmptyPassword": "لا يمكن ترك كلمة المرور فارغة",
     "successLogin": "تم تسجيل الدخول بنجاح",
     "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة. حاول مرة أخرى.",
-    "levelLabel": "المرحلة الثانية • المستوى الأول",
+    "levelLabel": "انطق الكلمة",
     "greeting": "مرحباً {name}",
     "@greeting": {
         "description": "Greeting for the user with their name",
@@ -221,9 +211,35 @@
     "noLevelsAvailable": "لا توجد مستويات متاحة لهذا التمرين",
     "selectGameToPlay": "اختر لعبة للبدء",
     "noGamesAvailable": "لا توجد ألعاب متاحة لهذا المستوى",
-    "playGame": "العب الآن"
-    
-    
-      
-      
+    "playGame": "العب الآن",
+    "monthsOrderTitle": "ترتيب الشهور",
+    "monthsOrderHeader": "رتب {count} شهور السنة",
+    "@monthsOrderHeader": {
+        "description": "Header for how many months to order in the game",
+        "placeholders": {"count": {}}
+    },
+    "monthsOrderHelpDrag": "اسحب الشهور من الأسفل وضعها في الترتيب الصحيح",
+    "monthsOrderHelpOrder": "رتب الشهور من يناير إلى آخر شهر في المستوى",
+    "monthsOrderHelpListen": "اضغط على الشهر لسماع اسمه",
+    "monthsOrderHelpTranslate": "اضغط على زر الترجمة لتبديل بين الأسماء العربية والشامية",
+    "translateMonthsTooltip": "تبديل أسماء الشهور",
+    "monthsOrderSuccess": "أحسنت! لقد رتبت الشهور بشكل صحيح.",
+    "playAgain": "العب مرة أخرى",
+    "all": "جميع",
+    "monthsOrderList": "يناير, فبراير, مارس, أبريل, مايو, يونيو, يوليو, أغسطس, سبتمبر, أكتوبر, نوفمبر, ديسمبر",
+    "@monthsOrderList": {
+        "description": "أسماء الشهور العربية للعبة ترتيب الشهور."
+    },
+    "gameCompletionTitle": "اكتملت اللعبة!",
+    "gameCompletionScore": "درجتك: {score} من {total}",
+    "@gameCompletionScore": {
+      "description": "رسالة النتيجة عند اكتمال اللعبة",
+      "placeholders": {
+        "score": {},
+        "total": {}
+      }
+    },
+    "gameCompleted": "اكتملت!",
+    "orderMonthsCorrectly": "رتب الشهور بشكل صحيح",
+    "wordsGame3Title": "لعبة الشهور"
 }

@@ -1340,10 +1340,10 @@ class S {
     );
   }
 
-  /// `Stage 2 • Level 1`
+  /// `spell the word`
   String get levelLabel {
     return Intl.message(
-      'Stage 2 • Level 1',
+      'spell the word',
       name: 'levelLabel',
       desc: '',
       args: [],
@@ -1735,6 +1735,166 @@ class S {
     return Intl.message(
       'Play Now',
       name: 'playGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order the Months`
+  String get monthsOrderTitle {
+    return Intl.message(
+      'Order the Months',
+      name: 'monthsOrderTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order {count} months of the year`
+  String monthsOrderHeader(Object count) {
+    return Intl.message(
+      'Order $count months of the year',
+      name: 'monthsOrderHeader',
+      desc: 'Header for how many months to order in the game',
+      args: [count],
+    );
+  }
+
+  /// `Drag the months from below and place them in the correct order`
+  String get monthsOrderHelpDrag {
+    return Intl.message(
+      'Drag the months from below and place them in the correct order',
+      name: 'monthsOrderHelpDrag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order the months from January to the last month in the level`
+  String get monthsOrderHelpOrder {
+    return Intl.message(
+      'Order the months from January to the last month in the level',
+      name: 'monthsOrderHelpOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap the month to hear its name`
+  String get monthsOrderHelpListen {
+    return Intl.message(
+      'Tap the month to hear its name',
+      name: 'monthsOrderHelpListen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap the translate button to switch between Arabic and Levantine names`
+  String get monthsOrderHelpTranslate {
+    return Intl.message(
+      'Tap the translate button to switch between Arabic and Levantine names',
+      name: 'monthsOrderHelpTranslate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Switch month names`
+  String get translateMonthsTooltip {
+    return Intl.message(
+      'Switch month names',
+      name: 'translateMonthsTooltip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Great job! You've ordered the months correctly.`
+  String get monthsOrderSuccess {
+    return Intl.message(
+      'Great job! You\'ve ordered the months correctly.',
+      name: 'monthsOrderSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play Again`
+  String get playAgain {
+    return Intl.message(
+      'Play Again',
+      name: 'playAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `all`
+  String get all {
+    return Intl.message(
+      'all',
+      name: 'all',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `يناير, فبراير, مارس, أبريل, مايو, يونيو, يوليو, أغسطس, سبتمبر, أكتوبر, نوفمبر, ديسمبر`
+  String get monthsOrderList {
+    return Intl.message(
+      'يناير, فبراير, مارس, أبريل, مايو, يونيو, يوليو, أغسطس, سبتمبر, أكتوبر, نوفمبر, ديسمبر',
+      name: 'monthsOrderList',
+      desc: 'Always Arabic month names for the months ordering game.',
+      args: [],
+    );
+  }
+
+  /// `Game Completed!`
+  String get gameCompletionTitle {
+    return Intl.message(
+      'Game Completed!',
+      name: 'gameCompletionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your score: {score} out of {total}`
+  String gameCompletionScore(Object score, Object total) {
+    return Intl.message(
+      'Your score: $score out of $total',
+      name: 'gameCompletionScore',
+      desc: 'Score message for game completion dialog',
+      args: [score, total],
+    );
+  }
+
+  /// `Completed!`
+  String get gameCompleted {
+    return Intl.message(
+      'Completed!',
+      name: 'gameCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order the months correctly.`
+  String get orderMonthsCorrectly {
+    return Intl.message(
+      'Order the months correctly.',
+      name: 'orderMonthsCorrectly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Months Game`
+  String get wordsGame3Title {
+    return Intl.message(
+      'Months Game',
+      name: 'wordsGame3Title',
       desc: '',
       args: [],
     );

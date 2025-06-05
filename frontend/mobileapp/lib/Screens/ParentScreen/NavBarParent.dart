@@ -49,177 +49,135 @@ class _NavBarParentState extends State<NavBarParent>
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF2D3436),
-              Color(0xFF636E72),
-            ],
-          ),
-        ),
+        color: Colors.white,
         child: Column(
           children: [
-            // Enhanced Header Section
-            _buildEnhancedHeader(),
+            // Modern Header Section
+            _buildModernHeader(),
 
             // Navigation Items
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 24),
                 children: [
                   _buildNavItem(
                     icon: Icons.home_rounded,
                     title: S.of(context).ParentNavBarHome,
                     onTap: () {
-                      Navigator.pop(context); // Close drawer
+                      Navigator.pop(context);
                       widget.onSelectScreen(HomeScreen(parent: widget.parent!));
                     },
-                    gradient: [
-                      const Color(0xFF667eea),
-                      const Color(0xFF764ba2)
-                    ],
+                    color: const Color(0xFF6C63FF),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
 
                   _buildNavItem(
                     icon: Icons.people_rounded,
                     title: "Learner Members",
                     onTap: () {
-                      Navigator.pop(context); // Close drawer
+                      Navigator.pop(context);
                       widget.onSelectScreen(LearnerDetails(parent: widget.parent));
                     },
-                    gradient: [
-                      const Color(0xFFf093fb),
-                      const Color(0xFFf5576c)
-                    ],
+                    color: const Color(0xFFFF6B9D),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
 
                   _buildNavItem(
                     icon: Icons.trending_up_rounded,
                     title: "Learners Progress",
                     onTap: () {
-                      Navigator.pop(context); // Close drawer
+                      Navigator.pop(context);
                       widget.onSelectScreen(ProgressDetails(parent: widget.parent));
                     },
-                    gradient: [
-                      const Color(0xFF4facfe),
-                      const Color(0xFF00f2fe)
-                    ],
+                    color: const Color(0xFF4ECDC4),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
 
-                  // Divider
+                  // Subtle Divider
                   Container(
                     height: 1,
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withOpacity(0.0),
-                          Colors.white.withOpacity(0.3),
-                          Colors.white.withOpacity(0.0),
-                        ],
-                      ),
-                    ),
+                    margin: const EdgeInsets.symmetric(horizontal: 24),
+                    color: const Color(0xFFF0F0F0),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
 
                   _buildNavItem(
                     icon: Icons.settings_rounded,
                     title: S.of(context).ParentNavBarSettings,
                     onTap: () {
-                      Navigator.pop(context); // Close drawer first
-                      _showEnhancedLanguageDialog(context);
+                      Navigator.pop(context);
+                      _showModernLanguageDialog(context);
                     },
-                    gradient: [
-                      const Color(0xFFa8edea),
-                      const Color(0xFFfed6e3)
-                    ],
+                    color: const Color(0xFF95A5A6),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
 
                   _buildNavItem(
                     icon: Icons.logout_rounded,
                     title: S.of(context).ParentNavBarLogout,
                     onTap: () {
-                      Navigator.pop(context); // Close drawer first
+                      Navigator.pop(context);
                       _showLogoutDialog(context);
                     },
-                    gradient: [
-                      const Color(0xFFfd79a8),
-                      const Color(0xFFfdcb6e)
-                    ],
+                    color: const Color(0xFFFF6B6B),
                     isDestructive: true,
                   ),
                 ],
               ),
             ),
 
-            // Footer
-            _buildFooter(),
+            // Modern Footer
+            _buildModernFooter(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildEnhancedHeader() {
-    return DrawerHeader(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.1),
-            Colors.white.withOpacity(0.05),
-          ],
+  Widget _buildModernHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 60, 24, 32),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(
+            color: Color(0xFFF0F0F0),
+            width: 1,
+          ),
         ),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Profile Picture with animated border
+          // Modern Profile Picture
           Container(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF667eea),
-                  const Color(0xFF764ba2),
-                ],
+              border: Border.all(
+                color: const Color(0xFF6C63FF),
+                width: 2,
               ),
             ),
-            child: Container(
-              padding: const EdgeInsets.all(3),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: const CircleAvatar(
-                radius: 30,
-                backgroundImage: AssetImage('assets/images/child2.png'),
-              ),
+            child: const CircleAvatar(
+              radius: 35,
+              backgroundImage: AssetImage('assets/images/child2.png'),
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
           // Name
           Text(
             widget.parent!.name,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Color(0xFF2C3E50),
             ),
           ),
 
@@ -228,9 +186,9 @@ class _NavBarParentState extends State<NavBarParent>
           // Email
           Text(
             widget.parent!.email,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.white.withOpacity(0.7),
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF7F8C8D),
             ),
             overflow: TextOverflow.ellipsis,
           ),
@@ -243,7 +201,7 @@ class _NavBarParentState extends State<NavBarParent>
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    required List<Color> gradient,
+    required Color color,
     bool isDestructive = false,
   }) {
     return Container(
@@ -252,37 +210,26 @@ class _NavBarParentState extends State<NavBarParent>
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  gradient[0].withOpacity(0.1),
-                  gradient[1].withOpacity(0.05),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: gradient[0].withOpacity(0.2),
-                width: 1,
-              ),
+              color: color.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: gradient),
-                    borderRadius: BorderRadius.circular(10),
+                    color: color,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     icon,
                     color: Colors.white,
-                    size: 18,
+                    size: 20,
                   ),
                 ),
 
@@ -292,19 +239,19 @@ class _NavBarParentState extends State<NavBarParent>
                   child: Text(
                     title,
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: isDestructive
-                          ? Colors.red[300]
-                          : Colors.white,
+                          ? const Color(0xFFFF6B6B)
+                          : const Color(0xFF2C3E50),
                     ),
                   ),
                 ),
 
                 Icon(
                   Icons.arrow_forward_ios,
-                  size: 14,
-                  color: Colors.white.withOpacity(0.6),
+                  size: 16,
+                  color: const Color(0xFFBDC3C7),
                 ),
               ],
             ),
@@ -314,37 +261,30 @@ class _NavBarParentState extends State<NavBarParent>
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildModernFooter() {
     return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Container(
-            height: 1,
-            margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.white.withOpacity(0.0),
-                  Colors.white.withOpacity(0.3),
-                  Colors.white.withOpacity(0.0),
-                ],
-              ),
-            ),
+      padding: const EdgeInsets.all(24),
+      decoration: const BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Color(0xFFF0F0F0),
+            width: 1,
           ),
-          Text(
-            "Learning App v2.0",
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.white.withOpacity(0.5),
-            ),
-          ),
-        ],
+        ),
+      ),
+      child: const Text(
+        "Learning App v2.0",
+        style: TextStyle(
+          fontSize: 12,
+          color: Color(0xFFBDC3C7),
+          fontWeight: FontWeight.w500,
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }
 
-  void _showEnhancedLanguageDialog(BuildContext context) {
+  void _showModernLanguageDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -354,15 +294,15 @@ class _NavBarParentState extends State<NavBarParent>
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF667eea),
-                  Color(0xFF764ba2),
-                ],
-              ),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                ),
+              ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -370,16 +310,16 @@ class _NavBarParentState extends State<NavBarParent>
                 Row(
                   children: [
                     Container(
-                      width: 40,
-                      height: 40,
+                      width: 48,
+                      height: 48,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: const Color(0xFF6C63FF).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
                         Icons.language,
-                        color: Colors.white,
-                        size: 20,
+                        color: Color(0xFF6C63FF),
+                        size: 24,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -389,7 +329,7 @@ class _NavBarParentState extends State<NavBarParent>
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Color(0xFF2C3E50),
                         ),
                       ),
                     ),
@@ -399,41 +339,39 @@ class _NavBarParentState extends State<NavBarParent>
                 const SizedBox(height: 24),
 
                 Intl.getCurrentLocale() == 'ar'
-                    ? _buildLanguageOption(
+                    ? _buildModernLanguageOption(
                   flag: 'assets/arcades/flags/usa.png',
                   language: 'English',
                   onTap: () => _changeLanguage(context),
                 )
-                    : _buildLanguageOption(
+                    : _buildModernLanguageOption(
                   flag: 'assets/arcades/flags/egypt.png',
                   language: 'العربية',
                   onTap: () => _changeLanguage(context),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.2),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          S.of(context).cancel,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFFF8F9FA),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                  ],
+                    child: Text(
+                      S.of(context).cancel,
+                      style: const TextStyle(
+                        color: Color(0xFF6C757D),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -443,7 +381,7 @@ class _NavBarParentState extends State<NavBarParent>
     );
   }
 
-  Widget _buildLanguageOption({
+  Widget _buildModernLanguageOption({
     required String flag,
     required String language,
     required VoidCallback onTap,
@@ -456,10 +394,10 @@ class _NavBarParentState extends State<NavBarParent>
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: const Color(0xFFF8F9FA),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: const Color(0xFFE9ECEF),
               width: 1,
             ),
           ),
@@ -481,14 +419,14 @@ class _NavBarParentState extends State<NavBarParent>
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: Color(0xFF2C3E50),
                   ),
                 ),
               ),
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color: Colors.white.withOpacity(0.7),
+                color: Color(0xFFBDC3C7),
               ),
             ],
           ),
@@ -515,52 +453,52 @@ class _NavBarParentState extends State<NavBarParent>
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFfd79a8),
-                  Color(0xFFfdcb6e),
-                ],
-              ),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                ),
+              ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 60,
-                  height: 60,
+                  width: 64,
+                  height: 64,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: const Color(0xFFFF6B6B).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Icon(
                     Icons.logout_rounded,
-                    color: Colors.white,
-                    size: 30,
+                    color: Color(0xFFFF6B6B),
+                    size: 32,
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 const Text(
                   "Logout Confirmation",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFF2C3E50),
                   ),
                 ),
 
                 const SizedBox(height: 12),
 
-                Text(
+                const Text(
                   "Are you sure you want to logout?",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Color(0xFF7F8C8D),
                   ),
                 ),
 
@@ -572,8 +510,8 @@ class _NavBarParentState extends State<NavBarParent>
                       child: TextButton(
                         onPressed: () => Navigator.pop(context),
                         style: TextButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.2),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor: const Color(0xFFF8F9FA),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -581,7 +519,7 @@ class _NavBarParentState extends State<NavBarParent>
                         child: const Text(
                           "Cancel",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF6C757D),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -597,12 +535,13 @@ class _NavBarParentState extends State<NavBarParent>
                           AuthService.logoutParent(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFFfd79a8),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor: const Color(0xFFFF6B6B),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
+                          elevation: 0,
                         ),
                         child: const Text(
                           "Logout",
