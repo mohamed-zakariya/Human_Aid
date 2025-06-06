@@ -24,7 +24,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(name) => "${name} Dashboard";
 
-  static String m2(percent) => "${percent}%";
+  static String m2(letter) => "Draw the letter \"${letter}\"";
+
+  static String m3(percent) => "${percent}%";
 
   static String m3(score, total) =>
       "🎉 Great job! Your score: ${score} out of ${total}";
@@ -33,7 +35,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(level) => "🎉 Amazing! You\'ve completed level ${level}!";
 
-  static String m6(count) => "Order ${count} months of the year";
+  static String m7(count) => "Order ${count} months of the year";
 
   static String m7(level, count, direction) =>
       "Level ${level}: Order ${count} months ${direction}";
@@ -110,6 +112,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "continuesignuptitle":
             MessageLookupByLibrary.simpleMessage("Child Registration"),
         "correctAnswer": MessageLookupByLibrary.simpleMessage("🎉 Correct!"),
+        "correctFeedback":
+            MessageLookupByLibrary.simpleMessage("Well done! 🎉"),
         "createAccountGaurdian":
             MessageLookupByLibrary.simpleMessage("Create a gaurdian account"),
         "createAccountUser":
@@ -129,6 +133,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("✅ Done"),
         "dontWorry":
             MessageLookupByLibrary.simpleMessage("Don’t worry, it’s okay"),
+        "drawInstruction": MessageLookupByLibrary.simpleMessage(
+            "Touch and draw anywhere on the canvas"),
+        "drawLetter": m2,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "This email is already registered"),
         "emailHint": MessageLookupByLibrary.simpleMessage("humanid@gmail.com"),
@@ -150,7 +157,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "exercise2Title": MessageLookupByLibrary.simpleMessage("Exercise 2"),
         "exerciseProgressLabel":
             MessageLookupByLibrary.simpleMessage("Progress"),
-        "exerciseProgressPercent": m2,
+        "exerciseProgressPercent": m3,
+        "exit": MessageLookupByLibrary.simpleMessage("Exit"),
         "explore_message": MessageLookupByLibrary.simpleMessage(
             "Let\'s explore some insights today"),
         "feedbackWidgetAnalyzing":
@@ -282,6 +290,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("search"),
         "playAgain": MessageLookupByLibrary.simpleMessage("Play Again"),
         "playGame": MessageLookupByLibrary.simpleMessage("Play Now"),
+        "pointCount": m8,
         "processingError": MessageLookupByLibrary.simpleMessage(
             "An error occurred while processing"),
         "processingRecording": MessageLookupByLibrary.simpleMessage(
@@ -331,9 +340,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("phone number"),
         "signuptitleusername": MessageLookupByLibrary.simpleMessage("username"),
         "spellingGame": MessageLookupByLibrary.simpleMessage("Spelling Game"),
+        "strokeCount": m14,
         "submitbutton": MessageLookupByLibrary.simpleMessage("Done"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("Login successful"),
+        "timeLabel": MessageLookupByLibrary.simpleMessage("Time"),
         "tips": MessageLookupByLibrary.simpleMessage("Tips"),
         "title": MessageLookupByLibrary.simpleMessage("Create Account"),
         "title1": MessageLookupByLibrary.simpleMessage(
@@ -351,6 +362,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "tryAgain": MessageLookupByLibrary.simpleMessage("Try Again"),
         "tryAgain2": m14,
         "tryAgain3": MessageLookupByLibrary.simpleMessage("❌ Try Again"),
+        "tryAgainMotivation": MessageLookupByLibrary.simpleMessage(
+            "💪 Keep going! You can do it!"),
         "userButton": MessageLookupByLibrary.simpleMessage("User"),
         "userDescription": MessageLookupByLibrary.simpleMessage(
             "If you are older than 12, you can now easily register for yourself by clicking the user start button."),
@@ -362,6 +375,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Username must be entered"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(
             "Username must be at least 3 characters"),
+        "verify": MessageLookupByLibrary.simpleMessage("Verify"),
         "view_details": MessageLookupByLibrary.simpleMessage("view Detials"),
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("Welcome Back, "),

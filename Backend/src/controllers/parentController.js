@@ -1,7 +1,9 @@
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../config/jwtConfig.js";
 import Parents from "../models/Parents.js";
+import Exercises from "../models/Exercises.js";
 import { sendWelcomeEmail } from '../config/emailConfig.js';
+import { sendParentWelcomeEmail } from '../config/emailConfig.js';
 import DailyAttemptTracking from "../models/DailyAttemptTracking.js";
 import { requestOTP, verifyOTP, resetPassword } from '../services/passwordResetService.js'
 import mongoose from "mongoose";
@@ -76,7 +78,7 @@ export const signUpParent = async ({ name,email, password, phoneNumber, national
     // Save refresh token
     newParent.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) });
     await newParent.save();
-    await sendWelcomeEmail(newParent.email, newParent.name);
+    await sendParentWelcomeEmail(newParent.email, newParent.name);
     return {
         parent: newParent,
         accessToken,
@@ -247,186 +249,227 @@ export const getLearnerOverallProgress = async (parentId) => {
         throw new Error(`Error fetching learner overall progress: ${error.message}`);
     }
 };
-
 export const getLearnerDailyAttempts = async (parentId, days = 7) => {
-    try {
-        const parent = await Parents.findById(parentId).lean();
-        if (!parent) throw new Error("Parent not found");
+  try {
+    const parent = await Parents.findById(parentId).lean();
+    if (!parent) throw new Error("Parent not found");
 
-        const childIds = parent.linkedChildren;
-        if (!childIds.length) throw new Error("No linked children found");
+    const childIds = parent.linkedChildren;
+    if (!childIds.length) throw new Error("No linked children found");
 
-        const endDate = new Date();
-        endDate.setHours(23, 59, 59, 999);
+    const endDate = new Date();
+    endDate.setHours(23, 59, 59, 999);
 
-        const startDate = new Date();
-        startDate.setDate(endDate.getDate() - (days - 1));
-        startDate.setHours(0, 0, 0, 0);
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - (days - 1));
+    startDate.setHours(0, 0, 0, 0);
 
-        const result = await DailyAttemptTracking.aggregate([
-            {
-                $match: {
-                    user_id: { $in: childIds.map(id => new mongoose.Types.ObjectId(id)) },
-                    date: { $gte: startDate, $lte: endDate }
-                }
-            },
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "user_id",
-                    foreignField: "_id",
-                    as: "user"
-                }
-            },
-            { $unwind: "$user" },
-            {
-                $group: {
-                    _id: "$date",
-                    users: {
-                        $push: {
-                            user_id: "$user._id",
-                            name: { $ifNull: ["$user.name", ""] },
-                            username: { $ifNull: ["$user.username", ""] },
+    const result = await DailyAttemptTracking.aggregate([
+      {
+        $match: {
+          user_id: { $in: childIds.map(id => new mongoose.Types.ObjectId(id)) },
+          date: { $gte: startDate, $lte: endDate }
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      { $unwind: "$user" },
+      {
+        $group: {
+          _id: "$date",
+          users: {
+            $push: {
+              user_id: "$user._id",
+              name: { $ifNull: ["$user.name", ""] },
+              username: { $ifNull: ["$user.username", ""] },
 
-                            // Word attempts
-                            correct_words: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: { $ifNull: ["$words_attempts", []] },
-                                            as: "wa",
-                                            cond: { $eq: ["$$wa.is_correct", true] }
-                                        }
-                                    },
-                                    as: "cw",
-                                    in: {
-                                        word_id: "$$cw.word_id",
-                                        correct_word: "$$cw.correct_word",
-                                        spoken_word: "$$cw.spoken_word"
-                                    }
-                                }
-                            },
-                            incorrect_words: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: { $ifNull: ["$words_attempts", []] },
-                                            as: "wa",
-                                            cond: { $eq: ["$$wa.is_correct", false] }
-                                        }
-                                    },
-                                    as: "iw",
-                                    in: {
-                                        word_id: "$$iw.word_id",
-                                        correct_word: "$$iw.correct_word",
-                                        spoken_word: "$$iw.spoken_word"
-                                    }
-                                }
-                            },
-
-                            // Letter attempts
-                            correct_letters: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: { $ifNull: ["$letters_attempts", []] },
-                                            as: "la",
-                                            cond: { $eq: ["$$la.is_correct", true] }
-                                        }
-                                    },
-                                    as: "cl",
-                                    in: {
-                                        letter_id: "$$cl.letter_id",
-                                        correct_letter: "$$cl.correct_letter",
-                                        spoken_letter: "$$cl.spoken_letter"
-                                    }
-                                }
-                            },
-                            incorrect_letters: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: { $ifNull: ["$letters_attempts", []] },
-                                            as: "la",
-                                            cond: { $eq: ["$$la.is_correct", false] }
-                                        }
-                                    },
-                                    as: "il",
-                                    in: {
-                                        letter_id: "$$il.letter_id",
-                                        correct_letter: "$$il.correct_letter",
-                                        spoken_letter: "$$il.spoken_letter"
-                                    }
-                                }
-                            },
-
-                            // Sentence attempts
-                            correct_sentences: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: { $ifNull: ["$sentences_attempts", []] },
-                                            as: "sa",
-                                            cond: { $eq: ["$$sa.is_correct", true] }
-                                        }
-                                    },
-                                    as: "cs",
-                                    in: {
-                                        sentence_id: "$$cs.sentence_id",
-                                        correct_sentence: "$$cs.correct_sentence",
-                                        spoken_sentence: "$$cs.spoken_sentence"
-                                    }
-                                }
-                            },
-                            incorrect_sentences: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: { $ifNull: ["$sentences_attempts", []] },
-                                            as: "sa",
-                                            cond: { $eq: ["$$sa.is_correct", false] }
-                                        }
-                                    },
-                                    as: "is",
-                                    in: {
-                                        sentence_id: "$$is.sentence_id",
-                                        correct_sentence: "$$is.correct_sentence",
-                                        spoken_sentence: "$$is.spoken_sentence"
-                                    }
-                                }
-                            },
-
-                            // Game attempts (flattened with level_id and scores)
-                            game_attempts: {
-                                $map: {
-                                    input: { $ifNull: ["$game_attempts", []] },
-                                    as: "ga",
-                                    in: {
-                                        game_id: "$$ga.game_id",
-                                        level_id: "$$ga.level_id",
-                                        attempts: "$$ga.attempts"
-                                    }
-                                }
-                            }
-                        }
+              correct_words: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: { $ifNull: ["$words_attempts", []] },
+                      as: "wa",
+                      cond: { $eq: ["$$wa.is_correct", true] }
                     }
+                  },
+                  as: "cw",
+                  in: {
+                    word_id: "$$cw.word_id",
+                    correct_word: "$$cw.correct_word",
+                    spoken_word: "$$cw.spoken_word"
+                  }
                 }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    date: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
-                    users: 1
+              },
+              incorrect_words: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: { $ifNull: ["$words_attempts", []] },
+                      as: "wa",
+                      cond: { $eq: ["$$wa.is_correct", false] }
+                    }
+                  },
+                  as: "iw",
+                  in: {
+                    word_id: "$$iw.word_id",
+                    correct_word: "$$iw.correct_word",
+                    spoken_word: "$$iw.spoken_word"
+                  }
                 }
-            },
-            { $sort: { date: 1 } }
-        ]);
+              },
 
-        return result;
-    } catch (error) {
-        console.error("Error fetching learner daily attempts:", error);
-        throw new Error(`Error fetching learner daily attempts: ${error.message}`);
+              correct_letters: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: { $ifNull: ["$letters_attempts", []] },
+                      as: "la",
+                      cond: { $eq: ["$$la.is_correct", true] }
+                    }
+                  },
+                  as: "cl",
+                  in: {
+                    letter_id: "$$cl.letter_id",
+                    correct_letter: "$$cl.correct_letter",
+                    spoken_letter: "$$cl.spoken_letter"
+                  }
+                }
+              },
+              incorrect_letters: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: { $ifNull: ["$letters_attempts", []] },
+                      as: "la",
+                      cond: { $eq: ["$$la.is_correct", false] }
+                    }
+                  },
+                  as: "il",
+                  in: {
+                    letter_id: "$$il.letter_id",
+                    correct_letter: "$$il.correct_letter",
+                    spoken_letter: "$$il.spoken_letter"
+                  }
+                }
+              },
+
+              correct_sentences: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: { $ifNull: ["$sentences_attempts", []] },
+                      as: "sa",
+                      cond: { $eq: ["$$sa.is_correct", true] }
+                    }
+                  },
+                  as: "cs",
+                  in: {
+                    sentence_id: "$$cs.sentence_id",
+                    correct_sentence: "$$cs.correct_sentence",
+                    spoken_sentence: "$$cs.spoken_sentence"
+                  }
+                }
+              },
+              incorrect_sentences: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: { $ifNull: ["$sentences_attempts", []] },
+                      as: "sa",
+                      cond: { $eq: ["$$sa.is_correct", false] }
+                    }
+                  },
+                  as: "is",
+                  in: {
+                    sentence_id: "$$is.sentence_id",
+                    correct_sentence: "$$is.correct_sentence",
+                    spoken_sentence: "$$is.spoken_sentence"
+                  }
+                }
+              },
+
+              game_attempts: {
+                $map: {
+                  input: { $ifNull: ["$game_attempts", []] },
+                  as: "ga",
+                  in: {
+                    game_id: "$$ga.game_id",
+                    level_id: "$$ga.level_id",
+                    attempts: "$$ga.attempts"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
+          users: 1
+        }
+      },
+      { $sort: { date: 1 } }
+    ]);
+
+    // Load all exercises with levels and games
+    const exercises = await Exercises.find({}, { levels: 1 }).lean();
+// Build lookup maps for level and game names including arabic_name
+const gameIdToData = {};
+const levelIdToData = {};
+
+for (const exercise of exercises) {
+  for (const level of exercise.levels) {
+    const levelIdStr = level._id?.toString();
+    if (levelIdStr) {
+      levelIdToData[levelIdStr] = {
+        name: level.name,
+        arabic_name: level.arabic_name,
+      };
     }
+
+    for (const game of level.games) {
+      const gameIdStr = game._id?.toString();
+      if (gameIdStr) {
+        gameIdToData[gameIdStr] = {
+          name: game.name,
+          arabic_name: game.arabic_name,
+        };
+      }
+    }
+  }
+}
+
+for (const day of result) {
+  for (const user of day.users) {
+    if (!user.game_attempts) continue;
+
+    user.game_attempts = user.game_attempts.map(attempt => {
+      const gameData = gameIdToData[attempt.game_id?.toString()] || {};
+      const levelData = levelIdToData[attempt.level_id?.toString()] || {};
+
+      return {
+        ...attempt,
+        game_name: gameData.name || null,
+        game_arabic_name: gameData.arabic_name || null,
+        level_name: levelData.name || null,
+        level_arabic_name: levelData.arabic_name || null,
+      };
+    });
+  }
+}
+
+return result;
+
+  } catch (error) {
+    console.error("Error fetching learner daily attempts:", error);
+    throw new Error(`Error fetching learner daily attempts: ${error.message}`);
+  }
 };
-
-

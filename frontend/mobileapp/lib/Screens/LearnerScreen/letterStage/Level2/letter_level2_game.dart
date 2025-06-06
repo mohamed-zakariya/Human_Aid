@@ -3,7 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:mobileapp/models/letter.dart';
+import '../../../../Services/add_score_service.dart';
 import '../../../../Services/letters_service.dart';
+import '../../../../generated/l10n.dart';
+
+
 import '../letter_forms.dart';
 
 // Colors list from your LetterLevel2Game class
@@ -28,6 +32,9 @@ class LetterLevel2Game extends StatefulWidget {
 }
 
 class _LetterLevel2GameState extends State<LetterLevel2Game> {
+
+
+
   final FlutterTts _flutterTts = FlutterTts();
   List<Letter> allLetters = [];
   bool isLoading = true;
@@ -48,6 +55,7 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     _flutterTts.setLanguage('ar-SA'); // Set language to Arabic
     _flutterTts.setSpeechRate(0.5); // Adjust speech rate
     _loadLetters();
+
   }
 
   Future<void> _loadLetters() async {
@@ -77,7 +85,14 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     optionColors = shuffledColors.take(10).toList();
 
     setState(() => currentRound++);
+
+    // 🔊 Speak the letter after a brief delay to ensure TTS is ready
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _flutterTts.setLanguage('ar'); // Ensure Arabic language
+      _flutterTts.speak(targetLetter.letter);
+    });
   }
+
 
   void _checkAnswer(String letter) {
     setState(() {
@@ -89,19 +104,27 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     });
   }
 
-  void _showGameOverDialog() {
+  void _showGameOverDialog() async {
+    // Send the scaled score (out of totalRounds)
+    await AddScoreService.updateScore(
+      score: score,
+      outOf: totalRounds,
+    );
+
+    final lang = Localizations.localeOf(context).languageCode;
+
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.6), // Dim the background
+      barrierColor: Colors.black.withOpacity(0.6),
       builder: (_) => AlertDialog(
-        backgroundColor: const Color(0xFF2C2C2E), // Darker dialog background
+        backgroundColor: const Color(0xFF2C2C2E),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: const Center(
+        title: Center(
           child: Text(
-            '🎮 انتهت اللعبة',
-            style: TextStyle(
+            lang == 'en' ? '🎮 Game Over' : '🎮 انتهت اللعبة',
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -119,8 +142,12 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
             const SizedBox(height: 16),
             Text(
               score >= 8
-                  ? '🎉 أحسنت! عمل رائع!\nدرجتك: $score من $totalRounds'
-                  : '😊 لا بأس! حاول مرة أخرى\nدرجتك: $score من $totalRounds',
+                  ? (lang == 'en'
+                  ? '🎉 Well done! Great job!'
+                  : '🎉 أحسنت! عمل رائع!')
+                  : (lang == 'en'
+                  ? '😊 Not bad! Try again.'
+                  : '😊 لا بأس! حاول مرة أخرى'),
               style: const TextStyle(
                 fontSize: 18,
                 color: Colors.white,
@@ -132,6 +159,7 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
         ),
         actionsAlignment: MainAxisAlignment.center,
         actions: [
+          // Replay button
           TextButton(
             onPressed: () {
               Navigator.pop(context);
@@ -145,15 +173,36 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text(
-              'إعادة اللعب',
-              style: TextStyle(fontSize: 16),
+            child: Text(
+              lang == 'en' ? 'Play Again' : 'إعادة اللعب',
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+
+          // Exit button
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context); // exit the game screen
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.grey.shade700,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              lang == 'en' ? 'Exit' : 'الخروج',
+              style: const TextStyle(fontSize: 16),
             ),
           ),
         ],
       ),
     );
   }
+
 
   void _restartGame() {
     setState(() {
@@ -164,33 +213,55 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
   }
 
   void _showHelpDialog() {
+    final String lang = Localizations.localeOf(context).languageCode;
+
+    (lang == 'en')? _flutterTts.setLanguage('en'):_flutterTts.setLanguage('ar');
+
+    final String title = lang == 'en' ? 'How to Play 🎯' : 'طريقة اللعب 🎯';
+    final String contentText = lang == 'en'
+        ? '1️⃣ Tap the "Listen to the letter" button to hear the target letter.\n\n'
+        '2️⃣ Choose the correct letter from the colorful options.\n\n'
+        '3️⃣ You earn a point for each correct answer. Score more than 8 to win!'
+        : '1️⃣ اضغط على زر "استمع إلى الحرف" لسماع الحرف المطلوب.\n\n'
+        '2️⃣ اختر الحرف الصحيح من بين الخيارات الملونة.\n\n'
+        '3️⃣ تحصل على نقطة لكل إجابة صحيحة. اجمع أكثر من 8 للفوز!';
+
+    final String ttsText = lang == 'en'
+        ? '1. Tap the "Listen to the letter" button to hear the target letter. '
+        '2. Choose the correct letter from the colorful options. '
+        '3. You earn a point for each correct answer. Score more than 8 to win!'
+        : '1 اضغط على زر "استمع إلى الحرف" لسماع الحرف المطلوب. '
+        '2 اختر الحرف الصحيح من بين الخيارات الملونة. '
+        '3 تحصل على نقطة لكل إجابة صحيحة. اجمع أكثر من 8 للفوز!';
+
+    final String listenLabel = lang == 'en' ? 'Listen to Instructions' : 'استمع للتعليمات';
+    final String okLabel = lang == 'en' ? 'OK' : 'حسنًا';
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white, // Darker dialog background
-        title: const Text(
-          'طريقة اللعب 🎯',
+        backgroundColor: Colors.white,
+        title: Text(
+          title,
           textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '1️⃣ اضغط على زر "استمع إلى الحرف" لسماع الحرف المطلوب.\n\n'
-                  '2️⃣ اختر الحرف الصحيح من بين الخيارات الملونة.\n\n'
-                  '3️⃣ تحصل على نقطة لكل إجابة صحيحة. اجمع أكثر من 8 للفوز!',
-              style: TextStyle(fontSize: 16, color: Colors.black),
-              textAlign: TextAlign.right,
+            Text(
+              contentText,
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+              textAlign: lang == 'en' ? TextAlign.left : TextAlign.right,
             ),
             const SizedBox(height: 20),
-            // Button to listen to instructions
             ElevatedButton.icon(
               onPressed: () {
-                _flutterTts.speak('1 اضغط على زر "استمع إلى الحرف" لسماع الحرف المطلوب. 2 اختر الحرف الصحيح من بين الخيارات الملونة. 3 تحصل على نقطة لكل إجابة صحيحة. اجمع أكثر من 8 للفوز!');
+                _flutterTts.speak(ttsText);
               },
-              icon: const Icon(Icons.volume_up, size: 28), // Add your icon here
-              label: const Text('استمع للتعليمات', style: TextStyle(fontSize: 16)),
+              icon: const Icon(Icons.volume_up, size: 28),
+              label: Text(listenLabel, style: const TextStyle(fontSize: 16)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
                 foregroundColor: Colors.white,
@@ -200,7 +271,7 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
                 ),
                 elevation: 4,
               ),
-            )
+            ),
           ],
         ),
         actions: [
@@ -209,13 +280,14 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
               _flutterTts.stop();
               Navigator.pop(context);
             },
-            child: const Text('حسنًا', style: TextStyle(fontSize: 16)),
+            child: Text(okLabel, style: const TextStyle(fontSize: 16)),
           ),
         ],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
+
 
   @override
   void dispose() {
@@ -291,34 +363,52 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  Text(
-                    'الجولة $currentRound من $totalRounds',
-                    style: TextStyle(
-                      fontSize: isTablet ? 28 : 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+
+                  // Round text
+                  Builder(builder: (context) {
+                    final lang = Localizations.localeOf(context).languageCode;
+                    return Text(
+                      lang == 'en'
+                          ? 'Round $currentRound of $totalRounds'
+                          : 'الجولة $currentRound من $totalRounds',
+                      style: TextStyle(
+                        fontSize: isTablet ? 28 : 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  }),
+
                   const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () => _flutterTts.speak(targetLetter.letter),
-                    icon: const Icon(Icons.volume_up, size: 28),
-                    label: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        'استمع إلى الحرف',
-                        style: TextStyle(fontSize: isTablet ? 20 : 16),
+
+                  // Listen button
+                  Builder(builder: (context) {
+                    final lang = Localizations.localeOf(context).languageCode;
+                    return ElevatedButton.icon(
+                      onPressed: () => {
+                        _flutterTts.setLanguage('ar'),
+                        _flutterTts.speak(targetLetter.letter)
+                      },
+                      icon: const Icon(Icons.volume_up, size: 28),
+                      label: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          lang == 'en' ? 'Listen to the letter' : 'استمع إلى الحرف',
+                          style: TextStyle(fontSize: isTablet ? 20 : 16),
+                        ),
                       ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
                       ),
-                      elevation: 4,
-                    ),
-                  ),
+                    );
+                  }),
+
                   const SizedBox(height: 20),
+
                   Expanded(
                     child: GridView.builder(
                       itemCount: currentOptions.length,
@@ -335,57 +425,75 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
                       },
                     ),
                   ),
+
                   if (showFeedback)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        selectedLetter == targetLetter.letter
-                            ? '🎉 صحيح!'
-                            : '❌ خطأ، الصحيح: ${targetLetter.letter}',
-                        style: TextStyle(
-                          fontSize: isTablet ? 24 : 20,
-                          fontWeight: FontWeight.bold,
-                          color: selectedLetter == targetLetter.letter
-                              ? Colors.green
-                              : Colors.red,
+                    Builder(builder: (context) {
+                      final lang = Localizations.localeOf(context).languageCode;
+                      final isCorrect = selectedLetter == targetLetter.letter;
+
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          isCorrect
+                              ? (lang == 'en' ? '🎉 Correct!' : '🎉 صحيح!')
+                              : (lang == 'en'
+                              ? '❌ Wrong, correct is: ${targetLetter.letter}'
+                              : '❌ خطأ، الصحيح: ${targetLetter.letter}'),
+                          style: TextStyle(
+                            fontSize: isTablet ? 24 : 20,
+                            fontWeight: FontWeight.bold,
+                            color: isCorrect ? Colors.green : Colors.red,
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    }),
+
                   if (showFeedback)
-                    ElevatedButton(
-                      onPressed: _startNewRound,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(isTablet ? 250 : 180, 60),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                    Builder(builder: (context) {
+                      final lang = Localizations.localeOf(context).languageCode;
+                      return ElevatedButton(
+                        onPressed: _startNewRound,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          minimumSize: Size(isTablet ? 250 : 180, 60),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: isTablet ? 24 : 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        textStyle: TextStyle(
-                          fontSize: isTablet ? 24 : 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      child: const Text('التالي'),
-                    ),
+                        child: Text(lang == 'en' ? 'Next' : 'التالي'),
+                      );
+                    }),
+
                   const SizedBox(height: 12),
                 ],
               ),
             ),
           ),
-        ),
+        )
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+
+
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+
+
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: const Color(0xFF6E5DE7),
         centerTitle: true,
-        title: const Text('لعبة الحروف'),
+        title: Text(args['gameName']),
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.white),

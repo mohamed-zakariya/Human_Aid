@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const wordSchema = new Schema({
     word: { type: String, required: true },
     level: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], required: true },
+    imageUrl: { type: String }
 });
 
 

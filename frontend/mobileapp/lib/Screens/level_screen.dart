@@ -1,5 +1,6 @@
 // lib/screens/games_screen.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/level.dart';
 import '../models/game.dart';
 import '../models/learner.dart';
@@ -17,9 +18,21 @@ class LevelScreen extends StatefulWidget {
 
   @override
   State<LevelScreen> createState() => _LevelScreenState();
+
 }
 
 class _LevelScreenState extends State<LevelScreen> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // print("LocalStorageeeeeeeeee");
+    // print(widget.exerciseId);
+    // print(widget.level.levelNumber);
+    // print(widget.learner.id);
+  }
+
   final Color _primaryColor = const Color(0xFF6C63FF);
 
   // -------------------------------------------------------------------------
@@ -33,8 +46,12 @@ class _LevelScreenState extends State<LevelScreen> {
     [Color(0xFFFFAA33), Color(0xFFFF8800)],
   ];
 
+
   @override
   Widget build(BuildContext context) {
+
+
+
     final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final levelTitle = isArabic ? widget.level.arabicName : widget.level.name;
 
@@ -200,11 +217,22 @@ class _LevelScreenState extends State<LevelScreen> {
       shadowColor: gradient[0].withOpacity(0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
-        onTap: () {
+        onTap: () async {
+          print("LocalStorageeeeeeeeee");
+          print(game.gameId);
+
+          final prefs = await SharedPreferences.getInstance();
+
+          // Save values to local storage
+          await prefs.setString('exerciseId', widget.exerciseId ?? '');
+          await prefs.setString('levelId', widget.level.id ?? '');
+          await prefs.setString('learnerId', widget.learner.id ?? '');
+          await prefs.setString('gameId', game.id ?? '');
+
           Navigator.pushNamed(
             context,
             '/${game.gameId}', // Route directly to the gameId as defined in main.dart
-            arguments: {'gameId': game.gameId, 'learner': widget.learner},
+            arguments: {'gameId': game.gameId, 'gameName': Localizations.localeOf(context).languageCode == 'en'? game.name:game.arabicName,'learner': widget.learner},
           );
         },
         borderRadius: BorderRadius.circular(16),
@@ -284,6 +312,8 @@ class _LevelScreenState extends State<LevelScreen> {
                     Center(
                       child: ElevatedButton.icon(
                         onPressed: () {
+                          
+
                           Navigator.pushNamed(
                             context,
                             '/${game.gameId}',

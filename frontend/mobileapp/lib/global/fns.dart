@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
-import '../Screens/ParentScreen/LearnerData.dart';
+import '../Screens/ParentScreen/learnerMembersTab/LearnerData.dart';
 import '../models/learner.dart';
 import '../models/overall_progress.dart';
 

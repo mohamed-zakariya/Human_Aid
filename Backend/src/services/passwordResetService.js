@@ -1,6 +1,6 @@
 import Users from '../models/Users.js';
 import Parents from '../models/Parents.js';
-import sendOTPEmail from "../config/emailConfig.js";
+import {sendOTPEmail} from "../config/emailConfig.js";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 

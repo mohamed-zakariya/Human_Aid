@@ -260,6 +260,17 @@ class ParentService {
     final OverallProgress overallProgress = OverallProgress.fromJson(rawData as Map<String, dynamic>);
 
 
+    print("Overall ID: ${overallProgress.id}");
+    for (var userProgress in overallProgress.progress) {
+      print("User: ${userProgress.name}");
+      for (var exercise in userProgress.progressByExercise) {
+        print("  Exercise ID: ${exercise.exerciseId}");
+        print("    Correct: ${exercise.stats.totalCorrect.items}");
+        print("    Incorrect: ${exercise.stats.totalIncorrect.items}");
+      }
+    }
+
+
     print("Data processing complete.");
     print(overallProgress);
     return overallProgress;

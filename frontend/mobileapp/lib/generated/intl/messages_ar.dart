@@ -24,7 +24,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(name) => "لوحة تحكم ${name}";
 
-  static String m2(percent) => "%${percent}";
+  static String m2(letter) => "ارسم الحرف \"${letter}\"";
+
+  static String m3(percent) => "%${percent}";
 
   static String m3(score, total) => "🎉 أحسنت! درجتك: ${score} من ${total}";
 
@@ -32,7 +34,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(level) => "🎉 رائع! لقد أكملت المستوى ${level}!";
 
-  static String m6(count) => "رتب ${count} شهور السنة";
+  static String m7(count) => "رتب ${count} شهور السنة";
 
   static String m7(level, count, direction) =>
       "المستوى ${level}: رتب ${count} أشهر ${direction}";
@@ -112,6 +114,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "continuesignuptitle": MessageLookupByLibrary.simpleMessage(
             "تَسْجِيلُ بَيَانَاتِ الطِّفْلِ"),
         "correctAnswer": MessageLookupByLibrary.simpleMessage("🎉 صحيح!"),
+        "correctFeedback": MessageLookupByLibrary.simpleMessage("أحسنت! 🎉"),
         "createAccountGaurdian":
             MessageLookupByLibrary.simpleMessage("إنشاء حساب ولي أمر"),
         "createAccountUser":
@@ -131,6 +134,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("✅ تم"),
         "dontWorry":
             MessageLookupByLibrary.simpleMessage("لا تخف لا داعي للقلق"),
+        "drawInstruction": MessageLookupByLibrary.simpleMessage(
+            "المس وارسم في أي مكان على اللوحة"),
+        "drawLetter": m2,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "هذا البريد الإلكتروني مسجّل بالفعل"),
         "emailHint": MessageLookupByLibrary.simpleMessage("humanid@gmail.com"),
@@ -152,7 +158,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "exercise2Title":
             MessageLookupByLibrary.simpleMessage("التدريب التاني"),
         "exerciseProgressLabel": MessageLookupByLibrary.simpleMessage("التقدم"),
-        "exerciseProgressPercent": m2,
+        "exerciseProgressPercent": m3,
+        "exit": MessageLookupByLibrary.simpleMessage("إنهاء"),
         "explore_message":
             MessageLookupByLibrary.simpleMessage("لنستكشف بعض الأفكار اليوم"),
         "feedbackWidgetAnalyzing":
@@ -281,6 +288,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("ابحث"),
         "playAgain": MessageLookupByLibrary.simpleMessage("العب مرة أخرى"),
         "playGame": MessageLookupByLibrary.simpleMessage("العب الآن"),
+        "pointCount": m8,
         "processingError": MessageLookupByLibrary.simpleMessage(
             "حدث خطأ أثناء معالجة التسجيل"),
         "processingRecording":
@@ -333,9 +341,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "signuptitleusername":
             MessageLookupByLibrary.simpleMessage("اسم المستخدم"),
         "spellingGame": MessageLookupByLibrary.simpleMessage("لعبة التهجئة"),
+        "strokeCount": m14,
         "submitbutton": MessageLookupByLibrary.simpleMessage("تم"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول بنجاح"),
+        "timeLabel": MessageLookupByLibrary.simpleMessage("الوقت"),
         "tips": MessageLookupByLibrary.simpleMessage("نصائح"),
         "title": MessageLookupByLibrary.simpleMessage("إِنْشَاءُ حِسَابٍٍ"),
         "title1": MessageLookupByLibrary.simpleMessage(
@@ -352,6 +362,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "tryAgain": MessageLookupByLibrary.simpleMessage("حاول مرة أخرى"),
         "tryAgain2": m14,
         "tryAgain3": MessageLookupByLibrary.simpleMessage("❌ حاول مرة أخرى"),
+        "tryAgainMotivation":
+            MessageLookupByLibrary.simpleMessage("💪 استمر! يمكنك فعلها!"),
         "userButton": MessageLookupByLibrary.simpleMessage("مستخدم"),
         "userDescription": MessageLookupByLibrary.simpleMessage(
             "إذا كان عمرك يزيد عن 12 سنة. يمكنك الآن التسجيل بنفسك بسهولة فقط اضغط على زر مستخدم البدء."),
@@ -362,6 +374,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("يجب إدخال اسم المستخدم"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(
             "يجب أن يكون اسم المستخدم على الأقل 3 أحرف"),
+        "verify": MessageLookupByLibrary.simpleMessage("تحقق"),
         "view_details": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("مرحبًا بعودتك، "),
