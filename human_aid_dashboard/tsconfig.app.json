@@ -4,10 +4,11 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [],             // keep empty or add specific types here if you want
   },
   "files": [
-    "src/main.ts"
+    "src/main.ts",
+    "src/types/custom-typings.d.ts"    // Add this line
   ],
   "include": [
     "src/**/*.d.ts"

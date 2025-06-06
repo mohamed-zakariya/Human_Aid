@@ -8,20 +8,22 @@
     <p class="subtitle">Please enter your details</p>
     <h2>Welcome back</h2>
 
-    <form>
-      <input type="email" placeholder="Email address" />
-      <input type="password" placeholder="Password" />
+    <form (ngSubmit)="onLogin()">
+        <input type="text" placeholder="Username" [(ngModel)]="username" name="username" required />
+        <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required />
 
-      <div class="options">
-        <label><input type="checkbox" /> Remember for 30 days</label>
-        <a href="#">Forgot password</a>
-      </div>
+        <div class="options">
+            <label><input type="checkbox" /> Remember for 30 days</label>
+            <a href="#">Forgot password</a>
+        </div>
 
-      <button type="submit" class="primary-btn" routerLink="/dashboard">Sign in</button>
-
-
+        <button type="submit" class="primary-btn">Sign in</button>
     </form>
+
+    <p *ngIf="error" class="error">{{ error }}</p>
+
 
     <!-- <p class="signup-link">Don't have an account? <a href="#">Sign up</a></p> -->
   </div>
 </div>
+

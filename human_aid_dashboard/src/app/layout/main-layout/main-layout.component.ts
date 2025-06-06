@@ -1,31 +1,33 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
+import { User } from '../../interfaces/user-interface/user';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.css'
+  styleUrls: ['./main-layout.component.css']
 })
 export class MainLayoutComponent implements OnInit {
   isOpen = false;
   isDarkMode = false;
   showProfileDropdown = false;
+  user: User | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
-    // Check for saved dark mode preference
+    this.user = this.authService.getUserFromStorage(); // or subscribe if you want reactivity
+
     const savedDarkMode = localStorage.getItem('darkMode');
     this.isDarkMode = savedDarkMode === 'true';
     this.applyDarkMode();
   }
 
-  toggleSidebar() {
-    this.isOpen = !this.isOpen;
-  }
+  toggleSidebar() { this.isOpen = !this.isOpen; }
 
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
@@ -46,28 +48,21 @@ export class MainLayoutComponent implements OnInit {
   }
 
   onLogout() {
-    // Add your logout logic here
-    console.log('Logging out...');
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 
-  // Close sidebar when clicking outside on mobile
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
-    
-    // Close profile dropdown if clicked outside
     if (!target.closest('.profile-dropdown')) {
       this.showProfileDropdown = false;
     }
-    
-    // Close sidebar on mobile if clicked outside
     if (window.innerWidth < 1024 && !target.closest('.sidebar') && !target.closest('.hamburger-btn')) {
       this.isOpen = false;
     }
   }
 
-  // Close sidebar on window resize to desktop
   @HostListener('window:resize', ['$event'])
   onResize() {
     if (window.innerWidth >= 1024) {

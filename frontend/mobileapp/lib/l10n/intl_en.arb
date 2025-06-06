@@ -89,6 +89,28 @@
     "instruction1": "Drag the letters into the correct order.",
     "instruction2": "If the answer is correct, you'll get a new word.",
     "instruction3": "Try to complete all words and get a high score!",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     "close": "Close",
     "accuracy": "accuracy",
     "title1": "Welcome to your special world\nwhere learning is fun",
@@ -239,84 +261,5 @@
       }
     },
     "gameCompleted": "Completed!",
-    "orderMonthsCorrectly": "Order the months correctly.",
-    "wordsGame3Title": "Months Game",
-    "verify": "Verify",
-    "drawLetter": "Draw the letter \"{letter}\"",
-    "drawInstruction": "Touch and draw anywhere on the canvas",
-    "strokeCount": "Strokes: {count}",
-    "pointCount": "Points: {count}",
-    "gameOverTitle": "🎮 Game Over",
-    "greatJobMotivation": "🎉 Great job! You're doing amazing!",
-    "tryAgainMotivation": "💪 Keep going! You can do it!",
-    "correctFeedback": "Well done! 🎉",
-    "wrongFeedback": "Try again",
-    "roundLabel2": "Round",
-    "timeLabel": "Time",
-    "exit": "Exit",
-    "gameFinished": "Game Over!",
-    "info": "Information about Training",
-    "instructionTimer": "Each question has 5 seconds to answer.",
-    "instructionLookCarefully": "Look carefully at the direction shape and choose the correct sentence.",
-    "instructionAnswerShown": "After each question, the correct answer will be shown.",
-    "ttsInstructions": "Each question has 5 seconds to answer. Look carefully at the direction shape and choose the correct sentence. After each question, the correct answer will be shown.",
-    "startExercise": "Start Exercise",
-    "directions": "Directions",
-    "tapArrowToHear": "Tap the arrow to hear the direction",
-    "directionExerciseTitle": "Direction Exercise",
-    "seconds": "{count} seconds",
-    "questionProgress": "Question {current} / {total}",
-    "whatIsDirection": "What is the direction?",
-    "listenAgain": "Listen again ({remaining} attempts left)",
-    "correct": "Correct! ✅",
-    "incorrect": "Wrong! ❌",
-    "correctAnswerIs": "Correct answer: {answer}",
-    "tryAgainEncouragement": "Try again! 💪",
-    "excellent": "Excellent! 🎉",
-    "bravo": "Bravo! 👏",
-    "amazing": "Amazing! 😎",
-    "gameName": "Direction Game",
-    "exerciseInfoTitle": "Exercise Information",
-    "timerInfo": "Each question has 8 seconds to answer.",
-    "dragInfo": "Drag the image to the correct direction.",
-    "correctDirectionInfo": "After each question, the correct direction will be shown.",
-    "directionsTitle": "Directions",
-    "tapToHearDirection": "Tap the arrow to hear the direction",
-    "speakDirectionTemplate": "The direction is {direction}",
-    "instructionSpeech": "Each question has 8 seconds to answer. Drag the image to the correct direction. After each question, the correct direction will be shown.",
-    "Return": "Return",
-    "dontWorryTryAgain": "Don't worry, try again",
-    "tryingHardGreat": "You're trying hard, that's great",
-    "tryingIsFirstStep": "Trying is the first step",
-    "everyTryMakesStronger": "Every try makes you stronger",
-    "dontGiveUpLearning": "Don't give up, learning takes time",
-    "learningNeedsPatience": "Learning needs patience",
-    "keepTryingProgressing": "Keep trying, you're progressing",
-    "veryGreat": "Very great",
-    "excellentWork": "Excellent work",
-    "verySmart": "You're very smart",
-    "keepProgressing": "Keep progressing",
-    "up": "Up",
-    "down": "Down",
-    "right": "Right",
-    "left": "Left",
-    "upRight": "Up Right",
-    "downRight": "Down Right",
-    "upLeft": "Up Left",
-    "downLeft": "Down Left",
-    "cat": "Cat",
-    "apple": "Apple",
-    "car": "Car",
-    "book": "Book",
-    "ball": "Ball",
-    "dragImageToCorrectDirection": "Drag the image to the correct direction",
-    "correctDirectionIs": "The correct direction is {direction}",
-    "exerciseFinished": "Exercise Finished",
-    "exerciseCompleted": "Exercise Completed",
-    "finalScore": "Final Score: {score} out of {total}",
-    "placeImageInDirection": "Place {item} in {direction} direction",
-    "exitExerciseQuestion": "Do you want to exit the exercise?",
-    "progressWillBeLost": "Your progress will be lost",
-    "secondsRemaining": "{seconds} seconds remaining",
-    "dragImageToDirection": "Drag {item} to {direction} direction"
+    "orderMonthsCorrectly": "Order the months correctly."
 }

@@ -15,9 +15,20 @@ import path from 'path';
 import fs from 'fs';
 import { graphqlUploadExpress } from 'graphql-upload';
 import './src/config/googleStrategy.js';
+import cors from 'cors';
 
 
 const app = express();
+
+
+
+// Allow requests from localhost:4200
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true, // If you're sending cookies or using authentication headers
+}));
+
+
 app.use(express.json());
 // Serve uploaded files
 app.use('/uploads', express.static('uploads'));

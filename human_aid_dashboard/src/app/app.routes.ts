@@ -12,10 +12,13 @@ export const routes: Routes = [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { 
         path: 'home', 
-        loadComponent: () => import('./pages/home/home.component').then(c => c.HomeComponent)
+        loadComponent: () => import('./pages/home/home.component').then(c => c.HomeComponent),
       },
+      { 
+        path: 'words', 
+        loadComponent: () => import('./pages/words/words.component').then(c => c.WordsComponent),
+      }
       // Add more child routes here as you create components
-      // { path: 'students', loadComponent: () => import('./pages/students/students.component').then(c => c.StudentsComponent) },
       // { path: 'attendance', loadComponent: () => import('./pages/attendance/attendance.component').then(c => c.AttendanceComponent) },
     ]
   },
