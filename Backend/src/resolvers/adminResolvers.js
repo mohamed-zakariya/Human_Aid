@@ -27,31 +27,34 @@ export const adminResolvers = {
 
     // CREATE a word
 async createWord(_, { word, level, image }) {
-  // image is an Upload scalar (GraphQLUpload)
-  const { createReadStream } = await image;
+  try {
+    let imageUrl = null;
 
-  const stream = createReadStream();
+    if (image) {
+      const { createReadStream } = await image;
+      const stream = createReadStream();
 
-  const cloudRes = await new Promise((resolve, reject) => {
-    const streamUpload = cloudinary.uploader.upload_stream(
-      { folder: 'words' },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
-    stream.pipe(streamUpload);
-  });
+      const cloudRes = await new Promise((resolve, reject) => {
+        const streamUpload = cloudinary.uploader.upload_stream(
+          { folder: 'words' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.pipe(streamUpload);
+      });
 
-  const newWord = new Words({
-    word,
-    level,
-    imageUrl: cloudRes.secure_url,
-  });
+      imageUrl = cloudRes.secure_url;
+    }
 
-  await newWord.save();
+    const newWord = new Words({ word, level, imageUrl });
+    await newWord.save();
 
-  return newWord;
+    return newWord;
+  } catch (err) {
+    throw new Error('Failed to create word: ' + err.message);
+  }
 },
 
 async updateWord(_, { id, word, level, image }) {
