@@ -940,6 +940,796 @@ class S {
     );
   }
 
+  /// `Months Game`
+  String get wordsGame3Title {
+    return Intl.message(
+      'Months Game',
+      name: 'wordsGame3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verify`
+  String get verify {
+    return Intl.message(
+      'Verify',
+      name: 'verify',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Draw the letter "{letter}"`
+  String drawLetter(Object letter) {
+    return Intl.message(
+      'Draw the letter "$letter"',
+      name: 'drawLetter',
+      desc: '',
+      args: [letter],
+    );
+  }
+
+  /// `Touch and draw anywhere on the canvas`
+  String get drawInstruction {
+    return Intl.message(
+      'Touch and draw anywhere on the canvas',
+      name: 'drawInstruction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Strokes: {count}`
+  String strokeCount(Object count) {
+    return Intl.message(
+      'Strokes: $count',
+      name: 'strokeCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Points: {count}`
+  String pointCount(Object count) {
+    return Intl.message(
+      'Points: $count',
+      name: 'pointCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `🎮 Game Over`
+  String get gameOverTitle {
+    return Intl.message(
+      '🎮 Game Over',
+      name: 'gameOverTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🎉 Great job! You're doing amazing!`
+  String get greatJobMotivation {
+    return Intl.message(
+      '🎉 Great job! You\'re doing amazing!',
+      name: 'greatJobMotivation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `💪 Keep going! You can do it!`
+  String get tryAgainMotivation {
+    return Intl.message(
+      '💪 Keep going! You can do it!',
+      name: 'tryAgainMotivation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Well done! 🎉`
+  String get correctFeedback {
+    return Intl.message(
+      'Well done! 🎉',
+      name: 'correctFeedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try again`
+  String get wrongFeedback {
+    return Intl.message(
+      'Try again',
+      name: 'wrongFeedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Round`
+  String get roundLabel2 {
+    return Intl.message(
+      'Round',
+      name: 'roundLabel2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time`
+  String get timeLabel {
+    return Intl.message(
+      'Time',
+      name: 'timeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit`
+  String get exit {
+    return Intl.message(
+      'Exit',
+      name: 'exit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Game Over!`
+  String get gameFinished {
+    return Intl.message(
+      'Game Over!',
+      name: 'gameFinished',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Information about Training`
+  String get info {
+    return Intl.message(
+      'Information about Training',
+      name: 'info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Each question has 5 seconds to answer.`
+  String get instructionTimer {
+    return Intl.message(
+      'Each question has 5 seconds to answer.',
+      name: 'instructionTimer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Look carefully at the direction shape and choose the correct sentence.`
+  String get instructionLookCarefully {
+    return Intl.message(
+      'Look carefully at the direction shape and choose the correct sentence.',
+      name: 'instructionLookCarefully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `After each question, the correct answer will be shown.`
+  String get instructionAnswerShown {
+    return Intl.message(
+      'After each question, the correct answer will be shown.',
+      name: 'instructionAnswerShown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Each question has 5 seconds to answer. Look carefully at the direction shape and choose the correct sentence. After each question, the correct answer will be shown.`
+  String get ttsInstructions {
+    return Intl.message(
+      'Each question has 5 seconds to answer. Look carefully at the direction shape and choose the correct sentence. After each question, the correct answer will be shown.',
+      name: 'ttsInstructions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Exercise`
+  String get startExercise {
+    return Intl.message(
+      'Start Exercise',
+      name: 'startExercise',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Directions`
+  String get directions {
+    return Intl.message(
+      'Directions',
+      name: 'directions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap the arrow to hear the direction`
+  String get tapArrowToHear {
+    return Intl.message(
+      'Tap the arrow to hear the direction',
+      name: 'tapArrowToHear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Direction Exercise`
+  String get directionExerciseTitle {
+    return Intl.message(
+      'Direction Exercise',
+      name: 'directionExerciseTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} seconds`
+  String seconds(Object count) {
+    return Intl.message(
+      '$count seconds',
+      name: 'seconds',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Question {current} / {total}`
+  String questionProgress(Object current, Object total) {
+    return Intl.message(
+      'Question $current / $total',
+      name: 'questionProgress',
+      desc: '',
+      args: [current, total],
+    );
+  }
+
+  /// `What is the direction?`
+  String get whatIsDirection {
+    return Intl.message(
+      'What is the direction?',
+      name: 'whatIsDirection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Listen again ({remaining} attempts left)`
+  String listenAgain(Object remaining) {
+    return Intl.message(
+      'Listen again ($remaining attempts left)',
+      name: 'listenAgain',
+      desc: '',
+      args: [remaining],
+    );
+  }
+
+  /// `Correct! ✅`
+  String get correct {
+    return Intl.message(
+      'Correct! ✅',
+      name: 'correct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wrong! ❌`
+  String get incorrect {
+    return Intl.message(
+      'Wrong! ❌',
+      name: 'incorrect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Correct answer: {answer}`
+  String correctAnswerIs(Object answer) {
+    return Intl.message(
+      'Correct answer: $answer',
+      name: 'correctAnswerIs',
+      desc: '',
+      args: [answer],
+    );
+  }
+
+  /// `Try again! 💪`
+  String get tryAgainEncouragement {
+    return Intl.message(
+      'Try again! 💪',
+      name: 'tryAgainEncouragement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Excellent! 🎉`
+  String get excellent {
+    return Intl.message(
+      'Excellent! 🎉',
+      name: 'excellent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bravo! 👏`
+  String get bravo {
+    return Intl.message(
+      'Bravo! 👏',
+      name: 'bravo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Amazing! 😎`
+  String get amazing {
+    return Intl.message(
+      'Amazing! 😎',
+      name: 'amazing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Direction Game`
+  String get gameName {
+    return Intl.message(
+      'Direction Game',
+      name: 'gameName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exercise Information`
+  String get exerciseInfoTitle {
+    return Intl.message(
+      'Exercise Information',
+      name: 'exerciseInfoTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Each question has 8 seconds to answer.`
+  String get timerInfo {
+    return Intl.message(
+      'Each question has 8 seconds to answer.',
+      name: 'timerInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drag the image to the correct direction.`
+  String get dragInfo {
+    return Intl.message(
+      'Drag the image to the correct direction.',
+      name: 'dragInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `After each question, the correct direction will be shown.`
+  String get correctDirectionInfo {
+    return Intl.message(
+      'After each question, the correct direction will be shown.',
+      name: 'correctDirectionInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Directions`
+  String get directionsTitle {
+    return Intl.message(
+      'Directions',
+      name: 'directionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap the arrow to hear the direction`
+  String get tapToHearDirection {
+    return Intl.message(
+      'Tap the arrow to hear the direction',
+      name: 'tapToHearDirection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The direction is {direction}`
+  String speakDirectionTemplate(Object direction) {
+    return Intl.message(
+      'The direction is $direction',
+      name: 'speakDirectionTemplate',
+      desc: '',
+      args: [direction],
+    );
+  }
+
+  /// `Each question has 8 seconds to answer. Drag the image to the correct direction. After each question, the correct direction will be shown.`
+  String get instructionSpeech {
+    return Intl.message(
+      'Each question has 8 seconds to answer. Drag the image to the correct direction. After each question, the correct direction will be shown.',
+      name: 'instructionSpeech',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Return`
+  String get Return {
+    return Intl.message(
+      'Return',
+      name: 'Return',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Don't worry, try again`
+  String get dontWorryTryAgain {
+    return Intl.message(
+      'Don\'t worry, try again',
+      name: 'dontWorryTryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You're trying hard, that's great`
+  String get tryingHardGreat {
+    return Intl.message(
+      'You\'re trying hard, that\'s great',
+      name: 'tryingHardGreat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Trying is the first step`
+  String get tryingIsFirstStep {
+    return Intl.message(
+      'Trying is the first step',
+      name: 'tryingIsFirstStep',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Every try makes you stronger`
+  String get everyTryMakesStronger {
+    return Intl.message(
+      'Every try makes you stronger',
+      name: 'everyTryMakesStronger',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Don't give up, learning takes time`
+  String get dontGiveUpLearning {
+    return Intl.message(
+      'Don\'t give up, learning takes time',
+      name: 'dontGiveUpLearning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learning needs patience`
+  String get learningNeedsPatience {
+    return Intl.message(
+      'Learning needs patience',
+      name: 'learningNeedsPatience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep trying, you're progressing`
+  String get keepTryingProgressing {
+    return Intl.message(
+      'Keep trying, you\'re progressing',
+      name: 'keepTryingProgressing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Very great`
+  String get veryGreat {
+    return Intl.message(
+      'Very great',
+      name: 'veryGreat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Excellent work`
+  String get excellentWork {
+    return Intl.message(
+      'Excellent work',
+      name: 'excellentWork',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You're very smart`
+  String get verySmart {
+    return Intl.message(
+      'You\'re very smart',
+      name: 'verySmart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep progressing`
+  String get keepProgressing {
+    return Intl.message(
+      'Keep progressing',
+      name: 'keepProgressing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Up`
+  String get up {
+    return Intl.message(
+      'Up',
+      name: 'up',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Down`
+  String get down {
+    return Intl.message(
+      'Down',
+      name: 'down',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Right`
+  String get right {
+    return Intl.message(
+      'Right',
+      name: 'right',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Left`
+  String get left {
+    return Intl.message(
+      'Left',
+      name: 'left',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Up Right`
+  String get upRight {
+    return Intl.message(
+      'Up Right',
+      name: 'upRight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Down Right`
+  String get downRight {
+    return Intl.message(
+      'Down Right',
+      name: 'downRight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Up Left`
+  String get upLeft {
+    return Intl.message(
+      'Up Left',
+      name: 'upLeft',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Down Left`
+  String get downLeft {
+    return Intl.message(
+      'Down Left',
+      name: 'downLeft',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cat`
+  String get cat {
+    return Intl.message(
+      'Cat',
+      name: 'cat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apple`
+  String get apple {
+    return Intl.message(
+      'Apple',
+      name: 'apple',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car`
+  String get car {
+    return Intl.message(
+      'Car',
+      name: 'car',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Book`
+  String get book {
+    return Intl.message(
+      'Book',
+      name: 'book',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ball`
+  String get ball {
+    return Intl.message(
+      'Ball',
+      name: 'ball',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drag the image to the correct direction`
+  String get dragImageToCorrectDirection {
+    return Intl.message(
+      'Drag the image to the correct direction',
+      name: 'dragImageToCorrectDirection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The correct direction is {direction}`
+  String correctDirectionIs(Object direction) {
+    return Intl.message(
+      'The correct direction is $direction',
+      name: 'correctDirectionIs',
+      desc: '',
+      args: [direction],
+    );
+  }
+
+  /// `Exercise Finished`
+  String get exerciseFinished {
+    return Intl.message(
+      'Exercise Finished',
+      name: 'exerciseFinished',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exercise Completed`
+  String get exerciseCompleted {
+    return Intl.message(
+      'Exercise Completed',
+      name: 'exerciseCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Final Score: {score} out of {total}`
+  String finalScore(Object score, Object total) {
+    return Intl.message(
+      'Final Score: $score out of $total',
+      name: 'finalScore',
+      desc: '',
+      args: [score, total],
+    );
+  }
+
+  /// `Place {item} in {direction} direction`
+  String placeImageInDirection(Object item, Object direction) {
+    return Intl.message(
+      'Place $item in $direction direction',
+      name: 'placeImageInDirection',
+      desc: '',
+      args: [item, direction],
+    );
+  }
+
+  /// `Do you want to exit the exercise?`
+  String get exitExerciseQuestion {
+    return Intl.message(
+      'Do you want to exit the exercise?',
+      name: 'exitExerciseQuestion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your progress will be lost`
+  String get progressWillBeLost {
+    return Intl.message(
+      'Your progress will be lost',
+      name: 'progressWillBeLost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{seconds} seconds remaining`
+  String secondsRemaining(Object seconds) {
+    return Intl.message(
+      '$seconds seconds remaining',
+      name: 'secondsRemaining',
+      desc: '',
+      args: [seconds],
+    );
+  }
+
+  /// `Drag {item} to {direction} direction`
+  String dragImageToDirection(Object item, Object direction) {
+    return Intl.message(
+      'Drag $item to $direction direction',
+      name: 'dragImageToDirection',
+      desc: '',
+      args: [item, direction],
+    );
+  }
+
   /// `Close`
   String get close {
     return Intl.message(
@@ -1942,11 +2732,151 @@ class S {
     );
   }
 
-  /// `Months Game`
-  String get wordsGame3Title {
+  /// `Home`
+  String get LearnerNavBarHome {
     return Intl.message(
-      'Months Game',
-      name: 'wordsGame3Title',
+      'Home',
+      name: 'LearnerNavBarHome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Courses`
+  String get LearnerNavBarCourses {
+    return Intl.message(
+      'Courses',
+      name: 'LearnerNavBarCourses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile`
+  String get LearnerNavBarProfile {
+    return Intl.message(
+      'Profile',
+      name: 'LearnerNavBarProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Menu`
+  String get LearnerNavBarMenu {
+    return Intl.message(
+      'Menu',
+      name: 'LearnerNavBarMenu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign out securely`
+  String get logoutSubtitle {
+    return Intl.message(
+      'Sign out securely',
+      name: 'logoutSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `cancel`
+  String get cancelButton {
+    return Intl.message(
+      'cancel',
+      name: 'cancelButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout Confirmation`
+  String get logoutConfirmationTitle {
+    return Intl.message(
+      'Logout Confirmation',
+      name: 'logoutConfirmationTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to logout?\nYou will need to sign in again.`
+  String get logoutConfirmationMessage {
+    return Intl.message(
+      'Are you sure you want to logout?\nYou will need to sign in again.',
+      name: 'logoutConfirmationMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get logoutButton {
+    return Intl.message(
+      'Logout',
+      name: 'logoutButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Language`
+  String get chooseLanguageTitle {
+    return Intl.message(
+      'Choose Language',
+      name: 'chooseLanguageTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select your preferred language`
+  String get chooseLanguageSubtitle {
+    return Intl.message(
+      'Select your preferred language',
+      name: 'chooseLanguageSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get englishLanguage {
+    return Intl.message(
+      'English',
+      name: 'englishLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `العربية`
+  String get arabicLanguage {
+    return Intl.message(
+      'العربية',
+      name: 'arabicLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User`
+  String get defaultUserName {
+    return Intl.message(
+      'User',
+      name: 'defaultUserName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `username`
+  String get defaultUsername {
+    return Intl.message(
+      'username',
+      name: 'defaultUsername',
       desc: '',
       args: [],
     );
