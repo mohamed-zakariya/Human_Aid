@@ -230,16 +230,43 @@
     "@monthsOrderList": {
         "description": "أسماء الشهور العربية للعبة ترتيب الشهور."
     },
-    "gameCompletionTitle": "اكتملت اللعبة!",
-    "gameCompletionScore": "درجتك: {score} من {total}",
-    "@gameCompletionScore": {
-      "description": "رسالة النتيجة عند اكتمال اللعبة",
-      "placeholders": {
-        "score": {},
-        "total": {}
-      }
+    "monthsOrderLevelInstruction": "المستوى {level}: رتب {count} أشهر {direction}",
+    "@monthsOrderLevelInstruction": {
+        "description": "تعليمات لكل مستوى توضح عدد الأشهر المطلوب ترتيبها والاتجاه",
+        "placeholders": {
+            "level": {},
+            "count": {},
+            "direction": {}
+        }
     },
-    "gameCompleted": "اكتملت!",
-    "orderMonthsCorrectly": "رتب الشهور بشكل صحيح",
-    "wordsGame3Title": "لعبة الشهور"
+    "orderAscending": "من البداية إلى النهاية",
+    "orderDescending": "من النهاية إلى البداية",
+    "levelSuccess": "🎉 رائع! لقد أكملت المستوى {level}!",
+    "@levelSuccess": {
+        "description": "رسالة النجاح عند إكمال مستوى",
+        "placeholders": {
+            "level": {}
+        }
+    },
+    "levelFailure": "لا تقلق! التمرين يؤدي إلى الإتقان. حاول هذا المستوى مرة أخرى!",
+    "levelRetry": "واصل! أنت تتحسن مع كل محاولة!",
+    "finalLevelSuccess": "🌟 مذهل! لقد أتقنت ترتيب جميع الأشهر!",
+    "gameCompleted": "تم الإكمال!",
+    "orderMonthsCorrectly": "رتب الأشهر بشكل صحيح.",
+    "wordsGame3Title": "لعبة الأشهر",
+    "LearnerNavBarHome": "الرئيسية",
+    "LearnerNavBarCourses": "الدورات",
+    "LearnerNavBarProfile": "الملف الشخصي",
+    "LearnerNavBarMenu": "القائمة",
+    "logoutSubtitle": "تسجيل الخروج بأمان",
+    "cancelButton": "إلغاء",
+    "logoutConfirmationTitle": "تأكيد تسجيل الخروج",
+    "logoutConfirmationMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟\nستحتاج إلى تسجيل الدخول مرة أخرى.",
+    "logoutButton": "تسجيل الخروج",
+    "chooseLanguageTitle": "اختر اللغة",
+    "chooseLanguageSubtitle": "حدد لغتك المفضلة",
+    "englishLanguage": "الإنجليزية",
+    "arabicLanguage": "العربية",
+    "defaultUserName": "مستخدم",
+    "defaultUsername": "اسم المستخدم"
 }

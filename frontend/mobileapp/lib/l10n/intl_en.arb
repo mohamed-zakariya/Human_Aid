@@ -229,16 +229,44 @@
     "@monthsOrderList": {
         "description": "Always Arabic month names for the months ordering game."
     },
-    "gameCompletionTitle": "Game Completed!",
-    "gameCompletionScore": "Your score: {score} out of {total}",
-    "@gameCompletionScore": {
-      "description": "Score message for game completion dialog",
-      "placeholders": {
-        "score": {},
-        "total": {}
-      }
+    "monthsOrderLevelInstruction": "Level {level}: Order {count} months {direction}",
+    "@monthsOrderLevelInstruction": {
+        "description": "Instruction for each level showing how many months to order and in which direction",
+        "placeholders": {
+            "level": {},
+            "count": {},
+            "direction": {}
+        }
     },
+    "orderAscending": "from first to last",
+    "orderDescending": "from last to first",
+    "levelSuccess": "🎉 Amazing! You've completed level {level}!",
+    "@levelSuccess": {
+        "description": "Success message when completing a level",
+        "placeholders": {
+            "level": {}
+        }
+    },
+    "levelFailure": "Don't worry! Practice makes perfect. Try this level again!",
+    "levelRetry": "Keep going! You're getting better with each try!",
+    "finalLevelSuccess": "🌟 Incredible! You've mastered all month orders!",
     "gameCompleted": "Completed!",
     "orderMonthsCorrectly": "Order the months correctly.",
-    "wordsGame3Title": "Months Game"
+    "wordsGame3Title": "Months Game",
+    "LearnerNavBarHome": "Home",
+    "LearnerNavBarCourses": "Courses",
+    "LearnerNavBarProfile": "Profile",
+    "LearnerNavBarMenu": "Menu",
+    "logoutSubtitle": "Sign out securely",
+    "cancelButton": "cancel",
+    "logoutConfirmationTitle": "Logout Confirmation",
+    "logoutConfirmationMessage": "Are you sure you want to logout?\nYou will need to sign in again.",
+    "logoutButton": "Logout",
+    "chooseLanguageTitle": "Choose Language",
+    "chooseLanguageSubtitle": "Select your preferred language",
+    "englishLanguage": "English",
+    "arabicLanguage": "العربية",
+    "defaultUserName": "User",
+    "defaultUsername": "username"
+
 }

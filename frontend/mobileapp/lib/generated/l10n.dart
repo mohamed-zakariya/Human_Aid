@@ -1850,23 +1850,75 @@ class S {
     );
   }
 
-  /// `Game Completed!`
-  String get gameCompletionTitle {
+  /// `Level {level}: Order {count} months {direction}`
+  String monthsOrderLevelInstruction(
+      Object level, Object count, Object direction) {
     return Intl.message(
-      'Game Completed!',
-      name: 'gameCompletionTitle',
+      'Level $level: Order $count months $direction',
+      name: 'monthsOrderLevelInstruction',
+      desc:
+          'Instruction for each level showing how many months to order and in which direction',
+      args: [level, count, direction],
+    );
+  }
+
+  /// `from first to last`
+  String get orderAscending {
+    return Intl.message(
+      'from first to last',
+      name: 'orderAscending',
       desc: '',
       args: [],
     );
   }
 
-  /// `Your score: {score} out of {total}`
-  String gameCompletionScore(Object score, Object total) {
+  /// `from last to first`
+  String get orderDescending {
     return Intl.message(
-      'Your score: $score out of $total',
-      name: 'gameCompletionScore',
-      desc: 'Score message for game completion dialog',
-      args: [score, total],
+      'from last to first',
+      name: 'orderDescending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🎉 Amazing! You've completed level {level}!`
+  String levelSuccess(Object level) {
+    return Intl.message(
+      '🎉 Amazing! You\'ve completed level $level!',
+      name: 'levelSuccess',
+      desc: 'Success message when completing a level',
+      args: [level],
+    );
+  }
+
+  /// `Don't worry! Practice makes perfect. Try this level again!`
+  String get levelFailure {
+    return Intl.message(
+      'Don\'t worry! Practice makes perfect. Try this level again!',
+      name: 'levelFailure',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep going! You're getting better with each try!`
+  String get levelRetry {
+    return Intl.message(
+      'Keep going! You\'re getting better with each try!',
+      name: 'levelRetry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🌟 Incredible! You've mastered all month orders!`
+  String get finalLevelSuccess {
+    return Intl.message(
+      '🌟 Incredible! You\'ve mastered all month orders!',
+      name: 'finalLevelSuccess',
+      desc: '',
+      args: [],
     );
   }
 
@@ -1895,6 +1947,156 @@ class S {
     return Intl.message(
       'Months Game',
       name: 'wordsGame3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Home`
+  String get LearnerNavBarHome {
+    return Intl.message(
+      'Home',
+      name: 'LearnerNavBarHome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Courses`
+  String get LearnerNavBarCourses {
+    return Intl.message(
+      'Courses',
+      name: 'LearnerNavBarCourses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile`
+  String get LearnerNavBarProfile {
+    return Intl.message(
+      'Profile',
+      name: 'LearnerNavBarProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Menu`
+  String get LearnerNavBarMenu {
+    return Intl.message(
+      'Menu',
+      name: 'LearnerNavBarMenu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign out securely`
+  String get logoutSubtitle {
+    return Intl.message(
+      'Sign out securely',
+      name: 'logoutSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `cancel`
+  String get cancelButton {
+    return Intl.message(
+      'cancel',
+      name: 'cancelButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout Confirmation`
+  String get logoutConfirmationTitle {
+    return Intl.message(
+      'Logout Confirmation',
+      name: 'logoutConfirmationTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to logout?\nYou will need to sign in again.`
+  String get logoutConfirmationMessage {
+    return Intl.message(
+      'Are you sure you want to logout?\nYou will need to sign in again.',
+      name: 'logoutConfirmationMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get logoutButton {
+    return Intl.message(
+      'Logout',
+      name: 'logoutButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Language`
+  String get chooseLanguageTitle {
+    return Intl.message(
+      'Choose Language',
+      name: 'chooseLanguageTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select your preferred language`
+  String get chooseLanguageSubtitle {
+    return Intl.message(
+      'Select your preferred language',
+      name: 'chooseLanguageSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get englishLanguage {
+    return Intl.message(
+      'English',
+      name: 'englishLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `العربية`
+  String get arabicLanguage {
+    return Intl.message(
+      'العربية',
+      name: 'arabicLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User`
+  String get defaultUserName {
+    return Intl.message(
+      'User',
+      name: 'defaultUserName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `username`
+  String get defaultUsername {
+    return Intl.message(
+      'username',
+      name: 'defaultUsername',
       desc: '',
       args: [],
     );
