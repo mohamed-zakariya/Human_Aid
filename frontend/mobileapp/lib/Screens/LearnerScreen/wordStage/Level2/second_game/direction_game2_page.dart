@@ -4,6 +4,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:math' as math;
 
 import '../../../../../Services/add_score_service.dart';
+import '../../../../../generated/l10n.dart';
 
 class DirectionGameSecondPage extends StatefulWidget {
   final int totalQuestions;
@@ -275,7 +276,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
       final motivation = _getRandomMotivationalMessage();
       String correctDirection = questionDirections[_currentQuestionIndex % questionDirections.length];
       String correctAnswer = directionData[correctDirection]?['meaning'] ?? '';
-      flutterTts.speak("${motivation['message']} الاتجاه الصحيح هو $correctAnswer");
+      flutterTts.speak(S.of(context).correctAnswerIs(correctAnswer));
     }
 
     // Move to next question after 4 seconds
@@ -299,8 +300,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
   }
 
   void _showFinalScore() {
-    print("socresssss");
-    print(_score);
+
     AddScoreService.updateScore(
       score: _score,
       outOf: widget.totalQuestions,
@@ -313,7 +313,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
       builder: (context) => Directionality(
         textDirection: TextDirection.rtl,
         child: AlertDialog(
-          title: const Text('انتهى التمرين!'),
+          title:  Text(S.of(context).exerciseFinished),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -324,20 +324,14 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
               ),
               const SizedBox(height: 16),
               Text(
-                'لقد أنهيت التمرين!',
+                S.of(context).exerciseCompleted,
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'النتيجة النهائية: $_score من ${widget.totalQuestions}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
               ),
             ],
           ),
           actions: [
             TextButton(
-              child: const Text('العودة'),
+              child: Text(S.of(context).Return),
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
@@ -350,7 +344,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              child: const Text('إعادة'),
+              child: Text(S.of(context).retry),
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.pushReplacement(
@@ -452,15 +446,15 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                           builder: (context) => Directionality(
                             textDirection: TextDirection.rtl,
                             child: AlertDialog(
-                              title: const Text('هل تريد الخروج من التمرين؟'),
-                              content: const Text('سيتم فقدان تقدمك الحالي في هذا التمرين.'),
+                              title: Text(S.of(context).exitExerciseQuestion),
+                              content: Text(S.of(context).progressWillBeLost),
                               actions: [
                                 TextButton(
-                                  child: const Text('إلغاء'),
+                                  child: Text(S.of(context).cancel),
                                   onPressed: () => Navigator.of(context).pop(),
                                 ),
                                 TextButton(
-                                  child: const Text('خروج'),
+                                  child: Text(S.of(context).exit),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                     Navigator.of(context).pop();
@@ -472,11 +466,11 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                         );
                       },
                     ),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'تمرين الاتجاهات',
+                        S.of(context).gameName,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -509,7 +503,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                           const Icon(Icons.timer, color: Colors.white, size: 18),
                           const SizedBox(width: 4),
                           Text(
-                            '$_timeLeft ثانية',
+                            S.of(context).secondsRemaining(_timeLeft),
                             style: const TextStyle(color: Colors.white),
                           ),
                         ],
@@ -554,7 +548,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                         child: Column(
                           children: [
                             Text(
-                              'ما هو الاتجاه',
+                              S.of(context).whatIsDirection,
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
@@ -590,7 +584,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                                         ),
                                       ),
                                     ] else ...[
-                                      const TextSpan(text: 'اسحب الصورة إلى الاتجاه الصحيح'),
+                                      TextSpan(text: S.of(context).dragInfo),
                                     ],
                                   ],
                                 ),
@@ -791,7 +785,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                             onPressed: _remainingAttempts > 0 ? _listenAgain : null,
                             icon: const Icon(Icons.volume_up, color: Colors.white),
                             label: Text(
-                              'اسمع مرة أخرى (محاولات متبقية $_remainingAttempts)',
+                              S.of(context).listenAgain(_remainingAttempts),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -831,7 +825,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    _isCorrect ? 'إجابة صحيحة!' : 'إجابة خاطئة!',
+                                    _isCorrect? S.of(context).correct : S.of(context).incorrect,
                                     style: TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
@@ -841,7 +835,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                                   if (!_isCorrect) ...[
                                     const SizedBox(height: 8),
                                     Text(
-                                      'الإجابة الصحيحة: $currentMeaning',
+                                      S.of(context).correctAnswerIs(currentMeaning),
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                   ],

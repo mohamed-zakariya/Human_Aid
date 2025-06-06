@@ -22,41 +22,62 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(count) => "${count} attempts left";
 
-  static String m1(name) => "${name} Dashboard";
+  static String m1(answer) => "Correct answer: ${answer}";
 
-  static String m2(letter) => "Draw the letter \"${letter}\"";
+  static String m2(direction) => "The correct direction is ${direction}";
 
-  static String m3(percent) => "${percent}%";
+  static String m3(name) => "${name} Dashboard";
 
-  static String m4(score, total) => "Your score: ${score} out of ${total}";
+  static String m4(item, direction) => "Drag ${item} to ${direction} direction";
 
-  static String m5(score, total) =>
+  static String m5(letter) => "Draw the letter \"${letter}\"";
+
+  static String m6(percent) => "${percent}%";
+
+  static String m7(score, total) => "Final Score: ${score} out of ${total}";
+
+  static String m8(score, total) => "Your score: ${score} out of ${total}";
+
+  static String m9(score, total) =>
       "🎉 Great job! Your score: ${score} out of ${total}";
 
-  static String m6(name) => "Hello ${name}";
+  static String m10(name) => "Hello ${name}";
 
-  static String m7(count) => "Order ${count} months of the year";
+  static String m11(remaining) => "Listen again (${remaining} attempts left)";
 
-  static String m8(count) => "Points: ${count}";
+  static String m12(count) => "Order ${count} months of the year";
 
-  static String m9(percent) => "${percent}% completed";
+  static String m13(item, direction) =>
+      "Place ${item} in ${direction} direction";
 
-  static String m10(points) => "${points} pts";
+  static String m14(count) => "Points: ${count}";
 
-  static String m11(error) => "Error: ${error}";
+  static String m15(percent) => "${percent}% completed";
 
-  static String m12(error) => "Error starting recording: ${error}";
+  static String m16(points) => "${points} pts";
 
-  static String m13(current, total) => "Round ${current} of ${total}";
+  static String m17(current, total) => "Question ${current} / ${total}";
 
-  static String m14(count) => "Strokes: ${count}";
+  static String m18(error) => "Error: ${error}";
 
-  static String m15(letter) => "📝 Trace this letter: ${letter}";
+  static String m19(error) => "Error starting recording: ${error}";
 
-  static String m16(score, total) =>
+  static String m20(current, total) => "Round ${current} of ${total}";
+
+  static String m21(count) => "${count} seconds";
+
+  static String m22(seconds) => "${seconds} seconds remaining";
+
+  static String m23(direction) => "The direction is ${direction}";
+
+  static String m24(count) => "Strokes: ${count}";
+
+  static String m25(letter) => "📝 Trace this letter: ${letter}";
+
+  static String m26(score, total) =>
       "😊 Good try! Your score: ${score} out of ${total}";
 
-  static String m17(letter) => "❌ Wrong! The correct letter is: ${letter}";
+  static String m27(letter) => "❌ Wrong! The correct letter is: ${letter}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -64,6 +85,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ParentNavBarLogout": MessageLookupByLibrary.simpleMessage("Logout"),
         "ParentNavBarSettings":
             MessageLookupByLibrary.simpleMessage("Settings"),
+        "Return": MessageLookupByLibrary.simpleMessage("Return"),
         "accuracy": MessageLookupByLibrary.simpleMessage("accuracy"),
         "add": MessageLookupByLibrary.simpleMessage("Add"),
         "addNewLearner":
@@ -72,16 +94,23 @@ class MessageLookup extends MessageLookupByLibrary {
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("Create Account"),
         "all": MessageLookupByLibrary.simpleMessage("all"),
+        "amazing": MessageLookupByLibrary.simpleMessage("Amazing! 😎"),
+        "apple": MessageLookupByLibrary.simpleMessage("Apple"),
         "attemptsLeft": m0,
         "availableExercises":
             MessageLookupByLibrary.simpleMessage("Available Exercises"),
+        "ball": MessageLookupByLibrary.simpleMessage("Ball"),
+        "book": MessageLookupByLibrary.simpleMessage("Book"),
         "bottomNavCourses": MessageLookupByLibrary.simpleMessage("Courses"),
         "bottomNavHome": MessageLookupByLibrary.simpleMessage("Home"),
         "bottomNavMenu": MessageLookupByLibrary.simpleMessage("Menu"),
         "bottomNavProfile": MessageLookupByLibrary.simpleMessage("Profile"),
+        "bravo": MessageLookupByLibrary.simpleMessage("Bravo! 👏"),
         "button1": MessageLookupByLibrary.simpleMessage("Start"),
         "button2": MessageLookupByLibrary.simpleMessage("Continue"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "car": MessageLookupByLibrary.simpleMessage("Car"),
+        "cat": MessageLookupByLibrary.simpleMessage("Cat"),
         "categories": MessageLookupByLibrary.simpleMessage("Categories"),
         "changePasswordTitle":
             MessageLookupByLibrary.simpleMessage("Change Password"),
@@ -102,7 +131,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Continue Learning"),
         "continuesignuptitle":
             MessageLookupByLibrary.simpleMessage("Child Registration"),
+        "correct": MessageLookupByLibrary.simpleMessage("Correct! ✅"),
         "correctAnswer": MessageLookupByLibrary.simpleMessage("🎉 Correct!"),
+        "correctAnswerIs": m1,
+        "correctDirectionInfo": MessageLookupByLibrary.simpleMessage(
+            "After each question, the correct direction will be shown."),
+        "correctDirectionIs": m2,
         "correctFeedback":
             MessageLookupByLibrary.simpleMessage("Well done! 🎉"),
         "createAccountGaurdian":
@@ -111,7 +145,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Create a user account"),
         "createaccountbutton":
             MessageLookupByLibrary.simpleMessage("Create Account"),
-        "dashboardTitle": m1,
+        "dashboardTitle": m3,
         "dashboard_title":
             MessageLookupByLibrary.simpleMessage("\'s Dashboard"),
         "desc1": MessageLookupByLibrary.simpleMessage(
@@ -119,12 +153,28 @@ class MessageLookup extends MessageLookupByLibrary {
         "desc2": MessageLookupByLibrary.simpleMessage(
             "It will be a fun journey, step by step, until you become an expert."),
         "desc3": MessageLookupByLibrary.simpleMessage("Nothing can stop you."),
+        "directionExerciseTitle":
+            MessageLookupByLibrary.simpleMessage("Direction Exercise"),
+        "directions": MessageLookupByLibrary.simpleMessage("Directions"),
+        "directionsTitle": MessageLookupByLibrary.simpleMessage("Directions"),
         "done": MessageLookupByLibrary.simpleMessage("✅ Done"),
+        "dontGiveUpLearning": MessageLookupByLibrary.simpleMessage(
+            "Don\'t give up, learning takes time"),
         "dontWorry":
             MessageLookupByLibrary.simpleMessage("Don’t worry, it’s okay"),
+        "dontWorryTryAgain":
+            MessageLookupByLibrary.simpleMessage("Don\'t worry, try again"),
+        "down": MessageLookupByLibrary.simpleMessage("Down"),
+        "downLeft": MessageLookupByLibrary.simpleMessage("Down Left"),
+        "downRight": MessageLookupByLibrary.simpleMessage("Down Right"),
+        "dragImageToCorrectDirection": MessageLookupByLibrary.simpleMessage(
+            "Drag the image to the correct direction"),
+        "dragImageToDirection": m4,
+        "dragInfo": MessageLookupByLibrary.simpleMessage(
+            "Drag the image to the correct direction."),
         "drawInstruction": MessageLookupByLibrary.simpleMessage(
             "Touch and draw anywhere on the canvas"),
-        "drawLetter": m2,
+        "drawLetter": m5,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "This email is already registered"),
         "emailHint": MessageLookupByLibrary.simpleMessage("humanid@gmail.com"),
@@ -142,15 +192,28 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Password cannot be empty"),
         "errorLoadingLevels":
             MessageLookupByLibrary.simpleMessage("Error loading levels"),
+        "everyTryMakesStronger": MessageLookupByLibrary.simpleMessage(
+            "Every try makes you stronger"),
+        "excellent": MessageLookupByLibrary.simpleMessage("Excellent! 🎉"),
+        "excellentWork": MessageLookupByLibrary.simpleMessage("Excellent work"),
         "exercise2Title": MessageLookupByLibrary.simpleMessage("Exercise 2"),
+        "exerciseCompleted":
+            MessageLookupByLibrary.simpleMessage("Exercise Completed"),
+        "exerciseFinished":
+            MessageLookupByLibrary.simpleMessage("Exercise Finished"),
+        "exerciseInfoTitle":
+            MessageLookupByLibrary.simpleMessage("Exercise Information"),
         "exerciseProgressLabel":
             MessageLookupByLibrary.simpleMessage("Progress"),
-        "exerciseProgressPercent": m3,
+        "exerciseProgressPercent": m6,
         "exit": MessageLookupByLibrary.simpleMessage("Exit"),
+        "exitExerciseQuestion": MessageLookupByLibrary.simpleMessage(
+            "Do you want to exit the exercise?"),
         "explore_message": MessageLookupByLibrary.simpleMessage(
             "Let\'s explore some insights today"),
         "feedbackWidgetAnalyzing":
             MessageLookupByLibrary.simpleMessage("Analyzing..."),
+        "finalScore": m7,
         "finishTracing":
             MessageLookupByLibrary.simpleMessage("✅ Finish Tracing"),
         "fishGameTitle":
@@ -162,10 +225,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "forgotPasswordTitle":
             MessageLookupByLibrary.simpleMessage("Forgot Password?"),
         "gameCompleted": MessageLookupByLibrary.simpleMessage("Completed!"),
-        "gameCompletionScore": m4,
+        "gameCompletionScore": m8,
         "gameCompletionTitle":
             MessageLookupByLibrary.simpleMessage("Game Completed!"),
         "gameFinished": MessageLookupByLibrary.simpleMessage("Game Over!"),
+        "gameName": MessageLookupByLibrary.simpleMessage("Direction Game"),
         "gameOverTitle": MessageLookupByLibrary.simpleMessage("🎮 Game Over"),
         "games": MessageLookupByLibrary.simpleMessage("Games"),
         "genderFemale": MessageLookupByLibrary.simpleMessage("Female"),
@@ -173,11 +237,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "genderSelect": MessageLookupByLibrary.simpleMessage("Select Gender"),
         "genderSelected": MessageLookupByLibrary.simpleMessage("Selected:"),
         "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
-        "greatJob": m5,
+        "greatJob": m9,
         "greatJob2": MessageLookupByLibrary.simpleMessage("🎉 Great job!"),
         "greatJobMotivation": MessageLookupByLibrary.simpleMessage(
             "🎉 Great job! You\'re doing amazing!"),
-        "greeting": m6,
+        "greeting": m10,
         "guardianButton": MessageLookupByLibrary.simpleMessage("Guardian"),
         "guardianDescription": MessageLookupByLibrary.simpleMessage(
             "Registering as a guardian allows you to track and follow the progress of your loved ones, whether they are your children, students, or anyone under your responsibility."),
@@ -191,12 +255,23 @@ class MessageLookup extends MessageLookupByLibrary {
         "howToTrace": MessageLookupByLibrary.simpleMessage("📚 How to Trace"),
         "ignoredRecording":
             MessageLookupByLibrary.simpleMessage("Recording ignored"),
+        "incorrect": MessageLookupByLibrary.simpleMessage("Wrong! ❌"),
+        "info":
+            MessageLookupByLibrary.simpleMessage("Information about Training"),
         "instruction1": MessageLookupByLibrary.simpleMessage(
             "Drag the letters into the correct order."),
         "instruction2": MessageLookupByLibrary.simpleMessage(
             "If the answer is correct, you\'ll get a new word."),
         "instruction3": MessageLookupByLibrary.simpleMessage(
             "Try to complete all words and get a high score!"),
+        "instructionAnswerShown": MessageLookupByLibrary.simpleMessage(
+            "After each question, the correct answer will be shown."),
+        "instructionLookCarefully": MessageLookupByLibrary.simpleMessage(
+            "Look carefully at the direction shape and choose the correct sentence."),
+        "instructionSpeech": MessageLookupByLibrary.simpleMessage(
+            "Each question has 8 seconds to answer. Drag the image to the correct direction. After each question, the correct direction will be shown."),
+        "instructionTimer": MessageLookupByLibrary.simpleMessage(
+            "Each question has 5 seconds to answer."),
         "instructions": MessageLookupByLibrary.simpleMessage(
             "1. Trace the letter with your finger.\n2. Try to stay on the shape.\n3. Press Done when finished."),
         "instructionsTitle":
@@ -205,19 +280,27 @@ class MessageLookup extends MessageLookupByLibrary {
             "How would you like to register?"),
         "invalidCredentials": MessageLookupByLibrary.simpleMessage(
             "Invalid username or password. Please try again."),
+        "keepProgressing":
+            MessageLookupByLibrary.simpleMessage("Keep progressing"),
+        "keepTryingProgressing": MessageLookupByLibrary.simpleMessage(
+            "Keep trying, you\'re progressing"),
         "learner_members":
             MessageLookupByLibrary.simpleMessage("Learner Members"),
         "learner_progress":
             MessageLookupByLibrary.simpleMessage("Learners Progress"),
+        "learningNeedsPatience":
+            MessageLookupByLibrary.simpleMessage("Learning needs patience"),
+        "left": MessageLookupByLibrary.simpleMessage("Left"),
         "level": MessageLookupByLibrary.simpleMessage("Level"),
         "levelLabel": MessageLookupByLibrary.simpleMessage("spell the word"),
         "levels": MessageLookupByLibrary.simpleMessage("Levels"),
         "listen": MessageLookupByLibrary.simpleMessage("Listen"),
+        "listenAgain": m11,
         "listenToLetter":
             MessageLookupByLibrary.simpleMessage("Listen to Letter"),
         "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("Login"),
-        "monthsOrderHeader": m7,
+        "monthsOrderHeader": m12,
         "monthsOrderHelpDrag": MessageLookupByLibrary.simpleMessage(
             "Drag the months from below and place them in the correct order"),
         "monthsOrderHelpListen": MessageLookupByLibrary.simpleMessage(
@@ -264,25 +347,32 @@ class MessageLookup extends MessageLookupByLibrary {
             "Password must be at least 8 characters"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("search"),
+        "placeImageInDirection": m13,
         "playAgain": MessageLookupByLibrary.simpleMessage("Play Again"),
         "playGame": MessageLookupByLibrary.simpleMessage("Play Now"),
-        "pointCount": m8,
+        "pointCount": m14,
         "processingError": MessageLookupByLibrary.simpleMessage(
             "An error occurred while processing"),
         "processingRecording": MessageLookupByLibrary.simpleMessage(
             "Processing your recording..."),
-        "progressCompleted": m9,
-        "progressPoints": m10,
-        "recordingError": m11,
-        "recordingStartError": m12,
+        "progressCompleted": m15,
+        "progressPoints": m16,
+        "progressWillBeLost":
+            MessageLookupByLibrary.simpleMessage("Your progress will be lost"),
+        "questionProgress": m17,
+        "recordingError": m18,
+        "recordingStartError": m19,
         "recordingTimeout": MessageLookupByLibrary.simpleMessage(
             "Recording time limit reached!"),
         "restart": MessageLookupByLibrary.simpleMessage("Restart"),
         "retry": MessageLookupByLibrary.simpleMessage("Retry"),
-        "roundLabel": m13,
+        "right": MessageLookupByLibrary.simpleMessage("Right"),
+        "roundLabel": m20,
         "roundLabel2": MessageLookupByLibrary.simpleMessage("Round"),
         "searchCoursesHint":
             MessageLookupByLibrary.simpleMessage("Search courses..."),
+        "seconds": m21,
+        "secondsRemaining": m22,
         "seeAll": MessageLookupByLibrary.simpleMessage("See All"),
         "selectGameToPlay": MessageLookupByLibrary.simpleMessage(
             "Select a game to start playing"),
@@ -316,12 +406,20 @@ class MessageLookup extends MessageLookupByLibrary {
         "signuptitlephonenumber":
             MessageLookupByLibrary.simpleMessage("phone number"),
         "signuptitleusername": MessageLookupByLibrary.simpleMessage("username"),
+        "speakDirectionTemplate": m23,
         "spellingGame": MessageLookupByLibrary.simpleMessage("Spelling Game"),
-        "strokeCount": m14,
+        "startExercise": MessageLookupByLibrary.simpleMessage("Start Exercise"),
+        "strokeCount": m24,
         "submitbutton": MessageLookupByLibrary.simpleMessage("Done"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("Login successful"),
+        "tapArrowToHear": MessageLookupByLibrary.simpleMessage(
+            "Tap the arrow to hear the direction"),
+        "tapToHearDirection": MessageLookupByLibrary.simpleMessage(
+            "Tap the arrow to hear the direction"),
         "timeLabel": MessageLookupByLibrary.simpleMessage("Time"),
+        "timerInfo": MessageLookupByLibrary.simpleMessage(
+            "Each question has 8 seconds to answer."),
         "tips": MessageLookupByLibrary.simpleMessage("Tips"),
         "title": MessageLookupByLibrary.simpleMessage("Create Account"),
         "title1": MessageLookupByLibrary.simpleMessage(
@@ -330,17 +428,28 @@ class MessageLookup extends MessageLookupByLibrary {
             "Together, we will learn to read\nand write Arabic properly"),
         "title3": MessageLookupByLibrary.simpleMessage(
             "Don\'t fear trying,\nkeep going until you break the fear barrier"),
-        "traceThisLetter": m15,
+        "traceThisLetter": m25,
         "traceTitle":
             MessageLookupByLibrary.simpleMessage("✍️ Trace the letter"),
         "transcriptLabel": MessageLookupByLibrary.simpleMessage("Transcript"),
         "translateMonthsTooltip":
             MessageLookupByLibrary.simpleMessage("Switch month names"),
         "tryAgain": MessageLookupByLibrary.simpleMessage("Try Again"),
-        "tryAgain2": m16,
+        "tryAgain2": m26,
         "tryAgain3": MessageLookupByLibrary.simpleMessage("❌ Try Again"),
+        "tryAgainEncouragement":
+            MessageLookupByLibrary.simpleMessage("Try again! 💪"),
         "tryAgainMotivation": MessageLookupByLibrary.simpleMessage(
             "💪 Keep going! You can do it!"),
+        "tryingHardGreat": MessageLookupByLibrary.simpleMessage(
+            "You\'re trying hard, that\'s great"),
+        "tryingIsFirstStep":
+            MessageLookupByLibrary.simpleMessage("Trying is the first step"),
+        "ttsInstructions": MessageLookupByLibrary.simpleMessage(
+            "Each question has 5 seconds to answer. Look carefully at the direction shape and choose the correct sentence. After each question, the correct answer will be shown."),
+        "up": MessageLookupByLibrary.simpleMessage("Up"),
+        "upLeft": MessageLookupByLibrary.simpleMessage("Up Left"),
+        "upRight": MessageLookupByLibrary.simpleMessage("Up Right"),
         "userButton": MessageLookupByLibrary.simpleMessage("User"),
         "userDescription": MessageLookupByLibrary.simpleMessage(
             "If you are older than 12, you can now easily register for yourself by clicking the user start button."),
@@ -353,12 +462,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "usernameShort": MessageLookupByLibrary.simpleMessage(
             "Username must be at least 3 characters"),
         "verify": MessageLookupByLibrary.simpleMessage("Verify"),
+        "veryGreat": MessageLookupByLibrary.simpleMessage("Very great"),
+        "verySmart": MessageLookupByLibrary.simpleMessage("You\'re very smart"),
         "view_details": MessageLookupByLibrary.simpleMessage("view Detials"),
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("Welcome Back, "),
         "wellDone": MessageLookupByLibrary.simpleMessage("Well done! ✅"),
+        "whatIsDirection":
+            MessageLookupByLibrary.simpleMessage("What is the direction?"),
         "wordsGame3Title": MessageLookupByLibrary.simpleMessage("Months Game"),
-        "wrongAnswer": m17,
+        "wrongAnswer": m27,
         "wrongFeedback": MessageLookupByLibrary.simpleMessage("Try again"),
         "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
             "You traced the letter correctly!")

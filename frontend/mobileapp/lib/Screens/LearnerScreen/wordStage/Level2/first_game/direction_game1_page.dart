@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 import '../../../../../Services/add_score_service.dart';
+import '../../../../../generated/l10n.dart';
 
 class DirectionGamePage extends StatefulWidget {
   final int totalQuestions;
@@ -156,16 +157,16 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
     setState(() {
       showFeedback = true;
       if (correct) {
-        feedbackText = "صحيح! ✅";
+        feedbackText = S.of(context).correct;
         encouragingText = encouragingMessages[Random().nextInt(encouragingMessages.length)];
       } else {
-        feedbackText = "خطأ! ❌";
+        feedbackText = S.of(context).incorrect;
         encouragingText = "${motivationalMessages[Random().nextInt(motivationalMessages.length)]}\nالإجابة الصحيحة: ${directionLabels[currentDirection]}";
       }
     });
 
     // Speak the feedback
-    flutterTts.speak(correct ? "إجابة صحيحة" : "إجابة خاطئة");
+    flutterTts.speak(correct ? encouragingText : "${motivationalMessages[Random().nextInt(motivationalMessages.length)]}\n${S.of(context).correctAnswerIs(directionLabels[currentDirection]!)}",);
 
     timer?.cancel();
     Future.delayed(const Duration(seconds: 3), () {
@@ -220,7 +221,7 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
         backgroundColor: Color(0xFF7367F0),
         elevation: 0,
         title: Text(
-          "تمرين الاتجاهات",
+          S.of(context).directionExerciseTitle,
           style: TextStyle(color: Colors.white),
         ),
         actions: [
@@ -239,7 +240,7 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "$timeLeft ثانية",
+                  S.of(context).seconds(timeLeft),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -247,7 +248,7 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
                   ),
                 ),
                 Text(
-                  "السؤال $questionIndex / ${widget.totalQuestions}",
+                  S.of(context).questionProgress(questionIndex, widget.totalQuestions),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -292,7 +293,7 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
                   children: [
                     // Question
                     Text(
-                      "ما هو الاتجاه",
+                      S.of(context).whatIsDirection,
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -345,7 +346,7 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
                           size: 24,
                         ),
                         label: Text(
-                          "اسمع مرة أخرى (${listenAttemptsRemaining} محاولات متبقية)",
+                          S.of(context).listenAgain(listenAttemptsRemaining),
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
