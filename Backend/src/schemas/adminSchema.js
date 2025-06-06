@@ -19,12 +19,34 @@ type UserStats {
   numParents: Int!
 }
 
+type Parent {
+  id: ID!
+  name: String!
+  email: String!
+  phoneNumber: String
+  nationality: String
+  birthdate: String
+  gender: String
+  linkedChildren: [User!]!
+}
+
+type User {
+  id: ID!
+  name: String!
+  username: String!
+  email: String
+  role: String!
+  # Add other fields as needed
+}
+
 type Query {
   getWords: [Word!]!
   getWord(id: ID!): Word
   getSentences: [Sentence!]!
   getSentence(id: ID!): Sentence
-  getUserStats: UserStats!   # <-- Add this line
+  getUserStats: UserStats!   
+  getAllParentsWithChildren: [Parent!]!
+  getAllUsers: [User!]!  
 }
 
 type Mutation {
@@ -35,6 +57,8 @@ type Mutation {
   createSentence(sentence: String!, level: String!): Sentence!
   updateSentence(id: ID!, sentence: String, level: String): Sentence!
   deleteSentence(id: ID!): Sentence!
+  deleteParentAndChildren(parentId: ID!): Boolean!
+  deleteUser(userId: ID!): Boolean!
 }
 
 type AuthPayload {

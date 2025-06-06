@@ -121,6 +121,29 @@ async updateWord(_, { id, word, level, image }) {
       if (!deletedSentence) throw new Error('Sentence not found');
       return deletedSentence;
     },
+    async deleteParentAndChildren(_, { parentId }) {
+    const parent = await Parents.findById(parentId);
+    if (!parent) throw new Error('Parent not found');
+    // Delete all linked children
+    await Users.deleteMany({ _id: { $in: parent.linkedChildren } });
+    // Delete the parent
+    await Parents.findByIdAndDelete(parentId);
+    return true;
+  },
+    async deleteUser(_, { userId }) {
+    const learner = await Users.findById(userId);
+    if (!learner) throw new Error('Learner not found');
+    // If the learner is a child, delete the parent-child link
+    if (learner.role === 'child') {
+      await Parents.updateMany(
+        { linkedChildren: userId },
+        { $pull: { linkedChildren: userId } }
+      );
+    }
+    // Delete the learner
+    await Users.findByIdAndDelete(userId);
+    return true;
+  }
   },
 
 
@@ -152,5 +175,13 @@ async updateWord(_, { id, word, level, image }) {
       const numParents = await Parents.countDocuments();
       return { numAdults, numChildren, numParents };
     },
+
+    async getAllParentsWithChildren() {
+    // Populate linkedChildren with full user details
+    return await Parents.find().populate('linkedChildren');
+  },
+  async getAllUsers() {
+  return await Users.find();
+},
   }
 };
