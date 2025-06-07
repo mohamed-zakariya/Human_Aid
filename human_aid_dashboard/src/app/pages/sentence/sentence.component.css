@@ -1,8 +1,8 @@
 /* ==============================================
-   WORDS COMPONENT STYLES
+   sentenceS COMPONENT STYLES
    ============================================== */
 
-.words-container {
+.sentences-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0;
@@ -139,12 +139,12 @@
   overflow-x: auto;
 }
 
-.words-table {
+.sentences-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.words-table th {
+.sentences-table th {
 
   background: #f9fafb;
   padding: 16px 20px;
@@ -157,7 +157,7 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-.words-table td {
+.sentences-table td {
   padding: 16px 20px;
   border-bottom: 1px solid #f3f4f6;
 }
@@ -178,17 +178,17 @@
   border: 2px solid #e5e7eb;
 }
 
-.word-image {
+.sentence-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.word-cell {
+.sentence-cell {
   min-width: 200px;
 }
 
-.word-text {
+.sentence-text {
   font-weight: 600;
   color: #111827;
   font-size: 16px;
@@ -540,13 +540,13 @@
   color: white;
 }
 
-:host-context(.dark) .words-table th {
+:host-context(.dark) .sentences-table th {
   background: #374151;
   color: #d1d5db;
   border-bottom-color: #4b5563;
 }
 
-:host-context(.dark) .words-table td {
+:host-context(.dark) .sentences-table td {
   border-bottom-color: #374151;
 }
 
@@ -554,7 +554,7 @@
   background-color: #374151;
 }
 
-:host-context(.dark) .word-text {
+:host-context(.dark) .sentence-text {
   color: white;
 }
 
@@ -756,16 +756,16 @@
     justify-content: center;
   }
   
-  .words-table {
+  .sentences-table {
     font-size: 14px;
   }
   
-  .words-table th,
-  .words-table td {
+  .sentences-table th,
+  .sentences-table td {
     padding: 12px 16px;
   }
   
-  .word-text {
+  .sentence-text {
     font-size: 14px;
   }
   
@@ -801,13 +801,13 @@
     border-radius: 0;
   }
   
-  .words-table th:first-child,
-  .words-table td:first-child {
+  .sentences-table th:first-child,
+  .sentences-table td:first-child {
     padding-left: 20px;
   }
   
-  .words-table th:last-child,
-  .words-table td:last-child {
+  .sentences-table th:last-child,
+  .sentences-table td:last-child {
     padding-right: 20px;
   }
 }

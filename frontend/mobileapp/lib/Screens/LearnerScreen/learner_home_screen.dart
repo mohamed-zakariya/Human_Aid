@@ -113,7 +113,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
             onLocaleChange: widget.onLocaleChange,
             onSelectPage: _selectPage,
           ),
-          const LearnerCoursesPage(),
+          LearnerCoursesPage(learner: widget.learner), // Pass learner here
           const LearnerProfilePage(),
         ],
       ),

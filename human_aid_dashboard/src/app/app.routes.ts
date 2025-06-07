@@ -17,6 +17,14 @@ export const routes: Routes = [
       { 
         path: 'words', 
         loadComponent: () => import('./pages/words/words.component').then(c => c.WordsComponent),
+      },
+      { 
+        path: 'sentences', 
+        loadComponent: () => import('./pages/sentence/sentence.component').then(c => c.SentenceComponent),
+      },
+      { 
+        path: 'learners', 
+        loadComponent: () => import('./pages/learners/learners.component').then(c => c.LearnersComponent),
       }
       // Add more child routes here as you create components
       // { path: 'attendance', loadComponent: () => import('./pages/attendance/attendance.component').then(c => c.AttendanceComponent) },

@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WordService } from '../../services/words/words-service.service';
 import { Word } from '../../interfaces/word-interface/word'; // Make sure this exists and is correct
+import { ToastComponent } from '../../layout/toast/toast.component';
+import { ToastService } from '../../services/notification/toast.service';
 
 @Component({
   selector: 'app-words',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ToastComponent],
   templateUrl: './words.component.html',
   styleUrls: ['./words.component.css']
 })
@@ -19,6 +21,11 @@ export class WordsComponent implements OnInit {
   imagePreview = '';
   isEditMode = false;
   editingWordId: string | null = null;
+  // New search and filter properties
+  searchTerm: string = '';
+  selectedLevelFilter: string = '';
+  filteredWords: Word[] = [];
+  
 
   newWord = {
     word: '',
@@ -26,7 +33,7 @@ export class WordsComponent implements OnInit {
     imageUrl: ''
   };
 
-  constructor(private wordService: WordService) {}
+  constructor(private wordService: WordService, private toastService: ToastService) {}
 
   ngOnInit() {
     this.loadWords();
@@ -36,6 +43,7 @@ export class WordsComponent implements OnInit {
     this.wordService.getWords().subscribe({
       next: (data) => {
         this.words = data;
+        this.filteredWords = [...this.words]; // Initialize filtered words
         console.log('Loaded words:', this.words.map(w => ({id: w.id, word: w.word})));
       },
       error: (err) => {
@@ -43,6 +51,55 @@ export class WordsComponent implements OnInit {
       }
     });
   }
+
+  // New search and filter methods
+  onSearchChange(): void {
+    this.applyFilters();
+  }
+
+
+  onFilterChange(): void {
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    let filtered = [...this.words];
+
+    // Apply search filter
+    if (this.searchTerm.trim()) {
+      const searchLower = this.searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(word => 
+        word.word?.toLowerCase().includes(searchLower) ||
+        word.word?.toLowerCase().startsWith(searchLower)
+      );
+    }
+
+    // Apply level filter
+    if (this.selectedLevelFilter) {
+      filtered = filtered.filter(word => word.level === this.selectedLevelFilter);
+    }
+
+    this.filteredWords = filtered;
+  }
+
+
+  getFilteredWords(): Word[] {
+    return this.filteredWords;
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.applyFilters();
+  }
+
+  clearAllFilters(): void {
+    this.searchTerm = '';
+    this.selectedLevelFilter = '';
+    this.applyFilters();
+  }
+
+
+
 
   saveWords() {
     localStorage.setItem('words', JSON.stringify(this.words));
@@ -54,6 +111,19 @@ export class WordsComponent implements OnInit {
       this.resetForm();
     }
   }
+
+
+  getDisplayWords(): Word[] {
+    return this.getFilteredWords();
+  }
+
+
+
+
+  getFilteredTotalWords(): number {
+    return this.getFilteredWords().length;
+  }
+
 
   closeModal(event: Event) {
     if (event.target === event.currentTarget) {
@@ -102,6 +172,7 @@ export class WordsComponent implements OnInit {
   }
 
 
+  // Update addWord method to refresh filters after adding
   addWord(): void {
     const { word, level } = this.newWord;
 
@@ -110,41 +181,110 @@ export class WordsComponent implements OnInit {
     }
 
     if (this.isEditMode && this.editingWordId !== null) {
-      this.wordService.updateWord(
-        this.editingWordId,
-        word.trim(),
-        level,
-        this.selectedFile || undefined
-      ).subscribe({
-        next: updated => {
-          const index = this.words.findIndex(w => w.id === updated.id);
-          if (index !== -1) {
-            this.words[index] = updated;
+      const id = this.editingWordId;
+
+      if (this.selectedFile) {
+        this.wordService.updateViaHttpClient(id, word.trim(), level, this.selectedFile).subscribe({
+          next: (response: any) => {
+            const updated = response?.data?.updateWord;
+            if (updated) {
+              const index = this.words.findIndex(w => w.id === updated.id);
+              this.words = [
+                ...this.words.slice(0, index),
+                updated,
+                ...this.words.slice(index + 1)
+              ];
+              this.saveWords();
+              this.toggleAddModal();
+              this.resetForm();
+              // Add this toast notification
+              this.toastService.showSuccess('Word Updated!', `"${updated.word}" has been successfully updated.`);
+              this.loadWords(); // ✅ Refresh the list from the server
+            } else {
+              console.error('No word returned from update:', response);
+            }
+          },
+          error: err => {
+            console.error('Error updating word via HttpClient:', err);
+            // Add error toast
+            this.toastService.showError('Update Failed', 'Failed to update the word. Please try again.');
           }
-          this.saveWords();
-          this.toggleAddModal();
-          this.resetForm();
-        },
-        error: err => console.error('Error updating word:', err)
-      });
-    } else {
-      this.wordService.addWord(word.trim(), level, this.selectedFile ?? undefined).subscribe({
-        next: result => {
-          const newWord = result.data?.createWord;  // matches the mutation name now
-          if (newWord) {
-            this.words.push(newWord);
+        });
+
+      } else {
+        this.wordService.updateWord(id, word.trim(), level).subscribe({
+          next: updated => {
+            const index = this.words.findIndex(w => w.id === updated.id);
+            this.words = [
+              ...this.words.slice(0, index),
+              updated,
+              ...this.words.slice(index + 1)
+            ];
+            this.saveWords();
             this.toggleAddModal();
             this.resetForm();
-          } else {
-            console.error('No word returned from mutation:', result);
+            // Add this toast notification
+            this.toastService.showSuccess('Word Updated!', `"${updated.word}" has been successfully updated.`);
+            this.loadWords(); // ✅ Refresh the list from the server
+          },
+          error: err => {
+            console.error('Error updating word:', err);
+            // Add error toast
+            this.toastService.showError('Update Failed', 'Failed to update the word. Please try again.');
           }
-        },
-        error: err => console.error('Error adding word:', err)
-      });
+        });
+      }
+    } else {
+      if (this.selectedFile) {
+        this.wordService.uploadViaHttpClient(word.trim(), level, this.selectedFile).subscribe({
+          next: (response: any) => {
+            const newWord = response?.data?.createWord;
+            if (newWord) {
+              this.words = [...this.words, newWord];
+              this.applyFilters();
+              this.toggleAddModal();
+              this.resetForm();
+              // Add this toast notification
+              this.toastService.showSuccess('Word Added!', `"${newWord.word}" has been successfully added to your collection.`);
+              this.loadWords(); // ✅ Refresh the list from the server
+            } else {
+              console.error('No word returned from upload:', response);
+            }
+          },
+          error: err => {
+            console.error('Error adding word via HttpClient:', err);
+            // Add error toast
+            this.toastService.showError('Add Failed', 'Failed to add the word. Please try again.');
+          }
+        });
 
-
+      } else {
+        this.wordService.addWord(word.trim(), level).subscribe({
+          next: result => {
+            const newWord = result.data?.createWord;
+            if (newWord) {
+              this.words = [...this.words, newWord];
+              this.applyFilters();
+              this.toggleAddModal();
+              this.resetForm();
+              // Add this toast notification
+              this.toastService.showSuccess('Word Added!', `"${newWord.word}" has been successfully added to your collection.`);
+              this.loadWords(); // ✅ Refresh the list from the server
+            } else {
+              console.error('No word returned from Apollo mutation:', result);
+            }
+          },
+          error: err => {
+            console.error('Error adding word via Apollo:', err);
+            // Add error toast
+            this.toastService.showError('Add Failed', 'Failed to add the word. Please try again.');
+          }
+        });
+      }
     }
   }
+
+
 
 
   resetForm() {
@@ -164,12 +304,17 @@ export class WordsComponent implements OnInit {
     if (confirm('Are you sure you want to delete this word?')) {
       this.wordService.deleteWord(id).subscribe({
         next: () => {
-          this.words = this.words.filter(word => word.id !== id);
+          this.toastService.showSuccess('Word Deleted!', 'The word has been successfully deleted.');
+          this.loadWords(); // ✅ Refresh the list from the server
         },
-        error: err => console.error('Error deleting word:', err)
+        error: err => {
+          console.error('Error deleting word:', err);
+          this.toastService.showError('Delete Failed', 'Failed to delete the word. Please try again.');
+        }
       });
     }
   }
+
 
   trackByWord(index: number, word: Word): string {
     return word.id;
@@ -181,5 +326,10 @@ export class WordsComponent implements OnInit {
 
   getWordsByLevel(level: string): number {
     return this.words.filter(word => word.level === level).length;
+  }
+
+
+  getFilteredWordsByLevel(level: string): number {
+    return this.getFilteredWords().filter(word => word.level === level).length;
   }
 }

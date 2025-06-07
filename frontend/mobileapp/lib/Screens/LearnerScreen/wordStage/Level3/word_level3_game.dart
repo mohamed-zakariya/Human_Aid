@@ -36,13 +36,15 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
     MonthData('ديسمبر', 'كانون الأول', 'شهر نهاية العام'),
   ];
 
-  bool showingLevadant = false; // Toggle between Arabic names and Levant names
+  bool showingLevadant = false;
   late List<MonthData> shuffledMonths;
   late List<MonthData?> orderedMonths;
   int score = 0;
   int currentLevel = 1;
-  int totalLevels = 3;
+  int totalLevels = 10; // Changed to 10 levels
   bool isLevelComplete = false;
+  bool isDescendingOrder = false; // New variable for order direction
+  int consecutiveFailures = 0; // Track failures for encouragement messages
   
   // Animation controllers
   late AnimationController _successAnimationController;
@@ -50,7 +52,8 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
   late Animation<double> _scaleAnimation;
   
   // Game variables
-  late int monthsToOrder; // Number of months to order in current level
+  late int monthsToOrder;
+  late List<MonthData> currentLevelMonths; // Store the correct order for the current level
 
   @override
   void initState() {
@@ -107,100 +110,151 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
     _levelCompleteController.dispose();
     super.dispose();
   }
-
   void _loadLevel() {
-    // Set number of months based on current level
-    switch (currentLevel) {
-      case 1:
-        monthsToOrder = 4; // First 4 months
-        break;
-      case 2:
-        monthsToOrder = 8; // First 8 months
-        break;
-      case 3:
-        monthsToOrder = 12; // All 12 months
-        break;
-      default:
-        monthsToOrder = 4;
-    }
-    
-    // Get subset of months based on level
-    List<MonthData> levelMonths = arabicMonths.sublist(0, monthsToOrder);
-    
-    // Shuffle months for this level
-    shuffledMonths = List.from(levelMonths)..shuffle(Random());
-    
-    // Initialize ordered months list with nulls
-    orderedMonths = List.filled(monthsToOrder, null);
-    
-    // Reset level completion status
-    isLevelComplete = false;
-    
-    // Reset animations
-    _successAnimationController.reset();
-    _levelCompleteController.reset();
-  }
+    setState(() {
+      // Determine order direction based on level
+      isDescendingOrder = currentLevel > 5;
+      
+      // Set number of months based on current level
+      if (currentLevel == 5 || currentLevel == 10) {
+        monthsToOrder = 12; // All months for levels 5 and 10
+      } else {
+        monthsToOrder = 4; // 4 months for other levels
+      }
+      
+      // Get the base list of months in correct order
+      List<MonthData> baseMonths = List.from(arabicMonths);
+      
+      // For levels with 4 months, randomly select months but maintain their relative order
+      if (monthsToOrder < 12) {
+        // Create a list of indices and shuffle it
+        List<int> indices = List.generate(12, (i) => i);
+        indices.shuffle(Random());
+        indices = indices.take(4).toList();
+        indices.sort(); // Sort indices to maintain relative order
+        
+        // Get the months at these indices
+        baseMonths = indices.map((i) => baseMonths[i]).toList();
+      }
 
-  void _checkOrderCorrectness() {
-    // Check if all months are placed
+      // For descending order (levels 6-10), reverse the months
+      if (isDescendingOrder) {
+        baseMonths = baseMonths.reversed.toList();
+      }
+      
+      // Store the correct order for this level
+      currentLevelMonths = List.from(baseMonths);
+      
+      // Create shuffled copy for display
+      shuffledMonths = List.from(baseMonths)..shuffle(Random());
+      
+      // Initialize ordered months list with nulls
+      orderedMonths = List.filled(monthsToOrder, null);
+      
+      // Reset level completion status
+      isLevelComplete = false;
+      
+      // Reset animations
+      _successAnimationController.reset();
+      _levelCompleteController.reset();
+    });
+  }  void _checkOrderCorrectness() {
     if (!orderedMonths.contains(null)) {
       bool isCorrect = true;
       
-      // Check if months are in correct order
+      // For both 4-month and 12-month levels, compare against currentLevelMonths
+      // which is already in the correct order (ascending or descending)
       for (int i = 0; i < orderedMonths.length; i++) {
-        if (orderedMonths[i]!.name != arabicMonths[i].name) {
+        if (orderedMonths[i] != currentLevelMonths[i]) {
           isCorrect = false;
           break;
         }
       }
       
       if (isCorrect) {
-        // Play success sound
-        try {
-          _successPlayer.resume();
-        } catch (e) {
-          debugPrint('Error playing success sound: $e');
-        }
-        
-        setState(() {
-          isLevelComplete = true;
-          score++;
-        });
-        
-        _levelCompleteController.forward();
-        
-        // Pronounce all months in order with delay
-        Future.delayed(const Duration(milliseconds: 500), () {
-          _pronounceOrderedMonths();
-        });
+        _handleCorrectOrder();
       } else {
-        // Play incorrect sound
-        try {
-          _incorrectPlayer.resume();
-        } catch (e) {
-          debugPrint('Error playing incorrect sound: $e');
-        }
-        
-        // Shake the months to indicate wrong order
-        _shakeMonthsForIncorrectOrder();
+        _handleIncorrectOrder();
       }
     }
   }
 
-  void _pronounceOrderedMonths() async {
-    for (int i = 0; i < orderedMonths.length; i++) {
-      await Future.delayed(const Duration(milliseconds: 800));
-      // Fix the null check error by ensuring the month isn't null before accessing it
-      if (orderedMonths[i] != null) {
-        try {
-          ttsService.speak(orderedMonths[i]!.name);
-        } catch (e) {
-          debugPrint('TTS error: $e');
-        }
-      }
+  void _handleCorrectOrder() {
+    try {
+      _successPlayer.resume();
+    } catch (e) {
+      debugPrint('Error playing success sound: $e');
     }
+    
+    setState(() {
+      isLevelComplete = true;
+      score++;
+      consecutiveFailures = 0; // Reset failures on success
+    });
+    
+    _levelCompleteController.forward();
+    
+    // Show success message and move to next level
+    _showLevelCompletionMessage(true);
   }
 
+  void _handleIncorrectOrder() {
+    try {
+      _incorrectPlayer.resume();
+    } catch (e) {
+      debugPrint('Error playing incorrect sound: $e');
+    }
+    
+    setState(() {
+      consecutiveFailures++;
+    });
+    
+    // Show encouragement message
+    _showEncouragementMessage();
+    
+    // Shake the months to indicate wrong order
+    _shakeMonthsForIncorrectOrder();
+  }
+
+  void _showEncouragementMessage() {
+    final l10n = S.of(context);
+    String message = l10n.levelFailure;
+    if (consecutiveFailures > 1) {
+      message = l10n.levelRetry;
+    }
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _showLevelCompletionMessage(bool isSuccess) {
+    final l10n = S.of(context);
+    String message;
+    
+    if (isSuccess) {
+      if (currentLevel == totalLevels) {
+        message = l10n.finalLevelSuccess;
+      } else {
+        message = l10n.levelSuccess(currentLevel);
+      }
+    } else {
+      message = l10n.levelFailure;
+    }
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+  
   void _shakeMonthsForIncorrectOrder() {
     // Reset all months back to shuffled list after a short delay
     Future.delayed(const Duration(seconds: 1), () {
@@ -246,7 +300,7 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(l10n.gameCompletionTitle, textAlign: TextAlign.center),
+        title: Text(l10n.monthsOrderTitle, textAlign: TextAlign.center),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -258,7 +312,7 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
             ),
             const SizedBox(height: 20),
             Text(
-              l10n.gameCompletionScore(score, totalLevels),
+              '${l10n.finalLevelSuccess}\n${l10n.progressPoints(score)}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -274,6 +328,7 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
                 setState(() {
                   score = 0;
                   currentLevel = 1;
+                  consecutiveFailures = 0;
                   _loadLevel();
                 });
               },
@@ -360,9 +415,9 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
       ),
       body: Column(
         children: [
-          // Header with level information
+          // Header with level information and ordering direction
           Container(
-            height: 100,
+            height: 120, // Increased height to accommodate direction text
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Color(0xFF7F73FF),
@@ -382,20 +437,38 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  l10n.wordsGame3Title, // Use as a getter, not a function
+                  l10n.monthsOrderLevelInstruction(
+                    currentLevel.toString(),
+                    monthsToOrder.toString(),
+                    isDescendingOrder ? l10n.orderDescending : l10n.orderAscending
+                  ),
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  l10n.monthsOrderHeader(monthsToOrder == 12 ? l10n.all : monthsToOrder.toString()),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      isDescendingOrder 
+                          ? Icons.arrow_downward 
+                          : Icons.arrow_upward,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      isDescendingOrder
+                          ? 'ديسمبر ← يناير'
+                          : 'يناير ← ديسمبر',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 5),
                 Row(
@@ -469,11 +542,10 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
                           ),
                           Expanded(
                             child: GridView.builder(
-                              shrinkWrap: true,  // Add shrinkWrap
                               padding: const EdgeInsets.all(16),
                               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: crossAxisCount,
-                                childAspectRatio: childAspectRatio,  // Use dynamic ratio
+                                childAspectRatio: childAspectRatio,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
                               ),
@@ -481,12 +553,11 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
                               itemBuilder: (context, index) {
                                 return DragTarget<MonthData>(
                                   builder: (context, candidateData, rejectedData) {
-                                    return AnimatedContainer(
-                                      duration: const Duration(milliseconds: 300),
+                                    return Container(
                                       decoration: BoxDecoration(
                                         color: orderedMonths[index] != null
                                             ? const Color(0xFFE6F0FF)
-                                            : const Color(0xFFEEEEFF),
+                                            : Colors.grey.withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
                                           color: orderedMonths[index] != null
@@ -494,68 +565,47 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
                                               : Colors.grey.withOpacity(0.3),
                                           width: 2,
                                         ),
-                                        boxShadow: orderedMonths[index] != null
-                                            ? [
-                                                BoxShadow(
-                                                  color: const Color(0xFF7F73FF).withOpacity(0.3),
-                                                  blurRadius: 8,
-                                                  offset: const Offset(0, 2),
-                                                )
-                                              ]
-                                            : null,
                                       ),
                                       child: orderedMonths[index] != null
                                           ? MonthCard(
                                               month: orderedMonths[index]!,
                                               showingLevadant: showingLevadant,
-                                              isDraggable: !isLevelComplete,
+                                              isDraggable: true,
                                               index: index + 1,
                                               onTap: () {
-                                                if (!isLevelComplete) {
-                                                  try {
-                                                    ttsService.speak(orderedMonths[index]!.name);
-                                                    _clickPlayer.resume();
-                                                  } catch (e) {
-                                                    debugPrint('Error with sound: $e');
-                                                  }
-                                                  setState(() {
-                                                    shuffledMonths.add(orderedMonths[index]!);
-                                                    orderedMonths[index] = null;
-                                                  });
+                                                try {
+                                                  ttsService.speak(orderedMonths[index]!.name);
+                                                } catch (e) {
+                                                  debugPrint('TTS error: $e');
                                                 }
                                               },
                                             )
                                           : Center(
                                               child: Text(
-                                                "${index + 1}",
+                                                '${index + 1}',
                                                 style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.grey.withOpacity(0.7),
+                                                  color: Colors.grey.withOpacity(0.5),
+                                                  fontSize: 24,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                     );
                                   },
-                                  onAccept: (data) {
-                                    try {
-                                      _dropPlayer.resume();
-                                    } catch (e) {
-                                      debugPrint('Error playing drop sound: $e');
-                                    }
+                                  onAccept: (MonthData month) {
                                     setState(() {
                                       // Remove from shuffled if it's there
-                                      shuffledMonths.removeWhere((m) => m.name == data.name);
+                                      shuffledMonths.remove(month);
                                       
-                                      // If there was already a month in this position, move it back to shuffled
+                                      // If there was a month here before, put it back in shuffled
                                       if (orderedMonths[index] != null) {
                                         shuffledMonths.add(orderedMonths[index]!);
                                       }
                                       
-                                      // Place the month in position
-                                      orderedMonths[index] = data;
+                                      // Place the new month here
+                                      orderedMonths[index] = month;
                                       
-                                      // Check if ordering is complete and correct
+                                      // Check if order is correct
                                       _checkOrderCorrectness();
                                     });
                                   },
@@ -570,7 +620,8 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
 
                   // Month selection area (shuffled months)
                   Container(
-                    height: 90,  // Reduced height slightly
+                    height: 90,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -578,96 +629,68 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
                           blurRadius: 10,
-                          offset: const Offset(0, 4),
+                          offset: const Offset(0, -4),
                         ),
                       ],
                     ),
                     child: isLevelComplete
                         ? Center(
-                            child: ScaleTransition(
-                              scale: _scaleAnimation,
-                              child: ElevatedButton(
-                                onPressed: _moveToNextLevel,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF7F73FF),
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                            child: ElevatedButton(
+                              onPressed: _moveToNextLevel,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF7F73FF),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
                                 ),
-                                child: Text(
-                                  currentLevel < totalLevels
-                                      ? l10n.next
-                                      : l10n.gameCompleted,
-                                  style: const TextStyle(fontSize: 18),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 12,
                                 ),
+                              ),
+                              child: Text(
+                                currentLevel < totalLevels
+                                    ? l10n.next
+                                    : l10n.done,
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
                           )
                         : ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             itemCount: shuffledMonths.length,
                             itemBuilder: (context, index) {
-                              final month = shuffledMonths[index];
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 5),
-                                child: Draggable<MonthData>(
-                                  data: month,
-                                  feedback: Material(  // Wrap in Material for proper text rendering
-                                    color: Colors.transparent,
-                                    child: Container(
-                                      width: 120,
-                                      height: 65,  // Reduced height slightly
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFE6F0FF),
-                                        borderRadius: BorderRadius.circular(15),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.2),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          showingLevadant ? month.levantName : month.name,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF7F73FF),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  childWhenDragging: Opacity(
-                                    opacity: 0.2,
-                                    child: MonthCard(
-                                      month: month,
-                                      showingLevadant: showingLevadant,
-                                      isDraggable: true,
-                                      index: null,
-                                      onTap: () {},
-                                    ),
-                                  ),
-                                  onDragStarted: () {
-                                    try {
-                                      _clickPlayer.resume();
-                                    } catch (e) {
-                                      debugPrint('Error playing click sound: $e');
-                                    }
-                                  },
+                              return Draggable<MonthData>(
+                                data: shuffledMonths[index],
+                                feedback: Material(
+                                  color: Colors.transparent,
                                   child: MonthCard(
-                                    month: month,
+                                    month: shuffledMonths[index],
+                                    showingLevadant: showingLevadant,
+                                    isDraggable: true,
+                                    index: null,
+                                    onTap: () {},
+                                  ),
+                                ),
+                                childWhenDragging: Container(
+                                  width: 120,
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  child: MonthCard(
+                                    month: shuffledMonths[index],
                                     showingLevadant: showingLevadant,
                                     isDraggable: true,
                                     index: null,
                                     onTap: () {
                                       try {
-                                        ttsService.speak(month.name);
+                                        ttsService.speak(shuffledMonths[index].name);
                                       } catch (e) {
                                         debugPrint('TTS error: $e');
                                       }

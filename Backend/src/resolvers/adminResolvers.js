@@ -27,31 +27,34 @@ export const adminResolvers = {
 
     // CREATE a word
 async createWord(_, { word, level, image }) {
-  // image is an Upload scalar (GraphQLUpload)
-  const { createReadStream } = await image;
+  try {
+    let imageUrl = null;
 
-  const stream = createReadStream();
+    if (image) {
+      const { createReadStream } = await image;
+      const stream = createReadStream();
 
-  const cloudRes = await new Promise((resolve, reject) => {
-    const streamUpload = cloudinary.uploader.upload_stream(
-      { folder: 'words' },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
-    stream.pipe(streamUpload);
-  });
+      const cloudRes = await new Promise((resolve, reject) => {
+        const streamUpload = cloudinary.uploader.upload_stream(
+          { folder: 'words' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.pipe(streamUpload);
+      });
 
-  const newWord = new Words({
-    word,
-    level,
-    imageUrl: cloudRes.secure_url,
-  });
+      imageUrl = cloudRes.secure_url;
+    }
 
-  await newWord.save();
+    const newWord = new Words({ word, level, imageUrl });
+    await newWord.save();
 
-  return newWord;
+    return newWord;
+  } catch (err) {
+    throw new Error('Failed to create word: ' + err.message);
+  }
 },
 
 async updateWord(_, { id, word, level, image }) {
@@ -121,6 +124,29 @@ async updateWord(_, { id, word, level, image }) {
       if (!deletedSentence) throw new Error('Sentence not found');
       return deletedSentence;
     },
+    async deleteParentAndChildren(_, { parentId }) {
+    const parent = await Parents.findById(parentId);
+    if (!parent) throw new Error('Parent not found');
+    // Delete all linked children
+    await Users.deleteMany({ _id: { $in: parent.linkedChildren } });
+    // Delete the parent
+    await Parents.findByIdAndDelete(parentId);
+    return true;
+  },
+    async deleteUser(_, { userId }) {
+    const learner = await Users.findById(userId);
+    if (!learner) throw new Error('Learner not found');
+    // If the learner is a child, delete the parent-child link
+    if (learner.role === 'child') {
+      await Parents.updateMany(
+        { linkedChildren: userId },
+        { $pull: { linkedChildren: userId } }
+      );
+    }
+    // Delete the learner
+    await Users.findByIdAndDelete(userId);
+    return true;
+  }
   },
 
 
@@ -152,5 +178,14 @@ async updateWord(_, { id, word, level, image }) {
       const numParents = await Parents.countDocuments();
       return { numAdults, numChildren, numParents };
     },
+
+    async getAllParentsWithChildren() {
+    // Populate linkedChildren with full user details
+    return await Parents.find().populate('linkedChildren');
+  },
+  async getAllUsers() {
+  return await Users.find({ role: { $in: ['adult', 'child'] } });
+  }
+
   }
 };

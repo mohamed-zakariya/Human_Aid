@@ -1,24 +1,33 @@
-    <div class="home-container">
-      <div class="welcome-card">
-        <h2>Welcome to School Dashboard</h2>
-        <p>This is your main dashboard where you can manage all school activities.</p>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>150</h3>
-            <p>Learners</p>
-          </div>
-          <div class="stat-card">
-            <h3>25</h3>
-            <p>Guardians</p>
-          </div>
-          <!-- <div class="stat-card">
-            <h3>12</h3>
-            <p>Classes</p>
-          </div>
-          <div class="stat-card">
-            <h3>95%</h3>
-            <p>Attendance Rate</p>
-          </div> -->
-        </div>
+<div class="home-container">
+  <div class="welcome-card">
+    <h2>Welcome to LexFix Dashboard</h2>
+    <p>This is your main dashboard where you can manage all System activities.</p>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>{{ numAdults }}</h3>
+        <p>Learners – Adults</p>
       </div>
+      <div class="stat-card">
+        <h3>{{ Guardians }}</h3>
+        <p>Guardians</p>
+      </div>
+      <div class="stat-card">
+        <h3>{{ numChildren }}</h3>
+        <p>Learners – Children</p>
+      </div>
+
+      <!-- Future stats placeholders -->
+      <!--
+      <div class="stat-card">
+        <h3>12</h3>
+        <p>Classes</p>
+      </div>
+      <div class="stat-card">
+        <h3>95%</h3>
+        <p>Attendance Rate</p>
+      </div>
+      -->
     </div>
+  </div>
+</div>
