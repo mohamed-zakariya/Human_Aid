@@ -9,3 +9,19 @@ export const GET_USER_STATS = gql`
     }
   }
 `;
+
+
+export const GET_LEVELS_FOR_EXERCISES = gql`
+  query GetLevelsForExercises {
+    getLevelsForExercises {
+      name
+      levels {
+        level_number
+        name
+        games {
+          name
+        }
+      }
+    }
+  }
+`;

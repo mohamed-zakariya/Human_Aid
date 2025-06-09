@@ -41,6 +41,8 @@ export class LearnersComponent implements OnInit {
   };
 
   learnerForm: FormGroup;
+  loading: boolean = false;
+  error: string = '';
 
   constructor(private fb: FormBuilder, private learnersService: LearnersService, private toastService: ToastService) {
     this.learnerForm = this.fb.group({
@@ -56,19 +58,7 @@ export class LearnersComponent implements OnInit {
 
   ngOnInit() {
     this.isDarkMode = document.body.classList.contains('dark-mode');
-    
-    // Fetch learners from server
-    this.learnersService.getAllUsers().subscribe({
-      next: learners => {
-        this.learners = learners;
-        this.processLearners();
-        this.applyFilters();
-      },
-      error: err => {
-        console.error('Error loading learners:', err);
-        // Optionally show an error notification here
-      }
-    });
+    this.loadLearners(); // Call the new method
   }
 
 
@@ -105,6 +95,26 @@ export class LearnersComponent implements OnInit {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedLearners = this.filteredLearners.slice(startIndex, endIndex);
+  }
+
+
+    loadLearners(): void {
+    this.loading = true;
+    this.error = '';
+    
+    this.learnersService.getAllUsers().subscribe({
+      next: (learners: Learner[]) => {
+        this.learners = learners;
+        this.processLearners();
+        this.applyFilters();
+        this.loading = false;
+      },
+      error: (error: any) => {
+        console.error('Error loading learners:', error);
+        this.error = 'Failed to load learners. Please try again.';
+        this.loading = false;
+      }
+    });
   }
 
 
@@ -264,6 +274,7 @@ export class LearnersComponent implements OnInit {
 
   deleteLearner(learner: Learner) {
     if (confirm('Are you sure you want to delete this user?')) {
+      this.loading = true;
       const userId = learner.id
       this.learnersService.deleteUser(userId).subscribe({
         next: success => {
@@ -275,6 +286,7 @@ export class LearnersComponent implements OnInit {
           } else {
             alert('User could not be deleted.');
           }
+          this.loading = false;
         },
         error: err => {
           console.error('Delete failed:', err);

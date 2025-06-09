@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobileapp/Screens/ParentScreen/learnerMembersTab/LearnerDetails.dart';
 import 'package:mobileapp/Screens/ParentScreen/LearnersProgress/ProgressDetails.dart';
+import 'package:mobileapp/Screens/ParentScreen/tips/GuardianTipsWidget.dart';
 import 'package:mobileapp/global/fns.dart';
 import 'package:mobileapp/models/parent.dart';
 
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         "subtitle": "Helpful tips for learning",
         "icon": Icons.lightbulb_outline,
         "color": const Color(0xFF6C5CE7),
-        "screen": () => const TipsScreen()
+        "screen": () => GuardianTipsWidget()
       },
       {
         "title": S.of(context).learner_members,
