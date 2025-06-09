@@ -12,6 +12,7 @@ import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/ArabicLetterTracingExercise.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart';
+import 'package:mobileapp/Screens/LearnerScreen/storyStage/StoryGeneratorForm.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level1/game1/screens/spelling_game_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/first_game/direction_level1_instruction.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/second_game/direction_game2_page.dart';
@@ -157,6 +158,7 @@ class _MyAppState extends State<MyApp> {
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
 
           '/words_game_4': (context) => const MonthsOrderGameScreen(),
+          '/story_game_1': (context) => StoryGeneratorForm(),
 
 
 

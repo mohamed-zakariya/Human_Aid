@@ -25,6 +25,10 @@ export class WordsComponent implements OnInit {
   searchTerm: string = '';
   selectedLevelFilter: string = '';
   filteredWords: Word[] = [];
+
+  loading: boolean = false;
+  error: string = '';
+  
   
 
   newWord = {
@@ -40,14 +44,19 @@ export class WordsComponent implements OnInit {
   }
 
   loadWords() {
+    this.loading = true;
+    this.error = '';
     this.wordService.getWords().subscribe({
       next: (data) => {
         this.words = data;
         this.filteredWords = [...this.words]; // Initialize filtered words
         console.log('Loaded words:', this.words.map(w => ({id: w.id, word: w.word})));
+        this.loading = false;
       },
       error: (err) => {
         console.error('Failed to fetch words:', err);
+        this.error = 'Failed to fetch words. Please try again.';
+        this.loading = false;
       }
     });
   }
@@ -184,6 +193,7 @@ export class WordsComponent implements OnInit {
       const id = this.editingWordId;
 
       if (this.selectedFile) {
+        this.loading = true;
         this.wordService.updateViaHttpClient(id, word.trim(), level, this.selectedFile).subscribe({
           next: (response: any) => {
             const updated = response?.data?.updateWord;
@@ -200,8 +210,11 @@ export class WordsComponent implements OnInit {
               // Add this toast notification
               this.toastService.showSuccess('Word Updated!', `"${updated.word}" has been successfully updated.`);
               this.loadWords(); // ✅ Refresh the list from the server
+              window.location.reload();
+              this.loading = false;
             } else {
               console.error('No word returned from update:', response);
+              this.loading = false;
             }
           },
           error: err => {
@@ -212,6 +225,7 @@ export class WordsComponent implements OnInit {
         });
 
       } else {
+        this.loading = true;
         this.wordService.updateWord(id, word.trim(), level).subscribe({
           next: updated => {
             const index = this.words.findIndex(w => w.id === updated.id);
@@ -226,11 +240,14 @@ export class WordsComponent implements OnInit {
             // Add this toast notification
             this.toastService.showSuccess('Word Updated!', `"${updated.word}" has been successfully updated.`);
             this.loadWords(); // ✅ Refresh the list from the server
+            window.location.reload();
+            this.loading = false;
           },
           error: err => {
             console.error('Error updating word:', err);
             // Add error toast
             this.toastService.showError('Update Failed', 'Failed to update the word. Please try again.');
+            this.loading = false;
           }
         });
       }
@@ -247,6 +264,7 @@ export class WordsComponent implements OnInit {
               // Add this toast notification
               this.toastService.showSuccess('Word Added!', `"${newWord.word}" has been successfully added to your collection.`);
               this.loadWords(); // ✅ Refresh the list from the server
+              window.location.reload();
             } else {
               console.error('No word returned from upload:', response);
             }
@@ -302,14 +320,17 @@ export class WordsComponent implements OnInit {
 
   deleteWord(id: string) {
     if (confirm('Are you sure you want to delete this word?')) {
+      this.loading = true;
       this.wordService.deleteWord(id).subscribe({
         next: () => {
           this.toastService.showSuccess('Word Deleted!', 'The word has been successfully deleted.');
           this.loadWords(); // ✅ Refresh the list from the server
+          this.loading = false;
         },
         error: err => {
           console.error('Error deleting word:', err);
           this.toastService.showError('Delete Failed', 'Failed to delete the word. Please try again.');
+          this.loading = false;
         }
       });
     }

@@ -10,6 +10,7 @@
     </button>
     </div>
 
+
     <!-- Statistics Cards -->
     <div class="stats-grid">
     <div class="stat-card">
@@ -29,6 +30,23 @@
         <p>Advanced</p>
     </div>
     </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+        <div class="error-icon">⚠️</div>
+        <div class="error-text">
+        <h3>Error</h3>
+        <p>{{error}}</p>
+        <button class="retry-btn" (click)="loadGuardians()">Try Again</button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading guardians...</p>
+    </div>
+
 
     <!-- Add this section right after the stats-grid and before the table-container -->
     <!-- Search and Filter Section -->

@@ -7,7 +7,7 @@ import { createUploadLink } from 'apollo-upload-client';
 
 export function createApollo() {
   const uploadLink = createUploadLink({
-    uri: 'http://localhost:5500/graphql',
+    uri: 'https://human-aid-deployment.onrender.com/graphql',
   });
 
   return {
