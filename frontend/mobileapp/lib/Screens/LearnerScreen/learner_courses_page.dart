@@ -381,6 +381,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
       '/${game.gameId}',
       arguments: {
         'gameId': game.gameId,
+        'gameName': Localizations.localeOf(context).languageCode == 'en'? game.name:game.arabicName,
         'learner': widget.learner,
       },
     );
