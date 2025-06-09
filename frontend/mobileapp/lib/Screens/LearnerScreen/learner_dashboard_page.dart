@@ -156,7 +156,7 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                                   child: ProgressCard(
                                     title: title ?? 'Unknown',
                                     description: desc ?? 'No description',
-                                    lessonCount: score,
+                                    lessonCount: score is int ? score : (score as num).toInt(),
                                     backgroundColor:
                                         colors[index % colors.length],
                                     imageUrl:
