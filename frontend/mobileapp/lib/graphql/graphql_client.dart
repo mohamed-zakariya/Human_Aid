@@ -7,6 +7,7 @@ class GraphQLService {
     final prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString("accessToken");
     print("checkkkkkkkkk $accessToken");
+    //  http://10.0.2.2:5500/graphql
 
     final HttpLink httpLink = HttpLink("https://human-aid-deployment.onrender.com/graphql");
 

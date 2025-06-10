@@ -158,7 +158,7 @@ class _MyAppState extends State<MyApp> {
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
 
           '/words_game_4': (context) => const MonthsOrderGameScreen(),
-          '/story_game_1': (context) => StoryGeneratorForm(),
+          '/story_game_1': (context) => StoryInputScreen(),
 
 
 
