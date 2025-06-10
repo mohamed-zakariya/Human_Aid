@@ -19,25 +19,6 @@ type UserStats {
   numParents: Int!
 }
 
-type Parent {
-  id: ID!
-  name: String!
-  email: String!
-  phoneNumber: String
-  nationality: String
-  birthdate: String
-  gender: String
-  linkedChildren: [User!]!
-}
-
-type User {
-  id: ID!
-  name: String!
-  username: String!
-  email: String
-  role: String!
-  # Add other fields as needed
-}
 
 type Query {
   getWords: [Word!]!

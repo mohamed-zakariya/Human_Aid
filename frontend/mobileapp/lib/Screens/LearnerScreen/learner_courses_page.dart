@@ -1,3 +1,4 @@
+// lib/screens/learner_courses_page.dart
 import 'package:flutter/material.dart';
 import 'package:mobileapp/Services/learner_home_service.dart';
 import 'package:mobileapp/models/learner.dart';
@@ -9,38 +10,57 @@ import '../../models/game.dart';
 class LearnerCoursesPage extends StatefulWidget {
   final Learner? learner;
   const LearnerCoursesPage({super.key, this.learner});
+
   @override
   State<LearnerCoursesPage> createState() => _LearnerCoursesPageState();
 }
 
-class _LearnerCoursesPageState extends State<LearnerCoursesPage> with TickerProviderStateMixin {
+class _LearnerCoursesPageState extends State<LearnerCoursesPage>
+    with TickerProviderStateMixin {
   Future<List<Map<String, dynamic>>>? _exercisesFuture;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  
-  // Enhanced vibrant color scheme
-  final Color _primaryColor = const Color(0xFF6C63FF);
+
+  // vibrant colour palette
+  final Color _primaryColor   = const Color(0xFF6C63FF);
   final Color _secondaryColor = const Color(0xFF8B5FBF);
-  final Color _accentColor = const Color(0xFF00BCD4);
-  final Color _cardColor1 = const Color(0xFF6C63FF);
-  final Color _cardColor2 = const Color(0xFF4A80F0);
-  final Color _cardColor3 = const Color(0xFF3AA8A8);
-  final Color _cardColor4 = const Color(0xFF96CEB4);
-  final Color _cardColor5 = const Color(0xFFFECA57);
+  final Color _accentColor    = const Color(0xFF00BCD4);
+  final Color _cardColor1     = const Color(0xFF6C63FF);
+  final Color _cardColor2     = const Color(0xFF4A80F0);
+  final Color _cardColor3     = const Color(0xFF3AA8A8);
+  final Color _cardColor4     = const Color(0xFF96CEB4);
+  final Color _cardColor5     = const Color(0xFFFECA57);
+
+  // --------------------------------------------------------------------------
+  // Helpers (guarantee *non-null* names)
+  // --------------------------------------------------------------------------
+  String _safeGameName(Game game, BuildContext ctx) {
+    final isArabic  = Localizations.localeOf(ctx).languageCode == 'ar';
+    final candidate = isArabic ? game.arabicName : game.name;
+    return candidate?.trim().isNotEmpty == true
+        ? candidate!
+        : (isArabic ? 'لعبة' : 'Game');
+  }
+
+  String _safeExerciseName(Map<String, dynamic> ex, BuildContext ctx) {
+    final isArabic  = Localizations.localeOf(ctx).languageCode == 'ar';
+    final candidate =
+        isArabic ? ex['arabic_name'] as String? : ex['name'] as String?;
+    return candidate?.trim().isNotEmpty == true
+        ? candidate!
+        : (isArabic ? 'تمرين' : 'Exercise');
+  }
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut)
-    );
-    
+    _animationController =
+        AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
+    _fadeAnimation =
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
     if (widget.learner?.id != null) {
-      _exercisesFuture = LearnerHomeService.fetchLearnerHomeData(widget.learner!.id!);
+      _exercisesFuture =
+          LearnerHomeService.fetchLearnerHomeData(widget.learner!.id!);
       _animationController.forward();
     }
   }
@@ -51,10 +71,13 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage> with TickerProv
     super.dispose();
   }
 
+  // --------------------------------------------------------------------------
+  // UI
+  // --------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
-    final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     if (widget.learner?.id == null) {
       return Scaffold(
         backgroundColor: Colors.white,
@@ -62,20 +85,13 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage> with TickerProv
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.person_off,
-                size: 80,
-                color: Colors.grey[400],
-              ),
+              Icon(Icons.person_off, size: 80, color: Colors.grey[400]),
               const SizedBox(height: 16),
-              Text(
-                isArabic ? 'لا يوجد متعلم' : 'No learner found',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              Text(isArabic ? 'لا يوجد متعلم' : 'No learner found',
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500)),
             ],
           ),
         ),
@@ -88,6 +104,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage> with TickerProv
         opacity: _fadeAnimation,
         child: CustomScrollView(
           slivers: [
+            // header
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 32, 20, 20),
               sliver: SliverToBoxAdapter(
@@ -105,45 +122,31 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage> with TickerProv
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: _primaryColor.withOpacity(0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
+                              color: _primaryColor.withOpacity(.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4)),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.school,
-                        color: Colors.white,
-                        size: 38,
-                      ),
+                      child:
+                          const Icon(Icons.school, color: Colors.white, size: 38),
                     ),
                     const SizedBox(width: 20),
                     Expanded(
-                      child: Text(
-                        isArabic ? 'اختر تمرين' : 'Choose Exercise',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.bold,
-                          color: _primaryColor,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
+                      child: Text(isArabic ? 'اختر تمرين' : 'Choose Exercise',
+                          style: TextStyle(
+                              fontSize: 34,
+                              fontWeight: FontWeight.bold,
+                              color: _primaryColor)),
                     ),
                   ],
                 ),
               ),
             ),
+            // body
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20), // Adjusted padding
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8), // Reduced space
-                    _buildContent(isArabic),
-                  ],
-                ),
+                child: _buildContent(isArabic),
               ),
             ),
           ],
@@ -152,151 +155,123 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage> with TickerProv
     );
   }
 
-  Widget _buildContent(bool isArabic) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _exercisesFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingState();
-        }
-        if (snapshot.hasError) {
-          return _buildErrorState(snapshot.error.toString(), isArabic);
-        }
-        final exercises = snapshot.data ?? [];
-        if (exercises.isEmpty) {
-          return _buildEmptyState(isArabic);
-        }
-        return _buildExercisesList(exercises, isArabic);
-      },
-    );
-  }
+  // --------------------------------------------------------------------------
+  // FutureBuilder wrapper
+  // --------------------------------------------------------------------------
+  Widget _buildContent(bool isArabic) => FutureBuilder<List<Map<String, dynamic>>>(
+        future: _exercisesFuture,
+        builder: (ctx, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return _buildLoadingState();
+          }
+          if (snap.hasError) {
+            return _buildErrorState(snap.error.toString(), isArabic);
+          }
+          final exercises = snap.data ?? [];
+          if (exercises.isEmpty) {
+            return _buildEmptyState(isArabic);
+          }
+          return _buildExercisesList(exercises, isArabic);
+        },
+      );
 
-  Widget _buildLoadingState() {
-    return Column(
-      children: List.generate(3, (index) => 
-        Container(
-          margin: const EdgeInsets.only(bottom: 20),
-          height: 160,
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
+  // --------------------------------------------------------------------------
+  // Loading / error / empty
+  // --------------------------------------------------------------------------
+  Widget _buildLoadingState() => Column(
+        children: List.generate(
+            3,
+            (_) => Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  height: 160,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey.withOpacity(.15),
+                          spreadRadius: 2,
+                          blurRadius: 15,
+                          offset: const Offset(0, 8)),
+                    ],
+                  ),
+                  child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 3)),
+                )),
+      );
+
+  Widget _buildErrorState(String error, bool isArabic) => Container(
+        padding: const EdgeInsets.all(40),
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.red.withOpacity(.1), Colors.red.withOpacity(.05)]),
             borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.15),
-                spreadRadius: 2,
-                blurRadius: 15,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: const Center(
-            child: CircularProgressIndicator(strokeWidth: 3),
-          ),
+            border: Border.all(color: Colors.red.withOpacity(.2), width: 2)),
+        child: Column(
+          children: [
+            Icon(Icons.error_outline, color: Colors.red[400], size: 60),
+            const SizedBox(height: 20),
+            Text(isArabic ? 'حدث خطأ' : 'Something went wrong',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red[700])),
+            const SizedBox(height: 12),
+            Text(error,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.red[600])),
+          ],
         ),
-      ),
-    );
-  }
+      );
 
-  Widget _buildErrorState(String error, bool isArabic) {
-    return Container(
-      padding: const EdgeInsets.all(40),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.red.withOpacity(0.1), Colors.red.withOpacity(0.05)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Widget _buildEmptyState(bool isArabic) => Container(
+        padding: const EdgeInsets.all(50),
+        child: Column(
+          children: [
+            Icon(Icons.quiz_outlined, size: 100, color: Colors.grey[400]),
+            const SizedBox(height: 24),
+            Text(S.of(context).noExercisesAvailable,
+                style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500)),
+          ],
         ),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.red.withOpacity(0.2), width: 2),
-      ),
-      child: Column(
-        children: [
-          Icon(Icons.error_outline, color: Colors.red[400], size: 60),
-          const SizedBox(height: 20),
-          Text(
-            isArabic ? 'حدث خطأ' : 'Something went wrong',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Colors.red[700],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            error,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.red[600],
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+      );
 
-  Widget _buildEmptyState(bool isArabic) {
-    return Container(
-      padding: const EdgeInsets.all(50),
-      child: Column(
-        children: [
-          Icon(
-            Icons.quiz_outlined,
-            size: 100,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 24),
-          Text(
-            S.of(context).noExercisesAvailable,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
+  // --------------------------------------------------------------------------
+  // Exercise list
+  // --------------------------------------------------------------------------
+  Widget _buildExercisesList(List<Map<String, dynamic>> exercises, bool isArabic) =>
+      Column(
+        children: exercises.asMap().entries.map((e) {
+          final idx = e.key;
+          final ex  = e.value;
+          return AnimatedContainer(
+            duration: Duration(milliseconds: 300 + idx * 100),
+            child: _ExerciseExpansionTile(
+              exercise:       ex,
+              learner:        widget.learner!,
+              isArabic:       isArabic,
+              primaryColor:   _primaryColor,
+              secondaryColor: _secondaryColor,
+              accentColor:    _accentColor,
+              cardColor:      _getCardColor(idx),
+              safeGameName:   _safeGameName,
+              safeExerciseName: _safeExerciseName,
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          );
+        }).toList(),
+      );
 
-  Widget _buildExercisesList(List<Map<String, dynamic>> exercises, bool isArabic) {
-    return Column(
-      children: exercises.asMap().entries.map((entry) {
-        final index = entry.key;
-        final exercise = entry.value;
-        final cardColor = _getCardColor(index);
-        
-        return AnimatedContainer(
-          duration: Duration(milliseconds: 300 + (index * 100)),
-          child: _ExerciseExpansionTile(
-            exercise: exercise,
-            learner: widget.learner!,
-            isArabic: isArabic,
-            primaryColor: _primaryColor,
-            secondaryColor: _secondaryColor,
-            accentColor: _accentColor,
-            cardColor: cardColor,
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Color _getCardColor(int index) {
-    final colors = [_cardColor1, _cardColor2, _cardColor3, _cardColor4, _cardColor5];
-    return colors[index % colors.length];
-  }
+  Color _getCardColor(int i) =>
+      [_cardColor1, _cardColor2, _cardColor3, _cardColor4, _cardColor5][i % 5];
 }
 
+// ═════════════════════════════════════════════════════════════════════════════
+// Expansion-tile widget (only the navigation bits changed)
+// ═════════════════════════════════════════════════════════════════════════════
 class _ExerciseExpansionTile extends StatefulWidget {
-  final Map<String, dynamic> exercise;
-  final Learner learner;
-  final bool isArabic;
-  final Color primaryColor;
-  final Color secondaryColor;
-  final Color accentColor;
-  final Color cardColor;
-  
   const _ExerciseExpansionTile({
     required this.exercise,
     required this.learner,
@@ -305,7 +280,19 @@ class _ExerciseExpansionTile extends StatefulWidget {
     required this.secondaryColor,
     required this.accentColor,
     required this.cardColor,
+    required this.safeGameName,
+    required this.safeExerciseName,
   });
+
+  final Map<String, dynamic>                   exercise;
+  final Learner                                learner;
+  final bool                                   isArabic;
+  final Color                                  primaryColor;
+  final Color                                  secondaryColor;
+  final Color                                  accentColor;
+  final Color                                  cardColor;
+  final String Function(Game, BuildContext)    safeGameName;
+  final String Function(Map<String, dynamic>, BuildContext) safeExerciseName;
 
   @override
   State<_ExerciseExpansionTile> createState() => _ExerciseExpansionTileState();
@@ -315,19 +302,20 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     with SingleTickerProviderStateMixin {
   bool _expanded = false;
   Future<List<Level>>? _levelsFuture;
+
   late AnimationController _expansionController;
-  late Animation<double> _rotationAnimation;
+  late Animation<double>   _rotationAnimation;
 
   @override
   void initState() {
     super.initState();
-    _expansionController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _rotationAnimation = Tween<double>(begin: 0, end: 0.5).animate(
-      CurvedAnimation(parent: _expansionController, curve: Curves.easeInOut)
-    );
+    _expansionController =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _rotationAnimation =
+        Tween<double>(begin: 0, end: .5).animate(CurvedAnimation(
+      parent: _expansionController,
+      curve: Curves.easeInOut,
+    ));
   }
 
   @override
@@ -336,54 +324,46 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     super.dispose();
   }
 
+  // Navigation helpers  ––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+  void _goToMainExercise() {
+    Navigator.pushNamed(context, '/exercise-levels', arguments: {
+      'exerciseId'        : widget.exercise['id'],
+      'exerciseName'      : widget.safeExerciseName(widget.exercise, context),
+      'exerciseArabicName': widget.exercise['arabic_name'],
+      'learner'           : widget.learner,
+    });
+  }
+
+  void _goToLevel(Level level) {
+    Navigator.pushNamed(context, '/games', arguments: {
+      'level'     : level,
+      'learner'   : widget.learner,
+      'exerciseId': widget.exercise['id'],
+    });
+  }
+
+  void _goToGame(Game game) {
+    Navigator.pushNamed(context, '/${game.gameId}', arguments: {
+      'gameId'  : game.gameId,
+      'gameName': widget.safeGameName(game, context),
+      'learner' : widget.learner,
+    });
+  }
+
+  // UI –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
   void _toggleExpanded() {
     setState(() {
       _expanded = !_expanded;
       if (_expanded) {
         _expansionController.forward();
-        if (_levelsFuture == null) {
-          _levelsFuture = LevelService.getLevelsForExercise(widget.exercise['id']);
-        }
+        _levelsFuture ??=
+            LevelService.getLevelsForExercise(widget.exercise['id']);
       } else {
         _expansionController.reverse();
       }
     });
-  }
-
-  void _goToMainExercise() {
-    Navigator.pushNamed(
-      context,
-      '/exercise-levels',
-      arguments: {
-        'exerciseId': widget.exercise['id'],
-        'exerciseName': widget.exercise['name'],
-        'exerciseArabicName': widget.exercise['arabic_name'],
-        'learner': widget.learner,
-      },
-    );
-  }
-
-  void _goToLevel(Level level) {
-    Navigator.pushNamed(
-      context,
-      '/games',
-      arguments: {
-        'level': level,
-        'learner': widget.learner,
-        'exerciseId': widget.exercise['id'],
-      },
-    );
-  }
-
-  void _goToGame(Game game) {
-    Navigator.pushNamed(
-      context,
-      '/${game.gameId}',
-      arguments: {
-        'gameId': game.gameId,
-        'learner': widget.learner,
-      },
-    );
   }
 
   @override

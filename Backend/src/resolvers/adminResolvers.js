@@ -184,7 +184,8 @@ async updateWord(_, { id, word, level, image }) {
     return await Parents.find().populate('linkedChildren');
   },
   async getAllUsers() {
-  return await Users.find();
-},
+  return await Users.find({ role: { $in: ['adult', 'child'] } });
+  }
+
   }
 };

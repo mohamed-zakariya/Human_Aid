@@ -15,7 +15,7 @@ class GraphQLService {
     );
 
     final HttpLink httpLink = HttpLink(
-      "http://10.0.2.2:5500/graphql",
+      "https://human-aid-deployment.onrender.com/graphql",
       httpClient: customIOClient, 
     );
 
