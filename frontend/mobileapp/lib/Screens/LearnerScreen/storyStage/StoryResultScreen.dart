@@ -1,5 +1,6 @@
 // screens/story_result_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
 import '../../../Services/generate_stories_service.dart';
 import '../../../Services/generate_questions_service.dart';
@@ -29,6 +30,10 @@ class _StoryResultScreenState extends State<StoryResultScreen>
   final GenerateStoriesService _storyService = GenerateStoriesService();
   final GenerateQuestionsService _questionService = GenerateQuestionsService();
 
+  // TTS related variables
+  FlutterTts flutterTts = FlutterTts();
+  bool isSpeaking = false;
+
   String? generatedStory;
   List<Question>? questions;
   bool isStoryLoading = true;
@@ -36,7 +41,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
 
   // Timer variables
   Timer? _readingTimer;
-  int _remainingSeconds = 60; // 60 seconds reading time
+  int _remainingSeconds = 60;
   bool _canAccessQuestions = false;
 
   late AnimationController _pulseController;
@@ -48,6 +53,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
   void initState() {
     super.initState();
     _setupAnimations();
+    _initTts();
     _generateStory();
   }
 
@@ -57,8 +63,10 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       vsync: this,
     )..repeat(reverse: true);
 
+    // Dynamic duration based on story length
+    int timerDuration = _getTimerDuration();
     _progressController = AnimationController(
-      duration: Duration(seconds: 60),
+      duration: Duration(seconds: timerDuration),
       vsync: this,
     );
 
@@ -79,6 +87,59 @@ class _StoryResultScreenState extends State<StoryResultScreen>
     ));
   }
 
+  int _getTimerDuration() {
+    switch (widget.length.toLowerCase()) {
+      case 'قصيرة':
+      case 'short':
+        return 30;
+      case 'متوسطة':
+      case 'medium':
+        return 45;
+      case 'طويلة':
+      case 'long':
+      default:
+        return 60;
+    }
+  }
+
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("ar-SA");
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setVolume(0.8);
+    await flutterTts.setPitch(1.0);
+
+    flutterTts.setStartHandler(() {
+      setState(() {
+        isSpeaking = true;
+      });
+    });
+
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        isSpeaking = false;
+      });
+    });
+
+    flutterTts.setErrorHandler((msg) {
+      setState(() {
+        isSpeaking = false;
+      });
+    });
+  }
+
+  Future<void> _toggleSpeech() async {
+    if (isSpeaking) {
+      await flutterTts.stop();
+      setState(() {
+        isSpeaking = false;
+      });
+    } else {
+      if (generatedStory != null && generatedStory!.isNotEmpty) {
+        await flutterTts.speak(generatedStory!);
+      }
+    }
+  }
+
   Future<void> _generateStory() async {
     try {
       final story = await _storyService.generateArabicStory(
@@ -95,9 +156,9 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       setState(() {
         generatedStory = story;
         isStoryLoading = false;
+        _remainingSeconds = _getTimerDuration();
       });
 
-      // Start reading timer and generate questions in background
       _startReadingTimer();
       _generateQuestions();
     } catch (e) {
@@ -200,39 +261,102 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                       Text(
                         "قصتك الخاصة",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey[800],
+                          fontFamily: 'OpenDyslexic',
                         ),
                       ),
                       Text(
                         "موضوع: ${widget.topic}",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           color: Colors.grey[600],
+                          fontFamily: 'OpenDyslexic',
                         ),
                       ),
                     ],
                   ),
                 ),
+                // Simple Audio Button
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF10B981), Color(0xFF059669)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IconButton(
+                    onPressed: _toggleSpeech,
+                    icon: Icon(
+                      isSpeaking ? Icons.stop : Icons.volume_up,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(width: 8),
+            if (isSpeaking)
+              Text(
+                "جاري القراءة...",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF10B981),
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'OpenDyslexic',
+                ),
+              ),
+            SizedBox(height: 24),
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Color(0xFFFFFBF0),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey[300]!, width: 1),
+              ),
+              child: SingleChildScrollView(
+                child: Text(
+                  generatedStory ?? 'لم يتم توليد القصة.',
+                  style: TextStyle(
+                    fontSize: 20,
+                    height: 2.2,
+                    color: Color(0xFF2D3748),
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'OpenDyslexic',
+                    letterSpacing: 0.8,
+                    wordSpacing: 2.5,
+                  ),
+                  textAlign: TextAlign.right,
+                  textDirection: TextDirection.rtl,
+                ),
+              ),
+            ),
+            SizedBox(height: 16),
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: Colors.blue.shade50,
+                border: Border.all(color: Colors.blue.shade200),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!),
               ),
-              child: Text(
-                generatedStory ?? 'لم يتم توليد القصة.',
-                style: TextStyle(
-                  fontSize: 16,
-                  height: 1.6,
-                  color: Colors.grey[800],
-                ),
-                textAlign: TextAlign.right,
+              child: Row(
+                children: [
+                  Icon(Icons.lightbulb, color: Colors.blue.shade600, size: 20),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      "نصيحة: اقرأ القصة ببطء وتركيز، يمكنك قراءتها أكثر من مرة أو الاستماع إليها",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.blue.shade700,
+                        fontFamily: 'OpenDyslexic',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -293,8 +417,9 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                   _canAccessQuestions ? "وقت القراءة انتهى!" : "وقت القراءة",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    fontFamily: 'OpenDyslexic',
                   ),
                 ),
                 SizedBox(height: 4),
@@ -304,7 +429,8 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                       : "اقرأ القصة بعناية - ${_formatTime(_remainingSeconds)}",
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 14,
+                    fontSize: 16,
+                    fontFamily: 'OpenDyslexic',
                   ),
                 ),
                 if (!_canAccessQuestions) ...[
@@ -389,6 +515,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                   color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
+                  fontFamily: 'OpenDyslexic',
                 ),
               ),
             ] else ...[
@@ -404,6 +531,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                   color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
+                  fontFamily: 'OpenDyslexic',
                 ),
               ),
             ],
@@ -418,6 +546,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
     _readingTimer?.cancel();
     _pulseController.dispose();
     _progressController.dispose();
+    flutterTts.stop();
     super.dispose();
   }
 
@@ -431,13 +560,17 @@ class _StoryResultScreenState extends State<StoryResultScreen>
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
+            fontFamily: 'OpenDyslexic',
           ),
         ),
         backgroundColor: Color(0xFF6366F1),
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            flutterTts.stop();
+            Navigator.pop(context);
+          },
         ),
       ),
       body: isStoryLoading
@@ -470,6 +603,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: Colors.grey[700],
+                      fontFamily: 'OpenDyslexic',
                     ),
                   ),
                   SizedBox(height: 8),
@@ -478,6 +612,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[500],
+                      fontFamily: 'OpenDyslexic',
                     ),
                   ),
                 ],

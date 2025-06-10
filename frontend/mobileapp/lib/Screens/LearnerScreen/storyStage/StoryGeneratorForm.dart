@@ -1,5 +1,9 @@
 // screens/story_input_screen.dart
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:mobileapp/global/fns.dart';
+import 'package:mobileapp/models/learner.dart';
 import 'StoryResultScreen.dart';
 
 class StoryInputScreen extends StatefulWidget {
@@ -10,15 +14,17 @@ class StoryInputScreen extends StatefulWidget {
 class _StoryInputScreenState extends State<StoryInputScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  String? age, topic, setting, length, goal, style, heroType, secondaryValues;
+  String? topic, setting, length, goal, style, heroType, secondaryValues;
 
-  final List<String> ages = ['4', '5', '6', '7', '8'];
+  // final List<String> ages = ['4', '5', '6', '7', '8'];
+  late int age = 0;
   final List<String> topics = ['الأمان', 'الصداقة', 'النظافة', 'الأمانة'];
   final List<String> settings = ['المدرسة', 'المنزل', 'الحديقة'];
-  final List<String> lengths = ['جملة قصيرة', 'قصة قصيرة', 'قصة متوسطة'];
+  final List<String> lengths = ['قصة قصيرة', 'قصة متوسطة', 'قصة طويلة'];
   final List<String> goals = ['تعليم الأخلاق', 'تعزيز القراءة', 'بناء المفردات'];
   final List<String> styles = ['واقعية', 'خيالية', 'مغامرة', 'عاطفية'];
   final List<String> heroTypes = ['ولد', 'بنت', 'مجموعة'];
+
 
   Widget _buildStyledDropdown({
     required String label,
@@ -94,6 +100,7 @@ class _StoryInputScreenState extends State<StoryInputScreen> {
   }
 
   Widget _buildOptionalSection() {
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16),
       padding: EdgeInsets.all(20),
@@ -200,11 +207,12 @@ class _StoryInputScreenState extends State<StoryInputScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
+
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => StoryResultScreen(
-            age: age!,
+            age: age.toString(),
             topic: topic!,
             setting: setting!,
             length: length!,
@@ -220,11 +228,18 @@ class _StoryInputScreenState extends State<StoryInputScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    print(args['gameName']);
+    Learner learner = args['learner'];
+    age = calculateAge(learner.birthdate);
+
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: Text(
-          "توليد قصة تعليمية",
+          args['gameName'],
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -283,13 +298,6 @@ class _StoryInputScreenState extends State<StoryInputScreen> {
               SizedBox(height: 24),
 
               // Required Fields
-              _buildStyledDropdown(
-                label: 'العمر',
-                options: ages,
-                value: age,
-                onChanged: (val) => setState(() => age = val),
-                icon: Icons.child_care,
-              ),
               _buildStyledDropdown(
                 label: 'الموضوع',
                 options: topics,
