@@ -29,18 +29,18 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
   List<CameraDescription>? _cameras;
   bool _isCameraInitialized = false;
   bool _isProcessing = false;
-  
+
   // TensorFlow Lite
   Interpreter? _interpreter;
   List<String> _labels = [];
-  
+
   // Exercise variables
   final List<String> _availableObjects = ['spoon', 'cup', 'pen', 'fork', 'plate'];
   String _currentTargetObject = '';
   int _score = 0;
   bool _objectDetected = false;
   String _detectionMessage = '';
-  
+
   // Detection parameters
   static const double CONFIDENCE_THRESHOLD = 0.5;
   static const int INPUT_SIZE = 224;
@@ -62,12 +62,12 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
           ResolutionPreset.medium,
           enableAudio: false,
         );
-        
+
         await _cameraController!.initialize();
         setState(() {
           _isCameraInitialized = true;
         });
-        
+
         // Start image stream for real-time detection
         _cameraController!.startImageStream(_processCameraImage);
       }
@@ -79,7 +79,7 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
   Future<void> _loadModel() async {
     try {
       _interpreter = await Interpreter.fromAsset('model.tflite');
-      
+
       // Load labels - you might need to adjust this based on your model
       _labels = [
         'background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
@@ -97,7 +97,7 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
         'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear',
         'hair drier', 'toothbrush'
       ];
-      
+
       print('Model loaded successfully');
     } catch (e) {
       print('Error loading model: $e');
@@ -115,20 +115,20 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
 
   void _processCameraImage(CameraImage image) async {
     if (_isProcessing || _interpreter == null) return;
-    
+
     _isProcessing = true;
-    
+
     try {
       // Convert CameraImage to input tensor
       final inputTensor = _preprocessImage(image);
-      
+
       // Run inference
       final output = List.filled(1 * _labels.length, 0.0).reshape([1, _labels.length]);
       _interpreter!.run(inputTensor, output);
-      
+
       // Process results
       _processDetectionResults(output[0]);
-      
+
     } catch (e) {
       print('Error processing image: $e');
     } finally {
@@ -139,18 +139,18 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
   Float32List _preprocessImage(CameraImage image) {
     // Convert CameraImage to RGB
     final bytes = _convertYUV420ToRGB(image);
-    
+
     // Create image from bytes
     final img.Image? rgbImage = img.decodeImage(bytes);
     if (rgbImage == null) return Float32List(INPUT_SIZE * INPUT_SIZE * 3);
-    
+
     // Resize image
     final resized = img.copyResize(rgbImage, width: INPUT_SIZE, height: INPUT_SIZE);
-    
+
     // Convert to Float32List and normalize
     final input = Float32List(INPUT_SIZE * INPUT_SIZE * 3);
     int pixelIndex = 0;
-    
+
     for (int y = 0; y < INPUT_SIZE; y++) {
       for (int x = 0; x < INPUT_SIZE; x++) {
         final pixel = resized.getPixel(x, y);
@@ -159,7 +159,7 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
         input[pixelIndex++] = pixel.b / 255.0;
       }
     }
-    
+
     return input;
   }
 
@@ -168,46 +168,46 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
     final int height = image.height;
     final int uvRowStride = image.planes[1].bytesPerRow;
     final int uvPixelStride = image.planes[1].bytesPerPixel!;
-    
+
     final Uint8List rgbBytes = Uint8List(width * height * 3);
-    
+
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         final int yIndex = y * width + x;
         final int uvIndex = uvPixelStride * (x ~/ 2) + uvRowStride * (y ~/ 2);
-        
+
         final int yValue = image.planes[0].bytes[yIndex];
         final int uValue = image.planes[1].bytes[uvIndex];
         final int vValue = image.planes[2].bytes[uvIndex];
-        
+
         // YUV to RGB conversion
         int r = (yValue + 1.402 * (vValue - 128)).round().clamp(0, 255);
         int g = (yValue - 0.344136 * (uValue - 128) - 0.714136 * (vValue - 128)).round().clamp(0, 255);
         int b = (yValue + 1.772 * (uValue - 128)).round().clamp(0, 255);
-        
+
         rgbBytes[yIndex * 3] = r;
         rgbBytes[yIndex * 3 + 1] = g;
         rgbBytes[yIndex * 3 + 2] = b;
       }
     }
-    
+
     return rgbBytes;
   }
 
   void _processDetectionResults(List<double> outputs) {
     double maxConfidence = 0.0;
     int maxIndex = 0;
-    
+
     for (int i = 0; i < outputs.length; i++) {
       if (outputs[i] > maxConfidence) {
         maxConfidence = outputs[i];
         maxIndex = i;
       }
     }
-    
+
     if (maxConfidence > CONFIDENCE_THRESHOLD) {
       final detectedLabel = _labels[maxIndex].toLowerCase();
-      
+
       // Check if detected object matches target
       if (detectedLabel == _currentTargetObject && !_objectDetected) {
         setState(() {
@@ -215,7 +215,7 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
           _score += 10;
           _detectionMessage = S.of(context).objectDetected;
         });
-        
+
         // Auto-advance to next exercise after 2 seconds
         Future.delayed(const Duration(seconds: 2), () {
           _generateNewExercise();
@@ -311,7 +311,7 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
               ],
             ),
           ),
-          
+
           // Camera Preview
           Expanded(
             child: Container(
@@ -356,7 +356,7 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
               ),
             ),
           ),
-          
+
           // Status Message
           Container(
             width: double.infinity,
@@ -372,7 +372,7 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
                 ),
               ),
               child: Text(
-                _detectionMessage.isEmpty 
+                _detectionMessage.isEmpty
                     ? localizations.objectNotFound
                     : _detectionMessage,
                 style: TextStyle(
@@ -384,7 +384,7 @@ class _ObjectDetectionExerciseScreenState extends State<ObjectDetectionExerciseS
               ),
             ),
           ),
-          
+
           // Next Exercise Button
           Padding(
             padding: const EdgeInsets.all(16),

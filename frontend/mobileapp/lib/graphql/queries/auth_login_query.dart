@@ -18,6 +18,7 @@ const String loginParentQuery = """
     parent {
       id,
       name,
+      gender,
       email,
     },
     accessToken,

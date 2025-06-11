@@ -93,6 +93,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "LearnerNavBarProfile":
             MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
         "ParentNavBarArabic": MessageLookupByLibrary.simpleMessage("العربية"),
+        "ParentNavBarChangeLanguage":
+            MessageLookupByLibrary.simpleMessage("اختر اللغة"),
         "ParentNavBarChooseLanguage":
             MessageLookupByLibrary.simpleMessage("اختر اللغة"),
         "ParentNavBarEnglish":
@@ -113,7 +115,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ParentNavBarProfile":
             MessageLookupByLibrary.simpleMessage("حساب تعريفي"),
         "ParentNavBarSettings":
-            MessageLookupByLibrary.simpleMessage("الإعدادات"),
+            MessageLookupByLibrary.simpleMessage("الاعدادات"),
         "Return": MessageLookupByLibrary.simpleMessage("العودة"),
         "accuracy": MessageLookupByLibrary.simpleMessage("الدقة"),
         "add": MessageLookupByLibrary.simpleMessage("إضافة"),

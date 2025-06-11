@@ -154,9 +154,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 width: 2,
               ),
             ),
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 28,
-              backgroundImage: AssetImage("assets/images/boy.jpeg"),
+              backgroundImage: AssetImage(
+                widget.parent!.gender == 'male'
+                    ? 'assets/images/child2.png'
+                    : 'assets/images/child1.png',
+              ),
             ),
           ),
           const SizedBox(width: 16),

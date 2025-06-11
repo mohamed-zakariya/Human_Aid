@@ -300,6 +300,16 @@ class S {
     );
   }
 
+  /// `Choose Language`
+  String get ParentNavBarChangeLanguage {
+    return Intl.message(
+      'Choose Language',
+      name: 'ParentNavBarChangeLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Settings`
   String get ParentNavBarSettings {
     return Intl.message(

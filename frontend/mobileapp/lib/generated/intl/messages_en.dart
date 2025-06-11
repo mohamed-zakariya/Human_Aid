@@ -96,6 +96,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "LearnerNavBarMenu": MessageLookupByLibrary.simpleMessage("Menu"),
         "LearnerNavBarProfile": MessageLookupByLibrary.simpleMessage("Profile"),
         "ParentNavBarArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
+        "ParentNavBarChangeLanguage":
+            MessageLookupByLibrary.simpleMessage("Choose Language"),
         "ParentNavBarChooseLanguage":
             MessageLookupByLibrary.simpleMessage("Choose Language"),
         "ParentNavBarEnglish": MessageLookupByLibrary.simpleMessage("English"),

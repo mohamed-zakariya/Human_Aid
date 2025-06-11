@@ -25,6 +25,7 @@
     "createaccountbutton": "Create Account",
     "signupbutton": "Continue",
     "ParentNavBarHome": "Home",
+    "ParentNavBarChangeLanguage": "Choose Language",
     "ParentNavBarSettings": "Settings",
     "ParentNavBarLogout": "Logout",
     "usernameRequired": "Username must be entered",

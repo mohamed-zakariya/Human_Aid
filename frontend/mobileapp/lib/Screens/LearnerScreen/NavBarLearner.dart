@@ -88,7 +88,9 @@ class NavBarLearner extends StatelessWidget {
                               backgroundColor: Colors.white,
                               child: ClipOval(
                                 child: Image.asset(
-                                  'assets/images/child2.png',
+                                  learner!.gender == 'male'
+                                      ? 'assets/images/child2.png'
+                                      : 'assets/images/child1.png',
                                   width: 65,
                                   height: 65,
                                   fit: BoxFit.cover,

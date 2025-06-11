@@ -37,6 +37,7 @@ class _NavBarParentState extends State<NavBarParent>
       vsync: this,
     );
     _animationController.forward();
+
   }
 
   @override
@@ -94,13 +95,13 @@ class _NavBarParentState extends State<NavBarParent>
                   const SizedBox(height: 24),
 
                   _buildNavItem(
-                    icon: Icons.settings_rounded,
-                    title: S.of(context).ParentNavBarSettings,
+                    icon: Icons.language,
+                    title: S.of(context).ParentNavBarChangeLanguage,
                     onTap: () {
                       Navigator.pop(context);
                       _showModernLanguageDialog(context);
                     },
-                    color: const Color(0xFF95A5A6),
+                    color: Colors.orangeAccent,
                   ),
 
                   const SizedBox(height: 12),
@@ -151,9 +152,19 @@ class _NavBarParentState extends State<NavBarParent>
                 width: 2,
               ),
             ),
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 35,
-              backgroundImage: AssetImage('assets/images/child2.png'),
+              backgroundColor: Colors.white,
+              child: ClipOval(
+                child: Image.asset(
+                  widget.parent!.gender == 'male'
+                      ? 'assets/images/child2.png'
+                      : 'assets/images/child1.png',
+                  width: 65,
+                  height: 65,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
 
