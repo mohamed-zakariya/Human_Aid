@@ -53,7 +53,7 @@ type Mutation {
     exerciseId: ID!
     levelId: ID!
     letterId: ID!
-    audioFile: Upload!
+    audioFile: String
     spokenLetter: String!
   ): ProcessedLetter!
 }

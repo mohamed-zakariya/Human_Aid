@@ -12,6 +12,16 @@ export const userTypeDefs = `#graphql
     currentStage: String
     lastActiveDate: String
 }
+type LearnerProfile {
+  name: String!
+  username: String!
+  email: String
+  nationality: String!
+  birthdate: String!
+  gender: String!
+  parentName: String
+  totalTimeSpent: Int!
+}
 type Exercise {
   id: ID!
   name: String!
@@ -107,6 +117,7 @@ type signUpAdultdResponse{
     checkUserEmailExists(email: String!): EmailCheckResponse!
     learnerHomePage(userId: ID!): [Exercise!]!
     getLevelsForExercises: [Exercise!]!
+    learnerProfile(userId: ID!): LearnerProfile!
   }
 
   extend type Mutation {

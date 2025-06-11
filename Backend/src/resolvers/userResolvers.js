@@ -1,6 +1,8 @@
 import { login, signUpAdult, signUpChild, refreshTokenUser, logout,forgotUserPassword,verifyUserOTP,resetUserPassword, deleteChild ,learnerHomePage} from "../controllers/userControllers.js"
 import Exercisesprogress from "../models/Exercisesprogress.js";
 import Exercises from "../models/Exercises.js";
+import OverallProgress from "../models/OverallProgress.js";
+import Parents from "../models/Parents.js";
 import Users from "../models/Users.js";
 export const userResolvers = {
   Query: {
@@ -36,6 +38,32 @@ export const userResolvers = {
       }
       return learnerProgress;
   },  
+      learnerProfile: async (_, { userId }) => {
+      const user = await Users.findById(userId);
+      if (!user) throw new Error("User not found");
+
+      // Get total time spent
+      const overallProgress = await OverallProgress.findOne({ user_id: userId });
+      const totalTimeSpent = overallProgress?.overall_stats?.total_time_spent || 0;
+
+      // Get parent name if user is a child
+      let parentName = null;
+      if (user.role === "child") {
+        const parent = await Parents.findOne({ linkedChildren: user._id });
+        parentName = parent ? parent.name : null;
+      }
+
+      return {
+        name: user.name,
+        username: user.username,
+        email: user.role === "adult" ? user.email : null,
+        nationality: user.nationality,
+        birthdate: user.birthdate,
+        gender: user.gender,
+        parentName,
+        totalTimeSpent,
+      };
+    },
   },
   Mutation: {
     login: async (_, { username, password }) => {

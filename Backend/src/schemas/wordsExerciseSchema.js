@@ -14,6 +14,7 @@ type Word {
   _id: ID!
   word: String!
   level: String!
+  imageUrl: String
 }
 
 type ExerciseSession {
