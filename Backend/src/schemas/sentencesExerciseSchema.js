@@ -71,7 +71,7 @@ type Mutation {
     exerciseId: ID!
     levelId: ID! # Added levelId to match the updated implementation
     sentenceId: ID! # Renamed to match the function parameter
-    audioFile: Upload! # Updated to accept an audio file
+    audioFile: String
     spokenSentence: String! # Updated to match the spoken sentence input
     timeSpent: Int # Optional time spent parameter
   ): ProcessedSentence!
