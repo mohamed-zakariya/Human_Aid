@@ -45,6 +45,9 @@ dependencies:
   pinput: ^2.2.30
   flutter_svg: ^2.0.9
   lottie: ^2.2.0
+  camera: ^0.10.5+5
+  tflite_flutter: ^0.11.0
+  image: ^4.1.3
 
 
 
@@ -79,6 +82,12 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   build_runner: ^2.4.7
   json_serializable: ^6.7.1
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon/LexFix.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -97,6 +106,7 @@ flutter:
     - assets/arcades/flags/
     - assets/images/letters/
     - assets/sounds/
+    - assets/model.tflite
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

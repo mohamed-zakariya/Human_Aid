@@ -1690,43 +1690,453 @@ class S {
     );
   }
 
-  /// `Do you want to exit the exercise?`
+  /// `هل تريد الخروج من التمرين؟`
   String get exitExerciseQuestion {
     return Intl.message(
-      'Do you want to exit the exercise?',
+      'هل تريد الخروج من التمرين؟',
       name: 'exitExerciseQuestion',
       desc: '',
       args: [],
     );
   }
 
-  /// `Your progress will be lost`
+  /// `سيتم فقدان تقدمك`
   String get progressWillBeLost {
     return Intl.message(
-      'Your progress will be lost',
+      'سيتم فقدان تقدمك',
       name: 'progressWillBeLost',
       desc: '',
       args: [],
     );
   }
 
-  /// `{seconds} seconds remaining`
+  /// `{seconds} ثواني متبقية`
   String secondsRemaining(Object seconds) {
     return Intl.message(
-      '$seconds seconds remaining',
+      '$seconds ثواني متبقية',
       name: 'secondsRemaining',
       desc: '',
       args: [seconds],
     );
   }
 
-  /// `Drag {item} to {direction} direction`
+  /// `اسحب {item} إلى اتجاه {direction}`
   String dragImageToDirection(Object item, Object direction) {
     return Intl.message(
-      'Drag $item to $direction direction',
+      'اسحب $item إلى اتجاه $direction',
       name: 'dragImageToDirection',
       desc: '',
       args: [item, direction],
+    );
+  }
+
+  /// `Helpful tips for learning`
+  String get helpful_tips {
+    return Intl.message(
+      'Helpful tips for learning',
+      name: 'helpful_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manage your learners`
+  String get manage_learners {
+    return Intl.message(
+      'Manage your learners',
+      name: 'manage_learners',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add new vocabulary`
+  String get add_vocabulary {
+    return Intl.message(
+      'Add new vocabulary',
+      name: 'add_vocabulary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Track learning progress`
+  String get track_progress {
+    return Intl.message(
+      'Track learning progress',
+      name: 'track_progress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Explore`
+  String get explore {
+    return Intl.message(
+      'Explore',
+      name: 'explore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search for activities...`
+  String get search_hint {
+    return Intl.message(
+      'Search for activities...',
+      name: 'search_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recent Activity`
+  String get recent_activity {
+    return Intl.message(
+      'Recent Activity',
+      name: 'recent_activity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Great Progress!`
+  String get great_progress {
+    return Intl.message(
+      'Great Progress!',
+      name: 'great_progress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your learners completed {count} activities today`
+  String learners_completed_activities(Object count) {
+    return Intl.message(
+      'Your learners completed $count activities today',
+      name: 'learners_completed_activities',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Today`
+  String get today {
+    return Intl.message(
+      'Today',
+      name: 'today',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tips`
+  String get tips_title {
+    return Intl.message(
+      'Tips',
+      name: 'tips_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Track Learning Progress`
+  String get track_learning_progress {
+    return Intl.message(
+      'Track Learning Progress',
+      name: 'track_learning_progress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monitor daily learning activities`
+  String get monitor_daily_activities {
+    return Intl.message(
+      'Monitor daily learning activities',
+      name: 'monitor_daily_activities',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Progress Summary`
+  String get progress_summary {
+    return Intl.message(
+      'Progress Summary',
+      name: 'progress_summary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No learning activities recorded for this day`
+  String get no_learning_activities {
+    return Intl.message(
+      'No learning activities recorded for this day',
+      name: 'no_learning_activities',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total`
+  String get stat_total {
+    return Intl.message(
+      'Total',
+      name: 'stat_total',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Correct`
+  String get stat_correct {
+    return Intl.message(
+      'Correct',
+      name: 'stat_correct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Incorrect`
+  String get stat_incorrect {
+    return Intl.message(
+      'Incorrect',
+      name: 'stat_incorrect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exercise Breakdown`
+  String get exercise_breakdown {
+    return Intl.message(
+      'Exercise Breakdown',
+      name: 'exercise_breakdown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Letters`
+  String get label_letters {
+    return Intl.message(
+      'Letters',
+      name: 'label_letters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Words`
+  String get label_words {
+    return Intl.message(
+      'Words',
+      name: 'label_words',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sentences`
+  String get label_sentences {
+    return Intl.message(
+      'Sentences',
+      name: 'label_sentences',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Games`
+  String get label_games {
+    return Intl.message(
+      'Games',
+      name: 'label_games',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Game Summary`
+  String get game_summary {
+    return Intl.message(
+      'Game Summary',
+      name: 'game_summary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `game sessions`
+  String get game_sessions {
+    return Intl.message(
+      'game sessions',
+      name: 'game_sessions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `total attempts`
+  String get total_attempts {
+    return Intl.message(
+      'total attempts',
+      name: 'total_attempts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quest Complete`
+  String get quest_complete {
+    return Intl.message(
+      'Quest Complete',
+      name: 'quest_complete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quest Pending`
+  String get quest_pending {
+    return Intl.message(
+      'Quest Pending',
+      name: 'quest_pending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Award Won`
+  String get award_won {
+    return Intl.message(
+      'Award Won',
+      name: 'award_won',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Award`
+  String get no_award {
+    return Intl.message(
+      'No Award',
+      name: 'no_award',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learner Details`
+  String get learner_details {
+    return Intl.message(
+      'Learner Details',
+      name: 'learner_details',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No learner data available.`
+  String get no_learner_data_available {
+    return Intl.message(
+      'No learner data available.',
+      name: 'no_learner_data_available',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learner Members`
+  String get ParentNavBarLearnerMembers {
+    return Intl.message(
+      'Learner Members',
+      name: 'ParentNavBarLearnerMembers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learners Progress`
+  String get ParentNavBarLearnersProgress {
+    return Intl.message(
+      'Learners Progress',
+      name: 'ParentNavBarLearnersProgress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Language`
+  String get ParentNavBarChooseLanguage {
+    return Intl.message(
+      'Choose Language',
+      name: 'ParentNavBarChooseLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get ParentNavBarEnglish {
+    return Intl.message(
+      'English',
+      name: 'ParentNavBarEnglish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Arabic`
+  String get ParentNavBarArabic {
+    return Intl.message(
+      'Arabic',
+      name: 'ParentNavBarArabic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout Confirmation`
+  String get ParentNavBarLogoutConfirmation {
+    return Intl.message(
+      'Logout Confirmation',
+      name: 'ParentNavBarLogoutConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to logout?`
+  String get ParentNavBarLogoutPrompt {
+    return Intl.message(
+      'Are you sure you want to logout?',
+      name: 'ParentNavBarLogoutPrompt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learning App v2.0`
+  String get ParentNavBarFooterVersion {
+    return Intl.message(
+      'Learning App v2.0',
+      name: 'ParentNavBarFooterVersion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile`
+  String get ParentNavBarProfile {
+    return Intl.message(
+      'Profile',
+      name: 'ParentNavBarProfile',
+      desc: '',
+      args: [],
     );
   }
 
@@ -2879,6 +3289,146 @@ class S {
       name: 'defaultUsername',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Object Detection Exercise`
+  String get appTitle {
+    return Intl.message(
+      'Object Detection Exercise',
+      name: 'appTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bring a {object}`
+  String bringObject(String object) {
+    return Intl.message(
+      'Bring a $object',
+      name: 'bringObject',
+      desc: '',
+      args: [object],
+    );
+  }
+
+  /// `Object Detection Exercise`
+  String get objectDetectionExercise {
+    return Intl.message(
+      'Object Detection Exercise',
+      name: 'objectDetectionExercise',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Point your camera at the requested object to complete the exercise`
+  String get objectDetectionHint {
+    return Intl.message(
+      'Point your camera at the requested object to complete the exercise',
+      name: 'objectDetectionHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Point your camera at the requested object to complete the exercise`
+  String get hint {
+    return Intl.message(
+      'Point your camera at the requested object to complete the exercise',
+      name: 'hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `spoon`
+  String get spoon {
+    return Intl.message(
+      'spoon',
+      name: 'spoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `cup`
+  String get cup {
+    return Intl.message(
+      'cup',
+      name: 'cup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `pen`
+  String get pen {
+    return Intl.message(
+      'pen',
+      name: 'pen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `fork`
+  String get fork {
+    return Intl.message(
+      'fork',
+      name: 'fork',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `plate`
+  String get plate {
+    return Intl.message(
+      'plate',
+      name: 'plate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Great! Object detected!`
+  String get objectDetected {
+    return Intl.message(
+      'Great! Object detected!',
+      name: 'objectDetected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Object not detected. Keep trying!`
+  String get objectNotFound {
+    return Intl.message(
+      'Object not detected. Keep trying!',
+      name: 'objectNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next Exercise`
+  String get nextExercise {
+    return Intl.message(
+      'Next Exercise',
+      name: 'nextExercise',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Score: {score}`
+  String score(int score) {
+    return Intl.message(
+      'Score: $score',
+      name: 'score',
+      desc: '',
+      args: [score],
     );
   }
 }

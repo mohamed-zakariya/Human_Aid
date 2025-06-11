@@ -1,374 +1,241 @@
 import 'package:flutter/material.dart';
 
 class GuardianTipsWidget extends StatefulWidget {
+  const GuardianTipsWidget({Key? key}) : super(key: key);
+
   @override
-  _GuardianTipsWidgetState createState() => _GuardianTipsWidgetState();
+  State<GuardianTipsWidget> createState() => _GuardianTipsWidgetState();
 }
 
-class _GuardianTipsWidgetState extends State<GuardianTipsWidget>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  int _currentStep = 0;
+class _GuardianTipsWidgetState extends State<GuardianTipsWidget> {
+  final PageController _pageController = PageController();
+  int _currentIndex = 0;
 
-  final List<GuardianTipStep> _steps = [
-    GuardianTipStep(
-      title: "Main Dashboard - Mohamed's Interface",
-      screenshot: "assets/images/dashboard_screenshot.png", // Image 1
-      highlights: [
-        TipHighlight(
-          area: const Rect.fromLTWH(50, 100, 300, 80),
-          title: "Profile Section",
-          description: "Show learner their name 'Mohamed' and profile picture at the top",
-        ),
-        TipHighlight(
-          area: Rect.fromLTWH(30, 200, 340, 50),
-          title: "Search Bar",
-          description: "Explain how to search for activities using Arabic text",
-        ),
-        TipHighlight(
-          area: Rect.fromLTWH(20, 300, 360, 200),
-          title: "Activity Categories",
-          description: "Point out the different learning categories with icons",
-        ),
-      ],
-      instructions: [
-        "Start by showing Mohamed his personalized dashboard",
-        "Point to his name and profile picture to make it personal",
-        "Explain the search functionality in Arabic",
-        "Show the different learning activities available",
-      ],
+  final List<GuardianTip> _tips = [
+    GuardianTip(
+        title: "Identifying Reading Difficulties",
+        description: "Watch for signs like slow reading pace, difficulty with word recognition, or avoidance of reading tasks.",
+        icon: Icons.visibility_outlined,
+        color: const Color(0xFF6C63FF),
+        detailedTips: [
+          "• Observe if the learner frequently loses their place while reading",
+          "• Notice if they substitute similar-looking words (like 'was' for 'saw')",
+          "• Check if they struggle to sound out unfamiliar words",
+          "• Look for signs of fatigue or frustration during reading activities"
+        ],
+        reference: "International Dyslexia Association - Reading Assessment Guidelines"
     ),
-    GuardianTipStep(
-      title: "Navigate to Courses",
-      screenshot: "assets/images/courses_navigation.png", // Bottom nav from images
-      highlights: [
-        TipHighlight(
-          area: Rect.fromLTWH(100, 700, 100, 60),
-          title: "Courses Button",
-          description: "Tap here to access all learning courses",
-        ),
-      ],
-      instructions: [
-        "Guide learner to look at the bottom of the screen",
-        "Show them the 'Courses' button in the navigation bar",
-        "Explain this is where all lessons are located",
-        "Let them tap it themselves to build confidence",
-      ],
-    ),
-    GuardianTipStep(
-      title: "Choose Exercise - Words Exercise",
-      screenshot: "assets/images/exercise_selection.png", // Image 2
-      highlights: [
-        TipHighlight(
-          area: Rect.fromLTWH(20, 150, 360, 100),
-          title: "Words Exercise Card",
-          description: "This shows the exercise name and description",
-        ),
-        TipHighlight(
-          area: Rect.fromLTWH(320, 170, 40, 40),
-          title: "Enter Button",
-          description: "Click this arrow to enter the exercise",
-        ),
-        TipHighlight(
-          area: Rect.fromLTWH(40, 180, 280, 60),
-          title: "Exercise Description",
-          description: "Explains what learner will practice - 'Try to say the word you see'",
-        ),
-      ],
-      instructions: [
-        "Point out the 'Words Exercise' title",
-        "Read the description: 'Try to say the word you see. You'll get up to 3 tries'",
-        "Show the right arrow button to enter the course",
-        "Explain they can listen to pronunciation",
-      ],
-    ),
-    GuardianTipStep(
-      title: "Understanding Levels Structure",
-      screenshot: "assets/images/levels_view.png", // Image 2 lower part
-      highlights: [
-        TipHighlight(
-          area: Rect.fromLTWH(20, 300, 360, 120),
-          title: "Level 1 Section",
-          description: "Each level is clearly numbered and organized",
-        ),
-        TipHighlight(
-          area: Rect.fromLTWH(330, 320, 30, 30),
-          title: "Faculty Icon",
-          description: "This graduation cap icon indicates educational content",
-        ),
-        TipHighlight(
-          area: Rect.fromLTWH(20, 450, 360, 120),
-          title: "Level 2 Section",
-          description: "Shows progression to next difficulty level",
-        ),
-      ],
-      instructions: [
-        "Explain that courses are divided into levels",
-        "Level 1 is for beginners, Level 2 is more advanced",
-        "Each level has its own games and practices",
-        "The levels expand to show content without changing pages",
-      ],
-    ),
-    GuardianTipStep(
-      title: "Starting Practice Activities",
-      screenshot: "assets/images/practice_buttons.png", // Image 5
-      highlights: [
-        TipHighlight(
-          area: Rect.fromLTWH(80, 380, 150, 40),
-          title: "Basic Words Button",
-          description: "Click this to start Level 1 practice",
-        ),
-        TipHighlight(
-          area: Rect.fromLTWH(80, 500, 200, 40),
-          title: "Arrow Recognition Game",
-          description: "Different practice type for Level 2",
-        ),
-      ],
-      instructions: [
-        "Show the blue practice buttons under each level",
-        "Level 1 has 'Basic Words' practice",
-        "Level 2 has 'Arrow Recognition Game'",
-        "These buttons start the actual learning exercises",
-        "Each practice type teaches different skills",
-      ],
+    GuardianTip(
+        title: "Supportive Communication Strategies",
+        description: "Use clear, patient communication and provide multiple ways to receive and express information.",
+        icon: Icons.chat_bubble_outline,
+        color: const Color(0xFFFF6B9D),
+        detailedTips: [
+          "• Break instructions into smaller, manageable steps",
+          "• Use visual aids and diagrams alongside verbal explanations",
+          "• Allow extra processing time before expecting responses",
+          "• Praise effort and progress rather than just correct answers"
+        ],
+        reference: "British Dyslexia Association - Communication Best Practices"
     ),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: _steps.length, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  // Helper method to determine if device is tablet
+  bool _isTablet(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return screenWidth >= 600; // Common tablet breakpoint
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isTablet = _isTablet(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Guardian Navigation Guide',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.blue[600],
+        elevation: 0,
+        backgroundColor: const Color(0xFF6C63FF),
         foregroundColor: Colors.white,
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.blue[100],
-          tabs: _steps.asMap().entries.map((entry) {
-            IconData stepIcon;
-            switch (entry.key) {
-              case 0:
-                stepIcon = Icons.dashboard;
-                break;
-              case 1:
-                stepIcon = Icons.menu_book;
-                break;
-              case 2:
-                stepIcon = Icons.assignment;
-                break;
-              case 3:
-                stepIcon = Icons.stairs;
-                break;
-              case 4:
-                stepIcon = Icons.play_circle;
-                break;
-              default:
-                stepIcon = Icons.circle;
-            }
-            return Tab(
+        title: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.school_outlined,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(stepIcon),
-                  Text('Step ${entry.key + 1}'),
+                  Text(
+                    'Learning Support',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    'Guardian Resources',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
                 ],
               ),
-            );
-          }).toList(),
+            ),
+          ],
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              // Show help or info dialog
+            },
+            icon: const Icon(
+              Icons.help_outline,
+              color: Colors.white,
+            ),
+            tooltip: 'Help & Information',
+          ),
+          IconButton(
+            onPressed: () {
+              // Show settings or more options
+            },
+            icon: const Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            ),
+            tooltip: 'More Options',
+          ),
+        ],
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: _steps.map((step) => _buildStepContent(step)).toList(),
-      ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Container(
+        margin: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ElevatedButton.icon(
-              onPressed: _currentStep > 0
-                  ? () {
-                setState(() {
-                  _currentStep--;
-                  _tabController.animateTo(_currentStep);
-                });
-              }
-                  : null,
-              icon: Icon(Icons.arrow_back),
-              label: Text('Previous'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[600],
-                foregroundColor: Colors.white,
+            _buildHeader(isTablet),
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                itemCount: _tips.length,
+                itemBuilder: (context, index) {
+                  return _buildTipCard(_tips[index], isTablet);
+                },
               ),
             ),
-            Text(
-              'Step ${_currentStep + 1} of ${_steps.length}',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
-              ),
-            ),
-            ElevatedButton.icon(
-              onPressed: _currentStep < _steps.length - 1
-                  ? () {
-                setState(() {
-                  _currentStep++;
-                  _tabController.animateTo(_currentStep);
-                });
-              }
-                  : null,
-              icon: Icon(Icons.arrow_forward),
-              label: Text('Next'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[600],
-                foregroundColor: Colors.white,
-              ),
-            ),
+            _buildPageIndicator(),
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStepContent(GuardianTipStep step) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildHeader(bool isTablet) {
+    return Padding(
+      padding: EdgeInsets.all(isTablet ? 24 : 20),
+      child: Row(
         children: [
-          // Step Title
           Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16),
+            width: isTablet ? 48 : 40,
+            height: isTablet ? 48 : 40,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue[100]!, Colors.purple[100]!],
-              ),
+              color: const Color(0xFFF0F0FF),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(
-              step.title,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
+            child: Icon(
+              Icons.lightbulb_outline,
+              color: const Color(0xFF6C63FF),
+              size: isTablet ? 28 : 24,
             ),
           ),
-
-          SizedBox(height: 20),
-
-          // Screenshot with Highlights
-          Container(
-            height: 500,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Guardian Tips',
+                  style: TextStyle(
+                    fontSize: isTablet ? 22 : 18,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF2D3748),
+                  ),
+                ),
+                Text(
+                  'Assess and support dyslexic learners',
+                  style: TextStyle(
+                    fontSize: isTablet ? 16 : 14,
+                    color: const Color(0xFF718096),
+                  ),
                 ),
               ],
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                children: [
-                  // App Screenshot
-                  Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.phone_android,
-                            size: 100,
-                            color: Colors.grey[400],
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            'App Screenshot',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            step.title,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[500],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Highlight Overlays
-                  ...step.highlights.map((highlight) =>
-                      _buildHighlightOverlay(highlight)
-                  ).toList(),
-                ],
+          ),
+          TextButton(
+            onPressed: () {
+              // Navigate to view all tips
+            },
+            child: Text(
+              'View All',
+              style: TextStyle(
+                color: const Color(0xFF6C63FF),
+                fontWeight: FontWeight.w500,
+                fontSize: isTablet ? 16 : 14,
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
 
-          SizedBox(height: 24),
-
-          // Highlighted Features
-          Text(
-            'Key Features to Point Out:',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
-            ),
-          ),
-
-          SizedBox(height: 12),
-
-          ...step.highlights.asMap().entries.map((entry) {
-            final highlight = entry.value;
-            return Container(
-              margin: EdgeInsets.only(bottom: 12),
-              padding: EdgeInsets.all(16),
+  Widget _buildTipCard(GuardianTip tip, bool isTablet) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: isTablet ? 24 : 20),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8), // Add some top spacing
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(isTablet ? 24 : 20),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border(
-                  left: BorderSide(
-                    color: Colors.blue[600]!,
-                    width: 4,
-                  ),
+                color: tip.color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: tip.color.withOpacity(0.2),
+                  width: 1,
                 ),
               ),
               child: Column(
@@ -377,188 +244,162 @@ class _GuardianTipsWidgetState extends State<GuardianTipsWidget>
                   Row(
                     children: [
                       Container(
-                        width: 24,
-                        height: 24,
+                        width: isTablet ? 56 : 48,
+                        height: isTablet ? 56 : 48,
                         decoration: BoxDecoration(
-                          color: Colors.blue[600],
-                          shape: BoxShape.circle,
+                          color: tip.color,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Center(
-                          child: Text(
-                            '${entry.key + 1}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
+                        child: Icon(
+                          tip.icon,
+                          color: Colors.white,
+                          size: isTablet ? 28 : 24,
                         ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
-                        child: Text(
-                          highlight.title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[800],
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tip.title,
+                              style: TextStyle(
+                                fontSize: isTablet ? 18 : 16,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF2D3748),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              tip.description,
+                              style: TextStyle(
+                                fontSize: isTablet ? 14 : 12,
+                                color: const Color(0xFF718096),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    highlight.description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[700],
+                  const SizedBox(height: 16),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(isTablet ? 20 : 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-
-          SizedBox(height: 24),
-
-          // Guardian Instructions
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.green[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.green[200]!),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.people,
-                      color: Colors.green[600],
-                      size: 24,
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      'How to Guide Your Learner:',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[800],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12),
-                ...step.instructions.asMap().entries.map((entry) {
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 8),
-                    child: Row(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 20,
-                          height: 20,
-                          margin: EdgeInsets.only(top: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.green[600],
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              '${entry.key + 1}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                        Text(
+                          'Key Points:',
+                          style: TextStyle(
+                            fontSize: isTablet ? 16 : 14,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF2D3748),
                           ),
                         ),
-                        SizedBox(width: 12),
-                        Expanded(
+                        const SizedBox(height: 8),
+                        ...tip.detailedTips.map((tipText) => Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
                           child: Text(
-                            entry.value,
+                            tipText,
                             style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey[700],
+                              fontSize: isTablet ? 14 : 12,
+                              color: const Color(0xFF4A5568),
+                              height: 1.5,
                             ),
+                          ),
+                        )),
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: EdgeInsets.all(isTablet ? 12 : 10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF7FAFC),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                size: isTablet ? 16 : 14,
+                                color: const Color(0xFF718096),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Reference: ${tip.reference}',
+                                  style: TextStyle(
+                                    fontSize: isTablet ? 12 : 10,
+                                    color: const Color(0xFF718096),
+                                    fontStyle: FontStyle.italic,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  );
-                }).toList(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHighlightOverlay(TipHighlight highlight) {
-    return Positioned(
-      left: highlight.area.left,
-      top: highlight.area.top,
-      width: highlight.area.width,
-      height: highlight.area.height,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.red,
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.red.withOpacity(0.1),
-        ),
-        child: Center(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              highlight.title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
+                  ),
+                ],
               ),
             ),
+            const SizedBox(height: 16), // Add some bottom spacing
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPageIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          _tips.length,
+              (index) => Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: _currentIndex == index ? 24 : 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: _currentIndex == index
+                  ? const Color(0xFF6C63FF)
+                  : const Color(0xFFE2E8F0),
+              borderRadius: BorderRadius.circular(4),
+            ),
           ),
         ),
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 }
 
-class GuardianTipStep {
-  final String title;
-  final String screenshot;
-  final List<TipHighlight> highlights;
-  final List<String> instructions;
-
-  GuardianTipStep({
-    required this.title,
-    required this.screenshot,
-    required this.highlights,
-    required this.instructions,
-  });
-}
-
-class TipHighlight {
-  final Rect area;
+class GuardianTip {
   final String title;
   final String description;
+  final IconData icon;
+  final Color color;
+  final List<String> detailedTips;
+  final String reference;
 
-  TipHighlight({
-    required this.area,
+  GuardianTip({
     required this.title,
     required this.description,
+    required this.icon,
+    required this.color,
+    required this.detailedTips,
+    required this.reference,
   });
 }

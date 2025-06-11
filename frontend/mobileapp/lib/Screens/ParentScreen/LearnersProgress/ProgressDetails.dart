@@ -202,7 +202,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                   const SizedBox(height: 16),
 
                   Text(
-                    "Track Learning Progress",
+                      S.of(context).track_learning_progress,
                     style: const TextStyle(
                       color: Color(0xFF2C3E50),
                       fontSize: 18,
@@ -213,7 +213,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                   const SizedBox(height: 8),
 
                   Text(
-                    "Monitor daily learning activities",
+                      S.of(context).monitor_daily_activities,
                     style: TextStyle(
                       color: const Color(0xFF7F8C8D),
                       fontSize: 14,
@@ -323,7 +323,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
           ),
           const SizedBox(height: 8),
           Text(
-            "No learning activities recorded for this day",
+              S.of(context).no_learning_activities,
             style: TextStyle(
               fontSize: 14,
               color: const Color(0xFF7F8C8D).withOpacity(0.7),
@@ -345,7 +345,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
             child: Childcard(
-              title: "Progress Summary",
+              title: S.of(context).progress_summary,
               learnerName: progress['name'] ?? "Unknown",
               username: progress['username'] ?? "Unknown",
               totalCorrect: progress["total_correct"] ?? 0,

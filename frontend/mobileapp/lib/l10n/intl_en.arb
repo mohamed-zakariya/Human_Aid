@@ -164,38 +164,78 @@
     "exerciseCompleted": "Exercise Completed",
     "finalScore": "Final Score: {score} out of {total}",
     "placeImageInDirection": "Place {item} in {direction} direction",
-    "exitExerciseQuestion": "Do you want to exit the exercise?",
-    "progressWillBeLost": "Your progress will be lost",
-    "secondsRemaining": "{seconds} seconds remaining",
-    "dragImageToDirection": "Drag {item} to {direction} direction",
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    "exitExerciseQuestion": "هل تريد الخروج من التمرين؟",
+    "progressWillBeLost": "سيتم فقدان تقدمك",
+    "secondsRemaining": "{seconds} ثواني متبقية",
+    "dragImageToDirection": "اسحب {item} إلى اتجاه {direction}",
+    "helpful_tips": "Helpful tips for learning",
+    "manage_learners": "Manage your learners",
+    "add_vocabulary": "Add new vocabulary",
+    "track_progress": "Track learning progress",
+    "explore": "Explore",
+    "search_hint": "Search for activities...",
+    "recent_activity": "Recent Activity",
+    "great_progress": "Great Progress!",
+    "learners_completed_activities": "Your learners completed {count} activities today",
+    "today": "Today",
+    "tips_title": "Tips",
+    "track_learning_progress": "Track Learning Progress",
+    "monitor_daily_activities": "Monitor daily learning activities",
+    "progress_summary": "Progress Summary",
+    "no_learning_activities": "No learning activities recorded for this day",
+    "stat_total": "Total",
+    "stat_correct": "Correct",
+    "stat_incorrect": "Incorrect",
+    "exercise_breakdown": "Exercise Breakdown",
+    "label_letters": "Letters",
+    "label_words": "Words",
+    "label_sentences": "Sentences",
+    "label_games": "Games",
+    "game_summary": "Game Summary",
+    "game_sessions": "game sessions",
+    "total_attempts": "total attempts",
+    "quest_complete": "Quest Complete",
+    "quest_pending": "Quest Pending",
+    "award_won": "Award Won",
+    "no_award": "No Award",
+    "learner_details": "Learner Details",
+    "no_learner_data_available": "No learner data available.",
+    "ParentNavBarLearnerMembers": "Learner Members",
+    "ParentNavBarLearnersProgress": "Learners Progress",
+    "ParentNavBarChooseLanguage": "Choose Language",
+    "ParentNavBarEnglish": "English",
+    "ParentNavBarArabic": "Arabic",
+    "ParentNavBarLogoutConfirmation": "Logout Confirmation",
+    "ParentNavBarLogoutPrompt": "Are you sure you want to logout?",
+    "ParentNavBarFooterVersion": "Learning App v2.0",
+    "ParentNavBarProfile": "Profile",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     "close": "Close",
     "accuracy": "accuracy",
     "title1": "Welcome to your special world\nwhere learning is fun",
@@ -374,6 +414,34 @@
     "englishLanguage": "English",
     "arabicLanguage": "العربية",
     "defaultUserName": "User",
-    "defaultUsername": "username"
+    "defaultUsername": "username",
+    "appTitle": "Object Detection Exercise",
+    "bringObject": "Bring a {object}",
+    "@bringObject": {
+        "placeholders": {
+            "object": {
+                "type": "String"
+            }
+        }
+    },
+    "objectDetectionExercise": "Object Detection Exercise",
+    "objectDetectionHint": "Point your camera at the requested object to complete the exercise",
+    "hint": "Point your camera at the requested object to complete the exercise",
+    "spoon": "spoon",
+    "cup": "cup",
+    "pen": "pen",
+    "fork": "fork",
+    "plate": "plate",
+    "objectDetected": "Great! Object detected!",
+    "objectNotFound": "Object not detected. Keep trying!",
+    "nextExercise": "Next Exercise",
+    "score": "Score: {score}",
+    "@score": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    }
 
 }

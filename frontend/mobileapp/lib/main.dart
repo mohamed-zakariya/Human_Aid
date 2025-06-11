@@ -39,6 +39,7 @@ import 'Screens/Login/otp_verification_screen.dart';
 import 'Screens/ParentScreen/ParentMain.dart';
 import 'Screens/exercises_levels_screen.dart';
 import 'Screens/level_screen.dart';
+import 'Screens/object_detection_exercise_screen.dart';
 import 'models/level.dart';
 
 
@@ -92,6 +93,14 @@ class _MyAppState extends State<MyApp> {
             return WordPronunciationScreen(
               onLocaleChange: _setLocale,
               initialLearner: args['learner'] as Learner,
+            );
+          },
+          '/words_game_4': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return ObjectDetectionExerciseScreen(
+              onLocaleChange: _setLocale,
+              learner: args['learner'] as Learner,
+              exerciseId: args['exerciseId'] as String,
             );
           },
           '/sentences_level_1': (context) {
@@ -157,7 +166,7 @@ class _MyAppState extends State<MyApp> {
           '/words_game_2': (context) => DirectionInstructionsPage(),
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
 
-          '/words_game_4': (context) => const MonthsOrderGameScreen(),
+          '/words_game_5': (context) => const MonthsOrderGameScreen(),
           '/story_game_1': (context) => StoryInputScreen(),
 
 

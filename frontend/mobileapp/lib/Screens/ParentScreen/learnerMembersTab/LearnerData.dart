@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/dailyAttempts/learner_daily_attempts.dart';
 import 'package:mobileapp/models/overall_progress.dart';
+import 'package:mobileapp/generated/l10n.dart';
 
 import '../overallLearnerProgress/LearnerProfileWidget.dart';
 
@@ -16,7 +17,6 @@ class Learnerdata extends StatefulWidget {
 }
 
 class _LearnerdataState extends State<Learnerdata> {
-
   @override
   void initState() {
     super.initState();
@@ -45,8 +45,8 @@ class _LearnerdataState extends State<Learnerdata> {
           ],
         ),
       )
-          : const Center(
-        child: Text("No learner data available."),
+          : Center(
+        child: Text(S.of(context).no_learner_data_available),
       ),
     );
   }
@@ -80,11 +80,11 @@ class _LearnerdataState extends State<Learnerdata> {
             ),
           ),
           // Title
-          const Expanded(
+          Expanded(
             child: Text(
-              "Learner Details",
+              S.of(context).learner_details,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,

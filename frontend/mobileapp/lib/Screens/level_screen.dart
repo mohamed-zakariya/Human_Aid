@@ -228,6 +228,7 @@ class _LevelScreenState extends State<LevelScreen> {
           'gameId'   : game.gameId,
           'gameName' : title,            // <- guaranteed non-null
           'learner'  : widget.learner,
+          'exerciseId' : widget.exerciseId,
         },
       );
     }
