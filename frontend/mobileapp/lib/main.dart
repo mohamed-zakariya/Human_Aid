@@ -15,6 +15,7 @@ import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart'
 import 'package:mobileapp/Screens/LearnerScreen/storyStage/Level1/StoryGeneratorForm.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level1/game1/screens/spelling_game_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/first_game/direction_level1_instruction.dart';
+import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/fourth_game/arrow_detection_game.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/second_game/direction_game2_page.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/second_game/direction_level2_instruction.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
@@ -163,11 +164,15 @@ class _MyAppState extends State<MyApp> {
           '/letters_game_3': (context) => const LetterLevel2Game(),
           '/letters_game_4': (context) => const LetterLevel2Game2(),
           '/letters_game_5': (context) => const LetterLevel3Game(),
+
+
           '/words_game_1': (context) => const SpellingGameScreen(),
           '/words_game_2': (context) => DirectionInstructionsPage(),
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
+          '/words_game_5': (context) => const ArrowDetectionGameWidget(),
+          '/words_game_6': (context) => const MonthsOrderGameScreen(),
 
-          '/words_game_5': (context) => const MonthsOrderGameScreen(),
+
           '/story_game_1': (context) => StoryInputScreen(),
           '/story_game_2': (context) => const ArabicStorySummarizeWidget(),
 
