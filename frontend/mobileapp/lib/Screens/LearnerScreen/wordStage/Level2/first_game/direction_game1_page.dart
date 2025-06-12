@@ -340,14 +340,14 @@ class _DirectionGamePageState extends State<DirectionGamePage> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.volume_up,
                           color: Colors.white,
                           size: 24,
                         ),
                         label: Text(
                           S.of(context).listenAgain(listenAttemptsRemaining),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,

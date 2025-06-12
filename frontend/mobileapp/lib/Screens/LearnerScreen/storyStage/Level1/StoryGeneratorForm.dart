@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/global/fns.dart';
 import 'package:mobileapp/models/learner.dart';
+
 import 'StoryResultScreen.dart';
 
 class StoryInputScreen extends StatefulWidget {

@@ -91,13 +91,21 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
               ],
             ),
             // Profile Avatar
-            const CircleAvatar(
+            CircleAvatar(
               radius: 24,
               backgroundColor: Colors.white,
               child: CircleAvatar(
                 radius: 22,
-                backgroundImage: NetworkImage(
-                  'https://images.pexels.com/photos/5428148/pexels-photo-5428148.jpeg',
+                backgroundColor: Colors.white,
+                child: ClipOval(
+                  child: Image.asset(
+                    widget.learner!.gender == 'male'
+                        ? 'assets/images/child2.png'
+                        : 'assets/images/child1.png',
+                    width: 65,
+                    height: 65,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),

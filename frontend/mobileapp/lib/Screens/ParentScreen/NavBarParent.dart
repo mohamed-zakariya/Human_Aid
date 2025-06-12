@@ -37,6 +37,7 @@ class _NavBarParentState extends State<NavBarParent>
       vsync: this,
     );
     _animationController.forward();
+
   }
 
   @override
@@ -64,7 +65,7 @@ class _NavBarParentState extends State<NavBarParent>
                     icon: Icons.home_rounded,
                     title: S.of(context).ParentNavBarHome,
                     onTap: () {
-                      Navigator.pop(context);
+                      // Navigator.pop(context);
                       widget.onSelectScreen(HomeScreen(parent: widget.parent!));
                     },
                     color: const Color(0xFF6C63FF),
@@ -73,22 +74,10 @@ class _NavBarParentState extends State<NavBarParent>
                   const SizedBox(height: 12),
 
                   _buildNavItem(
-                    icon: Icons.people_rounded,
-                    title: "Learner Members",
+                    icon: Icons.person,
+                    title: S.of(context).ParentNavBarProfile,
                     onTap: () {
-                      Navigator.pop(context);
-                      widget.onSelectScreen(LearnerDetails(parent: widget.parent));
-                    },
-                    color: const Color(0xFFFF6B9D),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  _buildNavItem(
-                    icon: Icons.trending_up_rounded,
-                    title: "Learners Progress",
-                    onTap: () {
-                      Navigator.pop(context);
+                      // Navigator.pop(context);
                       widget.onSelectScreen(ProgressDetails(parent: widget.parent));
                     },
                     color: const Color(0xFF4ECDC4),
@@ -106,13 +95,13 @@ class _NavBarParentState extends State<NavBarParent>
                   const SizedBox(height: 24),
 
                   _buildNavItem(
-                    icon: Icons.settings_rounded,
-                    title: S.of(context).ParentNavBarSettings,
+                    icon: Icons.language,
+                    title: S.of(context).ParentNavBarChangeLanguage,
                     onTap: () {
                       Navigator.pop(context);
                       _showModernLanguageDialog(context);
                     },
-                    color: const Color(0xFF95A5A6),
+                    color: Colors.orangeAccent,
                   ),
 
                   const SizedBox(height: 12),
@@ -163,9 +152,19 @@ class _NavBarParentState extends State<NavBarParent>
                 width: 2,
               ),
             ),
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 35,
-              backgroundImage: AssetImage('assets/images/child2.png'),
+              backgroundColor: Colors.white,
+              child: ClipOval(
+                child: Image.asset(
+                  widget.parent!.gender == 'male'
+                      ? 'assets/images/child2.png'
+                      : 'assets/images/child1.png',
+                  width: 65,
+                  height: 65,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
 
@@ -272,9 +271,9 @@ class _NavBarParentState extends State<NavBarParent>
           ),
         ),
       ),
-      child: const Text(
-        "Learning App v2.0",
-        style: TextStyle(
+      child: Text(
+        S.of(context).ParentNavBarFooterVersion,
+        style: const TextStyle(
           fontSize: 12,
           color: Color(0xFFBDC3C7),
           fontWeight: FontWeight.w500,
@@ -323,10 +322,10 @@ class _NavBarParentState extends State<NavBarParent>
                       ),
                     ),
                     const SizedBox(width: 16),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        "Choose Language",
-                        style: TextStyle(
+                        S.of(context).ParentNavBarChooseLanguage,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF2C3E50),
@@ -482,9 +481,9 @@ class _NavBarParentState extends State<NavBarParent>
 
                 const SizedBox(height: 24),
 
-                const Text(
-                  "Logout Confirmation",
-                  style: TextStyle(
+                Text(
+                  S.of(context).ParentNavBarLogoutConfirmation,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF2C3E50),
@@ -493,10 +492,10 @@ class _NavBarParentState extends State<NavBarParent>
 
                 const SizedBox(height: 12),
 
-                const Text(
-                  "Are you sure you want to logout?",
+                Text(
+                  S.of(context).ParentNavBarLogoutPrompt,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Color(0xFF7F8C8D),
                   ),
@@ -516,9 +515,9 @@ class _NavBarParentState extends State<NavBarParent>
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).cancel,
+                          style: const TextStyle(
                             color: Color(0xFF6C757D),
                             fontWeight: FontWeight.w600,
                           ),
@@ -543,9 +542,9 @@ class _NavBarParentState extends State<NavBarParent>
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          "Logout",
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).logoutButton,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),

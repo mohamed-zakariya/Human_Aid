@@ -196,7 +196,7 @@ class _ChildcardState extends State<Childcard> {
               children: [
                 Expanded(
                   child: _buildStatCard(
-                    "Total",
+                    S.of(context).stat_total,
                     stats['total'].toString(),
                     const Color(0xFF3498DB),
                     Icons.assessment,
@@ -205,7 +205,7 @@ class _ChildcardState extends State<Childcard> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildStatCard(
-                    "Correct",
+                    S.of(context).stat_correct,
                     stats['totalCorrect'].toString(),
                     const Color(0xFF27AE60),
                     Icons.check_circle_outline,
@@ -214,7 +214,7 @@ class _ChildcardState extends State<Childcard> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildStatCard(
-                    "Incorrect",
+                    S.of(context).stat_incorrect,
                     stats['totalIncorrect'].toString(),
                     const Color(0xFFE74C3C),
                     Icons.cancel_outlined,
@@ -236,7 +236,7 @@ class _ChildcardState extends State<Childcard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Exercise Breakdown",
+                    S.of(context).exercise_breakdown,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -247,10 +247,10 @@ class _ChildcardState extends State<Childcard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildExerciseChip("Letters", stats['lettersTotal']!, const Color(0xFF9B59B6)),
-                      _buildExerciseChip("Words", stats['wordsTotal']!, const Color(0xFFE67E22)),
-                      _buildExerciseChip("Sentences", stats['sentencesTotal']!, const Color(0xFF1ABC9C)),
-                      _buildExerciseChip("Games", widget.gameAttempts.length, const Color(0xFF3F51B5)),
+                      _buildExerciseChip(S.of(context).label_letters, stats['lettersTotal']!, const Color(0xFF9B59B6)),
+                      _buildExerciseChip(S.of(context).label_words, stats['wordsTotal']!, const Color(0xFFE67E22)),
+                      _buildExerciseChip(S.of(context).label_sentences, stats['sentencesTotal']!, const Color(0xFF1ABC9C)),
+                      _buildExerciseChip(S.of(context).label_games, widget.gameAttempts.length, const Color(0xFF3F51B5)),
                     ],
                   ),
                 ],
@@ -275,7 +275,7 @@ class _ChildcardState extends State<Childcard> {
                         Icon(Icons.videogame_asset, size: 16, color: const Color(0xFF3F51B5)),
                         const SizedBox(width: 8),
                         Text(
-                          "Game Summary",
+                          S.of(context).game_summary,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -286,7 +286,7 @@ class _ChildcardState extends State<Childcard> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "${widget.gameAttempts.length} game sessions • ${widget.gameAttempts.fold(0, (sum, game) => sum + game.attempts.length)} total attempts",
+                      "${widget.gameAttempts.length} ${S.of(context).game_sessions}  • ${widget.gameAttempts.fold(0, (sum, game) => sum + game.attempts.length)} ${S.of(context).total_attempts}",
                       style: TextStyle(
                         fontSize: 12,
                         color: const Color(0xFF3F51B5).withOpacity(0.8),
@@ -303,13 +303,13 @@ class _ChildcardState extends State<Childcard> {
             Row(
               children: [
                 _buildStatusChip(
-                  widget.dailyQuestCompleted ? "Quest Complete" : "Quest Pending",
+                  widget.dailyQuestCompleted ? S.of(context).quest_complete : S.of(context).quest_pending,
                   widget.dailyQuestCompleted ? const Color(0xFF3498DB) : Colors.grey,
                   widget.dailyQuestCompleted ? Icons.task_alt : Icons.schedule,
                 ),
                 const SizedBox(width: 8),
                 _buildStatusChip(
-                  widget.awardReceived ? "Award Won" : "No Award",
+                  widget.awardReceived ? S.of(context).award_won : S.of(context).no_award,
                   widget.awardReceived ? const Color(0xFFF39C12) : Colors.grey,
                   widget.awardReceived ? Icons.emoji_events : Icons.lock_outline,
                 ),

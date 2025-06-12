@@ -22,18 +22,23 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
     'هـ', 'و', 'ي'
   ];
   int currentLetterIndex = 0;
-  List<List<Offset>> strokes = <List<Offset>>[];  // Multiple strokes
-  List<Offset> currentStroke = <Offset>[];        // Current stroke being drawn
+  List<List<Offset>> strokes = <List<Offset>>[];
+  List<Offset> currentStroke = <Offset>[];
   final GlobalKey _paintKey = GlobalKey();
   final FlutterTts _flutterTts = FlutterTts();
   bool _isCorrectTracing = false;
   double _accuracy = 0.0;
   bool _isDrawing = false;
 
+  // For letter shape analysis
+  List<Offset> _letterPixels = [];
+  late Size _canvasSize;
+
   @override
   void initState() {
     super.initState();
     _initTts();
+    _canvasSize = const Size(300, 300);
   }
 
   Future<void> _initTts() async {
@@ -137,10 +142,6 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
         strokes.add(List.from(currentStroke));
         currentStroke = [];
       }
-
-      // We're not validating against any specific path, so just check
-      // if they've drawn something substantial
-      _checkDrawingProgress();
     });
   }
 
@@ -153,22 +154,134 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
     });
   }
 
-  void _checkDrawingProgress() {
-    // Simple check - if they've drawn enough strokes
-    if (strokes.isEmpty) return;
+  // Generate reference points for the current letter
+  List<Offset> _generateLetterShape(String letter, Size canvasSize) {
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
 
-    int totalPoints = 0;
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: letter,
+        style: TextStyle(
+          fontSize: canvasSize.width * 0.6,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'Amiri',
+        ),
+      ),
+      textDirection: TextDirection.rtl,
+    );
+
+    textPainter.layout(maxWidth: canvasSize.width);
+    final offset = Offset(
+      canvasSize.width / 2 - textPainter.width / 2,
+      canvasSize.height / 2 - textPainter.height / 2,
+    );
+    textPainter.paint(canvas, offset);
+
+    final picture = recorder.endRecording();
+
+    // Generate points around the letter shape
+    List<Offset> letterPoints = [];
+
+    // Create a grid and sample points around where the letter would be
+    final centerX = canvasSize.width / 2;
+    final centerY = canvasSize.height / 2;
+    final letterWidth = textPainter.width;
+    final letterHeight = textPainter.height;
+
+    // Generate points in the letter area
+    for (double x = centerX - letterWidth / 2; x <= centerX + letterWidth / 2; x += 8) {
+      for (double y = centerY - letterHeight / 2; y <= centerY + letterHeight / 2; y += 8) {
+        letterPoints.add(Offset(x, y));
+      }
+    }
+
+    return letterPoints;
+  }
+
+  // Calculate similarity between user drawing and letter shape
+  // Made more forgiving for dyslexic users
+  double _calculateLetterSimilarity() {
+    if (strokes.isEmpty) return 0.0;
+
+    final currentLetter = arabicLetters[currentLetterIndex];
+    final letterShape = _generateLetterShape(currentLetter, _canvasSize);
+
+    // Get all user drawn points
+    List<Offset> userPoints = [];
     for (var stroke in strokes) {
-      totalPoints += stroke.length;
+      userPoints.addAll(stroke);
     }
 
-    // Consider any drawing as valid - we're not checking against template
-    if (totalPoints > 20) {
-      setState(() {
-        _accuracy = 0.8; // High accuracy since we're not validating against a template
-        _isCorrectTracing = true;
-      });
+    if (userPoints.isEmpty) return 0.0;
+
+    // Calculate coverage of letter area with more generous tolerance
+    double totalCoverage = 0.0;
+    double coveredPoints = 0.0;
+
+    for (Offset letterPoint in letterShape) {
+      totalCoverage++;
+
+      // Check if any user point is close to this letter point
+      bool covered = false;
+      for (Offset userPoint in userPoints) {
+        double distance = (letterPoint - userPoint).distance;
+        if (distance < 40.0) { // Increased tolerance from 25 to 40
+          covered = true;
+          break;
+        }
+      }
+
+      if (covered) {
+        coveredPoints++;
+      }
     }
+
+    double coverageRatio = totalCoverage > 0 ? coveredPoints / totalCoverage : 0.0;
+
+    // Check if the drawing is roughly in the right area - more forgiving
+    final centerX = _canvasSize.width / 2;
+    final centerY = _canvasSize.height / 2;
+
+    double avgUserX = userPoints.map((p) => p.dx).reduce((a, b) => a + b) / userPoints.length;
+    double avgUserY = userPoints.map((p) => p.dy).reduce((a, b) => a + b) / userPoints.length;
+
+    double centerDistance = (Offset(avgUserX, avgUserY) - Offset(centerX, centerY)).distance;
+    double positionScore = centerDistance < 120 ? 1.0 : (200 - centerDistance) / 80; // More generous positioning
+    positionScore = positionScore.clamp(0.0, 1.0);
+
+    // Check for sufficient drawing complexity - lowered requirements
+    double complexityScore = 0.0;
+    if (userPoints.length > 5) { // Reduced from 10 to 5 points
+      // Calculate the spread of points
+      double minX = userPoints.map((p) => p.dx).reduce((a, b) => a < b ? a : b);
+      double maxX = userPoints.map((p) => p.dx).reduce((a, b) => a > b ? a : b);
+      double minY = userPoints.map((p) => p.dy).reduce((a, b) => a < b ? a : b);
+      double maxY = userPoints.map((p) => p.dy).reduce((a, b) => a > b ? a : b);
+
+      double width = maxX - minX;
+      double height = maxY - minY;
+
+      complexityScore = ((width + height) / (_canvasSize.width + _canvasSize.height)).clamp(0.0, 1.0);
+
+      // Give bonus points for any reasonable attempt
+      if (width > 20 || height > 20) {
+        complexityScore = (complexityScore + 0.3).clamp(0.0, 1.0);
+      }
+    }
+
+    // More generous scoring weights and bonus for effort
+    double baseScore = (coverageRatio * 0.3 + positionScore * 0.4 + complexityScore * 0.3);
+
+    // Add effort bonus - reward any substantial drawing attempt
+    double effortBonus = 0.0;
+    if (userPoints.length > 15) effortBonus += 0.15;
+    if (strokes.length > 1) effortBonus += 0.1; // Multiple strokes bonus
+
+    double finalScore = (baseScore + effortBonus).clamp(0.0, 1.0);
+
+    return finalScore;
   }
 
   Future<void> _validateTracingFeedback() async {
@@ -185,19 +298,12 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
       });
     }
 
-    // Simply check if the user has drawn something
-    int totalPoints = 0;
-    for (var stroke in strokes) {
-      totalPoints += stroke.length;
-    }
+    // Calculate accuracy based on letter similarity
+    double similarity = _calculateLetterSimilarity();
 
     setState(() {
-      // Any drawing is considered valid
-      _accuracy = totalPoints > 20 ? 0.9 : totalPoints / 22.0;
-      _accuracy = _accuracy > 1.0 ? 1.0 : _accuracy;
-
-      // Consider it correct if they drew anything substantial
-      _isCorrectTracing = totalPoints > 15;
+      _accuracy = similarity;
+      _isCorrectTracing = similarity >= 0.4; // Reduced from 0.6 to 0.4 (40% instead of 60%)
     });
 
     if (_isCorrectTracing) {
@@ -311,8 +417,29 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(S.of(context).tryAgain3),
-        content: const Text("Please draw something to continue."),
+        title: Row(
+          children: [
+            const Icon(Icons.close_rounded, color: Colors.red),
+            const SizedBox(width: 8),
+            Text(S.of(context).tryAgain3),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Your tracing doesn't match the letter well enough. Try to draw the letter '${arabicLetters[currentLetterIndex]}' more accurately."),
+            const SizedBox(height: 16),
+            if (_accuracy > 0) ...[
+              LinearProgressIndicator(
+                value: _accuracy,
+                backgroundColor: Colors.grey[200],
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
+              ),
+              const SizedBox(height: 8),
+              Text("${(_accuracy * 100).toStringAsFixed(0)}% accuracy (need 40%+)"),
+            ],
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () {
@@ -331,9 +458,7 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
 
   @override
   Widget build(BuildContext context) {
-
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
 
     String currentLetter = arabicLetters[currentLetterIndex];
     return Scaffold(
@@ -460,13 +585,12 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
                             onPanUpdate: _onPanUpdate,
                             onPanEnd: _onPanEnd,
                             child: CustomPaint(
-                              painter: FreeDrawingPainter(
+                              painter: AccurateTracingPainter(
                                 letter: currentLetter,
                                 strokes: strokes,
                                 currentStroke: currentStroke,
                                 showGuideLines: true,
                               ),
-                              // Make sure the painter fills the entire area
                               size: const Size(300, 300),
                             ),
                           ),
@@ -488,12 +612,14 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
                     S.of(context).strokeCount(strokes.length),
                     style: TextStyle(color: Colors.grey[700]),
                   ),
-                  Text(
-                    S.of(context).pointCount(
-                        strokes.fold(0, (sum, stroke) => sum + stroke.length) + currentStroke.length
+                  if (_accuracy > 0)
+                    Text(
+                      "Accuracy: ${(_accuracy * 100).toStringAsFixed(1)}%",
+                      style: TextStyle(
+                        color: _accuracy >= 0.6 ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
                 ],
               ),
             ),
@@ -541,14 +667,14 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
   }
 }
 
-// Free drawing painter that doesn't enforce tracing along a specific path
-class FreeDrawingPainter extends CustomPainter {
+// Improved painter with better letter validation
+class AccurateTracingPainter extends CustomPainter {
   final String letter;
   final List<List<Offset>> strokes;
   final List<Offset> currentStroke;
   final bool showGuideLines;
 
-  FreeDrawingPainter({
+  AccurateTracingPainter({
     required this.letter,
     required this.strokes,
     required this.currentStroke,
@@ -568,24 +694,26 @@ class FreeDrawingPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.0;
 
-      // Horizontal lines
-      for (double y = 0; y < size.height; y += size.height / 6) {
-        canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
-      }
-
-      // Vertical lines
-      for (double x = 0; x < size.width; x += size.width / 6) {
-        canvas.drawLine(Offset(x, 0), Offset(x, size.height), gridPaint);
-      }
+      // Center guidelines
+      canvas.drawLine(
+        Offset(size.width / 2, 0),
+        Offset(size.width / 2, size.height),
+        gridPaint,
+      );
+      canvas.drawLine(
+        Offset(0, size.height / 2),
+        Offset(size.width, size.height / 2),
+        gridPaint,
+      );
     }
 
-    // Draw the letter as a watermark in the background
+    // Draw the letter as a light watermark in the background
     final textPainter = TextPainter(
       text: TextSpan(
         text: letter,
         style: TextStyle(
           fontSize: size.width * 0.6,
-          color: Colors.grey.withOpacity(0.2),  // Make it more faded
+          color: Colors.grey.withOpacity(0.15),
           fontWeight: FontWeight.bold,
           fontFamily: 'Amiri',
         ),
@@ -638,7 +766,7 @@ class FreeDrawingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(FreeDrawingPainter oldDelegate) {
+  bool shouldRepaint(AccurateTracingPainter oldDelegate) {
     return oldDelegate.letter != letter ||
         oldDelegate.strokes != strokes ||
         oldDelegate.currentStroke != currentStroke;

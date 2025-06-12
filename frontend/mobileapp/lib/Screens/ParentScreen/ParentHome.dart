@@ -55,28 +55,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final List<Map<String, dynamic>> categoryItems = [
       {
         "title": S.of(context).tips,
-        "subtitle": "Helpful tips for learning",
+        "subtitle": S.of(context).helpful_tips,
         "icon": Icons.lightbulb_outline,
         "color": const Color(0xFF6C5CE7),
-        "screen": () => GuardianTipsWidget()
+        "screen": () => const GuardianTipsWidget()
       },
       {
         "title": S.of(context).learner_members,
-        "subtitle": "Manage your learners",
+        "subtitle": S.of(context).manage_learners,
         "icon": Icons.group_outlined,
         "color": const Color(0xFFE84393),
         "screen": () => LearnerDetails(parent: parent)
       },
       {
         "title": S.of(context).add_word,
-        "subtitle": "Add new vocabulary",
+        "subtitle": S.of(context).add_vocabulary,
         "icon": Icons.add_circle_outline,
         "color": const Color(0xFF00B894),
         "screen": () => const AddWordScreen()
       },
       {
         "title": S.of(context).learner_progress,
-        "subtitle": "Track learning progress",
+        "subtitle": S.of(context).track_progress,
         "icon": Icons.trending_up_outlined,
         "color": const Color(0xFF00CEC9),
         "screen": () => ProgressDetails(parent: parent)
@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 const SizedBox(height: 32),
 
                 // Recent Activity Section (Optional)
-                _buildSectionTitle("Recent Activity"),
+                _buildSectionTitle(S.of(context).recent_activity),
 
                 const SizedBox(height: 16),
 
@@ -154,9 +154,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 width: 2,
               ),
             ),
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 28,
-              backgroundImage: AssetImage("assets/images/boy.jpeg"),
+              backgroundImage: AssetImage(
+                widget.parent!.gender == 'male'
+                    ? 'assets/images/child2.png'
+                    : 'assets/images/child1.png',
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -230,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
       child: TextField(
         decoration: InputDecoration(
-          hintText: "Search for activities...",
+          hintText: S.of(context).search_hint,
           hintStyle: TextStyle(
             color: Colors.grey[500],
             fontSize: 16,
@@ -376,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: Row(
                 children: [
                   Text(
-                    "Explore",
+                    S.of(context).explore,
                     style: TextStyle(
                       color: item['color'],
                       fontSize: 12,
@@ -441,8 +445,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Great Progress!",
+                    Text(
+                    S.of(context).great_progress,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -450,7 +454,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       ),
                     ),
                     Text(
-                      "Your learners completed 5 activities today",
+                    S.of(context).learners_completed_activities(5),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -460,7 +464,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
               Text(
-                "Today",
+                S.of(context).today,
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[500],
@@ -479,14 +483,14 @@ class TipsScreen extends StatelessWidget {
   const TipsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => _buildScreen(context, "Tips");
+  Widget build(BuildContext context) => _buildScreen(context, S.of(context).tips_title);
 }
 
 class AddWordScreen extends StatelessWidget {
   const AddWordScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => _buildScreen(context, "Add Word");
+  Widget build(BuildContext context) => _buildScreen(context, S.of(context).add_word);
 }
 
 Widget _buildScreen(BuildContext context, String title) {

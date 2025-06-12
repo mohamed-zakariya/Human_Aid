@@ -12,9 +12,10 @@ import 'package:mobileapp/Screens/LearnerScreen/letterStage/Level3/letter_level3
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/ArabicLetterTracingExercise.dart';
 import 'package:mobileapp/Screens/LearnerScreen/letterStage/level1/letter_level1.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/test_selector.dart';
-import 'package:mobileapp/Screens/LearnerScreen/storyStage/StoryGeneratorForm.dart';
+import 'package:mobileapp/Screens/LearnerScreen/storyStage/Level1/StoryGeneratorForm.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level1/game1/screens/spelling_game_screen.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/first_game/direction_level1_instruction.dart';
+import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/fourth_game/arrow_detection_game.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/second_game/direction_game2_page.dart';
 import 'package:mobileapp/Screens/LearnerScreen/wordStage/Level2/second_game/direction_level2_instruction.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentHome.dart';
@@ -29,6 +30,7 @@ import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/parent.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/quizapp.dart';
 
+import 'Screens/LearnerScreen/storyStage/Level2/story_summarize.dart';
 import 'Screens/LearnerScreen/wordStage/Level2/first_game/direction_game1_page.dart';
 import 'Screens/LearnerScreen/wordStage/Level3/word_level3_game.dart';
 import 'Screens/Login/change_password_screen.dart';
@@ -39,6 +41,7 @@ import 'Screens/Login/otp_verification_screen.dart';
 import 'Screens/ParentScreen/ParentMain.dart';
 import 'Screens/exercises_levels_screen.dart';
 import 'Screens/level_screen.dart';
+import 'Screens/object_detection_exercise_screen.dart';
 import 'models/level.dart';
 
 
@@ -92,6 +95,14 @@ class _MyAppState extends State<MyApp> {
             return WordPronunciationScreen(
               onLocaleChange: _setLocale,
               initialLearner: args['learner'] as Learner,
+            );
+          },
+          '/words_game_4': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return ObjectDetectionExerciseScreen(
+              onLocaleChange: _setLocale,
+              learner: args['learner'] as Learner,
+              exerciseId: args['exerciseId'] as String,
             );
           },
           '/sentences_level_1': (context) {
@@ -153,13 +164,17 @@ class _MyAppState extends State<MyApp> {
           '/letters_game_3': (context) => const LetterLevel2Game(),
           '/letters_game_4': (context) => const LetterLevel2Game2(),
           '/letters_game_5': (context) => const LetterLevel3Game(),
+
+
           '/words_game_1': (context) => const SpellingGameScreen(),
           '/words_game_2': (context) => DirectionInstructionsPage(),
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
+          '/words_game_5': (context) => const ArrowDetectionGameWidget(),
+          '/words_game_6': (context) => const MonthsOrderGameScreen(),
 
-          '/words_game_4': (context) => const MonthsOrderGameScreen(),
+
           '/story_game_1': (context) => StoryInputScreen(),
-
+          '/story_game_2': (context) => const ArabicStorySummarizeWidget(),
 
 
         },

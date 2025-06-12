@@ -1,6 +1,7 @@
 // screens/story_questions_screen.dart
 import 'package:flutter/material.dart';
-import '../../../Services/generate_questions_service.dart';
+
+import '../../../../Services/generate_questions_service.dart';
 
 class StoryQuestionsScreen extends StatefulWidget {
   final String story;

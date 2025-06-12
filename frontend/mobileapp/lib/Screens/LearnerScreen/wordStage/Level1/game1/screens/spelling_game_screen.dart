@@ -722,24 +722,44 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
                   const SizedBox(height: 24),
 
                   // Letter slots
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: List.generate(word.length, (index) {
-                      return LetterSlot(
-                        letter: selectedLetters[index],
-                        onAccept: (data) {
-                          setState(() {
-                            selectedLetters[index] = data;
-                            if (!selectedLetters.contains(null)) _checkSpelling();
-                          });
-                        },
-                      );
-                    }).reversed.toList(),
-                  ),
+                  // In your SpellingGameScreen build method, replace the letter slots section with this:
 
-                  const SizedBox(height: 30),
+// Letter slots - Always RTL direction like Arabic
+                Localizations.localeOf(context).languageCode == 'en'
+                    ? Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: List.generate(word.length, (index) {
+                    return LetterSlot(
+                      letter: selectedLetters[index],
+                      onAccept: (data) {
+                        setState(() {
+                          selectedLetters[index] = data;
+                          if (!selectedLetters.contains(null)) _checkSpelling();
+                        });
+                      },
+                    );
+                  }).reversed.toList(), // Reversed for RTL (Arabic, Hebrew, etc.)
+                )
+                    : Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: List.generate(word.length, (index) {
+                    return LetterSlot(
+                      letter: selectedLetters[index],
+                      onAccept: (data) {
+                        setState(() {
+                          selectedLetters[index] = data;
+                          if (!selectedLetters.contains(null)) _checkSpelling();
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+
+                const SizedBox(height: 30),
 
                   // Letter tiles
                   Wrap(

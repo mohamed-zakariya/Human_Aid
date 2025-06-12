@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 
 class GenerateStoriesService {
-  final String openRouterApiKey = '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';
+  final String openRouterApiKey = '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';
   final Random _random = Random();
 
   // Creative Arabic names pools

@@ -25,7 +25,8 @@
     "createaccountbutton": "إنشاء الحساب",
     "signupbutton": "استمرار",
     "ParentNavBarHome": "القائمة",
-    "ParentNavBarSettings": "الإعدادات",
+    "ParentNavBarChangeLanguage": "اختر اللغة",
+    "ParentNavBarSettings": "الاعدادات",
     "ParentNavBarLogout": "تسجيل الخروج",
     "usernameRequired": "يجب إدخال اسم المستخدم",
     "usernameShort": "يجب أن يكون اسم المستخدم على الأقل 3 أحرف",
@@ -168,18 +169,69 @@
     "progressWillBeLost": "سيتم فقدان تقدمك",
     "secondsRemaining": "{seconds} ثواني متبقية",
     "dragImageToDirection": "اسحب {item} إلى اتجاه {direction}",
+    "helpful_tips": "نصائح مفيدة للتعلم",
+    "manage_learners": "إدارة المتعلمين",
+    "add_vocabulary": "إضافة مفردات جديدة",
+    "track_progress": "تتبع التقدم في التعلم",
+    "explore": "استكشاف",
+    "search_hint": "ابحث عن الأنشطة...",
+    "recent_activity": "النشاطات الأخيرة",
+    "great_progress": "تقدم رائع!",
+    "learners_completed_activities": "أكمل متعلموك {count} نشاطًا اليوم",
+    "today": "اليوم",
+    "tips_title": "نصائح",
+    "track_learning_progress": "تتبع تقدم التعلم",
+    "monitor_daily_activities": "راقب الأنشطة التعليمية اليومية",
+    "progress_summary": "ملخص التقدم",
+    "no_learning_activities": "لم يتم تسجيل أي نشاط تعليمي لهذا اليوم",
+    "stat_total": "الإجمالي",
+    "stat_correct": "صحيح",
+    "stat_incorrect": "خاطئ",
+    "exercise_breakdown": "تفصيل التمارين",
+    "label_letters": "الحروف",
+    "label_words": "الكلمات",
+    "label_sentences": "الجمل",
+    "label_games": "الألعاب",
+    "game_summary": "ملخص الألعاب",
+    "game_sessions": "جلسات الألعاب",
+    "total_attempts": "إجمالي المحاولات",
+    "quest_complete": "المهمة مكتملة",
+    "quest_pending": "المهمة قيد الانتظار",
+    "award_won": "تم الفوز بالجائزة",
+    "no_award": "لا توجد جائزة",
+    "learner_details": "تفاصيل المتعلم",
+    "no_learner_data_available": "لا توجد بيانات متاحة للمتعلم.",
+    "ParentNavBarLearnerMembers": "أعضاء المتعلمين",
+    "ParentNavBarLearnersProgress": "تقدم المتعلمين",
+    "ParentNavBarChooseLanguage": "اختر اللغة",
+    "ParentNavBarEnglish": "الإنجليزية",
+    "ParentNavBarArabic": "العربية",
+    "ParentNavBarLogoutConfirmation": "تأكيد تسجيل الخروج",
+    "ParentNavBarLogoutPrompt": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+    "ParentNavBarFooterVersion": "تطبيق التعلم الإصدار 2.0",
+    "ParentNavBarProfile": "حساب تعريفي",
+    "improvementSuggestions": "اقتراحات للتحسين",
+    "ok": "حسناً",
+    "previous": "السابقة",
+    "storyCounter": "القصة {current} من {total}",
+    "story": "القصة",
+    "writeSummaryHere": "اكتب ملخصك هنا",
+    "summaryHint": "اكتب ملخصاً للقصة التي قرأتها...",
+    "checking": "جاري الفحص...",
+    "checkSummary": "فحص الملخص",
+    "storySummarizerGame": "لعبة تلخيص القصص",
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
     
     
     
@@ -366,5 +418,33 @@
     "englishLanguage": "الإنجليزية",
     "arabicLanguage": "العربية",
     "defaultUserName": "مستخدم",
-    "defaultUsername": "اسم المستخدم"
+    "defaultUsername": "اسم المستخدم",
+        "appTitle": "تمرين كشف الأشياء",
+    "bringObject": "أحضر {object}",
+    "@bringObject": {
+        "placeholders": {
+            "object": {
+                "type": "String"
+            }
+        }
+    },
+    "objectDetectionExercise": "تمرين كشف الأشياء",
+    "objectDetectionHint": "وجه الكاميرا نحو الشيء المطلوب لإكمال التمرين",
+    "hint": "وجه الكاميرا نحو الشيء المطلوب لإكمال التمرين",
+    "spoon": "ملعقة",
+    "cup": "كوب",
+    "pen": "قلم",
+    "fork": "شوكة",
+    "plate": "طبق",
+    "objectDetected": "رائع! تم اكتشاف الشيء!",
+    "objectNotFound": "لم يتم اكتشاف الشيء. استمر في المحاولة!",
+    "nextExercise": "التمرين التالي",
+    "score": "النتيجة: {score}",
+    "@score": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    }
 }
