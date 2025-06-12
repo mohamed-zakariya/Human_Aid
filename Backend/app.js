@@ -22,11 +22,14 @@ const app = express();
 
 
 
-// Allow requests from localhost:4200
 app.use(cors({
-  origin: 'http://localhost:4200',
-  credentials: true, // If you're sending cookies or using authentication headers
+  origin: [
+    'http://localhost:4200',
+    'https://mohamed-zakariya.github.io',
+  ],
+  credentials: true,
 }));
+
 
 
 app.use(express.json());
