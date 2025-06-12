@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
-import '../../../Services/generate_stories_service.dart';
-import '../../../Services/generate_questions_service.dart';
+
+import '../../../../Services/generate_questions_service.dart';
+import '../../../../Services/generate_stories_service.dart';
 import 'StoryQuestionsScreen.dart';
 
 class StoryResultScreen extends StatefulWidget {

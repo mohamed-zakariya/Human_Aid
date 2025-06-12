@@ -210,15 +210,28 @@
     "ParentNavBarLogoutPrompt": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
     "ParentNavBarFooterVersion": "تطبيق التعلم الإصدار 2.0",
     "ParentNavBarProfile": "حساب تعريفي",
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    "improvementSuggestions": "اقتراحات للتحسين",
+    "ok": "حسناً",
+    "previous": "السابقة",
+    "storyCounter": "القصة {current} من {total}",
+    "story": "القصة",
+    "writeSummaryHere": "اكتب ملخصك هنا",
+    "summaryHint": "اكتب ملخصاً للقصة التي قرأتها...",
+    "checking": "جاري الفحص...",
+    "checkSummary": "فحص الملخص",
+    "storySummarizerGame": "لعبة تلخيص القصص",
+
+
+
+
+
+
+
+
+
+
+
+
     
     
     

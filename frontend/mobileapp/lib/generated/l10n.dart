@@ -2150,6 +2150,106 @@ class S {
     );
   }
 
+  /// `Improvement Suggestions`
+  String get improvementSuggestions {
+    return Intl.message(
+      'Improvement Suggestions',
+      name: 'improvementSuggestions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OK`
+  String get ok {
+    return Intl.message(
+      'OK',
+      name: 'ok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Previous`
+  String get previous {
+    return Intl.message(
+      'Previous',
+      name: 'previous',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Story {current} of {total}`
+  String storyCounter(Object current, Object total) {
+    return Intl.message(
+      'Story $current of $total',
+      name: 'storyCounter',
+      desc: '',
+      args: [current, total],
+    );
+  }
+
+  /// `Story`
+  String get story {
+    return Intl.message(
+      'Story',
+      name: 'story',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Write Your Summary Here`
+  String get writeSummaryHere {
+    return Intl.message(
+      'Write Your Summary Here',
+      name: 'writeSummaryHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Write a summary of the story you read...`
+  String get summaryHint {
+    return Intl.message(
+      'Write a summary of the story you read...',
+      name: 'summaryHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checking...`
+  String get checking {
+    return Intl.message(
+      'Checking...',
+      name: 'checking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check Summary`
+  String get checkSummary {
+    return Intl.message(
+      'Check Summary',
+      name: 'checkSummary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Story Summarizer Game`
+  String get storySummarizerGame {
+    return Intl.message(
+      'Story Summarizer Game',
+      name: 'storySummarizerGame',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Close`
   String get close {
     return Intl.message(

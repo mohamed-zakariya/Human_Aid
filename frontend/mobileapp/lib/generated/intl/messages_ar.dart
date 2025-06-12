@@ -77,13 +77,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m27(direction) => "الاتجاه في ${direction}";
 
-  static String m28(count) => "عدد الخطوط: ${count}";
+  static String m28(current, total) => "القصة ${current} من ${total}";
 
-  static String m29(letter) => "📝 تتبع هذا الحرف: ${letter}";
+  static String m29(count) => "عدد الخطوط: ${count}";
 
-  static String m30(score, total) => "😊 لا بأس! درجتك: ${score} من ${total}";
+  static String m30(letter) => "📝 تتبع هذا الحرف: ${letter}";
 
-  static String m31(letter) => "❌ خطأ! الحرف الصحيح هو: ${letter}";
+  static String m31(score, total) => "😊 لا بأس! درجتك: ${score} من ${total}";
+
+  static String m32(letter) => "❌ خطأ! الحرف الصحيح هو: ${letter}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -155,6 +157,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "تَغْيِيرُ كَلِمَةِ المَرُورِ"),
         "changepasswordHint":
             MessageLookupByLibrary.simpleMessage("كلمة المرور"),
+        "checkSummary": MessageLookupByLibrary.simpleMessage("فحص الملخص"),
+        "checking": MessageLookupByLibrary.simpleMessage("جاري الفحص..."),
         "chooseLanguageSubtitle":
             MessageLookupByLibrary.simpleMessage("حدد لغتك المفضلة"),
         "chooseLanguageTitle":
@@ -311,6 +315,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "howToTrace": MessageLookupByLibrary.simpleMessage("📚 كيفية التتبع"),
         "ignoredRecording":
             MessageLookupByLibrary.simpleMessage("تم تجاهل التسجيل"),
+        "improvementSuggestions":
+            MessageLookupByLibrary.simpleMessage("اقتراحات للتحسين"),
         "incorrect": MessageLookupByLibrary.simpleMessage("خطأ! ❌"),
         "info": MessageLookupByLibrary.simpleMessage("معلومات عن التمرين"),
         "instruction1": MessageLookupByLibrary.simpleMessage(
@@ -421,6 +427,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "وجه الكاميرا نحو الشيء المطلوب لإكمال التمرين"),
         "objectNotFound": MessageLookupByLibrary.simpleMessage(
             "لم يتم اكتشاف الشيء. استمر في المحاولة!"),
+        "ok": MessageLookupByLibrary.simpleMessage("حسناً"),
         "okButton": MessageLookupByLibrary.simpleMessage("حسنًا"),
         "orContinueWith":
             MessageLookupByLibrary.simpleMessage("أو اكمل بواسطة"),
@@ -449,6 +456,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "playAgain": MessageLookupByLibrary.simpleMessage("العب مرة أخرى"),
         "playGame": MessageLookupByLibrary.simpleMessage("العب الآن"),
         "pointCount": m17,
+        "previous": MessageLookupByLibrary.simpleMessage("السابقة"),
         "processingError": MessageLookupByLibrary.simpleMessage(
             "حدث خطأ أثناء معالجة التسجيل"),
         "processingRecording":
@@ -523,10 +531,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "stat_correct": MessageLookupByLibrary.simpleMessage("صحيح"),
         "stat_incorrect": MessageLookupByLibrary.simpleMessage("خاطئ"),
         "stat_total": MessageLookupByLibrary.simpleMessage("الإجمالي"),
-        "strokeCount": m28,
+        "story": MessageLookupByLibrary.simpleMessage("القصة"),
+        "storyCounter": m28,
+        "storySummarizerGame":
+            MessageLookupByLibrary.simpleMessage("لعبة تلخيص القصص"),
+        "strokeCount": m29,
         "submitbutton": MessageLookupByLibrary.simpleMessage("تم"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول بنجاح"),
+        "summaryHint": MessageLookupByLibrary.simpleMessage(
+            "اكتب ملخصاً للقصة التي قرأتها..."),
         "tapArrowToHear": MessageLookupByLibrary.simpleMessage(
             "اضغط على السهم لسماع الاتجاه"),
         "tapToHearDirection": MessageLookupByLibrary.simpleMessage(
@@ -546,7 +560,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "today": MessageLookupByLibrary.simpleMessage("اليوم"),
         "total_attempts":
             MessageLookupByLibrary.simpleMessage("إجمالي المحاولات"),
-        "traceThisLetter": m29,
+        "traceThisLetter": m30,
         "traceTitle": MessageLookupByLibrary.simpleMessage("✍️ تتبع الحرف"),
         "track_learning_progress":
             MessageLookupByLibrary.simpleMessage("تتبع تقدم التعلم"),
@@ -556,7 +570,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "translateMonthsTooltip":
             MessageLookupByLibrary.simpleMessage("تبديل أسماء الشهور"),
         "tryAgain": MessageLookupByLibrary.simpleMessage("حاول مرة أخرى"),
-        "tryAgain2": m30,
+        "tryAgain2": m31,
         "tryAgain3": MessageLookupByLibrary.simpleMessage("❌ حاول مرة أخرى"),
         "tryAgainEncouragement":
             MessageLookupByLibrary.simpleMessage("حاول مرة أخرى! 💪"),
@@ -591,7 +605,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "whatIsDirection":
             MessageLookupByLibrary.simpleMessage("ما هو الاتجاه؟"),
         "wordsGame3Title": MessageLookupByLibrary.simpleMessage("لعبة الأشهر"),
-        "wrongAnswer": m31,
+        "writeSummaryHere":
+            MessageLookupByLibrary.simpleMessage("اكتب ملخصك هنا"),
+        "wrongAnswer": m32,
         "wrongFeedback": MessageLookupByLibrary.simpleMessage("حاول مرة أخرى"),
         "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
             "لقد قمت بتتبع الحرف بشكل صحيح.")

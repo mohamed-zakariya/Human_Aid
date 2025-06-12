@@ -210,7 +210,16 @@
     "ParentNavBarLogoutPrompt": "Are you sure you want to logout?",
     "ParentNavBarFooterVersion": "Learning App v2.0",
     "ParentNavBarProfile": "Profile",
-
+    "improvementSuggestions": "Improvement Suggestions",
+    "ok": "OK",
+    "previous": "Previous",
+    "storyCounter": "Story {current} of {total}",
+    "story": "Story",
+    "writeSummaryHere": "Write Your Summary Here",
+    "summaryHint": "Write a summary of the story you read...",
+    "checking": "Checking...",
+    "checkSummary": "Check Summary",
+    "storySummarizerGame": "Story Summarizer Game",
 
 
 

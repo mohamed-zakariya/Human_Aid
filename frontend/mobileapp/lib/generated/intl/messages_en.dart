@@ -80,14 +80,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m27(direction) => "The direction is ${direction}";
 
-  static String m28(count) => "Strokes: ${count}";
+  static String m28(current, total) => "Story ${current} of ${total}";
 
-  static String m29(letter) => "📝 Trace this letter: ${letter}";
+  static String m29(count) => "Strokes: ${count}";
 
-  static String m30(score, total) =>
+  static String m30(letter) => "📝 Trace this letter: ${letter}";
+
+  static String m31(score, total) =>
       "😊 Good try! Your score: ${score} out of ${total}";
 
-  static String m31(letter) => "❌ Wrong! The correct letter is: ${letter}";
+  static String m32(letter) => "❌ Wrong! The correct letter is: ${letter}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -154,6 +156,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "changePasswordTitle":
             MessageLookupByLibrary.simpleMessage("Change Password"),
         "changepasswordHint": MessageLookupByLibrary.simpleMessage("Password"),
+        "checkSummary": MessageLookupByLibrary.simpleMessage("Check Summary"),
+        "checking": MessageLookupByLibrary.simpleMessage("Checking..."),
         "chooseLanguageSubtitle": MessageLookupByLibrary.simpleMessage(
             "Select your preferred language"),
         "chooseLanguageTitle":
@@ -313,6 +317,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "howToTrace": MessageLookupByLibrary.simpleMessage("📚 How to Trace"),
         "ignoredRecording":
             MessageLookupByLibrary.simpleMessage("Recording ignored"),
+        "improvementSuggestions":
+            MessageLookupByLibrary.simpleMessage("Improvement Suggestions"),
         "incorrect": MessageLookupByLibrary.simpleMessage("Wrong! ❌"),
         "info":
             MessageLookupByLibrary.simpleMessage("Information about Training"),
@@ -425,6 +431,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Point your camera at the requested object to complete the exercise"),
         "objectNotFound": MessageLookupByLibrary.simpleMessage(
             "Object not detected. Keep trying!"),
+        "ok": MessageLookupByLibrary.simpleMessage("OK"),
         "okButton": MessageLookupByLibrary.simpleMessage("OK"),
         "orContinueWith":
             MessageLookupByLibrary.simpleMessage("or continue with"),
@@ -453,6 +460,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "playAgain": MessageLookupByLibrary.simpleMessage("Play Again"),
         "playGame": MessageLookupByLibrary.simpleMessage("Play Now"),
         "pointCount": m17,
+        "previous": MessageLookupByLibrary.simpleMessage("Previous"),
         "processingError": MessageLookupByLibrary.simpleMessage(
             "An error occurred while processing"),
         "processingRecording": MessageLookupByLibrary.simpleMessage(
@@ -525,10 +533,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "stat_correct": MessageLookupByLibrary.simpleMessage("Correct"),
         "stat_incorrect": MessageLookupByLibrary.simpleMessage("Incorrect"),
         "stat_total": MessageLookupByLibrary.simpleMessage("Total"),
-        "strokeCount": m28,
+        "story": MessageLookupByLibrary.simpleMessage("Story"),
+        "storyCounter": m28,
+        "storySummarizerGame":
+            MessageLookupByLibrary.simpleMessage("Story Summarizer Game"),
+        "strokeCount": m29,
         "submitbutton": MessageLookupByLibrary.simpleMessage("Done"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("Login successful"),
+        "summaryHint": MessageLookupByLibrary.simpleMessage(
+            "Write a summary of the story you read..."),
         "tapArrowToHear": MessageLookupByLibrary.simpleMessage(
             "Tap the arrow to hear the direction"),
         "tapToHearDirection": MessageLookupByLibrary.simpleMessage(
@@ -548,7 +562,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "today": MessageLookupByLibrary.simpleMessage("Today"),
         "total_attempts":
             MessageLookupByLibrary.simpleMessage("total attempts"),
-        "traceThisLetter": m29,
+        "traceThisLetter": m30,
         "traceTitle":
             MessageLookupByLibrary.simpleMessage("✍️ Trace the letter"),
         "track_learning_progress":
@@ -559,7 +573,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "translateMonthsTooltip":
             MessageLookupByLibrary.simpleMessage("Switch month names"),
         "tryAgain": MessageLookupByLibrary.simpleMessage("Try Again"),
-        "tryAgain2": m30,
+        "tryAgain2": m31,
         "tryAgain3": MessageLookupByLibrary.simpleMessage("❌ Try Again"),
         "tryAgainEncouragement":
             MessageLookupByLibrary.simpleMessage("Try again! 💪"),
@@ -595,7 +609,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "whatIsDirection":
             MessageLookupByLibrary.simpleMessage("What is the direction?"),
         "wordsGame3Title": MessageLookupByLibrary.simpleMessage("Months Game"),
-        "wrongAnswer": m31,
+        "writeSummaryHere":
+            MessageLookupByLibrary.simpleMessage("Write Your Summary Here"),
+        "wrongAnswer": m32,
         "wrongFeedback": MessageLookupByLibrary.simpleMessage("Try again"),
         "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
             "You traced the letter correctly!")
