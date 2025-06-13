@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 import '../../Services/signup_service.dart';
+import '../widgets/SignupCountryDropdown.dart';
 import '../widgets/SignupEmailInputField.dart';
 import '../widgets/date.dart';
 import '../widgets/successSnackBar.dart';
@@ -149,7 +150,25 @@ class _SignupadultState extends State<Signupadult> {
                   SignupInputFieldUsername(S.of(context).signupinputfieldusername, S.of(context).signuptitleusername, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, usernameController),
                   SignupInputFieldEmail(S.of(context).signupinputfieldemail, S.of(context).signuptitleemail, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, emailController, false),
                   // Signupphonenumberfield(S.of(context).signuptitlephonenumber, phoneNumberController),
-                  Signupinputfield(S.of(context).signupinputfieldnationality, S.of(context).signuptitlenationality, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, nationalityController, null,),
+                  SignupCountryDropdown(
+                    S.of(context).signupinputfieldnationality,
+                    S.of(context).signuptitlenationality,
+                    108, 99, 255, 0.1,
+                    0, 0, 0, 0.3,
+                    true, false,
+                    nationalityController.text.isEmpty ? null : nationalityController.text,
+                        (String? newValue) {
+                      nationalityController.text = newValue ?? '';
+                    },
+                        (value) {
+                      if (value == null || value.isEmpty) {
+                        return Intl.getCurrentLocale() == 'ar'
+                            ? 'يرجى اختيار الجنسية'
+                            : 'Please select a nationality';
+                      }
+                      return null;
+                    },
+                  ),
                   Signupinputfield(S.of(context).signupinputfieldpassword, S.of(context).signuptitlepassword, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, passwordController, Validators.validatePassword,),
                   Signupinputfield(S.of(context).signupinputfieldpassword, S.of(context).signuptitleconfirmpassword, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, confirmPasswordController, validateConfirmPassword,),
                   DateTimePicker(controller: birthdateController, quardian: false,),

@@ -44,6 +44,7 @@ import 'Screens/exercises_levels_screen.dart';
 import 'Screens/level_screen.dart';
 import 'Screens/object_detection_exercise_screen.dart';
 import 'Services/user_service.dart';
+import 'SplashLoadingScreen.dart';
 import 'models/level.dart';
 
 
@@ -60,8 +61,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
+  Widget _initialScreen = const SplashLoadingScreen(); // Show this until loaded
   Locale _locale = const Locale('en');
-  Widget _initialScreen = const SizedBox(); // Placeholder until we determine screen
 
   @override
   void initState() {

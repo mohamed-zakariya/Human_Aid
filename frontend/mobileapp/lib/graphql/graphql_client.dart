@@ -6,11 +6,11 @@ class GraphQLService {
   static Future<GraphQLClient> getClient() async {
     final prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString("accessToken");
-    print("checkkkkkkkkk $accessToken");
+
     //  http://10.0.2.2:5500/graphql
     // https://human-aid-deployment.onrender.com/graphql
 
-    final HttpLink httpLink = HttpLink("http://10.0.2.2:5500/graphql");
+    final HttpLink httpLink = HttpLink("https://human-aid-deployment.onrender.com/graphql");
 
     final AuthLink authLink = AuthLink(
       getToken: () async => accessToken != null ? "Bearer $accessToken" : null,
@@ -50,7 +50,7 @@ class GraphQLService {
 
     if (refreshToken == null) return false; // No refresh token, must log in
 
-    final HttpLink httpLink = HttpLink("http://10.0.2.2:5500/graphql");
+    final HttpLink httpLink = HttpLink("https://human-aid-deployment.onrender.com/graphql");
     print("olddd token $refreshToken");
     final GraphQLClient client = GraphQLClient(
       link: httpLink,

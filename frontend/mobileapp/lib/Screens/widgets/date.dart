@@ -41,7 +41,7 @@ class _DateTimePickerState extends State<DateTimePicker> {
       ),
       child: TextField(
         style: TextStyle(
-          color: flag? const Color.fromRGBO(108, 99, 255, 1): const Color.fromRGBO(255, 255, 255, 1),
+          color: !flag? Colors.black: const Color.fromRGBO(255, 255, 255, 1),
         ),
         controller: widget.controller,
         decoration: InputDecoration(
