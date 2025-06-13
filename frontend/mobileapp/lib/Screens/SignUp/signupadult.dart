@@ -7,6 +7,7 @@ import 'package:mobileapp/Screens/widgets/SignupUsernameInputField.dart';
 import 'package:mobileapp/classes/validators.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/models/learner.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 import '../../Services/signup_service.dart';
@@ -95,6 +96,9 @@ class _SignupadultState extends State<Signupadult> {
       ScaffoldMessenger.of(context).showSnackBar(
         successSnackBar("Signup successful!"),
       );
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('onboardingSeen', true);
 
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.pushNamedAndRemoveUntil(

@@ -5,6 +5,7 @@ import 'package:mobileapp/Screens/SignUp/ProgressBar.dart';
 import 'package:mobileapp/Screens/widgets/SignupInputField.dart';
 import 'package:mobileapp/Screens/widgets/successSnackBar.dart';
 import 'package:mobileapp/generated/l10n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Services/signup_service.dart';
 import '../../models/learner.dart';
@@ -159,6 +160,9 @@ class _ContinuesignupState extends State<Continuesignup> {
     ScaffoldMessenger.of(context).showSnackBar(
       successSnackBar("Signup successful!"),
     );
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboardingSeen', true);
 
     // Delay navigation by 3 seconds
     Future.delayed(const Duration(seconds: 2), () {

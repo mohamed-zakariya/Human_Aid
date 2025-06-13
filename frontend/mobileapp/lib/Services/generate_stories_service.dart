@@ -1,10 +1,18 @@
-// Enhanced GenerateStoriesService
+// Enhanced GenerateStoriesService with Complete Story Generation
 import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 
 class GenerateStoriesService {
-  final String openRouterApiKey = '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';
+  // List of API keys for fallback functionality
+  final List<String> _apiKeys = [
+    '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',
+    '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',
+    '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',
+    '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',
+  ];
+
+  int _currentApiKeyIndex = 0;
   final Random _random = Random();
 
   // Creative Arabic names pools
@@ -43,6 +51,35 @@ class GenerateStoriesService {
     'وفهم أن أجمل ما في الحياة هو'
   ];
 
+  /// Get the current API key
+  String get _currentApiKey => _apiKeys[_currentApiKeyIndex];
+
+  /// Switch to the next API key
+  bool _switchToNextApiKey() {
+    if (_currentApiKeyIndex < _apiKeys.length - 1) {
+      _currentApiKeyIndex++;
+      print('Switching to API key #${_currentApiKeyIndex + 1}');
+      return true;
+    }
+    return false;
+  }
+
+  /// Reset API key index to the first one
+  void _resetApiKeyIndex() {
+    _currentApiKeyIndex = 0;
+  }
+
+  /// Check if the error is related to API key issues
+  bool _isApiKeyError(int statusCode, String responseBody) {
+    return statusCode == 401 ||
+        statusCode == 403 ||
+        responseBody.toLowerCase().contains('unauthorized') ||
+        responseBody.toLowerCase().contains('invalid') ||
+        responseBody.toLowerCase().contains('expired') ||
+        responseBody.toLowerCase().contains('quota') ||
+        responseBody.toLowerCase().contains('limit exceeded');
+  }
+
   Future<String> generateArabicStory({
     required String topic,
     required String setting,
@@ -65,10 +102,6 @@ class GenerateStoriesService {
     String? culturalElement,
   }) async {
     final url = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
-    final headers = {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Authorization': 'Bearer $openRouterApiKey',
-    };
 
     // Generate creative character names
     final characterNames = _generateCharacterNames(heroType);
@@ -111,23 +144,71 @@ class GenerateStoriesService {
         {"role": "user", "content": userPrompt}
       ],
       "max_tokens": _getTokenLimit(length),
-      "temperature": 0.8,
+      "temperature": 0.7,
       "top_p": 0.9,
-      "presence_penalty": 0.3,
-      "frequency_penalty": 0.2,
+      "presence_penalty": 0.2,
+      "frequency_penalty": 0.1,
+      "stop": ["\n\n\n", "---", "***", "القصة التالية", "قصة أخرى"], // Add stop sequences
     });
 
-    final response = await http.post(url, headers: headers, body: body);
+    // Try each API key until one works or all fail
+    for (int attempt = 0; attempt < _apiKeys.length; attempt++) {
+      try {
+        final headers = {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Authorization': 'Bearer $_currentApiKey',
+        };
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(utf8.decode(response.bodyBytes));
-      final content = data['choices'][0]['message']['content'];
-      final cleanedStory = _cleanAndFormatArabicText(content).trim();
-      print(cleanedStory);
-      return cleanedStory;
-    } else {
-      throw Exception('فشل في توليد القصة: ${response.statusCode} - ${response.body}');
+        print('Attempting request with API key #${_currentApiKeyIndex + 1}');
+        final response = await http.post(url, headers: headers, body: body);
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(utf8.decode(response.bodyBytes));
+          final content = data['choices'][0]['message']['content'];
+          final cleanedStory = _cleanAndFormatArabicText(content).trim();
+
+          // Validate that story is complete
+          final validatedStory = _validateAndCompleteStory(cleanedStory, length);
+
+          print('Story generated successfully with API key #${_currentApiKeyIndex + 1}');
+          print(validatedStory);
+          return validatedStory;
+        } else {
+          print('API key #${_currentApiKeyIndex + 1} failed with status: ${response.statusCode}');
+          print('Response: ${response.body}');
+
+          // Check if it's an API key related error
+          if (_isApiKeyError(response.statusCode, response.body)) {
+            if (!_switchToNextApiKey()) {
+              // No more API keys to try
+              _resetApiKeyIndex(); // Reset for next time
+              throw Exception('جميع مفاتيح API فشلت. آخر خطأ: ${response.statusCode} - ${response.body}');
+            }
+            // Continue to next iteration to try the next API key
+            continue;
+          } else {
+            // Non-API key error, throw immediately
+            _resetApiKeyIndex(); // Reset for next time
+            throw Exception('فشل في توليد القصة: ${response.statusCode} - ${response.body}');
+          }
+        }
+      } catch (e) {
+        print('Error with API key #${_currentApiKeyIndex + 1}: $e');
+
+        // If it's the last API key, throw the error
+        if (_currentApiKeyIndex == _apiKeys.length - 1) {
+          _resetApiKeyIndex(); // Reset for next time
+          throw Exception('فشل في توليد القصة بعد تجربة جميع مفاتيح API: $e');
+        }
+
+        // Try next API key
+        _switchToNextApiKey();
+      }
     }
+
+    // This should never be reached, but just in case
+    _resetApiKeyIndex();
+    throw Exception('فشل في توليد القصة: لم يتم العثور على مفتاح API صالح');
   }
 
   Map<String, String> _generateCharacterNames(String? heroType) {
@@ -168,15 +249,15 @@ class GenerateStoriesService {
     return _wisdomEndings[_random.nextInt(_wisdomEndings.length)];
   }
 
+  // Fixed token limits to ensure complete stories
   int _getTokenLimit(String length) {
     switch (length) {
-      case 'قصة قصيرة': return 150;
-      case 'قصة متوسطة': return 200;
-      case 'قصة طويلة': return 250;
-      default: return 150;
+      case 'قصة قصيرة': return 120; // Reduced from 150
+      case 'قصة متوسطة': return 160; // Reduced from 200
+      case 'قصة طويلة': return 200; // Reduced from 250
+      default: return 120;
     }
   }
-
 
   Map<String, dynamic> _buildStoryContext({
     required String topic,
@@ -244,55 +325,41 @@ class GenerateStoriesService {
 
   String _buildEnhancedSystemPrompt(String age) {
     return '''
-أنت كاتب قصص أطفال محترف ومبدع، متخصص في إنتاج قصص تعليمية رائعة باللغة العربية الفصحى. مهمتك إبداع قصص فريدة ومتنوعة تجمع بين المتعة والفائدة التربوية.
+أنت كاتب قصص أطفال محترف ومبدع، متخصص في إنتاج قصص تعليمية مكتملة باللغة العربية الفصحى. مهمتك إبداع قصص قصيرة ومتماسكة تجمع بين المتعة والفائدة التربوية.
 
 🌟 مبادئ الإبداع الأساسية:
-- اخلق قصصاً متنوعة ومختلفة في كل مرة
-- استخدم خيالاً واسعاً وأفكاراً مبتكرة
-- اجعل كل قصة فريدة من نوعها
-- امزج بين الواقع والخيال بطريقة جذابة
+- اكتب قصصاً مكتملة من البداية للنهاية
+- كل قصة يجب أن تنتهي بخاتمة واضحة ومرضية
+- استخدم جملاً قصيرة وبسيطة
+- اجعل كل قصة مستقلة وغير مترابطة مع قصص أخرى
 
 📚 متطلبات اللغة والأسلوب:
 - العربية الفصحى البسيطة المناسبة لعمر $age سنوات
-- جمل قصيرة وواضحة وسهلة الفهم
+- جمل قصيرة جداً (3-7 كلمات لكل جملة)
 - مفردات بسيطة ومناسبة للأطفال
-- حوار طبيعي وممتع
 - تدفق سردي سلس ومشوق
-
-🎭 عناصر القصة المطلوبة:
-- شخصيات محببة وقريبة من الطفل
-- أحداث مشوقة ومناسبة للعمر
-- دروس أخلاقية وتربوية واضحة
-- نهاية إيجابية ومُرضية
-- عنصر المفاجأة أو الإثارة البسيطة
-
-🌈 التنويع والإبداع:
-- استخدم تقنيات سرد متنوعة
-- اخلق مواقف مختلفة وغير متوقعة  
-- اجعل كل قصة تحمل طابعاً مميزاً
-- استخدم الحواس الخمس في الوصف
-- اربط القصة بخبرات الطفل اليومية
 
 🎯 القيم التربوية:
 - ادمج القيم بطريقة طبيعية وغير مباشرة
 - اجعل الطفل يستنتج الدرس بنفسه
 - ركز على السلوكيات الإيجابية
-- عزز الثقة بالنفس والشجاعة
-- أظهر أهمية التعاون والمشاركة
 
 ⚡ مبادئ التشويق:
 - ابدأ بطريقة جذابة تشد الانتباه
-- اخلق لحظات تشويق مناسبة للعمر
-- استخدم الحوار لإضافة الحيوية
-- اجعل النهاية مفاجئة ومُرضية
-- ضع تفاصيل حسية تجعل القصة حية
+- اجعل النهاية مفاجئة ومُرضية ومكتملة
+- تأكد من انتهاء القصة بشكل طبيعي
 
 🚫 تجنب تماماً:
-- التكرار في الأفكار أو الأحداث
-- الكلمات المعقدة أو غير المفهومة
-- المواضيع المخيفة أو المحزنة
-- الوعظ المباشر أو التلقين
+- ترك القصة بدون نهاية
 - الجمل الطويلة والمعقدة
+- القصص المفتوحة أو غير المكتملة
+- استخدام عبارات مثل "يتبع" أو "في الجزء التالي
+- مهما كانت القصة طويلة او متوسطة او قصيرة عدم تركها بدون نهاية و عدم اظهار حروف غير مكتملة"
+
+⭐ الأهم من كل شيء:
+- اكتب قصة مكتملة لها بداية ووسط ونهاية واضحة
+- تأكد من أن القصة تنتهي بحل المشكلة والدرس المستفاد
+- لا تترك أي خيوط مفتوحة في القصة
 ''';
   }
 
@@ -305,11 +372,12 @@ class GenerateStoriesService {
     final values = context['values'];
     final creative = context['creative_elements'];
 
+    // Reduced word limits for shorter, complete stories
     final wordLimit = {
-      "قصة قصيرة": "70-90 كلمة",
-      "قصة متوسطة": "120-140 كلمة",
-      "قصة طويلة": "170-190 كلمة",
-    }[length] ?? "120-140 كلمة";
+      "قصة قصيرة": "40-75 كلمة",
+      "قصة متوسطة": "75-105 كلمة",
+      "قصة طويلة": "106-130 كلمة",
+    }[length] ?? "75-105 كلمة";
 
     String charactersInfo = '';
     final names = characters['names'] as Map<String, String>;
@@ -324,7 +392,7 @@ class GenerateStoriesService {
     }
 
     return '''
-اكتب قصة تعليمية مبدعة وفريدة باللغة العربية الفصحى بناءً على التفاصيل التالية:
+اكتب قصة تعليمية مكتملة وقصيرة باللغة العربية الفصحى بناءً على التفاصيل التالية:
 
 🎯 المعلومات الأساسية:
 ▪ الموضوع الرئيسي: ${basic['topic']}
@@ -333,85 +401,116 @@ class GenerateStoriesService {
 ▪ عمر الطفل المستهدف: ${basic['age']} سنة
 ▪ طول القصة: ${basic['length']} ($wordLimit)
 
-🎨 الأسلوب والطابع:
-▪ نوع السرد: ${style['narrative_style']}
-▪ نبرة القصة: ${style['tone']}
-▪ المزاج العام: ${style['mood']}
-
 👥 الشخصيات:
 ▪ نوع البطل: ${characters['hero_type']}
-▪ الصفة الرئيسية للبطل: ${characters['main_trait']}
-▪ المرافقون: ${characters['companion']}
 $charactersInfo
-
-🌍 البيئة والجو:
-▪ وقت الأحداث: ${environment['time_of_day']}
-▪ حالة الطقس: ${environment['weather']}
-${environment['cultural_element'] != null ? '▪ العنصر الثقافي: ${environment['cultural_element']}' : ''}
 
 🎬 الأحداث والصراع:
 ▪ التحدي الرئيسي: ${plot['challenge']}
-▪ نوع المشكلة: ${plot['conflict']}
 ▪ طريقة الحل: ${plot['resolution']}
 
 📖 القيم والدروس:
 ▪ الدرس الأساسي: ${values['primary_lesson']}
-${values['secondary_values'] != null ? '▪ قيم إضافية: ${values['secondary_values']}' : ''}
 
 ✨ عناصر إبداعية مقترحة:
 ▪ بداية القصة: "${creative['opener']}"
 ▪ نهاية حكيمة: "${creative['wisdom_ending']}"
 
-🎪 متطلبات خاصة:
-- اجعل القصة فريدة ومختلفة عن القصص التقليدية
-- استخدم الأسماء المقترحة للشخصيات
-- اربط جميع العناصر المذكورة بطريقة إبداعية
-- ركز على التفاعل بين الشخصيات
-- اجعل الحل نابعاً من ذكاء وإبداع الشخصيات
-- ضع تفاصيل حسية تجعل القارئ يعيش القصة
-
 🔥 المطلوب:
-قصة مكتملة ومتماسكة تبدأ بداية جذابة وتنتهي نهاية مُرضية، مع دمج جميع العناصر المطلوبة بطريقة طبيعية وإبداعية.
+قصة مكتملة تماماً من البداية للنهاية تتضمن:
+1. مقدمة سريعة للشخصية والمشكلة
+2. تطور الأحداث وحل المشكلة
+3. نهاية واضحة مع الدرس المستفاد
 
 📏 عدد الكلمات: $wordLimit بالضبط
 
-⚠️ اكتب القصة فقط بدون أي تعليقات أو شروحات إضافية.
+⚠️ مهم جداً:
+- اكتب القصة فقط بدون أي تعليقات
+- تأكد من أن القصة مكتملة ولها نهاية واضحة
+- لا تترك القصة معلقة أو بدون خاتمة
+- استعمل جملاً قصيرة وبسيطة فقط
 ''';
   }
 
-  String _cleanAndFormatArabicText(String input) {
-    // Enhanced Arabic text cleaning with better formatting
-    final arabicPattern = RegExp(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s\.,!?؟،؛:"()«»\-\n\r]');
-    final cleanedChars = input.runes
-        .where((rune) => arabicPattern.hasMatch(String.fromCharCode(rune)))
-        .map((rune) => String.fromCharCode(rune));
+  // Enhanced story validation and completion
+  String _validateAndCompleteStory(String story, String length) {
+    String validatedStory = story;
 
-    String result = cleanedChars.join();
+    // Check if story ends abruptly or incomplete
+    final lastSentence = validatedStory.split('.').last.trim();
 
-    // Enhanced text formatting
-    result = result
-        .replaceAll(RegExp(r'\s+'), ' ')  // Remove extra spaces
-        .replaceAll(RegExp(r'\n\s*\n+'), '\n\n')  // Clean up line breaks
-        .replaceAll(RegExp(r'^\s+|\s+$'), '')  // Trim
-        .replaceAll('،،', '،')  // Fix double commas
-        .replaceAll('..', '.')  // Fix double periods
-        .replaceAll('؟؟', '؟')  // Fix double question marks
-        .replaceAll('!!', '!')  // Fix double exclamations
-        .replaceAll(RegExp(r'\s+([،؛:.!؟])'), r'$1')  // Fix spacing before punctuation
-        .replaceAll(RegExp(r'([،؛:.!؟])([أابتثجحخدذرزسشصضطظعغفقكلمنهويءآإؤئ])'), r'$1 $2');  // Fix spacing after punctuation
+    // Check for incomplete endings
+    final incompletePatterns = [
+      RegExp(r'وأدرك\s*$'),
+      RegExp(r'وعرف\s*$'),
+      RegExp(r'وفهم\s*$'),
+      RegExp(r'وتعلم\s*$'),
+      RegExp(r'أن\s*$'),
+      RegExp(r'في\s*$'),
+      RegExp(r'من\s*$'),
+      RegExp(r'هو\s*$'),
+    ];
 
-    // Better paragraph formatting - only create paragraphs for actual story breaks
-    // Look for sentences that end with specific patterns that indicate new paragraphs
-    result = result.replaceAllMapped(
-      RegExp(r'([.!؟])\s*(?=وهكذا|ومن ذلك اليوم|وأدرك|واكتشف|وعرف|وفهم|في يوم|عندما|حين|في زمن)'),
-          (match) => '${match.group(1)}\n\n',
-    );
+    bool isIncomplete = incompletePatterns.any((pattern) =>
+        pattern.hasMatch(validatedStory.trim()));
 
-    // Also handle common story transition phrases
-    result = result.replaceAll(RegExp(r'([.!؟])\s*(?=بعد ذلك|في اليوم التالي|وفجأة|ولكن|لكن|وعندما|وبعد)'), r'$1 ');
+    // If story is incomplete, add a simple ending
+    if (isIncomplete || !validatedStory.trim().endsWith('.')) {
+      if (!validatedStory.endsWith('.')) {
+        // Find the last complete sentence
+        final sentences = validatedStory.split('.');
+        if (sentences.length > 1) {
+          validatedStory = sentences.sublist(0, sentences.length - 1).join('.') + '.';
+        }
+      }
 
-    return result.trim();
+      // Add a simple moral ending if needed
+      if (validatedStory.split(' ').length < _getMinWordCount(length)) {
+        validatedStory += ' وهكذا تعلم أهمية الصدق والعمل الجاد.';
+      }
+    }
+
+    return validatedStory;
   }
 
+  int _getMinWordCount(String length) {
+    switch (length) {
+      case 'قصة قصيرة': return 50;
+      case 'قصة متوسطة': return 80;
+      case 'قصة طويلة': return 110;
+      default: return 80;
+    }
+  }
 
+  // Improved Arabic text cleaning function
+  String _cleanAndFormatArabicText(String input) {
+    // Remove unwanted characters while preserving Arabic text and basic punctuation
+    final arabicPattern = RegExp(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s\.,!?؟،؛:"()«»\-\n\r]+');
+
+    // Extract only Arabic content
+    final matches = arabicPattern.allMatches(input);
+    String result = matches.map((match) => match.group(0)).join(' ');
+
+    // Clean and format the text
+    result = result
+        .replaceAll(RegExp(r'\s+'), ' ') // Remove extra spaces
+        .replaceAll(RegExp(r'^\s+|\s+$'), '') // Trim
+        .replaceAll('،،', '،') // Fix double commas
+        .replaceAll('..', '.') // Fix double periods
+        .replaceAll('؟؟', '؟') // Fix double question marks
+        .replaceAll('!!', '!') // Fix double exclamations
+        .replaceAll(RegExp(r'\s+([،؛:.!؟])'), r'$1') // Fix spacing before punctuation
+        .replaceAll(RegExp(r'([،؛:.!؟])([^\s])'), r'$1 $2') // Add space after punctuation
+        .replaceAll(RegExp(r'[\$\d#]+'), '') // Remove any stray numbers, dollar signs, hashtags
+        .replaceAll(RegExp(r'[a-zA-Z]+'), '') // Remove any English letters
+        .replaceAll(RegExp(r'\s+'), ' ') // Clean up spaces again
+        .trim();
+
+    // Ensure the story ends with proper punctuation
+    if (result.isNotEmpty && !result.endsWith('.') && !result.endsWith('!') && !result.endsWith('؟')) {
+      result += '.';
+    }
+
+    return result;
+  }
 }

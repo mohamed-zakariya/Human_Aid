@@ -4,6 +4,7 @@ import Exercises from "../models/Exercises.js";
 import OverallProgress from "../models/OverallProgress.js";
 import Parents from "../models/Parents.js";
 import Users from "../models/Users.js";
+
 export const userResolvers = {
   Query: {
     users: async () => {
@@ -63,7 +64,20 @@ export const userResolvers = {
         parentName,
         totalTimeSpent,
       };
-    },
+    },   
+     getLearnerDataById: async (_, { userId }) => {
+      console.log(userId);
+      const user = await Users.findOne({ _id: userId });
+      console.log(user);
+    
+      if (!user) {
+          throw new Error(`No progress found for user with ID: ${userId}`);
+      }
+      return user;
+  }, 
+    
+
+    
   },
   Mutation: {
     login: async (_, { username, password }) => {

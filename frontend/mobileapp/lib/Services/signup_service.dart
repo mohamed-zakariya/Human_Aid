@@ -75,7 +75,7 @@ class SignupService {
     final String accessToken = data["accessToken"];
     final String refreshToken = data["refreshToken"];
 
-    GraphQLService.saveTokens(accessToken, refreshToken);
+    GraphQLService.saveTokens(accessToken, refreshToken, "parent");
 
     return Parent.fromJson(userdata);
     // return Parent.fromJson(userdata, accessToken, refreshToken);

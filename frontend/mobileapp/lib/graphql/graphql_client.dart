@@ -8,8 +8,9 @@ class GraphQLService {
     String? accessToken = prefs.getString("accessToken");
     print("checkkkkkkkkk $accessToken");
     //  http://10.0.2.2:5500/graphql
+    // https://human-aid-deployment.onrender.com/graphql
 
-    final HttpLink httpLink = HttpLink("https://human-aid-deployment.onrender.com/graphql");
+    final HttpLink httpLink = HttpLink("http://10.0.2.2:5500/graphql");
 
     final AuthLink authLink = AuthLink(
       getToken: () async => accessToken != null ? "Bearer $accessToken" : null,
@@ -24,10 +25,12 @@ class GraphQLService {
   }
 
 
-  static Future<void> saveTokens(String accessToken, String refreshToken) async {
+  static Future<void> saveTokens(String accessToken, String refreshToken, String role) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("accessToken", accessToken);
     await prefs.setString("refreshToken", refreshToken);
+    await prefs.setString("role", role);
+
   }
 
   static Future<String?> getToken() async {
@@ -92,7 +95,9 @@ class GraphQLService {
 
     if (newAccessToken != null && newRefreshToken != null) {
       print("savedddddddddddddddd");
-      await saveTokens(newAccessToken, newRefreshToken);
+      await saveTokens(newAccessToken, newRefreshToken, role!);
+      final prefs = await SharedPreferences.getInstance();
+
       return true;
     }
 
