@@ -178,7 +178,6 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
 
     void showInfoDialog() {
       final currentLocale = Localizations.localeOf(context).languageCode;
-      final isArabic = currentLocale == 'ar';
 
       showDialog(
         context: context,
@@ -207,11 +206,7 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
                 children: [
                   const Icon(Icons.volume_up),
                   const SizedBox(width: 8),
-                  Text(
-                    Localizations.localeOf(context).languageCode == 'en'
-                        ? 'Read Aloud'
-                        : 'اقرأ بصوت عالٍ',
-                  ),
+                  Text(S.of(context).readAloud),
                 ],
               ),
             ),

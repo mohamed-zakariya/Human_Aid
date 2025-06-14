@@ -102,12 +102,7 @@ class _SignupadultState extends State<Signupadult> {
       await prefs.setBool('onboardingSeen', true);
 
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/Learner-Home',
-              (route) => false, // Removes all previous routes
-          arguments: learner, // Passing the parent object
-        );
+        Navigator.pushReplacementNamed(context, '/Learner-Home', arguments: learner);
       });
 
     } else {

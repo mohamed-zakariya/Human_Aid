@@ -243,6 +243,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Password cannot be empty"),
         "errorLoadingLevels":
             MessageLookupByLibrary.simpleMessage("Error loading levels"),
+        "errorTryAgain": MessageLookupByLibrary.simpleMessage(
+            "An error occurred, try again"),
         "everyTryMakesStronger": MessageLookupByLibrary.simpleMessage(
             "Every try makes you stronger"),
         "excellent": MessageLookupByLibrary.simpleMessage("Excellent! 🎉"),
@@ -362,6 +364,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "learningNeedsPatience":
             MessageLookupByLibrary.simpleMessage("Learning needs patience"),
         "left": MessageLookupByLibrary.simpleMessage("Left"),
+        "letterLevel2": MessageLookupByLibrary.simpleMessage("Level 2"),
         "level": MessageLookupByLibrary.simpleMessage("Level"),
         "levelFailure": MessageLookupByLibrary.simpleMessage(
             "Don\'t worry! Practice makes perfect. Try this level again!"),
@@ -475,8 +478,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Quest Complete"),
         "quest_pending": MessageLookupByLibrary.simpleMessage("Quest Pending"),
         "questionProgress": m20,
+        "readAloud": MessageLookupByLibrary.simpleMessage("Read Aloud"),
         "recent_activity":
             MessageLookupByLibrary.simpleMessage("Recent Activity"),
+        "recordYourVoice":
+            MessageLookupByLibrary.simpleMessage("Record your voice"),
         "recordingError": m21,
         "recordingStartError": m22,
         "recordingTimeout": MessageLookupByLibrary.simpleMessage(
@@ -533,6 +539,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "stat_correct": MessageLookupByLibrary.simpleMessage("Correct"),
         "stat_incorrect": MessageLookupByLibrary.simpleMessage("Incorrect"),
         "stat_total": MessageLookupByLibrary.simpleMessage("Total"),
+        "stop": MessageLookupByLibrary.simpleMessage("Stop"),
         "story": MessageLookupByLibrary.simpleMessage("Story"),
         "storyCounter": m28,
         "storySummarizerGame":

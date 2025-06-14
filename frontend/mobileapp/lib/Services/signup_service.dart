@@ -146,28 +146,28 @@ class SignupService {
       String birthdate,
       String gender,
       String role
-      ) async{
-
+      ) async {
     final client = await GraphQLService.getClient();
 
     print("entered");
     print(username);
+
     final QueryResult result = await client.query(
-        QueryOptions(
-            document: gql(signupAdultQuery),
-            variables: {
-              "adult": {
-                "name": name,
-                "username": username,
-                "email": email,
-                "password": password,
-                "nationality": nationality,
-                "birthdate": birthdate,
-                "gender": gender,
-                "role": role
-              },
-            }
-        )
+      QueryOptions(
+        document: gql(signupAdultQuery),
+        variables: {
+          "adult": {
+            "name": name,
+            "username": username,
+            "email": email,
+            "password": password,
+            "nationality": nationality,
+            "birthdate": birthdate,
+            "gender": gender,
+            "role": role
+          },
+        },
+      ),
     );
 
     if (result.hasException) {
@@ -177,18 +177,24 @@ class SignupService {
 
     final Map<String, dynamic>? data = result.data?["signUpAdult"];
 
-    if (data == null || data["adult"] == null || data["accessToken"] == null) {
+    if (data == null || data["adult"] == null || data["accessToken"] == null || data["refreshToken"] == null) {
       print("Signup Failed: Invalid data received.");
       return null;
     }
 
+    final Map<String, dynamic> learnerData = data["adult"];
+    final String accessToken = data["accessToken"];
+    final String refreshToken = data["refreshToken"];
 
-    final Map<String, dynamic> learnerData = data;
+    // Save tokens and user ID (same as login)
+    GraphQLService.saveTokens(accessToken, refreshToken, "learner"); // use "learner" or "adult" as needed
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("userId", learnerData["id"] ?? "");
 
     print("account created $learnerData");
-    print(learnerData["accessToken"]);
+    print(accessToken);
 
-    return Learner.fromJson(learnerData["adult"]);
-
+    return Learner.fromJson(learnerData);
   }
+
 }
