@@ -44,6 +44,8 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   List<String> _wordLetters = [];
   String _currentWord = "";
   String _currentWordId = "";
+  String _currentWordImage = "";
+
   int _attemptsLeft = 3;
   String _username = "";
   String _userId = "";
@@ -136,6 +138,8 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
       _currentWord = fetchedWord.text;
       _currentWordId = fetchedWord.id;
       _wordLetters = fetchedWord.text.split('');
+      _currentWordImage = fetchedWord.imageUrl;
+
       _isProcessing = false;
     });
   }
@@ -343,7 +347,24 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset('assets/images/Apple.png', height: 150),
+                    Image.network(
+                      _currentWordImage,
+                      height: 150,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.broken_image,
+                          size: 150,
+                          color: Colors.grey,
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const SizedBox(
+                          height: 150,
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),

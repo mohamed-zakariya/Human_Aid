@@ -139,6 +139,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Available Exercises"),
         "award_won": MessageLookupByLibrary.simpleMessage("Award Won"),
         "ball": MessageLookupByLibrary.simpleMessage("Ball"),
+        "birthdateValidation":
+            MessageLookupByLibrary.simpleMessage("Please select a birthdate"),
         "book": MessageLookupByLibrary.simpleMessage("Book"),
         "bottomNavCourses": MessageLookupByLibrary.simpleMessage("Courses"),
         "bottomNavHome": MessageLookupByLibrary.simpleMessage("Home"),
@@ -227,7 +229,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "drawLetter": m6,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "This email is already registered"),
-        "emailHint": MessageLookupByLibrary.simpleMessage("humanid@gmail.com"),
+        "emailHint": MessageLookupByLibrary.simpleMessage("lexfix@gmail.com"),
         "emailHint2":
             MessageLookupByLibrary.simpleMessage("******aid@gmail.com"),
         "emailInvalid":
@@ -294,6 +296,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "genderMale": MessageLookupByLibrary.simpleMessage("Male"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("Select Gender"),
         "genderSelected": MessageLookupByLibrary.simpleMessage("Selected:"),
+        "genderValidationError":
+            MessageLookupByLibrary.simpleMessage("Please select a gender"),
         "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
         "greatJob": m9,
         "greatJob2": MessageLookupByLibrary.simpleMessage("🎉 Great job!"),
@@ -602,6 +606,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Register for yourself"),
         "usernameExist": MessageLookupByLibrary.simpleMessage(
             "This username is already taken"),
+        "usernameHint": MessageLookupByLibrary.simpleMessage("lexfix123"),
         "usernameRequired":
             MessageLookupByLibrary.simpleMessage("Username must be entered"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(

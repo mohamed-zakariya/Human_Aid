@@ -20,7 +20,7 @@ class LoginScreenGaurdian extends StatefulWidget {
 
 class _LoginScreenGaurdianState extends State<LoginScreenGaurdian> {
 
-
+  bool _obscurePassword = true;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -117,17 +117,26 @@ class _LoginScreenGaurdianState extends State<LoginScreenGaurdian> {
               // Password Field
               TextField(
                 controller: _passwordController,
-                obscureText: true,
+                obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   hintStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[400]
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[400],
                   ),
                   hintText: S.of(context).passwordHint,
                   filled: true,
                   fillColor: const Color.fromARGB(26, 108, 99, 255),
                   prefixIcon: const Icon(Icons.lock_outline),
-                  suffixIcon: const Icon(Icons.visibility),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,

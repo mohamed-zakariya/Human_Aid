@@ -2300,6 +2300,36 @@ class S {
     );
   }
 
+  /// `Please select a gender`
+  String get genderValidationError {
+    return Intl.message(
+      'Please select a gender',
+      name: 'genderValidationError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a birthdate`
+  String get birthdateValidation {
+    return Intl.message(
+      'Please select a birthdate',
+      name: 'birthdateValidation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `lexfix123`
+  String get usernameHint {
+    return Intl.message(
+      'lexfix123',
+      name: 'usernameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Close`
   String get close {
     return Intl.message(
@@ -2490,10 +2520,10 @@ class S {
     );
   }
 
-  /// `humanid@gmail.com`
+  /// `lexfix@gmail.com`
   String get emailHint {
     return Intl.message(
-      'humanid@gmail.com',
+      'lexfix@gmail.com',
       name: 'emailHint',
       desc: '',
       args: [],

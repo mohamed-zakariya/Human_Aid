@@ -2,90 +2,100 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobileapp/generated/l10n.dart';
 
-class Malefemale extends StatefulWidget {
-  final ValueChanged<String> onGenderSelected;
-  final String initialGender;
-  final bool flag;
+class Malefemale extends FormField<String> {
+  Malefemale({
+    Key? key,
+    required ValueChanged<String> onGenderSelected,
+    required bool flag,
+    String initialGender = '',
+    FormFieldValidator<String>? validator,
+  }) : super(
+    key: key,
+    initialValue: initialGender,
+    validator: validator,
+    builder: (FormFieldState<String> field) {
+      final selectedGender = field.value ?? '';
+      final male = S.of(field.context).genderMale;
+      final female = S.of(field.context).genderFemale;
+      final flagColor = flag ? Colors.black : Colors.white;
 
-  const Malefemale({
-    super.key,
-    required this.onGenderSelected,
-    required this.flag,
-    this.initialGender = '',
-  });
-
-  @override
-  _MalefemaleState createState() => _MalefemaleState();
-}
-
-class _MalefemaleState extends State<Malefemale> {
-  late String selectedGender;
-
-
-  @override
-  void initState() {
-    super.initState();
-    selectedGender = widget.initialGender;
-  }
-
-  void _onGenderSelected(String gender) {
-    setState(() {
-      selectedGender = gender;
-    });
-    widget.onGenderSelected(gender);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String male = S.of(context).genderMale;
-    String female = S.of(context).genderFemale;
-    bool flag = widget.flag;
-
-
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 5),
-          child: Text(
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
             selectedGender.isEmpty
-                ? S.of(context).genderSelect
+                ? S.of(field.context).genderSelect
                 : selectedGender,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: flag? Colors.black:Colors.white),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: flagColor,
+            ),
           ),
-        ),
-        Container(
-          width: 300,
-          height: 80,
-          margin: const EdgeInsets.only(bottom: 3),
-          padding: const EdgeInsets.only(top: 15),
-          child: Row(
+          const SizedBox(height: 10),
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _genderOption(male, FontAwesomeIcons.mars, Colors.blue),
+              _genderOption(
+                context: field.context,
+                gender: male,
+                selected: selectedGender == male,
+                icon: FontAwesomeIcons.mars,
+                color: Colors.blue,
+                onTap: () {
+                  field.didChange(male);
+                  onGenderSelected(male);
+                },
+              ),
               const SizedBox(width: 20),
-              _genderOption(female, FontAwesomeIcons.venus, Colors.pink),
+              _genderOption(
+                context: field.context,
+                gender: female,
+                selected: selectedGender == female,
+                icon: FontAwesomeIcons.venus,
+                color: Colors.pink,
+                onTap: () {
+                  field.didChange(female);
+                  onGenderSelected(female);
+                },
+              ),
             ],
           ),
-        ),
-      ],
-    );
-  }
+          if (field.hasError)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, left: 4.0),
+              child: Text(
+                field.errorText!,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
+              ),
+            ),
+        ],
+      );
+    },
+  );
 
-  Widget _genderOption(String gender, IconData icon, Color color) {
+  static Widget _genderOption({
+    required BuildContext context,
+    required String gender,
+    required bool selected,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
-      onTap: () => _onGenderSelected(gender),
+      onTap: onTap,
       child: Container(
         width: 70,
         height: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: selectedGender == gender ? color.withOpacity(0.3) : Colors.grey.shade200,
+          color: selected ? color.withOpacity(0.3) : Colors.grey.shade200,
         ),
         child: Center(
           child: FaIcon(
             icon,
-            size: 50.0,
-            color: selectedGender == gender ? color : color.withOpacity(0.6),
+            size: 50,
+            color: selected ? color : color.withOpacity(0.6),
           ),
         ),
       ),

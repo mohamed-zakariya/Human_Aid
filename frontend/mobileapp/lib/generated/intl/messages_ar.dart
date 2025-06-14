@@ -138,6 +138,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("التمارين المتاحة"),
         "award_won": MessageLookupByLibrary.simpleMessage("تم الفوز بالجائزة"),
         "ball": MessageLookupByLibrary.simpleMessage("كرة"),
+        "birthdateValidation":
+            MessageLookupByLibrary.simpleMessage("يرجى اختيار تاريخ الميلاد"),
         "book": MessageLookupByLibrary.simpleMessage("كتاب"),
         "bottomNavCourses": MessageLookupByLibrary.simpleMessage("الدورات"),
         "bottomNavHome": MessageLookupByLibrary.simpleMessage("الرئيسية"),
@@ -227,7 +229,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "drawLetter": m6,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "هذا البريد الإلكتروني مسجّل بالفعل"),
-        "emailHint": MessageLookupByLibrary.simpleMessage("humanid@gmail.com"),
+        "emailHint": MessageLookupByLibrary.simpleMessage("lexfix@gmail.com"),
         "emailHint2":
             MessageLookupByLibrary.simpleMessage("******aid@gmail.com"),
         "emailInvalid": MessageLookupByLibrary.simpleMessage(
@@ -294,6 +296,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "genderMale": MessageLookupByLibrary.simpleMessage("ذكر"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("اختار النوع"),
         "genderSelected": MessageLookupByLibrary.simpleMessage(":اختار"),
+        "genderValidationError":
+            MessageLookupByLibrary.simpleMessage("اختار النوع"),
         "gotIt": MessageLookupByLibrary.simpleMessage("فهمت!"),
         "greatJob": m9,
         "greatJob2": MessageLookupByLibrary.simpleMessage("🎉 عمل رائع!"),
@@ -597,6 +601,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "userTitle": MessageLookupByLibrary.simpleMessage("سجل لنفسك"),
         "usernameExist":
             MessageLookupByLibrary.simpleMessage("اسم المستخدم مأخوذ بالفعل"),
+        "usernameHint": MessageLookupByLibrary.simpleMessage("lexfix123"),
         "usernameRequired":
             MessageLookupByLibrary.simpleMessage("يجب إدخال اسم المستخدم"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(

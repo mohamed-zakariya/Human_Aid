@@ -23,6 +23,10 @@ TextEditingController _passwordController = TextEditingController();
 
 
 class _LoginScreenUserState extends State<LoginScreenUser> {
+
+  bool _obscurePassword = true; // Add this state variable
+
+
   void _handleGoogleSignIn(BuildContext context) async {
     final User? user = await GoogleAuthService.loginWithGoogle(); // Use GoogleAuthService
     if (user != null) {
@@ -105,7 +109,7 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
-                  hintText: S.of(context).emailHint,
+                  hintText: S.of(context).usernameHint,
                   filled: true,
                   hintStyle: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -123,7 +127,7 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
               // Password Field
               TextField(
                 controller: _passwordController,
-                obscureText: true,
+                obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   hintText: S.of(context).passwordHint,
                   hintStyle: TextStyle(
@@ -133,13 +137,23 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
                   filled: true,
                   fillColor: const Color.fromARGB(26, 108, 99, 255),
                   prefixIcon: const Icon(Icons.lock_outline),
-                  suffixIcon: const Icon(Icons.visibility),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
                   ),
                 ),
               ),
+
               const SizedBox(height: 10),
               // Forgot Password
               Align(

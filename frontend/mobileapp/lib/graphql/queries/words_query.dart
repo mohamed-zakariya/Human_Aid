@@ -5,6 +5,7 @@ const String fetchWordsQuery = r'''
       _id
       word
       level
+      imageUrl
     }
   }
 ''';

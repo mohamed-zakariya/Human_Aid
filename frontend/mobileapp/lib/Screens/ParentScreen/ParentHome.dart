@@ -113,12 +113,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                 const SizedBox(height: 32),
 
-                // Recent Activity Section (Optional)
-                _buildSectionTitle(S.of(context).recent_activity),
-
-                const SizedBox(height: 16),
-
-                _buildRecentActivityCard(),
               ],
             ),
           ),
