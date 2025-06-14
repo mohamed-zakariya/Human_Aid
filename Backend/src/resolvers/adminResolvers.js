@@ -6,6 +6,7 @@ import cloudinary from '../config/cloudinary.js';
 import { GraphQLUpload } from 'graphql-upload';
 import Sentences from '../models/Sentences.js';
 import Parents from '../models/Parents.js';
+import Stories from "../models/Stories.js";
 export const adminResolvers = {
   Upload: GraphQLUpload,
   Mutation: {
@@ -146,9 +147,27 @@ async updateWord(_, { id, word, level, image }) {
     // Delete the learner
     await Users.findByIdAndDelete(userId);
     return true;
-  }
   },
-
+      createStory: async (_, { story, kind, summary, morale }) => {
+      const newStory = new Stories({ story, kind, summary, morale });
+      await newStory.save();
+      return newStory;
+    },
+    updateStory: async (_, { id, story, kind, summary, morale }) => {
+      const updatedStory = await Stories.findByIdAndUpdate(
+        id,
+        { story, kind, summary, morale },
+        { new: true }
+      );
+      if (!updatedStory) throw new Error("Story not found");
+      return updatedStory;
+    },
+    deleteStory: async (_, { id }) => {
+      const deletedStory = await Stories.findByIdAndDelete(id);
+      if (!deletedStory) throw new Error("Story not found");
+      return deletedStory;
+    },
+  },
 
   Query: {
     // Get all words
@@ -185,7 +204,14 @@ async updateWord(_, { id, word, level, image }) {
   },
   async getAllUsers() {
   return await Users.find({ role: { $in: ['adult', 'child'] } });
-  }
-
-  }
+  },
+  getStories: async () => {
+      return await Stories.find();
+    },
+    getStory: async (_, { id }) => {
+      const story = await Stories.findById(id);
+      if (!story) throw new Error("Story not found");
+      return story;
+    },
+  },
 };

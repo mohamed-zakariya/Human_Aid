@@ -1,5 +1,6 @@
 export const adminTypeDefs = `#graphql
 scalar Upload
+
 type Word {
   id: ID!
   word: String!
@@ -13,12 +14,19 @@ type Sentence {
   level: String!
 }
 
+type Story {
+  id: ID!
+  story: String!
+  kind: String!
+  summary: String!
+  morale: String!
+}
+
 type UserStats {
   numAdults: Int!
   numChildren: Int!
   numParents: Int!
 }
-
 
 type Query {
   getWords: [Word!]!
@@ -28,6 +36,8 @@ type Query {
   getUserStats: UserStats!   
   getAllParentsWithChildren: [Parent!]!
   getAllUsers: [User!]!  
+  getStories: [Story!]!
+  getStory(id: ID!): Story
 }
 
 type Mutation {
@@ -40,6 +50,9 @@ type Mutation {
   deleteSentence(id: ID!): Sentence!
   deleteParentAndChildren(parentId: ID!): Boolean!
   deleteUser(userId: ID!): Boolean!
+  createStory(story: String!, kind: String!, summary: String!, morale: String!): Story!
+  updateStory(id: ID!, story: String, kind: String, summary: String, morale: String): Story!
+  deleteStory(id: ID!): Story!
 }
 
 type AuthPayload {
@@ -47,5 +60,4 @@ type AuthPayload {
   refreshToken: String!
   user: User!
 }
-
 `;
