@@ -115,7 +115,7 @@ app.post('/upload-audio', upload.single('audio'), async (req, res) => {
     fs.unlinkSync(inputPath);
   }
 
-  const fileUrl = `http://localhost:5500/uploads/${outputFilename}`;
+  const fileUrl = `http://localhost:${PORT}/uploads/${outputFilename}`;
   console.log("Processed audio file:", fileUrl);
   res.json({ message: "Audio uploaded and processed", fileUrl });
 });
