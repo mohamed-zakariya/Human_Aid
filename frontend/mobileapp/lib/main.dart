@@ -175,13 +175,20 @@ class _MyAppState extends State<MyApp> {
             );
           },
 
-          // '/sentences_level_1': (context) {
-          //   final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          //   return SentencePronunciationScreen(
-          //     onLocaleChange: _setLocale,
-          //     learner: args['learner'] as Learner,
-          //   );
-          // },
+          '/sentences_level_1': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+            return SentencePronunciationScreen(
+              onLocaleChange: _setLocale,
+              learner: args['learner'],
+              exerciseId: args['exerciseId'],
+              levelId: args['levelId'], // Changed from levelObjectId to levelId
+            );
+          },
 
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),

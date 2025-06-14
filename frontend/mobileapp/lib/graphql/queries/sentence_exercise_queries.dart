@@ -1,4 +1,4 @@
-/// GraphQL strings – keep them central so services/screens can import one file
+/// GraphQL strings for sentence exercises – updated to match backend schema
 const String getSentencesQuery = r'''
 query GetSentenceForExercise($level: String!) {
   getSentenceForExercise(level: $level) {
@@ -22,20 +22,20 @@ const String updateSentenceProgressMutation = r'''
 mutation UpdateSentenceProgress(
   $userId: ID!,
   $exerciseId: ID!,
-  $sentence_id: ID!,
-  $sentence_text: String!,
-  $spoken_sentence: String!,
-  $is_correct: Boolean!,
-  $incorrect_words: [IncorrectWordInput!]
+  $levelId: ID!,
+  $sentenceId: ID!,
+  $audioFile: String,
+  $spokenSentence: String!,
+  $timeSpent: Int
 ) {
   updateSentenceProgress(
     userId: $userId,
     exerciseId: $exerciseId,
-    sentence_id: $sentence_id,
-    sentence_text: $sentence_text,
-    spoken_sentence: $spoken_sentence,
-    is_correct: $is_correct,
-    incorrect_words: $incorrect_words
+    levelId: $levelId,
+    sentenceId: $sentenceId,
+    audioFile: $audioFile,
+    spokenSentence: $spokenSentence,
+    timeSpent: $timeSpent
   ) {
     spokenSentence
     expectedSentence
