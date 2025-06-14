@@ -25,11 +25,15 @@ import '../graphql/graphql_client.dart';
 class WordPronunciationScreen extends StatefulWidget {
   final Function(Locale)? onLocaleChange;
   final Learner initialLearner;
+  final String exerciseId;
+  final String levelId;
 
   const WordPronunciationScreen({
     Key? key,
     this.onLocaleChange,
     required this.initialLearner,
+    required this.exerciseId,
+    required this.levelId,
   }) : super(key: key);
 
   @override
@@ -46,7 +50,8 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
 
   final AudioService _audioService = AudioService();
 
-  final String _exerciseId = "67c66a0e3387a31ba1ee4a72";
+  late final String _exerciseId;
+  late final String _levelId;
 
   static const int _maxRecordingSeconds = 30;
   int _timerSeconds = 0;
@@ -58,30 +63,32 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   bool? _isCorrect;
 
   // NEW: We'll store the ExerciseService
-  late ExerciseService _exerciseService;  @override
-void initState() {
+  late ExerciseService _exerciseService;
+
+  @override
+  void initState() {
     super.initState();
+    _exerciseId = widget.exerciseId;
+    _levelId = widget.levelId;
     _username = widget.initialLearner.name;
     _userId = widget.initialLearner.id!;
     _loadWord();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (_userId.isEmpty) {
+        print("❗ No valid user ID available. Cannot start exercise.");
+        return;
+      }
 
-    if (_userId.isEmpty) {
-      print("❗ No valid user ID available. Cannot start exercise.");
-      return;
-    }
+      final client = await GraphQLService.getClient();
+      _exerciseService = ExerciseService(client: client);
 
-    final client = await GraphQLService.getClient();
-    _exerciseService = ExerciseService(client: client);
-
-    final startResult = await _exerciseService.startExercise(_userId, _exerciseId);
-    if (startResult != null) {
-      print("Exercise started: $startResult");
-    }
-  });
-}
-
+      final startResult = await _exerciseService.startExercise(_userId, _exerciseId);
+      if (startResult != null) {
+        print("Exercise started: $startResult");
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -108,7 +115,10 @@ void initState() {
       _isCorrect = null;
     });
 
-    final Word? fetchedWord = await WordsService.fetchRandomWord("Beginner", "67c66a0e3387a31ba1ee4a72");
+    // Map levelId to backend key for fetching words only
+    String backendLevelKey = _getBackendLevelKey(widget.levelId);
+
+    final Word? fetchedWord = await WordsService.fetchRandomWord(backendLevelKey, _exerciseId);
 
 
     if (fetchedWord == null) {
@@ -193,7 +203,8 @@ void initState() {
     }
   }
 
-  /// Process the speech recording
+  
+/// Process the speech recording
   Future<void> _processSpeech(String audioPath) async {
     setState(() {
       _isProcessing = true;
@@ -205,6 +216,7 @@ void initState() {
         userId: _userId,
         exerciseId: _exerciseId,
         wordId: _currentWordId,
+        levelId: _levelId, // <-- send as received from LevelScreen
         correctWord: _currentWord,
         audioFilePath: audioPath,
       );
@@ -262,6 +274,15 @@ void initState() {
     final int minutes = seconds ~/ 60;
     final int secs = seconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  }
+
+  /// Helper to map levelId to backend key for fetching words only
+  String _getBackendLevelKey(String levelId) {
+    // Only for fetchRandomWord, not for updateUserProgress
+    if (levelId.contains('1')) return 'Beginner';
+    if (levelId.contains('2')) return 'Intermediate';
+    if (levelId.contains('3')) return 'Advanced';
+    return 'Beginner'; // fallback
   }
 
   @override

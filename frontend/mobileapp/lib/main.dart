@@ -151,11 +151,19 @@ class _MyAppState extends State<MyApp> {
           '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
           '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
 
-          '/words_level_1': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            '/words_level_1': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+
             return WordPronunciationScreen(
               onLocaleChange: _setLocale,
-              initialLearner: args['learner'] as Learner,
+              initialLearner: args['learner'],
+              exerciseId: args['exerciseId'],
+              levelId: args['levelId'], // This is now the MongoDB ObjectId
             );
           },
           '/words_game_4': (context) {
@@ -167,13 +175,13 @@ class _MyAppState extends State<MyApp> {
             );
           },
 
-          '/sentences_level_1': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-            return SentencePronunciationScreen(
-              onLocaleChange: _setLocale,
-              learner: args['learner'] as Learner,
-            );
-          },
+          // '/sentences_level_1': (context) {
+          //   final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          //   return SentencePronunciationScreen(
+          //     onLocaleChange: _setLocale,
+          //     learner: args['learner'] as Learner,
+          //   );
+          // },
 
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
@@ -209,16 +217,17 @@ class _MyAppState extends State<MyApp> {
               level: args['level'] as Level,
               learner: args['learner'] as Learner,
               exerciseId: args['exerciseId'] as String,
+              levelObjectId: args['levelObjectId'] as String, // Pass the MongoDB ObjectId
             );
           },
           '/letters_level_1': (context) => const LetterLevel1(),
-          '/letters_level_2': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-            return LetterLevel2(
-              learner: args['learner'] as Learner,
-              exerciseId: args['exerciseId'] as String,
-            );
-          },
+          // '/letters_level_2': (context) {
+          //   final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          //   return LetterLevel2(
+          //     learner: args['learner'] as Learner,
+          //     exerciseId: args['exerciseId'] as String,
+          //   );
+          // },
           '/letters_level_3': (context) => const LetterLevel3(),
           '/letters_game_1': (context) => const ArabicLetterTracingExercise(),
           '/letters_game_3': (context) => const LetterLevel2Game(),

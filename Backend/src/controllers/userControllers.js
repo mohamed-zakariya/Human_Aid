@@ -296,7 +296,18 @@ export const learnerHomePage = async (userId) => {
       };
     });
 
-    return exercisesWithProgress;
+    const order = [
+      "Letters Exercise",
+      "Words Exercise",
+      "Sentences Exercise",
+      "Story Exercise"
+    ];
+
+    const sorted = exercisesWithProgress.sort(
+      (a, b) => order.indexOf(a.name) - order.indexOf(b.name)
+    );
+
+    return sorted;
   } catch (error) {
     console.error('Error fetching learner home page data:', error);
     throw new Error('Failed to fetch learner home page data');
