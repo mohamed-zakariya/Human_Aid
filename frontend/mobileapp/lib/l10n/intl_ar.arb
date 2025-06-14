@@ -225,6 +225,10 @@
     "stop": "إيقاف",
     "errorTryAgain": "حدث خطأ، حاول مرة أخرى",
     "readAloud": "اقرأ بصوت عالٍ",
+    "genderValidationError": "اختار النوع",
+    "birthdateValidation": "يرجى اختيار تاريخ الميلاد",
+    "usernameHint": "lexfix123",
+
 
 
 
@@ -261,7 +265,7 @@
     "guardianButton": "ولي أمر",
     "userButton": "مستخدم",
     "loginTitle": "تسجيل الدُّخول",
-    "emailHint": "humanid@gmail.com",
+    "emailHint": "lexfix@gmail.com",
     "passwordHint": "●●●●●●●",
     "forgotPassword": "نسيت كلمة المرور؟",
     "loginButton": "تسجيل الدخول",

@@ -139,7 +139,7 @@ class _SignupadultState extends State<Signupadult> {
             Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Signupinputfield(S.of(context).signupinputfieldname, S.of(context).signuptitlename, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, nameController, Validators.validateName),
                   SignupInputFieldUsername(S.of(context).signupinputfieldusername, S.of(context).signuptitleusername, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, usernameController),
@@ -166,8 +166,27 @@ class _SignupadultState extends State<Signupadult> {
                   ),
                   Signupinputfield(S.of(context).signupinputfieldpassword, S.of(context).signuptitlepassword, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, passwordController, Validators.validatePassword,),
                   Signupinputfield(S.of(context).signupinputfieldpassword, S.of(context).signuptitleconfirmpassword, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, confirmPasswordController, validateConfirmPassword,),
-                  DateTimePicker(controller: birthdateController, quardian: false,),
-                  Malefemale(onGenderSelected: _updateGender, flag: true,),
+                  DateTimePicker(
+                    controller: birthdateController,
+                    quardian: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return S.of(context).birthdateValidation;
+                      }
+                      return null;
+                    },
+                  ),                  Malefemale(
+                    onGenderSelected: (gender) {
+                      selectedGender = gender;
+                    },
+                    flag: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return S.of(context).genderValidationError;
+                      }
+                      return null;
+                    },
+                  ),
                 ],
               ),
             ),

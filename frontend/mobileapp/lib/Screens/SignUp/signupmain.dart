@@ -46,6 +46,8 @@ class _SignupmainState extends State<Signupmain> {
       selectedGender = gender;
     });
   }
+
+
   String? validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
       return Intl.getCurrentLocale() == 'ar'? "يجب تأكيد كلمة المرور":"Confirm password must be entered";
@@ -175,7 +177,7 @@ class _SignupmainState extends State<Signupmain> {
           Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Signupinputfield(S.of(context).signupinputfieldname, S.of(context).signuptitlename, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, nameController, Validators.validateName),
                 // Signupinputfield(S.of(context).signupinputfieldusername, S.of(context).signuptitleusername, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, usernameController, Validators.validateUsername),
@@ -202,8 +204,27 @@ class _SignupmainState extends State<Signupmain> {
                 Signupinputfield(S.of(context).signupinputfieldpassword, S.of(context).signuptitlepassword, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, passwordController, Validators.validatePassword),
                 Signupinputfield(S.of(context).signupinputfieldpassword, S.of(context).signuptitleconfirmpassword, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, confirmPasswordController, validateConfirmPassword),
                 // Signupinputfield(S.of(context).signupinputfieldbirthdate, S.of(context).signuptitlebirthdate, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, birthdateController),
-                DateTimePicker(controller: birthdateController, quardian: true,),
-                Malefemale(onGenderSelected: _updateGender, flag: true,),
+                DateTimePicker(
+                  controller: birthdateController,
+                  quardian: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return S.of(context).birthdateValidation;
+                    }
+                    return null;
+                  },
+                ),                Malefemale(
+                  onGenderSelected: (gender) {
+                    selectedGender = gender;
+                  },
+                  flag: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return S.of(context).genderValidationError;
+                    }
+                    return null;
+                  },
+                ),
               ],
             ),
           ),

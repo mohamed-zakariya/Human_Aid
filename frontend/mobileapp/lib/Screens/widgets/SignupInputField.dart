@@ -3,7 +3,7 @@ import 'package:mobileapp/classes/validators.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/global/fns.dart';
 
-class Signupinputfield extends StatelessWidget {
+class Signupinputfield extends StatefulWidget {
   const Signupinputfield(
     this.text,
     this.title,
@@ -30,7 +30,21 @@ class Signupinputfield extends StatelessWidget {
     final TextEditingController controller;
     final String? Function(String?)? validation;
 
+  @override
+  State<Signupinputfield> createState() => _SignupinputfieldState();
+}
 
+class _SignupinputfieldState extends State<Signupinputfield> {
+  bool _obscureText = true;
+
+  bool get _isPasswordField {
+    final title = widget.title;
+    final passwordTitles = [
+      S.current.signuptitlepassword,
+      S.current.signuptitleconfirmpassword,
+    ];
+    return passwordTitles.contains(title);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,38 +53,52 @@ class Signupinputfield extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(
-            fontSize: 18,
-            color: titleBWhiteEn? Colors.white: Colors.black
-          ),),
+          Text(
+            widget.title,
+            style: TextStyle(
+              fontSize: 18,
+              color: widget.titleBWhiteEn ? Colors.white : Colors.black,
+            ),
+          ),
           Container(
             width: 300,
             height: 55,
             padding: EdgeInsets.fromLTRB(
-              isArabic()? 0:8,
+              isArabic() ? 0 : 8,
               0,
-              isArabic()? 8:0,
-              0
+              isArabic() ? 8 : 0,
+              0,
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Color.fromRGBO(colorbR, colorbG, colorbB, opacityb),
+              color: Color.fromRGBO(
+                  widget.colorbR, widget.colorbG, widget.colorbB, widget.opacityb),
             ),
             child: TextFormField(
-              validator: validation,
-              controller: controller,
+              validator: widget.validation,
+              controller: widget.controller,
+              obscureText: _isPasswordField ? _obscureText : false,
               style: TextStyle(
-                color: makeBlack? Colors.black: Colors.white
+                color: widget.makeBlack ? Colors.black : Colors.white,
               ),
               decoration: InputDecoration(
-                hintText: text,
-                hintStyle:  TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey[500]
-                ),
+                hintText: widget.text,
+                hintStyle: TextStyle(fontSize: 15, color: Colors.grey[500]),
                 border: InputBorder.none,
+                suffixIcon: _isPasswordField
+                    ? IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                )
+                    : null,
               ),
-              obscureText: (title == S.of(context).signuptitlepassword || title ==  S.of(context).signuptitleconfirmpassword)? true:false,
             ),
           ),
         ],
@@ -78,4 +106,5 @@ class Signupinputfield extends StatelessWidget {
     );
   }
 }
+
 

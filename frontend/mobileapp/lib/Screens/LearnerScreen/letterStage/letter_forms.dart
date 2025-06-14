@@ -257,7 +257,7 @@ final Map<String, List<Map<String, dynamic>>>  letterForms2 = {
     {
       'label': 'بداية',
       'form': 'هـ',
-      'example': 'هامستر',
+      'example': 'هدهد',
       'image': 'assets/images/letters/ه_منفصل.png',
     },
     {

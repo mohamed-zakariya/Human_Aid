@@ -286,10 +286,24 @@ class _ContinuesignupState extends State<Continuesignup> {
             DateTimePicker(
               controller: birthdateControllers[id]!,
               quardian: false,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return S.of(context).birthdateValidation;
+                }
+                return null;
+              },
             ),
             Malefemale(
-              onGenderSelected: (gender) => _updateGender(id, gender),
-              flag: false,
+              onGenderSelected: (gender) {
+                selectedGenders[id] = gender;
+              },
+              flag: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return S.of(context).genderValidationError;
+                }
+                return null;
+              },
             ),
           ],
         ),
