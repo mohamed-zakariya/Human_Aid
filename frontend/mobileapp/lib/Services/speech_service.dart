@@ -14,7 +14,7 @@ class SpeechService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("accessToken");
 
-    final uri = Uri.parse('http://10.0.2.2:5500/upload-audio');
+    final uri = Uri.parse('https://human-aid-deployment.onrender.com/upload-audio');
     var request = http.MultipartRequest('POST', uri)
       ..files.add(await http.MultipartFile.fromPath('audio', audioFilePath));
 
@@ -41,7 +41,7 @@ class SpeechService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("accessToken");
 
-    final uri = Uri.parse('http://10.0.2.2:5500/api/transcribe');
+    final uri = Uri.parse('https://human-aid-deployment.onrender.com/api/transcribe');
     final response = await http.post(
       uri,
       headers: {
