@@ -10,12 +10,14 @@ class LevelScreen extends StatefulWidget {
   final Level   level;
   final Learner learner;
   final String  exerciseId;
+  final String  levelObjectId; // MongoDB ObjectId for mutation
 
   const LevelScreen({
     Key? key,
     required this.level,
     required this.learner,
     required this.exerciseId,
+    required this.levelObjectId,
   }) : super(key: key);
 
   @override
@@ -43,7 +45,7 @@ class _LevelScreenState extends State<LevelScreen> {
     final String? candidate =
         isArabic ? game.arabicName : game.name; // either may be null
 
-    // Arabic fallback is just the English “Game” transliterated; adjust if needed.
+    // Arabic fallback is just the English "Game" transliterated; adjust if needed.
     return candidate?.trim().isNotEmpty == true
         ? candidate!
         : (isArabic ? 'لعبة' : 'Game');
@@ -157,9 +159,10 @@ class _LevelScreenState extends State<LevelScreen> {
         onTap: () => Navigator.pushNamed(
           ctx,
           '/${widget.level.levelId}', // e.g. "/letters_level_1"
-          arguments: {
+            arguments: {
             'learner':    widget.learner,
             'exerciseId': widget.exerciseId,
+            'levelId':    widget.levelObjectId, // Pass the MongoDB ObjectId
           },
         ),
         borderRadius: BorderRadius.circular(16),
@@ -200,8 +203,8 @@ class _LevelScreenState extends State<LevelScreen> {
     final bool   isArabic     = Localizations.localeOf(ctx).languageCode == 'ar';
     final String title        = _safeGameName(game, ctx);
     final String description  = isArabic
-        ? (game.arabicDescription ?? '')
-        : (game.description      ?? '');
+        ? game.arabicDescription
+        : game.description;
 
     // difficulty chip colours
     final difficultyColors = <String, Color>{
@@ -217,9 +220,9 @@ class _LevelScreenState extends State<LevelScreen> {
       // Persist minimal context if you need it later
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('exerciseId', widget.exerciseId);
-      await prefs.setString('levelId',    widget.level.id     ?? '');
-      await prefs.setString('learnerId',  widget.learner.id   ?? '');
-      await prefs.setString('gameId',     game.id             ?? '');
+      await prefs.setString('levelId',    widget.level.id);
+      await prefs.setString('learnerId',  widget.learner.id ?? '');
+      await prefs.setString('gameId',     game.id);
 
       Navigator.pushNamed(
         ctx,

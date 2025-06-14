@@ -43,6 +43,7 @@ class _ExerciseLevelsScreenState extends State<ExerciseLevelsScreen> {
           level: level,
           learner: widget.learner,
           exerciseId: widget.exerciseId,
+          levelObjectId: level.id, // Pass the MongoDB ObjectId
         ),
       ),
     );

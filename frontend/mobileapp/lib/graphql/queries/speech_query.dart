@@ -3,6 +3,7 @@ mutation UpdateUserProgress(
   $userId: ID!,
   $exerciseId: ID!,
   $wordId: ID!,
+  $levelId: ID!,
   $audioFile: String,
   $spokenWord: String!
 ) {
@@ -10,6 +11,7 @@ mutation UpdateUserProgress(
     userId: $userId,
     exerciseId: $exerciseId,
     wordId: $wordId,
+    levelId: $levelId,
     audioFile: $audioFile,
     spokenWord: $spokenWord
   ) {
