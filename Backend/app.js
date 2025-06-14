@@ -42,7 +42,10 @@ app.use(passport.initialize());
 // Google OAuth routes
 app.use(googleAuthController);
 
-app.use(graphqlUploadExpress());
+app.use(
+  '/graphql',
+  graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }) // Optional config
+);
 
 app.use((req, res, next) => {
   if (req.path !== "/graphql" && req.path !== "/upload-audio" && req.path !== "/api/transcribe") {
