@@ -44,7 +44,8 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   List<String> _wordLetters = [];
   String _currentWord = "";
   String _currentWordId = "";
-  String _currentWordImage = "";
+  String? _currentWordImage;
+
 
   int _attemptsLeft = 3;
   String _username = "";
@@ -280,12 +281,12 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
     return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
-  /// Helper to map levelId to backend key for fetching words only
+  /// Helper to map levelId (ObjectId) to backend key for fetching words only
   String _getBackendLevelKey(String levelId) {
-    // Only for fetchRandomWord, not for updateUserProgress
-    if (levelId.contains('1')) return 'Beginner';
-    if (levelId.contains('2')) return 'Intermediate';
-    if (levelId.contains('3')) return 'Advanced';
+    // Map MongoDB ObjectId to backend key
+    if (levelId == '681004a0cb31000175a0b1b4') return 'Beginner';
+    if (levelId == '681004a0cb31000175a0b1b7') return 'Intermediate';
+    if (levelId == '681004a0cb31000175a0b1ba') return 'Advanced';
     return 'Beginner'; // fallback
   }
 
@@ -347,24 +348,31 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.network(
-                      _currentWordImage,
-                      height: 150,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
-                          Icons.broken_image,
+                    _currentWordImage != null
+                      ? Image.network(
+                          _currentWordImage!,
+                          height: 150,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.broken_image,
+                              size: 150,
+                              color: Colors.grey,
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const SizedBox(
+                              height: 150,
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          },
+                        )
+                      : const Icon(
+                          Icons.image_not_supported,
                           size: 150,
                           color: Colors.grey,
-                        );
-                      },
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const SizedBox(
-                          height: 150,
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      },
-                    ),
+                        ),
+
                   ],
                 ),
               ),

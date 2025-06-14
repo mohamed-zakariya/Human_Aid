@@ -166,6 +166,36 @@ class _MyAppState extends State<MyApp> {
               levelId: args['levelId'], // This is now the MongoDB ObjectId
             );
           },
+          '/words_level_2': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+
+            return WordPronunciationScreen(
+              onLocaleChange: _setLocale,
+              initialLearner: args['learner'],
+              exerciseId: args['exerciseId'],
+              levelId: args['levelId'], // This is now the MongoDB ObjectId
+            );
+          },
+          '/words_level_3': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+
+            return WordPronunciationScreen(
+              onLocaleChange: _setLocale,
+              initialLearner: args['learner'],
+              exerciseId: args['exerciseId'],
+              levelId: args['levelId'], // This is now the MongoDB ObjectId
+            );
+          },
           '/words_game_4': (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
             return ObjectDetectionExerciseScreen(
