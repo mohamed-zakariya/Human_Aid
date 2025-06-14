@@ -22,11 +22,14 @@ const app = express();
 
 
 
-// Allow requests from localhost:4200
 app.use(cors({
-  origin: 'http://localhost:4200',
-  credentials: true, // If you're sending cookies or using authentication headers
+  origin: [
+    'http://localhost:4200',
+    'https://mohamed-zakariya.github.io',
+  ],
+  credentials: true,
 }));
+
 
 
 app.use(express.json());
@@ -39,46 +42,49 @@ app.use(passport.initialize());
 // Google OAuth routes
 app.use(googleAuthController);
 
-app.use(graphqlUploadExpress());
+app.use(
+  '/graphql',
+  graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }) // Optional config
+);
 
-app.use((req, res, next) => {
-  if (req.path !== "/graphql" && req.path !== "/upload-audio" && req.path !== "/api/transcribe") {
-    authenticateJWT(req, res, next);
-  } else {
-    next();
-  }  
-});
-
-
-// app.use(async (req, res, next) => {
-//   if (
-//     (req.path === "/graphql" && req.body?.query) ||
-//     (req.path === "/auth/google" && req.method === "POST")
-//   ) {
-//     if (req.path === "/graphql") {
-//       const { query } = req.body;
-//       const operationMatch = query.match(/\bmutation\s+(\w+)/);
-//       const operationName = operationMatch ? operationMatch[1] : null;
-
-//       const publicOperations = [
-//         "loginParent", "signUpParent", "refreshTokenParent",
-//         "refreshTokenUser", "loginUser", "signUpChild",
-//         "signUpAdult", "checkUserUsernameExists",
-//          "checkParentEmailExists", "checkUserEmailExists"
-//       ];
-
-//       if (operationName && publicOperations.includes(operationName)) {
-//         return next(); // Skip authentication for these GraphQL operations
-//       }
-//     }
-
-//     if (req.path === "/auth/google" && req.method === "POST") {
-//       return next(); // Skip authentication for Google sign-in route
-//     }
-//   }
-
-//   authenticateJWT(req, res, next);
+// app.use((req, res, next) => {
+//   if (req.path !== "/graphql" && req.path !== "/upload-audio" && req.path !== "/api/transcribe") {
+//     authenticateJWT(req, res, next);
+//   } else {
+//     next();
+//   }  
 // });
+
+
+app.use(async (req, res, next) => {
+  if (
+    (req.path === "/graphql" && req.body?.query) ||
+    (req.path === "/auth/google" && req.method === "POST")
+  ) {
+    if (req.path === "/graphql") {
+      const { query } = req.body;
+      const operationMatch = query.match(/\bmutation\s+(\w+)/);
+      const operationName = operationMatch ? operationMatch[1] : null;
+
+      const publicOperations = [
+        "loginParent", "signUpParent", "refreshTokenParent",
+        "refreshTokenUser", "loginUser", "signUpChild",
+        "signUpAdult", "checkUserUsernameExists",
+         "checkParentEmailExists", "checkUserEmailExists", "loginAdmin"
+      ];
+
+      if (operationName && publicOperations.includes(operationName)) {
+        return next(); // Skip authentication for these GraphQL operations
+      }
+    }
+
+    if (req.path === "/auth/google" && req.method === "POST") {
+      return next(); // Skip authentication for Google sign-in route
+    }
+  }
+
+  authenticateJWT(req, res, next);
+});
 
 
 
@@ -109,7 +115,7 @@ app.post('/upload-audio', upload.single('audio'), async (req, res) => {
     fs.unlinkSync(inputPath);
   }
 
-  const fileUrl = `http://localhost:5500/uploads/${outputFilename}`;
+  const fileUrl = `http://localhost:${PORT}/uploads/${outputFilename}`;
   console.log("Processed audio file:", fileUrl);
   res.json({ message: "Audio uploaded and processed", fileUrl });
 });

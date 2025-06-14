@@ -154,11 +154,11 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
     });
   }
 
-  // Generate reference points for the current letter
+  // Enhanced letter shape generation for better coverage detection
   List<Offset> _generateLetterShape(String letter, Size canvasSize) {
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder);
+    List<Offset> letterPoints = [];
 
+    // Calculate letter dimensions and position
     final textPainter = TextPainter(
       text: TextSpan(
         text: letter,
@@ -173,35 +173,74 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
     );
 
     textPainter.layout(maxWidth: canvasSize.width);
-    final offset = Offset(
-      canvasSize.width / 2 - textPainter.width / 2,
-      canvasSize.height / 2 - textPainter.height / 2,
-    );
-    textPainter.paint(canvas, offset);
 
-    final picture = recorder.endRecording();
-
-    // Generate points around the letter shape
-    List<Offset> letterPoints = [];
-
-    // Create a grid and sample points around where the letter would be
     final centerX = canvasSize.width / 2;
     final centerY = canvasSize.height / 2;
     final letterWidth = textPainter.width;
     final letterHeight = textPainter.height;
 
-    // Generate points in the letter area
-    for (double x = centerX - letterWidth / 2; x <= centerX + letterWidth / 2; x += 8) {
-      for (double y = centerY - letterHeight / 2; y <= centerY + letterHeight / 2; y += 8) {
+    // TECHNIQUE: Multi-layer point generation for comprehensive coverage detection
+
+    // Layer 1: Dense core grid (primary letter area)
+    for (double x = centerX - letterWidth / 2; x <= centerX + letterWidth / 2; x += 5) {
+      for (double y = centerY - letterHeight / 2; y <= centerY + letterHeight / 2; y += 5) {
         letterPoints.add(Offset(x, y));
       }
     }
 
+    // Layer 2: Perimeter outline points (letter boundaries)
+    final steps = 50;
+    for (int i = 0; i < steps; i++) {
+      double t = i / steps;
+
+      // Top edge
+      letterPoints.add(Offset(
+          centerX - letterWidth / 2 + (letterWidth * t),
+          centerY - letterHeight / 2
+      ));
+
+      // Bottom edge
+      letterPoints.add(Offset(
+          centerX - letterWidth / 2 + (letterWidth * t),
+          centerY + letterHeight / 2
+      ));
+
+      // Left edge
+      letterPoints.add(Offset(
+          centerX - letterWidth / 2,
+          centerY - letterHeight / 2 + (letterHeight * t)
+      ));
+
+      // Right edge
+      letterPoints.add(Offset(
+          centerX + letterWidth / 2,
+          centerY - letterHeight / 2 + (letterHeight * t)
+      ));
+    }
+
+    // Layer 3: Cross-pattern for better shape detection
+    for (double t = 0; t <= 1; t += 0.02) {
+      // Horizontal line through center
+      letterPoints.add(Offset(
+          centerX - letterWidth / 2 + (letterWidth * t),
+          centerY
+      ));
+
+      // Vertical line through center
+      letterPoints.add(Offset(
+          centerX,
+          centerY - letterHeight / 2 + (letterHeight * t)
+      ));
+    }
+
+    print("Generated ${letterPoints.length} reference points for letter '$letter'");
     return letterPoints;
   }
 
   // Calculate similarity between user drawing and letter shape
   // Made more forgiving for dyslexic users
+
+// PRIMARY FOCUS: Letter Coverage Accuracy Calculation
   double _calculateLetterSimilarity() {
     if (strokes.isEmpty) return 0.0;
 
@@ -216,45 +255,73 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
 
     if (userPoints.isEmpty) return 0.0;
 
-    // Calculate coverage of letter area with more generous tolerance
-    double totalCoverage = 0.0;
-    double coveredPoints = 0.0;
+    // MAIN FACTOR: Letter Coverage Analysis (85% weight)
+    double totalLetterPoints = letterShape.length.toDouble();
+    double coveredLetterPoints = 0.0;
 
+    print("Total letter reference points: ${totalLetterPoints.toInt()}");
+    print("User drawn points: ${userPoints.length}");
+
+    // Calculate how many letter points are covered by user drawing
     for (Offset letterPoint in letterShape) {
-      totalCoverage++;
+      bool isCovered = false;
 
-      // Check if any user point is close to this letter point
-      bool covered = false;
       for (Offset userPoint in userPoints) {
         double distance = (letterPoint - userPoint).distance;
-        if (distance < 40.0) { // Increased tolerance from 25 to 40
-          covered = true;
+
+        // Tolerance for considering a point "covered"
+        if (distance <= 40.0) {
+          isCovered = true;
           break;
         }
       }
 
-      if (covered) {
-        coveredPoints++;
+      if (isCovered) {
+        coveredLetterPoints++;
       }
     }
 
-    double coverageRatio = totalCoverage > 0 ? coveredPoints / totalCoverage : 0.0;
+    // Calculate the raw coverage percentage
+    double coveragePercentage = totalLetterPoints > 0
+        ? (coveredLetterPoints / totalLetterPoints)
+        : 0.0;
 
-    // Check if the drawing is roughly in the right area - more forgiving
-    final centerX = _canvasSize.width / 2;
-    final centerY = _canvasSize.height / 2;
+    print("Covered letter points: ${coveredLetterPoints.toInt()}");
+    print("Raw coverage percentage: ${(coveragePercentage * 100).toStringAsFixed(1)}%");
 
-    double avgUserX = userPoints.map((p) => p.dx).reduce((a, b) => a + b) / userPoints.length;
-    double avgUserY = userPoints.map((p) => p.dy).reduce((a, b) => a + b) / userPoints.length;
+    // TECHNIQUE: Accuracy Zones for Different Coverage Levels
+    double adjustedCoverage = 0.0;
 
-    double centerDistance = (Offset(avgUserX, avgUserY) - Offset(centerX, centerY)).distance;
-    double positionScore = centerDistance < 120 ? 1.0 : (200 - centerDistance) / 80; // More generous positioning
-    positionScore = positionScore.clamp(0.0, 1.0);
+    if (coveragePercentage >= 0.7) {
+      // Excellent coverage (70%+) - Full score with bonus
+      adjustedCoverage = (coveragePercentage * 1.1).clamp(0.0, 1.0);
+    } else if (coveragePercentage >= 0.5) {
+      // Good coverage (50-69%) - Slight boost
+      adjustedCoverage = (coveragePercentage * 1.05).clamp(0.0, 1.0);
+    } else if (coveragePercentage >= 0.3) {
+      // Fair coverage (30-49%) - No adjustment
+      adjustedCoverage = coveragePercentage;
+    } else if (coveragePercentage >= 0.15) {
+      // Poor coverage (15-29%) - Slight penalty but still some credit
+      adjustedCoverage = coveragePercentage * 0.9;
+    } else {
+      // Very poor coverage (<15%) - Minimal credit
+      adjustedCoverage = coveragePercentage * 0.7;
+    }
 
-    // Check for sufficient drawing complexity - lowered requirements
-    double complexityScore = 0.0;
-    if (userPoints.length > 5) { // Reduced from 10 to 5 points
-      // Calculate the spread of points
+    // MINOR FACTORS: Basic Quality Checks (15% weight total)
+
+    // Check 1: Minimum effort (5% weight)
+    double effortScore = 0.0;
+    if (userPoints.length >= 8) {
+      effortScore = 0.3;
+      if (userPoints.length >= 15) effortScore = 0.6;
+      if (userPoints.length >= 25) effortScore = 1.0;
+    }
+
+    // Check 2: Drawing spread (5% weight)
+    double spreadScore = 0.0;
+    if (userPoints.length > 1) {
       double minX = userPoints.map((p) => p.dx).reduce((a, b) => a < b ? a : b);
       double maxX = userPoints.map((p) => p.dx).reduce((a, b) => a > b ? a : b);
       double minY = userPoints.map((p) => p.dy).reduce((a, b) => a < b ? a : b);
@@ -263,27 +330,35 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
       double width = maxX - minX;
       double height = maxY - minY;
 
-      complexityScore = ((width + height) / (_canvasSize.width + _canvasSize.height)).clamp(0.0, 1.0);
-
-      // Give bonus points for any reasonable attempt
-      if (width > 20 || height > 20) {
-        complexityScore = (complexityScore + 0.3).clamp(0.0, 1.0);
-      }
+      if (width > 20 && height > 20) spreadScore = 0.4;
+      if (width > 40 && height > 40) spreadScore = 0.7;
+      if (width > 60 && height > 60) spreadScore = 1.0;
     }
 
-    // More generous scoring weights and bonus for effort
-    double baseScore = (coverageRatio * 0.3 + positionScore * 0.4 + complexityScore * 0.3);
+    // Check 3: Stroke continuity (5% weight)
+    double continuityScore = 0.0;
+    if (strokes.isNotEmpty) {
+      continuityScore = 0.5; // Base score for any drawing
+      if (strokes.length >= 2) continuityScore = 0.8; // Multi-stroke bonus
+      if (strokes.length >= 3) continuityScore = 1.0; // Complex letter bonus
+    }
 
-    // Add effort bonus - reward any substantial drawing attempt
-    double effortBonus = 0.0;
-    if (userPoints.length > 15) effortBonus += 0.15;
-    if (strokes.length > 1) effortBonus += 0.1; // Multiple strokes bonus
+    // FINAL CALCULATION: Coverage is the dominant factor
+    double finalScore = (
+        adjustedCoverage * 0.85 +           // 85% - Letter coverage accuracy
+            effortScore * 0.05 +                // 5% - Drawing effort
+            spreadScore * 0.05 +                // 5% - Drawing spread
+            continuityScore * 0.05              // 5% - Stroke continuity
+    ).clamp(0.0, 1.0);
 
-    double finalScore = (baseScore + effortBonus).clamp(0.0, 1.0);
+    print("Final coverage score: ${(finalScore * 100).toStringAsFixed(1)}%");
+    print("Coverage component: ${(adjustedCoverage * 0.85 * 100).toStringAsFixed(1)}%");
+    print("Quality components: ${((effortScore * 0.05 + spreadScore * 0.05 + continuityScore * 0.05) * 100).toStringAsFixed(1)}%");
 
     return finalScore;
   }
 
+// Updated validation with coverage-focused messaging
   Future<void> _validateTracingFeedback() async {
     if (strokes.isEmpty && currentStroke.isEmpty) {
       _showTryAgainMessage();
@@ -298,12 +373,13 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
       });
     }
 
-    // Calculate accuracy based on letter similarity
-    double similarity = _calculateLetterSimilarity();
+    // Calculate coverage accuracy
+    double coverageAccuracy = _calculateLetterSimilarity();
 
     setState(() {
-      _accuracy = similarity;
-      _isCorrectTracing = similarity >= 0.4; // Reduced from 0.6 to 0.4 (40% instead of 60%)
+      _accuracy = coverageAccuracy;
+      // Coverage-focused threshold: 35% coverage required
+      _isCorrectTracing = coverageAccuracy >= 0.35;
     });
 
     if (_isCorrectTracing) {
@@ -328,7 +404,7 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(S.of(context).youTracedCorrectly),
+            Text("Great! You covered the letter shape accurately."),
             const SizedBox(height: 16),
             LinearProgressIndicator(
               value: _accuracy,
@@ -336,7 +412,21 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
               valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
             ),
             const SizedBox(height: 8),
-            Text("${(_accuracy * 100).toStringAsFixed(0)}% ${S.of(context).accuracy}"),
+            Text(
+              "Letter Coverage: ${(_accuracy * 100).toStringAsFixed(0)}%",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _accuracy >= 0.7 ? "Excellent coverage!" :
+              _accuracy >= 0.5 ? "Good coverage!" :
+              "Adequate coverage!",
+              style: TextStyle(
+                color: _accuracy >= 0.7 ? Colors.green :
+                _accuracy >= 0.5 ? Colors.blue : Colors.orange,
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
         actions: [
@@ -427,7 +517,7 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Your tracing doesn't match the letter well enough. Try to draw the letter '${arabicLetters[currentLetterIndex]}' more accurately."),
+            Text("You need to cover more of the letter '${arabicLetters[currentLetterIndex]}' shape. Try tracing over more parts of the letter."),
             const SizedBox(height: 16),
             if (_accuracy > 0) ...[
               LinearProgressIndicator(
@@ -436,7 +526,15 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
                 valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
               ),
               const SizedBox(height: 8),
-              Text("${(_accuracy * 100).toStringAsFixed(0)}% accuracy (need 40%+)"),
+              Text(
+                "Letter Coverage: ${(_accuracy * 100).toStringAsFixed(0)}% (need 35%+)",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "Tip: Draw over more areas of the letter to increase coverage",
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
             ],
           ],
         ),

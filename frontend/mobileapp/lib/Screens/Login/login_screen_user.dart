@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobileapp/services/auth_service.dart';
 import 'package:mobileapp/models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Services/google_auth_service.dart';
 import '../../generated/l10n.dart';
 import '../../models/learner.dart';
@@ -25,12 +26,18 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
   void _handleGoogleSignIn(BuildContext context) async {
     final User? user = await GoogleAuthService.loginWithGoogle(); // Use GoogleAuthService
     if (user != null) {
+      await _setOnboardingSeen(); // ✅ Set flag
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Google Sign-In failed")),
       );
     }
+  }
+
+  Future<void> _setOnboardingSeen() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboardingSeen', true);
   }
 
   void handleLoginUser() async{
@@ -43,21 +50,13 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
     print("user loged with password: $password");
 
     Learner? learner = await AuthService.loginLearner(username, password);
-    if(learner != null){
-      print(learner.name);
-      
-      // Navigate to the WordPronunciationScreen instead of learnerHome
-      Navigator.pushReplacementNamed(
-          context,
-          '/Learner-Home',
-          arguments: learner);
-    }
-    else{
-      // Show error message to the user instead of just printing
+    if (learner != null) {
+      await _setOnboardingSeen(); // ✅ Set flag
+      Navigator.pushReplacementNamed(context, '/Learner-Home', arguments: learner);
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Invalid username or password")),
       );
-      print("Enter the right username && password");
     }
   }
 

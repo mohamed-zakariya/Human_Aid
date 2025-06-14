@@ -158,6 +158,7 @@ extend type Query {
   getLearnerOverallProgress(parentId: ID!): LearneroverallProgress
   getParentChildren(parentId: ID!): [User!]
   getLearnerDailyAttempts(parentId: ID!): [LearnerDailyAttempts]
+  getParentDataById(parentId: ID!): Parent
 }
 
 extend type Mutation {

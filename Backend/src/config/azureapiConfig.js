@@ -8,7 +8,7 @@ export const azureTranscribeAudio = async (filePath) => {
     formData.append('file', fs.createReadStream(filePath));  // <--- Correct way
 
     const response = await axios.post(
-      'http://fiestconainer.acezb3fsf4djaacc.uaenorth.azurecontainer.io:8000/transcribe/',
+      'http://sstprod-2025.dqd5aybnawd2fwgq.uaenorth.azurecontainer.io:8000/transcribe/',
       formData,
       { headers: formData.getHeaders() }
     );

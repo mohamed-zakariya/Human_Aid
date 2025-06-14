@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobileapp/Services/auth_service.dart';
 import 'package:mobileapp/Services/google_auth_parent_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../generated/l10n.dart';
 import '../../models/parent.dart';
@@ -42,6 +43,8 @@ class _LoginScreenGaurdianState extends State<LoginScreenGaurdian> {
     Parent? parent = await AuthService.loginParent(email, password);
     if (parent != null) {
       print(parent.name);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('onboardingSeen', true);
       Navigator.pushReplacementNamed(
           context,
           '/parentHome',
@@ -203,6 +206,8 @@ class _LoginScreenGaurdianState extends State<LoginScreenGaurdian> {
                               "gender":      parentJson["gender"] ?? "",
                             });
 
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            await prefs.setBool('onboardingSeen', true);
                             // Pass `parent` as arguments to the route
                             Navigator.pushReplacementNamed(
                               context,

@@ -90,13 +90,13 @@ class _StoryResultScreenState extends State<StoryResultScreen>
 
   int _getTimerDuration() {
     switch (widget.length.toLowerCase()) {
-      case 'قصيرة':
+      case 'قصة قصيرة':
       case 'short':
-        return 30;
-      case 'متوسطة':
+        return 20;
+      case 'قصة متوسطة':
       case 'medium':
-        return 45;
-      case 'طويلة':
+        return 40;
+      case 'قصة طويلة':
       case 'long':
       default:
         return 60;
@@ -468,13 +468,15 @@ class _StoryResultScreenState extends State<StoryResultScreen>
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: _canAccessQuestions ? [
+        boxShadow: _canAccessQuestions
+            ? [
           BoxShadow(
             color: Colors.purple.withOpacity(0.4),
             blurRadius: 12,
             offset: Offset(0, 6),
           ),
-        ] : [],
+        ]
+            : [],
       ),
       child: ElevatedButton(
         onPressed: _canAccessQuestions && questions != null
@@ -500,42 +502,21 @@ class _StoryResultScreenState extends State<StoryResultScreen>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (isQuestionsLoading) ...[
-              SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: 2,
-                ),
-              ),
-              SizedBox(width: 12),
-              Text(
-                "جاري تحضير الأسئلة...",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'OpenDyslexic',
-                ),
-              ),
-            ] else ...[
-              Icon(
-                _canAccessQuestions ? Icons.quiz : Icons.lock,
+            Icon(
+              _canAccessQuestions ? Icons.quiz : Icons.lock,
+              color: Colors.white,
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              _canAccessQuestions ? "الأسئلة التعليمية 📘" : "الأسئلة مقفلة 🔒",
+              style: const TextStyle(
                 color: Colors.white,
-                size: 24,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'OpenDyslexic',
               ),
-              SizedBox(width: 8),
-              Text(
-                _canAccessQuestions ? "الأسئلة التعليمية 📘" : "الأسئلة مقفلة 🔒",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'OpenDyslexic',
-                ),
-              ),
-            ],
+            ),
           ],
         ),
       ),

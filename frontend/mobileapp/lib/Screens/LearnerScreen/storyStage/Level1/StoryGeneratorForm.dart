@@ -161,7 +161,7 @@ class _StoryInputScreenState extends State<StoryInputScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'قيم إضافية (مثل: الصبر، التعاون)',
                 border: InputBorder.none,
                 prefixIcon: Icon(Icons.add_circle_outline, color: Colors.green),

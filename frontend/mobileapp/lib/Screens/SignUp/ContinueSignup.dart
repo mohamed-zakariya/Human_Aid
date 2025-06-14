@@ -5,10 +5,12 @@ import 'package:mobileapp/Screens/SignUp/ProgressBar.dart';
 import 'package:mobileapp/Screens/widgets/SignupInputField.dart';
 import 'package:mobileapp/Screens/widgets/successSnackBar.dart';
 import 'package:mobileapp/generated/l10n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Services/signup_service.dart';
 import '../../models/learner.dart';
 import '../../models/parent.dart';
+import '../widgets/SignupCountryDropdown.dart';
 import '../widgets/date.dart';
 
 class Continuesignup extends StatefulWidget {
@@ -160,6 +162,9 @@ class _ContinuesignupState extends State<Continuesignup> {
       successSnackBar("Signup successful!"),
     );
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboardingSeen', true);
+
     // Delay navigation by 3 seconds
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushNamedAndRemoveUntil(
@@ -235,15 +240,20 @@ class _ContinuesignupState extends State<Continuesignup> {
               usernameControllers[id]!,
                   (value) => value!.isEmpty ? 'Username is required' : null,
             ),
-            Signupinputfield(
+            SignupCountryDropdown(
               S.of(context).signupinputfieldnationality,
               S.of(context).signuptitlenationality,
               255, 255, 255, 0.1,
               255, 255, 255, 1,
-              false,
-              true,
-              nationalityControllers[id]!,
-                  (value) => value!.isEmpty ? 'Nationality is required' : null,
+              false, // makeBlack
+              true,  // titleBWhiteEn
+              nationalityControllers[id]!.text.isNotEmpty ? nationalityControllers[id]!.text : null,
+                  (newValue) {
+                setState(() {
+                  nationalityControllers[id]!.text = newValue ?? '';
+                });
+              },
+                  (value) => value == null || value.isEmpty ? 'Nationality is required' : null,
             ),
             Signupinputfield(
               S.of(context).signupinputfieldpassword,

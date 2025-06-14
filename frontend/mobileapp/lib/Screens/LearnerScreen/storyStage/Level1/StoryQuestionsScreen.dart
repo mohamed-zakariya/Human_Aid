@@ -1,6 +1,7 @@
 // screens/story_questions_screen.dart
 import 'package:flutter/material.dart';
 
+import '../../../../Services/add_score_service.dart';
 import '../../../../Services/generate_questions_service.dart';
 
 class StoryQuestionsScreen extends StatefulWidget {
@@ -30,7 +31,7 @@ class _StoryQuestionsScreenState extends State<StoryQuestionsScreen>
     selectedAnswers = List.filled(widget.questions.length, null);
 
     _fadeController = AnimationController(
-      duration: Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
@@ -51,15 +52,14 @@ class _StoryQuestionsScreenState extends State<StoryQuestionsScreen>
     });
   }
 
-  void _submitAnswers() {
+  void _submitAnswers() async {
     if (selectedAnswers.contains(null)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('يرجى الإجابة على جميع الأسئلة'),
+          content: const Text('يرجى الإجابة على جميع الأسئلة'),
           backgroundColor: Colors.orange,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
       return;
@@ -73,10 +73,26 @@ class _StoryQuestionsScreenState extends State<StoryQuestionsScreen>
       }
     }
 
+    try {
+      // Submit the score
+      await AddScoreService.updateScore(
+        score: score,
+        outOf: widget.questions.length,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('حدث خطأ أثناء حفظ النتيجة'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+
     setState(() {
       showResults = true;
     });
   }
+
 
   Color _getScoreColor() {
     double percentage = score / widget.questions.length;
