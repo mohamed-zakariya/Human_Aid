@@ -42,7 +42,10 @@ class AuthService {
     final String refreshToken = data["refreshToken"];
 
 
-    GraphQLService.saveTokens(accessToken, refreshToken);
+    GraphQLService.saveTokens(accessToken, refreshToken, "parent");
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("userId", parentData["id"] ?? "");
+
 
     return Parent.fromJson(parentData);
 
@@ -78,7 +81,8 @@ class AuthService {
     final String refreshToken = data["refreshToken"];
 
 
-    GraphQLService.saveTokens(accessToken, refreshToken);
+    GraphQLService.saveTokens(accessToken, refreshToken, "learner");
+
     print("Token Saved: $accessToken");
     print("auth service $learnerData");
 

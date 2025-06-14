@@ -2250,6 +2250,56 @@ class S {
     );
   }
 
+  /// `Level 2`
+  String get letterLevel2 {
+    return Intl.message(
+      'Level 2',
+      name: 'letterLevel2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Record your voice`
+  String get recordYourVoice {
+    return Intl.message(
+      'Record your voice',
+      name: 'recordYourVoice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop`
+  String get stop {
+    return Intl.message(
+      'Stop',
+      name: 'stop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `An error occurred, try again`
+  String get errorTryAgain {
+    return Intl.message(
+      'An error occurred, try again',
+      name: 'errorTryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Read Aloud`
+  String get readAloud {
+    return Intl.message(
+      'Read Aloud',
+      name: 'readAloud',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Close`
   String get close {
     return Intl.message(

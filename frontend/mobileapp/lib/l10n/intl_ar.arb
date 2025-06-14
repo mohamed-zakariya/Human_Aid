@@ -220,6 +220,11 @@
     "checking": "جاري الفحص...",
     "checkSummary": "فحص الملخص",
     "storySummarizerGame": "لعبة تلخيص القصص",
+    "letterLevel2": "المستوي الثاني",
+    "recordYourVoice": "سجّل صوتك",
+    "stop": "إيقاف",
+    "errorTryAgain": "حدث خطأ، حاول مرة أخرى",
+    "readAloud": "اقرأ بصوت عالٍ",
 
 
 
@@ -232,12 +237,11 @@
 
 
 
-    
-    
-    
-    
-    
-    
+
+
+
+
+
     "close": "إغلاق",
     "accuracy": "الدقة",
     "title1": "مرحباً بك في عالمك الخاص\nحيث متعة التعلم",

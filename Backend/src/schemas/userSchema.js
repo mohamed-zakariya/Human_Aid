@@ -118,6 +118,7 @@ type signUpAdultdResponse{
     learnerHomePage(userId: ID!): [Exercise!]!
     getLevelsForExercises: [Exercise!]!
     learnerProfile(userId: ID!): LearnerProfile!
+    getLearnerDataById(userId: ID!): User!
   }
 
   extend type Mutation {

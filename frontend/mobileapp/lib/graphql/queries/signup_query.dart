@@ -36,14 +36,14 @@ const String signupAdultQuery = """
   mutation signUpAdult(\$adult: AddAdultData){
   signUpAdult(adult: \$adult) {
     adult {
+      id,
       name,
-      username,
       email,
-      phoneNumber,
-      nationality,
-      birthdate,
+      username,
+      name,
+      role,
       gender,
-      role
+      nationality
     },
     accessToken,
     refreshToken

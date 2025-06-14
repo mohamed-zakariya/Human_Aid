@@ -13,6 +13,7 @@ import '../../../generated/l10n.dart';
 import '../../../models/learner.dart';
 import '../../../models/parent.dart';
 import '../../widgets/MaleFemale.dart';
+import '../../widgets/SignupCountryDropdown.dart';
 import '../../widgets/SignupInputField.dart';
 import '../../widgets/date.dart';
 
@@ -130,6 +131,11 @@ class _LearnerDetailsState extends State<LearnerDetails> {
         return Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Container(
+            // Remove fixed height, let it be responsive
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.9, // Max 90% of screen height
+              maxWidth: MediaQuery.of(context).size.width * 0.9,   // Max 90% of screen width
+            ),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -140,8 +146,9 @@ class _LearnerDetailsState extends State<LearnerDetails> {
               ),
             ),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min, // Important: let content determine height
               children: [
+                // Header - Fixed
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -164,8 +171,9 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  height: 400,
+
+                // Form - Flexible/Scrollable
+                Flexible( // Use Flexible instead of fixed SizedBox
                   child: Form(
                     key: _formKey,
                     child: SingleChildScrollView(
@@ -191,15 +199,19 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                             usernameController,
                             Validators.validateUsername,
                           ),
-                          Signupinputfield(
+                          SignupCountryDropdown(
                             S.of(context).signupinputfieldnationality,
                             S.of(context).signuptitlenationality,
-                            108, 99, 255, 0.1,
-                            255, 255, 255, 1,
-                            true,
-                            false,
-                            nationalityControllers,
-                                (value) => value!.isEmpty ? 'Nationality is required' : null,
+                            108, 99, 255, 0.8, 255, 255, 255, 1,
+                            false, // makeBlack
+                            false,  // titleBWhiteEn
+                            nationalityControllers.text.isNotEmpty ? nationalityControllers.text : null,
+                                (newValue) {
+                              setState(() {
+                                nationalityControllers.text = newValue ?? '';
+                              });
+                            },
+                                (value) => value == null || value.isEmpty ? 'Nationality is required' : null,
                           ),
                           Signupinputfield(
                             S.of(context).signupinputfieldpassword,
@@ -235,14 +247,17 @@ class _LearnerDetailsState extends State<LearnerDetails> {
                           ),
                           Malefemale(
                             onGenderSelected: (gender) => _updateGender(gender),
-                            flag: false,
+                            flag: true,
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 24),
+
+                // Buttons - Fixed at bottom
                 Row(
                   children: [
                     Expanded(

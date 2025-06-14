@@ -29,6 +29,7 @@ import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/parent.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/quizapp.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Screens/LearnerScreen/storyStage/Level2/story_summarize.dart';
 import 'Screens/LearnerScreen/wordStage/Level2/first_game/direction_game1_page.dart';
@@ -42,6 +43,8 @@ import 'Screens/ParentScreen/ParentMain.dart';
 import 'Screens/exercises_levels_screen.dart';
 import 'Screens/level_screen.dart';
 import 'Screens/object_detection_exercise_screen.dart';
+import 'Services/user_service.dart';
+import 'SplashLoadingScreen.dart';
 import 'models/level.dart';
 
 
@@ -58,13 +61,69 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
+  Widget _initialScreen = const SplashLoadingScreen(); // Show this until loaded
   Locale _locale = const Locale('en');
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInitialScreen();
+  }
 
   void _setLocale(Locale locale) {
     setState(() {
       _locale = locale;
     });
   }
+  Future<void> _loadInitialScreen() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
+
+    if (!onboardingSeen) {
+      setState(() {
+        _initialScreen = OnboardingScreen(onLocaleChange: _setLocale);
+      });
+      return;
+    }
+
+    final String? userId = prefs.getString('userId');
+    final String? userRole = prefs.getString('role');
+    final String? refreshToken = prefs.getString('refreshToken');
+    final String? accessToken = prefs.getString('accessToken');
+
+    print(userId);
+    print(userRole);
+    print(refreshToken);
+    print(accessToken);
+
+    if (userId != null && userRole != null && refreshToken != null && refreshToken.isNotEmpty) {
+      if (userRole == "parent") {
+        final parent = await UserService.getParentById(userId);
+        if (parent != null) {
+          setState(() {
+            _initialScreen = ParentMain(parent: parent, onLocaleChange: _setLocale);
+          });
+          return;
+        }
+      } else if (userRole == "learner") {
+        final learner = await UserService.getLearnerById(userId);
+        if (learner != null) {
+          setState(() {
+            _initialScreen = LearnerHomeScreen(learner: learner, onLocaleChange: _setLocale);
+          });
+          return;
+        }
+      }
+    }
+
+    // Fallback to intro if anything is missing or invalid
+    setState(() {
+      _initialScreen = IntroScreen(onLocaleChange: _setLocale);
+    });
+  }
+
+
+
 
 
 
@@ -72,24 +131,26 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      color: const Color.fromRGBO(0, 0, 0, 1),
       locale: _locale,
-       localizationsDelegates: const [
-                S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-            ],
-        supportedLocales: S.delegate.supportedLocales,
-
-        initialRoute: '/intro',
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
+      home: _initialScreen,
         routes: {
           '/intro': (context) => IntroScreen(onLocaleChange: _setLocale),
           '/quiz': (context) => TestSelectorWidget(userProgress: 0.3),
+
           '/login_user': (context) => LoginScreenUser(onLocaleChange: _setLocale),
           '/login_gaurdian': (context) => LoginScreenGaurdian(onLocaleChange: _setLocale),
+
           '/forgot-password': (context) => ForgotPasswordPage(onLocaleChange: _setLocale),
-          '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),          '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
+          '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
+          '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
+
           '/words_level_1': (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
             return WordPronunciationScreen(
@@ -105,6 +166,7 @@ class _MyAppState extends State<MyApp> {
               exerciseId: args['exerciseId'] as String,
             );
           },
+
           '/sentences_level_1': (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
             return SentencePronunciationScreen(
@@ -112,20 +174,19 @@ class _MyAppState extends State<MyApp> {
               learner: args['learner'] as Learner,
             );
           },
+
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
           '/signup2': (context) {
             final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
             return Continuesignup(parent: parent);
           },
+
           '/parentHome': (context) {
             final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
             return ParentMain(parent: parent, onLocaleChange: _setLocale,);
           },
-          // '/learnerMain': (context) {
-          //   final Learner learner = ModalRoute.of(context)!.settings.arguments as Learner;
-          //   return LearnerMain(learner: learner, onLocaleChange: _setLocale,);
-          // },
+
           '/Learner-Home': (context) {
             final learner = ModalRoute.of(context)!.settings.arguments as Learner;
             return LearnerHomeScreen(
@@ -134,31 +195,30 @@ class _MyAppState extends State<MyApp> {
             );
           },
           '/exercise-levels': (context) {
-          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return ExerciseLevelsScreen(
-            exerciseId: args['exerciseId'] as String,
-            exerciseName: args['exerciseName'] as String,
-            exerciseArabicName: args['exerciseArabicName'] as String,
-            learner: args['learner'] as Learner,
-          );
-        },
-                '/games': (context) {
-          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return LevelScreen(
-            level: args['level'] as Level,
-            learner: args['learner'] as Learner,
-            exerciseId: args['exerciseId'] as String,
-          );
-        },
-      
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return ExerciseLevelsScreen(
+              exerciseId: args['exerciseId'] as String,
+              exerciseName: args['exerciseName'] as String,
+              exerciseArabicName: args['exerciseArabicName'] as String,
+              learner: args['learner'] as Learner,
+            );
+          },
+          '/games': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return LevelScreen(
+              level: args['level'] as Level,
+              learner: args['learner'] as Learner,
+              exerciseId: args['exerciseId'] as String,
+            );
+          },
           '/letters_level_1': (context) => const LetterLevel1(),
           '/letters_level_2': (context) {
-  final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-  return LetterLevel2(
-    learner: args['learner'] as Learner,
-    exerciseId: args['exerciseId'] as String,
-  );
-},
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return LetterLevel2(
+              learner: args['learner'] as Learner,
+              exerciseId: args['exerciseId'] as String,
+            );
+          },
           '/letters_level_3': (context) => const LetterLevel3(),
           '/letters_game_1': (context) => const ArabicLetterTracingExercise(),
           '/letters_game_3': (context) => const LetterLevel2Game(),
@@ -169,7 +229,7 @@ class _MyAppState extends State<MyApp> {
           '/words_game_1': (context) => const SpellingGameScreen(),
           '/words_game_2': (context) => DirectionInstructionsPage(),
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
-          '/words_game_5': (context) => const ArrowDetectionGameWidget(),
+          '/words_game_5': (context) => const HandDetectionGameWidget(),
           '/words_game_6': (context) => const MonthsOrderGameScreen(),
 
 
@@ -185,7 +245,6 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      home: OnboardingScreen(onLocaleChange: _setLocale),
     );
   }
 }

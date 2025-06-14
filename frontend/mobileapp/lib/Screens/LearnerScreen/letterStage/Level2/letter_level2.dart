@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../../../../generated/l10n.dart';
 import '../../../../graphql/graphql_client.dart';
 import '../../../../graphql/queries/letters_excercise_query.dart';
 import '../../../../services/letters_service.dart';
@@ -106,7 +107,7 @@ class _LetterLevel2State extends State<LetterLevel2> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(res?['message'] ?? 'حدث خطأ، حاول مرة أخرى'),
+        content: Text(res?['message'] ?? S.of(context).errorTryAgain),
         backgroundColor:
             (res?['isCorrect'] ?? false) ? Colors.green : Colors.red,
       ),
@@ -171,7 +172,7 @@ class _LetterLevel2State extends State<LetterLevel2> {
                   ),
                   onPressed: () => _play(ltr.letter),
                   icon: const Icon(Icons.volume_up),
-                  label: const Text('استمع'),
+                  label: Text(S.of(context).listen),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton.icon(
@@ -192,7 +193,7 @@ class _LetterLevel2State extends State<LetterLevel2> {
                     color: _recording ? Colors.white : color,
                   ),
                   label: Text(
-                    _recording ? 'إيقاف' : 'سجّل صوتك',
+                    _recording ? S.of(context).stop : S.of(context).recordYourVoice,
                     style:
                         TextStyle(color: _recording ? Colors.white : color),
                   ),
@@ -212,7 +213,7 @@ class _LetterLevel2State extends State<LetterLevel2> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF6C63FF),
         foregroundColor: Colors.white,
-        title: const Text('المستوي الثاني'),
+        title: Text(S.of(context).letterLevel2),
         centerTitle: true,
       ),
       backgroundColor: Colors.white,

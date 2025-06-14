@@ -243,6 +243,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "لا يمكن ترك كلمة المرور فارغة"),
         "errorLoadingLevels":
             MessageLookupByLibrary.simpleMessage("خطأ في تحميل المستويات"),
+        "errorTryAgain":
+            MessageLookupByLibrary.simpleMessage("حدث خطأ، حاول مرة أخرى"),
         "everyTryMakesStronger":
             MessageLookupByLibrary.simpleMessage("كل محاولة تجعلك أقوى"),
         "excellent": MessageLookupByLibrary.simpleMessage("ممتاز! 🎉"),
@@ -359,6 +361,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "learningNeedsPatience":
             MessageLookupByLibrary.simpleMessage("التعلم يحتاج إلى صبر"),
         "left": MessageLookupByLibrary.simpleMessage("يسار"),
+        "letterLevel2": MessageLookupByLibrary.simpleMessage("المستوي الثاني"),
         "level": MessageLookupByLibrary.simpleMessage("المستوى"),
         "levelFailure": MessageLookupByLibrary.simpleMessage(
             "لا تقلق! التمرين يؤدي إلى الإتقان. حاول هذا المستوى مرة أخرى!"),
@@ -470,8 +473,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "quest_pending":
             MessageLookupByLibrary.simpleMessage("المهمة قيد الانتظار"),
         "questionProgress": m20,
+        "readAloud": MessageLookupByLibrary.simpleMessage("اقرأ بصوت عالٍ"),
         "recent_activity":
             MessageLookupByLibrary.simpleMessage("النشاطات الأخيرة"),
+        "recordYourVoice": MessageLookupByLibrary.simpleMessage("سجّل صوتك"),
         "recordingError": m21,
         "recordingStartError": m22,
         "recordingTimeout": MessageLookupByLibrary.simpleMessage(
@@ -531,6 +536,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "stat_correct": MessageLookupByLibrary.simpleMessage("صحيح"),
         "stat_incorrect": MessageLookupByLibrary.simpleMessage("خاطئ"),
         "stat_total": MessageLookupByLibrary.simpleMessage("الإجمالي"),
+        "stop": MessageLookupByLibrary.simpleMessage("إيقاف"),
         "story": MessageLookupByLibrary.simpleMessage("القصة"),
         "storyCounter": m28,
         "storySummarizerGame":

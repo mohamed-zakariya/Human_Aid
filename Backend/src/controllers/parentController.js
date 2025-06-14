@@ -38,6 +38,23 @@ export const loginParent = async (email, password) => {
     };
 };
 
+// get parent data by id
+export const getParentDataById = async (parentId) => {
+    if (!parentId) {
+        throw new Error('Parent ID is required');
+    }
+
+    const parent = await Parents.findById(parentId).select('-password -refreshTokens'); // Exclude sensitive fields
+    if (!parent) {
+        throw new Error('Parent not found');
+    }
+
+    return parent;
+};
+
+
+
+
 // Parent Registration
 export const signUpParent = async ({ name,email, password, phoneNumber, nationality, birthdate,gender }) => {
     if (!name || !email || !password || !nationality || !birthdate || !gender) {
