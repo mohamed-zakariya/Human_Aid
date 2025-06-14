@@ -7,9 +7,10 @@ class GenerateStoriesService {
   // List of API keys for fallback functionality
   final List<String> _apiKeys = [
     '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',
-    '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',
-    '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',
-    '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',
+    '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',
+    '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',
+    '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',
+    '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'
   ];
 
   int _currentApiKeyIndex = 0;
@@ -252,10 +253,10 @@ class GenerateStoriesService {
   // Fixed token limits to ensure complete stories
   int _getTokenLimit(String length) {
     switch (length) {
-      case 'قصة قصيرة': return 120; // Reduced from 150
+      case 'قصة قصيرة': return 140; // Reduced from 150
       case 'قصة متوسطة': return 160; // Reduced from 200
-      case 'قصة طويلة': return 200; // Reduced from 250
-      default: return 120;
+      case 'قصة طويلة': return 180; // Reduced from 250
+      default: return 140;
     }
   }
 
