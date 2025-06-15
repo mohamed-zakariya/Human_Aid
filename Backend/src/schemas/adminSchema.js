@@ -43,8 +43,8 @@ type Query {
 }
 
 type Mutation {
-  createWord(word: String!, level: String!, image: Upload): Word!
-  updateWord(id: ID!, word: String, level: String, image: Upload): Word!
+  createWord(word: String!, level: String!, synonym: String, image: Upload): Word!
+  updateWord(id: ID!, word: String, level: String, synonym: String, image: Upload): Word!
   deleteWord(id: ID!): Word!
   loginAdmin(username: String!, password: String!): AuthPayload!
   createSentence(sentence: String!, level: String!): Sentence!
