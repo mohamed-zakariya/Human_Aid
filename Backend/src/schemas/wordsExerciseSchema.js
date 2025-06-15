@@ -29,7 +29,7 @@ type ExerciseEnd {
 }
 
 type Query {
-  getWordsByLevel(level: String!): [Words]
+  getWordsByLevel(level: String!): [Word]
   getWordForExercise(userId: ID!, exerciseId: ID!, level: String!): [Word]
 }
 
