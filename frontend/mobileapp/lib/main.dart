@@ -196,14 +196,14 @@ class _MyAppState extends State<MyApp> {
               levelId: args['levelId'], // This is now the MongoDB ObjectId
             );
           },
-          '/words_game_4': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-            return ObjectDetectionExerciseScreen(
-              onLocaleChange: _setLocale,
-              learner: args['learner'] as Learner,
-              exerciseId: args['exerciseId'] as String,
-            );
-          },
+          // '/words_game_4': (context) {
+          //   final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          //   return ObjectDetectionExerciseScreen(
+          //     onLocaleChange: _setLocale,
+          //     learner: args['learner'] as Learner,
+          //     exerciseId: args['exerciseId'] as String,
+          //   );
+          // },
 
           '/sentences_level_1': (context) {
             final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
