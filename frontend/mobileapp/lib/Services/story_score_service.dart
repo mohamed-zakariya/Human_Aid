@@ -1,10 +1,17 @@
 import 'dart:convert';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../graphql/graphql_client.dart';
+import '../graphql/queries/stories_query.dart';
 
 class StoryDatabaseService {
   // Replace with your actual GraphQL endpoint
   final String _graphqlEndpoint = 'https://human-aid-deployment.onrender.com/graphql';
+
+  // Summarization endpoint
+  final String _summarizationEndpoint = 'http://summry.fbbtdmdjc3bucght.uaenorth.azurecontainer.io:8000/summarize';
 
   // Replace with your actual authorization token if needed
 
@@ -152,6 +159,135 @@ class StoryDatabaseService {
       );
     } catch (e) {
       rethrow;
+    }
+  }
+
+  /// Get stories by progress for learner
+  static Future<List<Map<String, dynamic>>?> getStoriesByProgress(String learnerId) async {
+    final client = await GraphQLService.getClient();
+
+    final result = await client.query(
+      QueryOptions(
+        document: gql(getStoryByProgressQuery),
+        variables: {"learnerId": learnerId},
+      ),
+    );
+
+    final handledResult = await GraphQLService.handleAuthErrors(
+      result: result,
+      role: "learner",
+      retryRequest: () => client.query(
+        QueryOptions(
+          document: gql(getStoryByProgressQuery),
+          variables: {"learnerId": learnerId},
+        ),
+      ),
+    );
+
+    if (handledResult == null || handledResult.hasException) {
+      print("Error fetching stories: ${handledResult?.exception.toString()}");
+      return null;
+    }
+
+    return (handledResult.data?['getStoryByProgress'] as List<dynamic>)
+        .map((story) => story as Map<String, dynamic>)
+        .toList();
+  }
+
+  /// Generate summary using external API
+  Future<String?> generateStorySummary(String storyText) async {
+    try {
+      final Map<String, dynamic> requestBody = {
+        'text': storyText,
+        'top_k': 2,
+      };
+
+      print('Generating summary for story...');
+      final response = await http.post(
+        Uri.parse(_summarizationEndpoint),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+        // The API response structure may vary, adjust according to actual response
+        if (responseData.containsKey('summary')) {
+          return responseData['summary'];
+        } else if (responseData.containsKey('summarized_text')) {
+          return responseData['summarized_text'];
+        } else {
+          // If the response structure is different, return the whole response as string
+          return responseData.toString();
+        }
+      } else {
+        print('HTTP Error: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        throw Exception('فشل في توليد الملخص: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error generating summary: $e');
+      throw Exception('فشل في توليد الملخص: $e');
+    }
+  }
+
+  /// Generate summaries for multiple stories
+  Future<List<String?>> generateMultipleStorySummaries(List<String> stories) async {
+    List<String?> summaries = [];
+
+    for (String story in stories) {
+      try {
+        String? summary = await generateStorySummary(story);
+        summaries.add(summary);
+      } catch (e) {
+        print('Error generating summary for story: $e');
+        summaries.add(null); // Add null for failed summaries
+      }
+    }
+
+    return summaries;
+  }
+
+  /// Get random stories with their summaries for quiz
+  Future<Map<String, dynamic>?> getRandomStoriesWithSummaries(String learnerId) async {
+    try {
+      // Get stories from progress
+      List<Map<String, dynamic>>? stories = await getStoriesByProgress(learnerId);
+
+      if (stories == null || stories.isEmpty) {
+        throw Exception('لا توجد قصص متاحة');
+      }
+
+      // Shuffle and take up to 3 stories
+      stories.shuffle();
+      List<Map<String, dynamic>> selectedStories = stories.take(3).toList();
+
+      // Extract story texts for summarization
+      List<String> storyTexts = selectedStories.map((story) => story['story'] as String).toList();
+
+      // Generate summaries
+      List<String?> summaries = await generateMultipleStorySummaries(storyTexts);
+
+      // Combine stories with their summaries
+      List<Map<String, dynamic>> storiesWithSummaries = [];
+      for (int i = 0; i < selectedStories.length; i++) {
+        storiesWithSummaries.add({
+          ...selectedStories[i],
+          'generated_summary': summaries[i],
+        });
+      }
+
+      return {
+        'main_story': storiesWithSummaries[0], // First story as main story
+        'all_stories': storiesWithSummaries,
+        'summaries': summaries,
+      };
+    } catch (e) {
+      print('Error getting random stories with summaries: $e');
+      throw Exception('فشل في جلب القصص والملخصات: $e');
     }
   }
 }
