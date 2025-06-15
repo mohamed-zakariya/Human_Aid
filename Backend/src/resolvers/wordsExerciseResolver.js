@@ -79,7 +79,15 @@ const progress = await Exercisesprogress.findOne({
       console.log(`Returning ${result.length} words for user ${userId} at level ${level}`);
 
       return result;
-    }
+    },
+    getWordsByLevel: async (_, { level }) => {
+      const validLevels = ['Beginner', 'Intermediate', 'Advanced'];
+      if (!validLevels.includes(level)) {
+        throw new Error('Invalid level');
+      }
+      return await Words.find({ level });
+    },
+    
   },
 
   Mutation: {

@@ -14,6 +14,7 @@ type Word {
   _id: ID!
   word: String!
   level: String!
+  synonym: String
   imageUrl: String
 }
 
@@ -28,6 +29,7 @@ type ExerciseEnd {
 }
 
 type Query {
+  getWordsByLevel(level: String!): [Words]
   getWordForExercise(userId: ID!, exerciseId: ID!, level: String!): [Word]
 }
 
