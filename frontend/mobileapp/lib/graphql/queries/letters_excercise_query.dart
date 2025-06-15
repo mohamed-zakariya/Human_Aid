@@ -19,13 +19,15 @@ mutation UpdateLetterProgress(
  $userId:ID!,
  $exerciseId:ID!,
  $letterId:ID!,
- $audioFile:Upload!,
+ $levelId:ID!,
+ $audioFile:String!,
  $spokenLetter:String!
 ){
   updateLetterProgress(
     userId:$userId,
     exerciseId:$exerciseId,
     letterId:$letterId,
+    levelId:$levelId,
     audioFile:$audioFile,
     spokenLetter:$spokenLetter){
       spokenLetter
