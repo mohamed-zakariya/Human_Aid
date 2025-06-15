@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:math';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Import TTS service
 import 'package:mobileapp/Services/tts_service.dart';
@@ -105,6 +106,15 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
   // Localization
   String currentLocale = 'ar'; // Default to Arabic since this is for Arabic practice
 
+  // SharedPreferences keys and values
+  String? exerciseId;
+  String? levelId;
+  String? learnerId;
+  String? gameId;
+  String? roundKey;
+  String? scoreKey;
+  String? levelGameId;
+
   final List<WordModel> wordList = [
     WordModel(
       word: "تفاحة",
@@ -140,7 +150,7 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
   bool isSpellingComplete = false;
 
   // Timer variables
-  int timeLeft = 20; // 60 seconds per round
+  int timeLeft = 20; // 20 seconds per round
   Timer? gameTimer;
   bool timerActive = false;
 
@@ -176,7 +186,48 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
 
     // Initialize sound effects
     _initSoundEffects();
+    _initializeFromSharedPreferences();
+  }
+
+  Future<void> _initializeFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the stored IDs from SharedPreferences
+    exerciseId = prefs.getString('exerciseId');
+    levelId = prefs.getString('levelId');
+    learnerId = prefs.getString('learnerId');
+    gameId = prefs.getString('gameId');
+    levelGameId = prefs.getString('levelGameId');
+    print("mmmmmmmmmmmmmmmm");
+    print(levelGameId);
+    print(gameId);
+    if (levelId != null && gameId != null) {
+      // Create keys for this specific level and game
+      roundKey = '${levelId}_${gameId}_${levelGameId}_round';
+      scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
+
+      // Initialize round and score from SharedPreferences
+      currentRound = prefs.getInt(roundKey!) ?? 0;
+      totalScore = prefs.getInt(scoreKey!) ?? 0;
+
+      // Ensure currentRound is within bounds (0 to totalRounds-1)
+      if (currentRound < 0) currentRound = 0;
+      if (currentRound >= totalRounds) currentRound = totalRounds - 1;
+
+      // Ensure score is within bounds (0 to totalRounds * 2)
+      if (totalScore < 0) totalScore = 0;
+      if (totalScore > totalRounds * 2) totalScore = totalRounds * 2;
+    }
+
     _loadRound();
+  }
+
+  Future<void> _saveProgressToSharedPreferences() async {
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, currentRound);
+      await prefs.setInt(scoreKey!, totalScore);
+    }
   }
 
   Future<void> _initSoundEffects() async {
@@ -234,6 +285,11 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
   }
 
   void _loadRound() {
+    if (currentRound >= totalRounds) {
+      _showCompletionDialog();
+      return;
+    }
+
     final wordModel = wordList[currentRound];
     final word = wordModel.word;
 
@@ -255,6 +311,8 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     _synonymSectionController.reset();
     _nextButtonController.reset();
     _motivationController.reset();
+
+    setState(() {});
   }
 
   void _startTimer() {
@@ -288,6 +346,9 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     });
 
     _motivationController.forward();
+
+    // Save progress before showing dialog
+    _saveProgressToSharedPreferences();
 
     // Show time up dialog
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -354,6 +415,9 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     });
 
     _motivationController.forward();
+
+    // Save progress after completing round
+    _saveProgressToSharedPreferences();
 
     // Show motivation dialog
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -441,6 +505,7 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     if (currentRound < totalRounds - 1) {
       setState(() {
         currentRound++;
+        _saveProgressToSharedPreferences();
         _loadRound();
       });
     } else {
@@ -448,17 +513,21 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     }
   }
 
-  void _showCompletionDialog() {
-
-
-
+  void _showCompletionDialog() async {
     _playSound(_successPlayer);
 
     // Submit score to backend
-    AddScoreService.updateScore(
+    await AddScoreService.updateScore(
       score: totalScore,
-      outOf: totalRounds, // Max 2 points per round
+      outOf: totalRounds * 2, // Max 2 points per round
     );
+
+    // Clear the saved progress since game is completed
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(roundKey!);
+      await prefs.remove(scoreKey!);
+    }
 
     String finalMotivation;
     String emoji;
@@ -502,11 +571,7 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
                 onPressed: () {
                   _playSound(_clickPlayer);
                   Navigator.pop(context);
-                  setState(() {
-                    totalScore = 0;
-                    currentRound = 0;
-                    _loadRound();
-                  });
+                  _restartGame();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF7F73FF),
@@ -553,11 +618,25 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     );
   }
 
+  void _restartGame() async {
+    setState(() {
+      currentRound = 0;
+      totalScore = 0;
+    });
+
+    // Reset SharedPreferences for this game
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, 0);
+      await prefs.setInt(scoreKey!, 0);
+    }
+
+    _loadRound();
+  }
+
   @override
   Widget build(BuildContext context) {
-
     currentLocale = Localizations.localeOf(context).languageCode;
-
 
     final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
@@ -580,7 +659,7 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
           },
         ),
         title: Text(
-          args?['gameName'],
+          args?['gameName'] ?? AppLocalizations.translate('spelling_game', currentLocale),
           style: const TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -721,45 +800,42 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
                   ),
                   const SizedBox(height: 24),
 
-                  // Letter slots
-                  // In your SpellingGameScreen build method, replace the letter slots section with this:
+                  // Letter slots - Always RTL direction like Arabic
+                  Localizations.localeOf(context).languageCode == 'en'
+                      ? Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: List.generate(word.length, (index) {
+                      return LetterSlot(
+                        letter: selectedLetters[index],
+                        onAccept: (data) {
+                          setState(() {
+                            selectedLetters[index] = data;
+                            if (!selectedLetters.contains(null)) _checkSpelling();
+                          });
+                        },
+                      );
+                    }).reversed.toList(), // Reversed for RTL (Arabic, Hebrew, etc.)
+                  )
+                      : Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: List.generate(word.length, (index) {
+                      return LetterSlot(
+                        letter: selectedLetters[index],
+                        onAccept: (data) {
+                          setState(() {
+                            selectedLetters[index] = data;
+                            if (!selectedLetters.contains(null)) _checkSpelling();
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
 
-// Letter slots - Always RTL direction like Arabic
-                Localizations.localeOf(context).languageCode == 'en'
-                    ? Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: List.generate(word.length, (index) {
-                    return LetterSlot(
-                      letter: selectedLetters[index],
-                      onAccept: (data) {
-                        setState(() {
-                          selectedLetters[index] = data;
-                          if (!selectedLetters.contains(null)) _checkSpelling();
-                        });
-                      },
-                    );
-                  }).reversed.toList(), // Reversed for RTL (Arabic, Hebrew, etc.)
-                )
-                    : Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: List.generate(word.length, (index) {
-                    return LetterSlot(
-                      letter: selectedLetters[index],
-                      onAccept: (data) {
-                        setState(() {
-                          selectedLetters[index] = data;
-                          if (!selectedLetters.contains(null)) _checkSpelling();
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-
-                const SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
                   // Letter tiles
                   Wrap(

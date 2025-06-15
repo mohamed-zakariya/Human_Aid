@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobileapp/models/letter.dart';
 import '../../../../Services/add_score_service.dart';
 import '../../../../Services/letters_service.dart';
 import '../../../../generated/l10n.dart';
-
 
 import '../letter_forms.dart';
 
@@ -32,9 +32,6 @@ class LetterLevel2Game extends StatefulWidget {
 }
 
 class _LetterLevel2GameState extends State<LetterLevel2Game> {
-
-
-
   final FlutterTts _flutterTts = FlutterTts();
   List<Letter> allLetters = [];
   bool isLoading = true;
@@ -42,6 +39,15 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
   static const int totalRounds = 10;
   int currentRound = 0;
   int score = 0;
+
+  // SharedPreferences keys and values
+  String? exerciseId;
+  String? levelId;
+  String? learnerId;
+  String? gameId;
+  String? roundKey;
+  String? scoreKey;
+  String? levelGameId;
 
   List<Letter> currentOptions = [];
   List<Color> optionColors = [];
@@ -54,8 +60,39 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     super.initState();
     _flutterTts.setLanguage('ar-SA'); // Set language to Arabic
     _flutterTts.setSpeechRate(0.5); // Adjust speech rate
-    _loadLetters();
+    _initializeFromSharedPreferences();
+  }
 
+  Future<void> _initializeFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the stored IDs from SharedPreferences
+    exerciseId = prefs.getString('exerciseId');
+    levelId = prefs.getString('levelId');
+    learnerId = prefs.getString('learnerId');
+    gameId = prefs.getString('gameId');
+    levelGameId = prefs.getString('levelGameId');
+
+
+    if (levelId != null && gameId != null) {
+      // Create keys for this specific level and game
+      roundKey = '${levelId}_${gameId}_${levelGameId}_round';
+      scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
+
+      // Initialize round and score from SharedPreferences
+      currentRound = prefs.getInt(roundKey!) ?? 1;
+      score = prefs.getInt(scoreKey!) ?? 0;
+
+      // Ensure currentRound is within bounds (1 to totalRounds)
+      if (currentRound < 1) currentRound = 1;
+      if (currentRound > totalRounds) currentRound = totalRounds;
+
+      // Ensure score is within bounds (0 to totalRounds)
+      if (score < 0) score = 0;
+      if (score > totalRounds) score = totalRounds;
+    }
+
+    _loadLetters();
   }
 
   Future<void> _loadLetters() async {
@@ -68,8 +105,16 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     }
   }
 
+  Future<void> _saveProgressToSharedPreferences() async {
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, currentRound);
+      await prefs.setInt(scoreKey!, score);
+    }
+  }
+
   void _startNewRound() {
-    if (currentRound >= totalRounds) {
+    if (currentRound > totalRounds) {
       _showGameOverDialog();
       return;
     }
@@ -84,7 +129,7 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     final shuffledColors = [...colors]..shuffle(random);
     optionColors = shuffledColors.take(10).toList();
 
-    setState(() => currentRound++);
+    setState(() {});
 
     // 🔊 Speak the letter after a brief delay to ensure TTS is ready
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -92,7 +137,6 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
       _flutterTts.speak(targetLetter.letter);
     });
   }
-
 
   void _checkAnswer(String letter) {
     setState(() {
@@ -102,6 +146,10 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
         score++;
       }
     });
+
+
+    // Save progress after each answer
+    _saveProgressToSharedPreferences();
   }
 
   void _showGameOverDialog() async {
@@ -110,6 +158,13 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
       score: score,
       outOf: totalRounds,
     );
+
+    // Clear the saved progress since game is completed
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(roundKey!);
+      await prefs.remove(scoreKey!);
+    }
 
     final lang = Localizations.localeOf(context).languageCode;
 
@@ -203,12 +258,19 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     );
   }
 
-
-  void _restartGame() {
+  void _restartGame() async {
     setState(() {
-      currentRound = 0;
+      currentRound = 1;
       score = 0;
     });
+
+    // Reset SharedPreferences for this game
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, 1);
+      await prefs.setInt(scoreKey!, 0);
+    }
+
     _startNewRound();
   }
 
@@ -288,7 +350,6 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
     );
   }
 
-
   @override
   void dispose() {
     _flutterTts.stop();
@@ -333,8 +394,6 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
       ),
     );
   }
-
-  // Removed landing page UI
 
   // Updated game UI with purple theme
   Widget _buildGameUI() {
@@ -431,7 +490,6 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
                       final lang = Localizations.localeOf(context).languageCode;
                       final isCorrect = selectedLetter == targetLetter.letter;
 
-
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
@@ -453,7 +511,11 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
                     Builder(builder: (context) {
                       final lang = Localizations.localeOf(context).languageCode;
                       return ElevatedButton(
-                        onPressed: _startNewRound,
+                        onPressed: () {
+                          currentRound++;
+                          _saveProgressToSharedPreferences();
+                          _startNewRound();
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.redAccent,
                           foregroundColor: Colors.white,
@@ -482,27 +544,25 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
 
   @override
   Widget build(BuildContext context) {
-
-
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
-
-
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: const Color(0xFF6E5DE7),
-        centerTitle: true,
-        title: Text(args['gameName']),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline, color: Colors.white),
-            tooltip: 'مساعدة',
-            onPressed: _showHelpDialog,
-          ),
-        ],
-      ),
-      body:  _buildGameUI()
+        appBar: AppBar(
+          foregroundColor: Colors.white,
+          backgroundColor: const Color(0xFF6E5DE7),
+          centerTitle: true,
+          title: Text(args['gameName']),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.help_outline, color: Colors.white),
+              tooltip: 'مساعدة',
+              onPressed: _showHelpDialog,
+            ),
+          ],
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _buildGameUI()
     );
   }
 }

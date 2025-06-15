@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobileapp/models/letter.dart';
 import '../../../../Services/add_score_service.dart';
 import '../../../../Services/tts_service.dart';
@@ -14,9 +15,6 @@ class LetterLevel2Game2 extends StatefulWidget {
 }
 
 class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
-
-
-
   final TTSService _ttsService = TTSService();
 
   List<Letter> allLetters = [];
@@ -33,12 +31,46 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
 
   List<double> rotationAngles = [];
 
-  int remainingAttempts = 2; // NEW
+  int remainingAttempts = 2;
+
+  // SharedPreferences keys and values
+  String exerciseId = '';
+  String levelId = '';
+  String learnerId = '';
+  String gameId = '';
+  String levelGameId = '';
 
   @override
   void initState() {
     super.initState();
     _ttsService.initialize(language: 'ar-EG');
+    _initializeFromSharedPreferences();
+  }
+
+  Future<void> _initializeFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the string values that were set in previous widget
+    exerciseId = prefs.getString('exerciseId') ?? '';
+    levelId = prefs.getString('levelId') ?? '';
+    learnerId = prefs.getString('learnerId') ?? '';
+    gameId = prefs.getString('gameId') ?? '';
+    levelGameId = prefs.getString('levelGameId') ?? '';
+
+
+
+
+
+    // Initialize round and score from SharedPreferences
+    String roundKey = '${levelId}_${gameId}_${levelGameId}_round';
+    String scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
+
+    currentRound = prefs.getInt(roundKey) ?? 1;
+    score = prefs.getInt(scoreKey) ?? 0;
+
+    // Adjust currentRound to be 0-based for internal logic
+    currentRound = currentRound - 1;
+
     _loadLetters();
   }
 
@@ -50,6 +82,16 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
       _startNewRound();
     }
     setState(() => isLoading = false);
+  }
+
+  Future<void> _saveProgressToSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    String roundKey = '${levelId}_${gameId}_${levelGameId}_round';
+    String scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
+
+    // Save 1-based round number
+    await prefs.setInt(roundKey, currentRound + 1);
+    await prefs.setInt(scoreKey, score);
   }
 
   void _startNewRound() {
@@ -65,7 +107,7 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
     selectedLetter = null;
     showFeedback = false;
 
-    remainingAttempts = 2; // ✅ Reset attempts
+    remainingAttempts = 2; // Reset attempts
 
     rotationAngles = List.generate(12, (_) {
       final angleOptions = [0.0, -0.2, 0.2, -0.4, 0.4, -0.6, 0.6];
@@ -76,12 +118,14 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
       currentRound++;
     });
 
-    // ✅ ADD automatic audio playback here with Arabic language
+    // Save progress after each round
+    _saveProgressToSharedPreferences();
+
+    // ADD automatic audio playback here with Arabic language
     _ttsService.setLanguage('ar-EG');
     _ttsService.speak(targetLetter.letter);
     // Don't decrement remainingAttempts here - let the player use the listen button
   }
-
 
   void _checkAnswer(String letter) {
     setState(() {
@@ -89,11 +133,21 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
       showFeedback = true;
       if (letter == targetLetter.letter) {
         score++;
+        // Save score immediately when correct
+        _saveProgressToSharedPreferences();
       }
     });
   }
 
-  void _restartGame() {
+  void _restartGame() async {
+    // Reset SharedPreferences for this game
+    final prefs = await SharedPreferences.getInstance();
+    String roundKey = '${levelId}_${gameId}_round';
+    String scoreKey = '${levelId}_${gameId}_score';
+
+    await prefs.setInt(roundKey, 1);
+    await prefs.setInt(scoreKey, 0);
+
     setState(() {
       currentRound = 0;
       score = 0;
@@ -101,13 +155,19 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
     _startNewRound();
   }
 
-  void _showGameOverDialog() async{
+  void _showGameOverDialog() async {
+    // Clear the game progress from SharedPreferences when game is completed
+    final prefs = await SharedPreferences.getInstance();
+    String roundKey = '${levelId}_${gameId}_round';
+    String scoreKey = '${levelId}_${gameId}_score';
+
+    await prefs.remove(roundKey);
+    await prefs.remove(scoreKey);
 
     await AddScoreService.updateScore(
       score: score,
       outOf: totalRounds,
     );
-
 
     showDialog(
       context: context,
@@ -170,9 +230,7 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
 
   @override
   Widget build(BuildContext context) {
-
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
 
     final isTablet = MediaQuery.of(context).size.width > 600;
 
@@ -193,7 +251,6 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
               },
               child: Text(S.of(context).okButton),
             ),
-
             TextButton(
               onPressed: () {
                 Localizations.localeOf(context).languageCode == 'ar'?
@@ -214,8 +271,6 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
         ),
       );
     }
-
-
 
     return Scaffold(
       appBar: AppBar(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math' as math;
 
 import '../../../../../Services/add_score_service.dart';
@@ -17,7 +18,6 @@ class DirectionGameSecondPage extends StatefulWidget {
 
 class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with SingleTickerProviderStateMixin {
 
-
   final FlutterTts flutterTts = FlutterTts();
   late Timer _timer;
   int _currentQuestionIndex = 0;
@@ -28,7 +28,16 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
   bool _isDropped = false;
   String _selectedDirection = '';
   int _remainingAttempts = 2;
+  bool isLoading = true;
 
+  // SharedPreferences keys and values
+  String? exerciseId;
+  String? levelId;
+  String? learnerId;
+  String? gameId;
+  String? roundKey;
+  String? scoreKey;
+  String? levelGameId;
 
   // List of motivational messages for incorrect answers
   final List<Map<String, dynamic>> _motivationalMessages = [
@@ -86,11 +95,9 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
     },
   ];
 
-
   // Animation for the draggable element
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-
 
   // Define fixed positions for each direction (not random)
   final Map<String, Map<String, dynamic>> directionData = {
@@ -208,16 +215,61 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
     );
     _animationController.repeat(reverse: true);
 
+    // Initialize drop target keys
+    directionData.keys.forEach((direction) {
+      dropTargetKeys[direction] = GlobalKey();
+    });
+
+    _initializeFromSharedPreferences();
+  }
+
+  Future<void> _initializeFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the stored IDs from SharedPreferences
+    exerciseId = prefs.getString('exerciseId');
+    levelId = prefs.getString('levelId');
+    learnerId = prefs.getString('learnerId');
+    gameId = prefs.getString('gameId');
+    levelGameId = prefs.getString('levelGameId');
+
+    if (levelId != null && gameId != null) {
+      // Create keys for this specific level and game
+      roundKey = '${levelId}_${gameId}_${levelGameId}_round';
+      scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
+
+      // Initialize round and score from SharedPreferences
+      _currentQuestionIndex = prefs.getInt(roundKey!) ?? 0;
+      _score = prefs.getInt(scoreKey!) ?? 0;
+
+      // Ensure currentQuestionIndex is within bounds (0 to totalQuestions-1)
+      if (_currentQuestionIndex < 0) _currentQuestionIndex = 0;
+      if (_currentQuestionIndex >= widget.totalQuestions) _currentQuestionIndex = widget.totalQuestions - 1;
+
+      // Ensure score is within bounds (0 to totalQuestions)
+      if (_score < 0) _score = 0;
+      if (_score > widget.totalQuestions) _score = widget.totalQuestions;
+    }
+
+    _initializeGame();
+  }
+
+  Future<void> _saveProgressToSharedPreferences() async {
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, _currentQuestionIndex);
+      await prefs.setInt(scoreKey!, _score);
+    }
+  }
+
+  void _initializeGame() {
     // Create shuffled list of directions for questions
     questionDirections = directionData.keys.toList()..shuffle();
 
     // Create shuffled list of center images
     questionImages = List.from(centerImages)..shuffle();
 
-    // Initialize drop target keys
-    directionData.keys.forEach((direction) {
-      dropTargetKeys[direction] = GlobalKey();
-    });
+    setState(() => isLoading = false);
 
     initTts();
     _startTimer();
@@ -268,6 +320,9 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
       });
     }
 
+    // Save progress after each answer
+    _saveProgressToSharedPreferences();
+
     // Speak feedback
     if (isCorrect) {
       final celebration = _getRandomCelebrationMessage();
@@ -291,6 +346,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
           _selectedDirection = '';
           _remainingAttempts = 2; // Reset attempts for next question
         });
+        _saveProgressToSharedPreferences();
         _startTimer();
       } else {
         // Game over - show final score
@@ -299,12 +355,20 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
     });
   }
 
-  void _showFinalScore() {
-
-    AddScoreService.updateScore(
+  void _showFinalScore() async {
+    // Send the final score
+    await AddScoreService.updateScore(
       score: _score,
       outOf: widget.totalQuestions,
     );
+
+    // Clear the saved progress since game is completed
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(roundKey!);
+      await prefs.remove(scoreKey!);
+    }
+
     if (!mounted) return;  // Check if widget is still mounted
 
     showDialog(
@@ -313,54 +377,111 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
       builder: (context) => Directionality(
         textDirection: TextDirection.rtl,
         child: AlertDialog(
-          title:  Text(S.of(context).exerciseFinished),
+          backgroundColor: const Color(0xFF2C2C2E),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Center(
+            child: Text(
+              S.of(context).exerciseFinished,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 _score >= widget.totalQuestions / 2 ? Icons.emoji_events : Icons.sentiment_satisfied,
-                color: _score >= widget.totalQuestions / 2 ? Colors.amber : Colors.blue,
-                size: 60,
+                color: _score >= widget.totalQuestions / 2 ? Colors.amber : Colors.blueAccent,
+                size: 64,
               ),
               const SizedBox(height: 16),
               Text(
-                S.of(context).exerciseCompleted,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                _score >= widget.totalQuestions / 2
+                    ? '🎉 أحسنت! عمل رائع!'
+                    : '😊 لا بأس! حاول مرة أخرى',
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
+            // Replay button
             TextButton(
-              child: Text(S.of(context).Return),
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                Navigator.pop(context);
+                _restartGame();
               },
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
+              style: TextButton.styleFrom(
                 backgroundColor: const Color(0xFF8674F5),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(S.of(context).retry),
+              child: Text(
+                S.of(context).retry,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+
+            // Exit button
+            TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DirectionGameSecondPage(
-                      totalQuestions: widget.totalQuestions,
-                    ),
-                  ),
-                );
+                Navigator.pop(context);
+                Navigator.pop(context); // exit the game screen
               },
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.grey.shade700,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                S.of(context).Return,
+                style: const TextStyle(fontSize: 16),
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _restartGame() async {
+    setState(() {
+      _currentQuestionIndex = 0;
+      _score = 0;
+      _showFeedback = false;
+      _isDropped = false;
+      _selectedDirection = '';
+      _remainingAttempts = 2;
+    });
+
+    // Reset SharedPreferences for this game
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, 0);
+      await prefs.setInt(scoreKey!, 0);
+    }
+
+    // Reshuffle questions and images for new game
+    questionDirections.shuffle();
+    questionImages.shuffle();
+
+    _startTimer();
   }
 
   bool isCorrectDirection(String selectedDirection) {
@@ -389,6 +510,15 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        backgroundColor: Color(0xFF8674F5),
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
+      );
+    }
+
     final size = MediaQuery.of(context).size;
     final centerX = size.width / 2;
     final centerY = size.height / 2 - 20; // Adjust for better positioning
@@ -578,9 +708,9 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                                       TextSpan(
                                         text: currentMeaning,
                                         style: const TextStyle(
-                                          color: Colors.blue, // You can use any highlight color
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20
+                                            color: Colors.blue, // You can use any highlight color
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20
                                         ),
                                       ),
                                     ] else ...[

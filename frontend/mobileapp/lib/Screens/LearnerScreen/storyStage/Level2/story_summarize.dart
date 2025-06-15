@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 
@@ -34,17 +35,85 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
   bool _showQuizResult = false;
   bool _quizAnswered = false;
 
+  FlutterTts flutterTts = FlutterTts();
+  bool _isSpeaking = false;
+  bool _isLoadingTts = false;
+
+
   @override
   void initState() {
     super.initState();
     _loadRandomStories();
+    _initTts(); // Add this line
   }
 
   @override
   void dispose() {
     _summaryController.dispose();
+    flutterTts.stop(); // Add this line
     super.dispose();
   }
+
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("ar-SA");
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setVolume(1.0);
+    await flutterTts.setPitch(1.0);
+
+    flutterTts.setStartHandler(() {
+      setState(() {
+        _isSpeaking = true;
+        _isLoadingTts = false;
+      });
+    });
+
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        _isSpeaking = false;
+        _isLoadingTts = false;
+      });
+    });
+
+    flutterTts.setErrorHandler((msg) {
+      setState(() {
+        _isSpeaking = false;
+        _isLoadingTts = false;
+      });
+    });
+  }
+
+  // Add this method for speaking text
+  Future<void> _speak(String text) async {
+    if (_isSpeaking) {
+      await flutterTts.stop();
+      setState(() {
+        _isSpeaking = false;
+        _isLoadingTts = false;
+      });
+    } else {
+      setState(() {
+        _isLoadingTts = true;
+      });
+      await flutterTts.speak(text);
+    }
+  }
+
+  // Add this method to get color based on story kind
+  Color _getStoryKindColor(String? kind) {
+    if (kind == null) return Colors.grey;
+
+    switch (kind) {
+      case 'قصة قصيرة':
+        return Colors.green;
+      case 'قصة متوسطة':
+        return Colors.yellow[700]!;
+      case 'قصة طويلة':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
 
   Future<void> _loadRandomStories() async {
     setState(() {
@@ -578,11 +647,37 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
                               color: Colors.white,
                             ),
                           ),
+                          const SizedBox(width: 10),
+                          // Add TTS button for story
+                          GestureDetector(
+                            onTap: () => _speak(_mainStory!['story']),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: _isLoadingTts
+                                  ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                                  : Icon(
+                                _isSpeaking ? Icons.stop : Icons.volume_up,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
                           const Spacer(),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: _getStoryKindColor(_mainStory!['kind']),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -822,6 +917,23 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
                                             ),
                                             textAlign: TextAlign.right,
                                             textDirection: TextDirection.rtl,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        // Add TTS button for each quiz option
+                                        GestureDetector(
+                                          onTap: () => _speak(_quizOptions[index]),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.withOpacity(0.2),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: const Icon(
+                                              Icons.volume_up,
+                                              color: Color(0xFF2D3748),
+                                              size: 16,
+                                            ),
                                           ),
                                         ),
                                       ],

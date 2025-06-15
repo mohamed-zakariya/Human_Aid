@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:mobileapp/Services/tts_service.dart';
 import 'package:mobileapp/Services/add_score_service.dart';
 import 'package:mobileapp/generated/l10n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MonthsOrderGameScreen extends StatefulWidget {
   const MonthsOrderGameScreen({super.key});
@@ -45,6 +46,7 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
   int totalLevels = 10;
   bool isLevelComplete = false;
   bool isDescendingOrder = false;
+  bool isLoading = true;
 
   // Animation controllers
   late AnimationController _successAnimationController;
@@ -58,6 +60,14 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
   // Widget configuration for score service
   late Map<String, dynamic> gameData; // ✅ Renamed from 'widget'
 
+  // SharedPreferences keys and values
+  String? exerciseId;
+  String? levelId;
+  String? learnerId;
+  String? gameId;
+  String? roundKey;
+  String? scoreKey;
+  String? levelGameId;
 
   @override
   void initState() {
@@ -81,7 +91,7 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
     );
 
     _initSoundEffects();
-    _loadLevel();
+    _initializeFromSharedPreferences();
   }
 
   @override
@@ -93,6 +103,52 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
       'totalQuestions': totalLevels,
       ...args,
     };
+  }
+
+  Future<void> _initializeFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the stored IDs from SharedPreferences
+    exerciseId = prefs.getString('exerciseId');
+    levelId = prefs.getString('levelId');
+    learnerId = prefs.getString('learnerId');
+    gameId = prefs.getString('gameId');
+    levelGameId = prefs.getString('levelGameId');
+
+
+
+    if (levelId != null && gameId != null) {
+      // Create keys for this specific level and game
+      roundKey = '${levelId}_${gameId}_${levelGameId}_round';
+      scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
+
+      // Initialize round and score from SharedPreferences
+      currentLevel = prefs.getInt(roundKey!) ?? 1; // Start from 1
+      _score = prefs.getInt(scoreKey!) ?? 0;
+
+      // Ensure currentLevel is within bounds (1 to totalLevels)
+      if (currentLevel < 1) currentLevel = 1;
+      if (currentLevel > totalLevels) currentLevel = totalLevels;
+
+      // Ensure score is within bounds (0 to totalLevels)
+      if (_score < 0) _score = 0;
+      if (_score > totalLevels) _score = totalLevels;
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+
+    // Load the current level
+    _loadLevel();
+  }
+
+  Future<void> _saveProgressToSharedPreferences() async {
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, currentLevel);
+      await prefs.setInt(scoreKey!, _score);
+    }
   }
 
   Future<void> _initSoundEffects() async {
@@ -191,6 +247,9 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
       _score++; // Increment score for correct answer
     });
 
+    // Save progress after scoring
+    _saveProgressToSharedPreferences();
+
     _levelCompleteController.forward();
     _showLevelCompletionMessage(true);
   }
@@ -205,6 +264,9 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
     setState(() {
       isLevelComplete = true; // Complete level even on incorrect answer
     });
+
+    // Save progress even on incorrect answer
+    _saveProgressToSharedPreferences();
 
     _showLevelCompletionMessage(false);
   }
@@ -243,8 +305,12 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
     if (currentLevel < totalLevels) {
       setState(() {
         currentLevel++;
-        _loadLevel();
       });
+
+      // Save progress after moving to next level
+      _saveProgressToSharedPreferences();
+
+      _loadLevel();
     } else {
       _showGameCompletionDialog();
     }
@@ -267,6 +333,9 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
     } catch (e) {
       debugPrint('Error updating score: $e');
     }
+
+    // Clear the saved progress since game is completed
+    _clearProgressFromSharedPreferences();
 
     showDialog(
       context: context,
@@ -291,35 +360,81 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                try {
-                  _clickPlayer.resume();
-                } catch (e) {
-                  debugPrint('Error playing click sound: $e');
-                }
-                Navigator.pop(context);
-                setState(() {
-                  _score = 0;
-                  currentLevel = 1;
-                  _loadLevel();
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7F73FF),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    try {
+                      _clickPlayer.resume();
+                    } catch (e) {
+                      debugPrint('Error playing click sound: $e');
+                    }
+                    Navigator.pop(context);
+                    _restartGame();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF7F73FF),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                  child: Text(l10n.playAgain, style: const TextStyle(fontSize: 16)),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              ),
-              child: Text(l10n.playAgain, style: const TextStyle(fontSize: 16)),
+                ElevatedButton(
+                  onPressed: () {
+                    try {
+                      _clickPlayer.resume();
+                    } catch (e) {
+                      debugPrint('Error playing click sound: $e');
+                    }
+                    Navigator.pop(context);
+                    Navigator.pop(context); // exit the game screen
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade700,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                  child: const Text('خروج', style: TextStyle(fontSize: 16)),
+                ),
+              ],
             ),
           ],
         ),
         backgroundColor: Colors.white,
       ),
     );
+  }
+
+  Future<void> _clearProgressFromSharedPreferences() async {
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(roundKey!);
+      await prefs.remove(scoreKey!);
+    }
+  }
+
+  void _restartGame() async {
+    setState(() {
+      currentLevel = 1;
+      _score = 0;
+      isLoading = false;
+    });
+
+    // Reset SharedPreferences for this game
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, 1);
+      await prefs.setInt(scoreKey!, 0);
+    }
+
+    _loadLevel();
   }
 
   String _getEncouragingMessage() {
@@ -345,6 +460,17 @@ class _MonthsOrderGameScreenState extends State<MonthsOrderGameScreen> with Tick
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: const Color(0xFF7F73FF),
+        body: const Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+          ),
+        ),
+      );
+    }
+
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final l10n = S.of(context);
 
