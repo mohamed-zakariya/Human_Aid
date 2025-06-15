@@ -18,7 +18,7 @@ type Story {
   id: ID!
   story: String!
   kind: String!
-  summary: String!
+  summary: String
   morale: String!
 }
 
