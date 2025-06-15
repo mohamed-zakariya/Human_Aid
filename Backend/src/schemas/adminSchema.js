@@ -38,6 +38,7 @@ type Query {
   getAllUsers: [User!]!  
   getStories: [Story!]!
   getStory(id: ID!): Story
+  getStoryByProgress(learnerId: ID!): [Story]
 }
 
 type Mutation {

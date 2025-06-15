@@ -259,14 +259,14 @@ class _MyAppState extends State<MyApp> {
           },
           '/letters_level_1': (context) => const LetterLevel1(),
 
-          '/letters_level_2': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-            return LetterLevel2(
-              learner: args['learner'] as Learner,
-              exerciseId: args['exerciseId'] as String,
-              levelId: args['levelId'] as String, // Add the levelId parameter
-            );
-          },
+          // '/letters_level_2': (context) {
+          //   final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          //   return LetterLevel2(
+          //     learner: args['learner'] as Learner,
+          //     exerciseId: args['exerciseId'] as String,
+          //     levelId: args['levelId'] as String, // Add the levelId parameter
+          //   );
+          // },
 
           '/letters_level_3': (context) => const LetterLevel3(),
           '/letters_game_1': (context) => const ArabicLetterTracingExercise(),
