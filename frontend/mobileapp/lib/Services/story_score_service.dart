@@ -64,7 +64,7 @@ class StoryDatabaseService {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        final Map<String, dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
 
         if (responseData.containsKey('errors')) {
           print('GraphQL errors: ${responseData['errors']}');
@@ -199,7 +199,7 @@ class StoryDatabaseService {
     try {
       final Map<String, dynamic> requestBody = {
         'text': storyText,
-        'top_k': 2,
+        'top_k': 1,
       };
 
       print('Generating summary for story...');
@@ -212,7 +212,7 @@ class StoryDatabaseService {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        final Map<String, dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
 
         // The API response structure may vary, adjust according to actual response
         if (responseData.containsKey('summary')) {
@@ -279,6 +279,8 @@ class StoryDatabaseService {
           'generated_summary': summaries[i],
         });
       }
+
+      print(storiesWithSummaries);
 
       return {
         'main_story': storiesWithSummaries[0], // First story as main story

@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 
 import '../../../../Services/story_score_service.dart';
+import '../../../../Services/add_score_service.dart'; // Add this import
 import '../../../../generated/l10n.dart';
 
 class ArabicStorySummarizeWidget extends StatefulWidget {
@@ -53,10 +54,10 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
     try {
       // Get learner ID from SharedPreferences or use a default
       final prefs = await SharedPreferences.getInstance();
-      String learnerId = prefs.getString('userId') ?? '676579893a5c2ad7d653448a'; // Default learner ID
+      String? learnerId = prefs.getString('userId'); // Default learner ID
 
       // Get random stories with summaries
-      Map<String, dynamic>? result = await _storyService.getRandomStoriesWithSummaries(learnerId);
+      Map<String, dynamic>? result = await _storyService.getRandomStoriesWithSummaries(learnerId!);
 
       if (result != null) {
         setState(() {
@@ -227,23 +228,31 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
           title: const Text(
             'اقتراحات للتحسين',
             textAlign: TextAlign.right,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: suggestions.map<Widget>((suggestion) =>
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Row(
                     textDirection: TextDirection.rtl,
                     children: [
-                      const Icon(Icons.lightbulb_outline, color: Colors.amber, size: 16),
-                      const SizedBox(width: 8),
+                      const Icon(Icons.lightbulb_outline, color: Colors.amber, size: 20),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           suggestion.toString(),
                           textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            height: 1.8,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
@@ -254,7 +263,18 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('حسناً'),
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF7B68EE),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'حسناً',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         );
@@ -262,7 +282,7 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
     );
   }
 
-  void _selectQuizAnswer(int index) {
+  void _selectQuizAnswer(int index) async {
     if (_quizAnswered) return;
 
     setState(() {
@@ -270,6 +290,187 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
       _quizAnswered = true;
       _showQuizResult = true;
     });
+
+    // Update score based on answer
+    bool isCorrect = index == _correctAnswerIndex;
+    int score = isCorrect ? 10 : 5;
+
+    try {
+      await AddScoreService.updateScore(
+        score: score,
+        outOf: 10, // Total possible score
+      );
+    } catch (e) {
+      print('Error updating score: $e');
+    }
+
+    // Show result dialog
+    _showQuizResultDialog(isCorrect);
+  }
+
+  void _showQuizResultDialog(bool isCorrect) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: (isCorrect ? Colors.green : Colors.orange).withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isCorrect ? Icons.celebration : Icons.lightbulb,
+                  size: 60,
+                  color: isCorrect ? Colors.green : Colors.orange,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Title
+              Text(
+                isCorrect ? '🎉 مبروك! 🎉' : '💡 تعلم واكتشف 💡',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: isCorrect ? Colors.green : Colors.orange,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 15),
+
+              // Message
+              Text(
+                isCorrect
+                    ? 'أحسنت! إجابتك صحيحة تماماً!\nلقد حصلت على 10 نقاط'
+                    : 'لا بأس، يمكنك المحاولة مرة أخرى!\nحصلت على 5 نقاط للمحاولة',
+                style: const TextStyle(
+                  fontSize: 18,
+                  height: 1.8,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF2D3748),
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              // Show correct answer if wrong
+              if (!isCorrect) ...[
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green.withOpacity(0.3)),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'الإجابة الصحيحة:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _quizOptions[_correctAnswerIndex],
+                        style: const TextStyle(
+                          fontSize: 16,
+                          height: 1.6,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF2D3748),
+                        ),
+                        textAlign: TextAlign.center,
+                        textDirection: TextDirection.rtl,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Try Again Button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _loadNewStory();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7B68EE),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'قصة جديدة',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                // Continue Button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      if (!isCorrect) {
+                        _resetQuiz();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isCorrect ? Colors.green : Colors.orange,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      isCorrect ? 'متابعة' : 'حاول مرة أخرى',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _loadNewStory() {
+    setState(() {
+      _summaryController.clear();
+      _feedbackMessage = null;
+      _selectedAnswerIndex = null;
+      _showQuizResult = false;
+      _quizAnswered = false;
+    });
+    _loadRandomStories();
   }
 
   void _resetQuiz() {
@@ -292,6 +493,7 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
+            fontSize: 20,
           ),
         ),
         backgroundColor: const Color(0xFF7B68EE),
@@ -303,14 +505,8 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: () {
-              setState(() {
-                _summaryController.clear();
-                _feedbackMessage = null;
-              });
-              _resetQuiz();
-              _loadRandomStories();
-            },
+            onPressed: _loadNewStory,
+            tooltip: 'قصة جديدة',
           ),
         ],
       ),
@@ -319,11 +515,17 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7B68EE)),
+            ),
             SizedBox(height: 16),
             Text(
               'جاري تحميل القصص...',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
@@ -333,17 +535,17 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Story Display Card
+            // Story Display Card (Dyslexic-friendly)
             if (_mainStory != null) ...[
               Card(
-                elevation: 4,
+                elevation: 6,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(25),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(20),
                     gradient: const LinearGradient(
                       colors: [Color(0xFF9C88FF), Color(0xFF7B68EE)],
                       begin: Alignment.topLeft,
@@ -356,81 +558,89 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(15),
                             ),
                             child: const Icon(
                               Icons.book_outlined,
                               color: Colors.white,
-                              size: 20,
+                              size: 24,
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 15),
                           const Text(
                             'القصة',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
                           const Spacer(),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(15),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
                               _mainStory!['kind'] ?? 'قصة',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 12,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 20),
+                      // Dyslexic-friendly story text
                       Container(
-                        padding: const EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xFFFFFDF5), // Cream background
+                          borderRadius: BorderRadius.circular(15),
                         ),
                         child: Text(
                           _mainStory!['story'],
                           style: const TextStyle(
-                            fontSize: 16,
-                            height: 1.6,
+                            fontSize: 18, // Larger font size
+                            height: 2.0, // Increased line spacing
                             color: Color(0xFF2D3748),
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5, // Better letter spacing
                           ),
                           textAlign: TextAlign.right,
                           textDirection: TextDirection.rtl,
                         ),
                       ),
                       if (_mainStory!['morale'] != null) ...[
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 15),
                         Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             color: Colors.yellow.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.orange.withOpacity(0.3),
+                              width: 2,
+                            ),
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.lightbulb, color: Colors.orange, size: 16),
-                              const SizedBox(width: 8),
+                              const Icon(Icons.lightbulb, color: Colors.orange, size: 20),
+                              const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   'الدرس المستفاد: ${_mainStory!['morale']}',
                                   style: const TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF2D3748),
+                                    height: 1.8,
                                   ),
                                   textAlign: TextAlign.right,
                                   textDirection: TextDirection.rtl,
@@ -447,86 +657,17 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
 
               const SizedBox(height: 25),
 
-              // Summary Input Section
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF4FD1C7).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(
-                              Icons.edit_outlined,
-                              color: Color(0xFF4FD1C7),
-                              size: 20,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            'اكتب ملخصك هنا',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF2D3748),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: TextField(
-                          controller: _summaryController,
-                          textDirection: TextDirection.rtl,
-                          textAlign: TextAlign.right,
-                          maxLines: 6,
-                          decoration: const InputDecoration(
-                            hintText: 'اكتب ملخصاً للقصة يتضمن الأحداث الرئيسية والشخصيات والدرس المستفاد...',
-                            hintStyle: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.all(15),
-                          ),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            height: 1.5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
               // Feedback Message
               if (_feedbackMessage != null)
                 Container(
-                  padding: const EdgeInsets.all(15),
-                  margin: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.only(bottom: 25),
                   decoration: BoxDecoration(
                     color: _feedbackColor?.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(15),
                     border: Border.all(
                       color: _feedbackColor ?? Colors.grey,
-                      width: 1,
+                      width: 2,
                     ),
                   ),
                   child: Row(
@@ -540,15 +681,17 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
                             ? Icons.error_outline
                             : Icons.info_outline,
                         color: _feedbackColor,
-                        size: 20,
+                        size: 24,
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 15),
                       Expanded(
                         child: Text(
                           _feedbackMessage!,
                           style: TextStyle(
                             color: _feedbackColor,
                             fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            height: 1.6,
                           ),
                           textAlign: TextAlign.right,
                           textDirection: TextDirection.rtl,
@@ -558,71 +701,17 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
                   ),
                 ),
 
-              // Check Summary Button
-              SizedBox(
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _checkSummary,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4FD1C7),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 3,
-                  ),
-                  child: _isLoading
-                      ? const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'جاري التحقق...',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  )
-                      : const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.check_circle_outline),
-                      SizedBox(width: 10),
-                      Text(
-                        'تحقق من الملخص',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
               // Quiz Section
               if (_quizOptions.isNotEmpty) ...[
                 Card(
-                  elevation: 4,
+                  elevation: 6,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(25),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(20),
                       gradient: const LinearGradient(
                         colors: [Color(0xFFFF9A8B), Color(0xFFFE7A9B)],
                         begin: Alignment.topLeft,
@@ -635,34 +724,34 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(15),
                               ),
                               child: const Icon(
                                 Icons.quiz_outlined,
                                 color: Colors.white,
-                                size: 20,
+                                size: 24,
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 15),
                             const Text(
                               'اختبار سريع',
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 20),
                         Container(
-                          padding: const EdgeInsets.all(15),
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFFFFFDF5),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -670,40 +759,45 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
                               const Text(
                                 'أي من الملخصات التالية يناسب القصة التي قرأتها؟',
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF2D3748),
+                                  height: 1.8,
                                 ),
                                 textAlign: TextAlign.right,
                                 textDirection: TextDirection.rtl,
                               ),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 20),
                               ...List.generate(_quizOptions.length, (index) {
                                 bool isSelected = _selectedAnswerIndex == index;
                                 bool isCorrect = index == _correctAnswerIndex;
                                 bool showResult = _showQuizResult;
 
                                 Color? cardColor;
+                                Color borderColor = Colors.grey;
                                 if (showResult) {
                                   if (isCorrect) {
                                     cardColor = Colors.green.withOpacity(0.2);
+                                    borderColor = Colors.green;
                                   } else if (isSelected && !isCorrect) {
                                     cardColor = Colors.red.withOpacity(0.2);
+                                    borderColor = Colors.red;
                                   }
+                                } else if (isSelected) {
+                                  cardColor = Colors.blue.withOpacity(0.1);
+                                  borderColor = Colors.blue;
                                 }
 
                                 return GestureDetector(
                                   onTap: () => _selectQuizAnswer(index),
                                   child: Container(
-                                    margin: const EdgeInsets.only(bottom: 10),
-                                    padding: const EdgeInsets.all(12),
+                                    margin: const EdgeInsets.only(bottom: 15),
+                                    padding: const EdgeInsets.all(18),
                                     decoration: BoxDecoration(
-                                      color: cardColor ?? (isSelected ? Colors.blue.withOpacity(0.1) : Colors.grey.withOpacity(0.1)),
-                                      borderRadius: BorderRadius.circular(8),
+                                      color: cardColor ?? Colors.grey.withOpacity(0.05),
+                                      borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: showResult
-                                            ? (isCorrect ? Colors.green : (isSelected && !isCorrect ? Colors.red : Colors.grey))
-                                            : (isSelected ? Colors.blue : Colors.grey),
+                                        color: borderColor,
                                         width: 2,
                                       ),
                                     ),
@@ -713,16 +807,18 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
                                           Icon(
                                             isCorrect ? Icons.check_circle : (isSelected && !isCorrect ? Icons.cancel : Icons.radio_button_unchecked),
                                             color: isCorrect ? Colors.green : (isSelected && !isCorrect ? Colors.red : Colors.grey),
-                                            size: 20,
+                                            size: 24,
                                           ),
-                                          const SizedBox(width: 10),
+                                          const SizedBox(width: 15),
                                         ],
                                         Expanded(
                                           child: Text(
                                             _quizOptions[index],
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 16,
                                               color: Color(0xFF2D3748),
+                                              height: 1.8,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                             textAlign: TextAlign.right,
                                             textDirection: TextDirection.rtl,
@@ -733,25 +829,6 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
                                   ),
                                 );
                               }),
-                              if (_showQuizResult) ...[
-                                const SizedBox(height: 15),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: _resetQuiz,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.grey.shade600,
-                                        foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                      ),
-                                      child: const Text('إعادة المحاولة'),
-                                    ),
-                                  ],
-                                ),
-                              ],
                             ],
                           ),
                         ),

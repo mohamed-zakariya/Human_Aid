@@ -221,7 +221,7 @@ async updateWord(_, { id, word, level, image }) {
 
   getStoryByProgress: async (_, { learnerId }) => {
     const STORY_EXERCISE_ID = new mongoose.Types.ObjectId("6846f1396da181555b92c7c2");
-    const STORY_COMPREHENSION_GAME_ID = new mongoose.Types.ObjectId("681004a0cb31000175a0b1d0");
+    const STORY_COMPREHENSION_GAME_ID = new mongoose.Types.ObjectId("684a222f9b4f0e13211a270d");
 
     // Aggregate to count how many scores > 8 for the specific game
     const result = await Exercisesprogress.aggregate([
