@@ -184,7 +184,7 @@ export const generateProgressPDF = async ({ learner, parent, dailyAttempts, over
     const summaryItems = [
       `Total Learning Time: ${(stats.total_time_spent / 60).toFixed(1)} minutes`,
       `Overall Accuracy: ${stats.combined_accuracy.toFixed(1)}%`,
-      `Average Score: ${stats.average_score_all.toFixed(1)}/10`,
+      `Average Games Score: ${stats.average_score_all.toFixed(1)}/10`,
       `Exercises Completed: ${overallProgress.progress_by_exercise.length}`
     ];
     
@@ -193,7 +193,7 @@ export const generateProgressPDF = async ({ learner, parent, dailyAttempts, over
     // Progress bars for key metrics
     doc.moveDown(0.5);
     createProgressBar(doc, 'Overall Accuracy', stats.combined_accuracy, colors.success);
-    createProgressBar(doc, 'Average Score', (stats.average_score_all / 10) * 100, colors.primary);
+    createProgressBar(doc, 'Average Games Score', (stats.average_score_all / 10) * 100, colors.primary);
   }
 
   // Daily Attempts Section
@@ -351,7 +351,7 @@ export const generateProgressPDF = async ({ learner, parent, dailyAttempts, over
             const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
             doc.font('Helvetica')
                .fontSize(10)
-               .text(`Game ${gi + 1}: Average Score ${avgScore.toFixed(1)}/10 (${scores.length} attempts)`, 85);
+               .text(`Game ${gi + 1}: Average Games Score ${avgScore.toFixed(1)}/10 (${scores.length} attempts)`, 85);
             doc.moveDown(0.5);
           }
         });
@@ -391,7 +391,7 @@ export const generateProgressPDF = async ({ learner, parent, dailyAttempts, over
       
       // Progress bars
       createProgressBar(doc, 'Accuracy', entry.stats.accuracy_percentage, colors.success);
-      createProgressBar(doc, 'Average Score', (entry.stats.average_game_score / 10) * 100, colors.primary);
+      createProgressBar(doc, 'Average Games Score', (entry.stats.average_game_score / 10) * 100, colors.primary);
       
       // Stats summary
       const exerciseInfo = [

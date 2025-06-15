@@ -5,6 +5,7 @@ type Word {
   id: ID!
   word: String!
   level: String!
+  synonym: String
   imageUrl: String
 }
 

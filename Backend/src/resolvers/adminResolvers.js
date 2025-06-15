@@ -32,7 +32,7 @@ export const adminResolvers = {
     },
 
     // CREATE a word
-async createWord(_, { word, level, image }) {
+async createWord(_, { word, level, image ,synonym}) {
   try {
     let imageUrl = null;
 
@@ -54,7 +54,7 @@ async createWord(_, { word, level, image }) {
       imageUrl = cloudRes.secure_url;
     }
 
-    const newWord = new Words({ word, level, imageUrl });
+    const newWord = new Words({ word, level, imageUrl,synonym });
     await newWord.save();
 
     return newWord;
@@ -63,7 +63,7 @@ async createWord(_, { word, level, image }) {
   }
 },
 
-async updateWord(_, { id, word, level, image }) {
+async updateWord(_, { id, word, level, image,synonym }) {
   let imageUrl;
 
   if (image) {
@@ -90,6 +90,7 @@ async updateWord(_, { id, word, level, image }) {
       ...(word !== undefined && { word }),
       ...(level !== undefined && { level }),
       ...(imageUrl !== undefined && { imageUrl }),
+      ...(synonym !== undefined && { synonym }),
     },
     { new: true }
   );
