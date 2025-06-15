@@ -7,6 +7,11 @@ import { GraphQLUpload } from 'graphql-upload';
 import Sentences from '../models/Sentences.js';
 import Parents from '../models/Parents.js';
 import Stories from "../models/Stories.js";
+import mongoose from 'mongoose';
+import Exercisesprogress from '../models/Exercisesprogress.js';
+
+
+
 export const adminResolvers = {
   Upload: GraphQLUpload,
   Mutation: {
@@ -209,10 +214,73 @@ async updateWord(_, { id, word, level, image,synonym }) {
   getStories: async () => {
       return await Stories.find();
     },
-    getStory: async (_, { id }) => {
-      const story = await Stories.findById(id);
-      if (!story) throw new Error("Story not found");
-      return story;
-    },
+  getStory: async (_, { id }) => {
+    const story = await Stories.findById(id);
+    if (!story) throw new Error("Story not found");
+    return story;
+  },
+
+  getStoryByProgress: async (_, { learnerId }) => {
+    const STORY_EXERCISE_ID = new mongoose.Types.ObjectId("6846f1396da181555b92c7c2");
+    const STORY_COMPREHENSION_GAME_ID = new mongoose.Types.ObjectId("684a222f9b4f0e13211a270d");
+
+    // Aggregate to count how many scores > 8 for the specific game
+    const result = await Exercisesprogress.aggregate([
+      {
+        $match: {
+          user_id: new mongoose.Types.ObjectId(learnerId),
+          exercise_id: STORY_EXERCISE_ID,
+        }
+      },
+      { $unwind: "$levels" },
+      { $unwind: "$levels.games" },
+      {
+        $match: {
+          "levels.games.game_id": STORY_COMPREHENSION_GAME_ID,
+        }
+      },
+      {
+        $project: {
+          scoresAbove8: {
+            $size: {
+              $filter: {
+                input: "$levels.games.scores",
+                as: "score",
+                cond: { $gt: ["$$score", 8] }
+              }
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAttempts: { $sum: "$scoresAbove8" }
+        }
+      }
+    ]);
+
+    const attempts = result[0]?.totalAttempts || 0;
+
+    // Determine the story kind
+    let kind = "قصة قصيرة";
+    if (attempts >= 6) kind = "قصة طويلة";
+    else if (attempts >= 3) kind = "قصة متوسطة";
+
+    // Get 3 random stories of that kind
+    const stories = await Stories.aggregate([
+      { $match: { kind } },
+      { $sample: { size: 3 } }
+    ]);
+
+    return stories.map(story => ({
+      id: story._id.toString(),
+      story: story.story,
+      kind: story.kind,
+      summary: story.summary,
+      morale: story.morale
+    }));
+  }
+
   },
 };

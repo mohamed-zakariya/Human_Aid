@@ -5,6 +5,7 @@ import 'dart:async';
 
 import '../../../../Services/generate_questions_service.dart';
 import '../../../../Services/generate_stories_service.dart';
+import '../../../../Services/story_score_service.dart';
 import 'StoryQuestionsScreen.dart';
 
 class StoryResultScreen extends StatefulWidget {
@@ -30,6 +31,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
     with TickerProviderStateMixin {
   final GenerateStoriesService _storyService = GenerateStoriesService();
   final GenerateQuestionsService _questionService = GenerateQuestionsService();
+  final StoryDatabaseService _databaseService = StoryDatabaseService(); // Add this line
 
   // TTS related variables
   FlutterTts flutterTts = FlutterTts();
@@ -37,8 +39,10 @@ class _StoryResultScreenState extends State<StoryResultScreen>
 
   String? generatedStory;
   List<Question>? questions;
+  Map<String, dynamic>? savedStoryData; // Add this to store database response
   bool isStoryLoading = true;
   bool isQuestionsLoading = false;
+  bool isSavingToDatabase = false; // Add this for database saving status
 
   // Timer variables
   Timer? _readingTimer;
@@ -161,6 +165,11 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       });
 
       _startReadingTimer();
+
+      // Save story to database after successful generation
+      _saveStoryToDatabase();
+
+      // Generate questions after saving to database
       _generateQuestions();
     } catch (e) {
       setState(() {
@@ -172,6 +181,38 @@ class _StoryResultScreenState extends State<StoryResultScreen>
           backgroundColor: Colors.red,
         ),
       );
+    }
+  }
+
+  // Add this new method to save story to database
+  Future<void> _saveStoryToDatabase() async {
+    if (generatedStory == null || generatedStory!.isEmpty) return;
+
+    setState(() {
+      isSavingToDatabase = true;
+    });
+
+    try {
+      final storyData = await _databaseService.saveGeneratedStory(
+        story: generatedStory!,
+        length: widget.length,
+        topic: widget.topic,
+      );
+
+      setState(() {
+        savedStoryData = storyData;
+        isSavingToDatabase = false;
+      });
+
+      print('Story saved successfully: ${storyData?['id']}');
+
+    } catch (e) {
+      setState(() {
+        isSavingToDatabase = false;
+      });
+
+      print('Error saving story to database: $e');
+      // Show error message but don't stop the flow
     }
   }
 
@@ -259,14 +300,19 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "قصتك الخاصة",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
-                          fontFamily: 'OpenDyslexic',
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "قصتك الخاصة",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[800],
+                              fontFamily: 'OpenDyslexic',
+                            ),
+                          ),
+                          // Add database status indicator
+                        ],
                       ),
                       Text(
                         "موضوع: ${widget.topic}",

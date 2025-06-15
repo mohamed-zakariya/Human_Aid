@@ -19,10 +19,37 @@ class _StoryInputScreenState extends State<StoryInputScreen> {
 
   // final List<String> ages = ['4', '5', '6', '7', '8'];
   late int age = 0;
-  final List<String> topics = ['الأمان', 'الصداقة', 'النظافة', 'الأمانة'];
-  final List<String> settings = ['المدرسة', 'المنزل', 'الحديقة'];
+  final List<String> topics = [
+    'الصداقة',
+    'الشجاعة',
+    'التعاون',
+    'الرحمة',
+    'الاحترام',
+    'حب الطبيعة'
+  ];
+
+  final List<String> settings = [
+    'المدرسة',
+    'الغابة',
+    'الفضاء',
+    'القلعة',
+    'عالم تحت الماء',
+    'المزرعة',
+    'المكتبة'
+  ];
+
   final List<String> lengths = ['قصة قصيرة', 'قصة متوسطة', 'قصة طويلة'];
-  final List<String> goals = ['تعليم الأخلاق', 'تعزيز القراءة', 'بناء المفردات'];
+
+  final List<String> goals = [
+    'تعليم الأخلاق',
+    'تنمية الخيال',
+    'تحفيز التفكير النقدي',
+    'تعلم مهارات التواصل',
+    'تعزيز الثقة بالنفس',
+    'تعلم العمل ضمن فريق',
+    'تعلم الوعي العاطفي'
+  ];
+
   final List<String> styles = ['واقعية', 'خيالية', 'مغامرة', 'عاطفية'];
   final List<String> heroTypes = ['ولد', 'بنت', 'مجموعة'];
 

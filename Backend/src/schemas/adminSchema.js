@@ -19,7 +19,7 @@ type Story {
   id: ID!
   story: String!
   kind: String!
-  summary: String!
+  summary: String
   morale: String!
 }
 
@@ -39,6 +39,7 @@ type Query {
   getAllUsers: [User!]!  
   getStories: [Story!]!
   getStory(id: ID!): Story
+  getStoryByProgress(learnerId: ID!): [Story]
 }
 
 type Mutation {
@@ -51,7 +52,7 @@ type Mutation {
   deleteSentence(id: ID!): Sentence!
   deleteParentAndChildren(parentId: ID!): Boolean!
   deleteUser(userId: ID!): Boolean!
-  createStory(story: String!, kind: String!, summary: String!, morale: String!): Story!
+  createStory(story: String!, kind: String!, summary: String, morale: String!): Story!
   updateStory(id: ID!, story: String, kind: String, summary: String, morale: String): Story!
   deleteStory(id: ID!): Story!
 }

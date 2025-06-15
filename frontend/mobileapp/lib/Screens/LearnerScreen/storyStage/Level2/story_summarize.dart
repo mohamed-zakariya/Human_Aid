@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:math';
 
+import '../../../../Services/story_score_service.dart';
+import '../../../../Services/add_score_service.dart'; // Add this import
 import '../../../../generated/l10n.dart';
 
 class ArabicStorySummarizeWidget extends StatefulWidget {
@@ -13,19 +15,30 @@ class ArabicStorySummarizeWidget extends StatefulWidget {
 
 class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget> {
   final TextEditingController _summaryController = TextEditingController();
+  final StoryDatabaseService _storyService = StoryDatabaseService();
+
   bool _isLoading = false;
+  bool _isLoadingStories = true;
   String? _feedbackMessage;
   Color? _feedbackColor;
-  int _currentStoryIndex = 0;
 
-  // Arabic stories embedded in the widget
-  final List<String> _stories = [
-    '''كان هناك صبي صغير يُدعى أحمد يحب القراءة كثيراً. كان يقضي ساعات طويلة في المكتبة يقرأ الكتب المختلفة. في يوم من الأيام، وجد كتاباً قديماً مليئاً بالحكايات الشعبية. فتح الكتاب وبدأ في القراءة، وإذا بالشخصيات تنبض بالحياة أمام عينيه. تعلم أحمد من هذه التجربة أن للقراءة سحراً عظيماً يمكنه أن ينقلنا إلى عوالم مختلفة. منذ ذلك اليوم، أصبح أحمد أكثر شغفاً بالقراءة وقرر أن يصبح كاتباً في المستقبل.''',
+  // Story data
+  Map<String, dynamic>? _mainStory;
+  List<Map<String, dynamic>> _allStories = [];
+  List<String?> _allSummaries = [];
 
-    '''في قرية صغيرة، عاشت فتاة تُدعى فاطمة مع جدتها الحكيمة. كانت الجدة تعرف أسرار الطبخ التقليدي والوصفات القديمة. كل يوم، كانت فاطمة تراقب جدتها وهي تحضر الطعام بحب وعناية. تعلمت فاطمة أن الطبخ ليس مجرد خلط المكونات، بل هو فن يحتاج إلى صبر وإتقان. عندما كبرت فاطمة، افتتحت مطعماً صغيراً وأصبحت مشهورة بأطباقها التراثية الشهية التي تذكر الجميع بطعم البيت.''',
+  // Quiz data
+  List<String> _quizOptions = [];
+  int _correctAnswerIndex = -1;
+  int? _selectedAnswerIndex;
+  bool _showQuizResult = false;
+  bool _quizAnswered = false;
 
-    '''كان سالم صبياً يخاف من الظلام كثيراً. في كل ليلة، كان يرفض النوم بدون إضاءة الغرفة بالكامل. لاحظ والد سالم هذا الخوف وقرر مساعدته. أخذه في رحلة تخييم تحت النجوم وعلمه كيف يرى جمال الليل والنجوم المتلألئة. تدريجياً، تعلم سالم أن الظلام ليس مخيفاً، بل هو وقت السكينة والهدوء. أصبح سالم يحب النظر إلى النجوم كل ليلة قبل النوم، وتغلب على خوفه من الظلام نهائياً.'''
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadRandomStories();
+  }
 
   @override
   void dispose() {
@@ -33,94 +46,65 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
     super.dispose();
   }
 
-  // AI Model Request Implementation
-  Future<Map<String, dynamic>> _checkSummaryWithAI(String userSummary, String originalStory) async {
+  Future<void> _loadRandomStories() async {
+    setState(() {
+      _isLoadingStories = true;
+    });
+
     try {
-      // Replace with your actual AI API endpoint
-      const String apiUrl = 'https://your-ai-api-endpoint.com/check-summary';
-      const String apiKey = 'your-api-key-here'; // Replace with your API key
+      // Get learner ID from SharedPreferences or use a default
+      final prefs = await SharedPreferences.getInstance();
+      String? learnerId = prefs.getString('userId'); // Default learner ID
 
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $apiKey',
-        },
-        body: json.encode({
-          'original_story': originalStory,
-          'user_summary': userSummary,
-          'language': 'arabic',
-          'task': 'summary_evaluation'
-        }),
-      );
+      // Get random stories with summaries
+      Map<String, dynamic>? result = await _storyService.getRandomStoriesWithSummaries(learnerId!);
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
+      if (result != null) {
+        setState(() {
+          _mainStory = result['main_story'];
+          _allStories = List<Map<String, dynamic>>.from(result['all_stories']);
+          _allSummaries = List<String?>.from(result['summaries']);
+          _isLoadingStories = false;
+        });
+
+        _setupQuiz();
       } else {
-        throw Exception('Failed to connect to AI service: ${response.statusCode}');
+        throw Exception('لم يتم العثور على قصص');
       }
     } catch (e) {
-      // Fallback: Simple local validation for demo purposes
-      return _performLocalValidation(userSummary, originalStory);
+      setState(() {
+        _isLoadingStories = false;
+        _feedbackMessage = 'خطأ في تحميل القصص: ${e.toString()}';
+        _feedbackColor = Colors.red;
+      });
     }
   }
 
-  // Simple local validation as fallback
-  Map<String, dynamic> _performLocalValidation(String userSummary, String originalStory) {
-    // Basic validation logic
-    if (userSummary.length < 20) {
-      return {
-        'is_valid': false,
-        'score': 30,
-        'feedback': 'الملخص قصير جداً. حاول إضافة المزيد من التفاصيل المهمة.',
-        'suggestions': ['أضف الشخصيات الرئيسية', 'اذكر الأحداث المهمة', 'أضف النتيجة أو الدرس المستفاد']
-      };
+  void _setupQuiz() {
+    if (_allSummaries.isEmpty || _allSummaries.any((summary) => summary == null)) {
+      return;
     }
 
-    if (userSummary.length > 200) {
-      return {
-        'is_valid': false,
-        'score': 60,
-        'feedback': 'الملخص طويل جداً. حاول التركيز على النقاط الأساسية فقط.',
-        'suggestions': ['اختصر الأحداث الثانوية', 'ركز على الفكرة الرئيسية', 'احذف التفاصيل غير المهمة']
-      };
+    // Create quiz options with the summaries
+    _quizOptions = _allSummaries.map((summary) => summary!).toList();
+
+    // Shuffle the options but remember the correct answer position
+    _correctAnswerIndex = 0; // The main story is always the first one
+
+    // Create a list of indices and shuffle them
+    List<int> indices = List.generate(_quizOptions.length, (index) => index);
+    indices.shuffle();
+
+    // Reorder options and find new correct answer index
+    List<String> shuffledOptions = [];
+    for (int i = 0; i < indices.length; i++) {
+      shuffledOptions.add(_quizOptions[indices[i]]);
+      if (indices[i] == 0) {
+        _correctAnswerIndex = i;
+      }
     }
 
-    // Check for key elements (basic keyword matching)
-    List<String> keyWords = [];
-    if (_currentStoryIndex == 0) {
-      keyWords = ['أحمد', 'قراءة', 'كتاب', 'مكتبة'];
-    } else if (_currentStoryIndex == 1) {
-      keyWords = ['فاطمة', 'جدة', 'طبخ', 'مطعم'];
-    } else {
-      keyWords = ['سالم', 'ظلام', 'نجوم', 'خوف'];
-    }
-
-    int foundKeywords = keyWords.where((word) => userSummary.contains(word)).length;
-    double score = (foundKeywords / keyWords.length) * 100;
-
-    if (score >= 75) {
-      return {
-        'is_valid': true,
-        'score': score.round(),
-        'feedback': 'ممتاز! ملخص جيد يغطي النقاط الأساسية للقصة.',
-        'suggestions': []
-      };
-    } else if (score >= 50) {
-      return {
-        'is_valid': true,
-        'score': score.round(),
-        'feedback': 'جيد! لكن يمكن تحسين الملخص بإضافة المزيد من التفاصيل المهمة.',
-        'suggestions': ['أضف المزيد من الأحداث الرئيسية', 'اذكر النتيجة أو الدرس المستفاد']
-      };
-    } else {
-      return {
-        'is_valid': false,
-        'score': score.round(),
-        'feedback': 'الملخص يحتاج إلى تحسين. لم يغطِ النقاط الأساسية للقصة.',
-        'suggestions': ['اقرأ القصة مرة أخرى', 'ركز على الشخصيات الرئيسية', 'اذكر الأحداث المهمة']
-      };
-    }
+    _quizOptions = shuffledOptions;
   }
 
   void _checkSummary() async {
@@ -132,15 +116,23 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
       return;
     }
 
+    if (_mainStory == null) {
+      setState(() {
+        _feedbackMessage = 'لا توجد قصة متاحة للتحقق';
+        _feedbackColor = Colors.red;
+      });
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _feedbackMessage = null;
     });
 
     try {
-      final result = await _checkSummaryWithAI(
+      final result = await _performLocalValidation(
           _summaryController.text.trim(),
-          _stories[_currentStoryIndex]
+          _mainStory!['story']
       );
 
       setState(() {
@@ -168,31 +160,99 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
     }
   }
 
+  // Simple local validation
+  Map<String, dynamic> _performLocalValidation(String userSummary, String originalStory) {
+    if (userSummary.length < 20) {
+      return {
+        'is_valid': false,
+        'score': 30,
+        'feedback': 'الملخص قصير جداً. حاول إضافة المزيد من التفاصيل المهمة.',
+        'suggestions': ['أضف الشخصيات الرئيسية', 'اذكر الأحداث المهمة', 'أضف النتيجة أو الدرس المستفاد']
+      };
+    }
+
+    if (userSummary.length > 200) {
+      return {
+        'is_valid': false,
+        'score': 60,
+        'feedback': 'الملخص طويل جداً. حاول التركيز على النقاط الأساسية فقط.',
+        'suggestions': ['اختصر الأحداث الثانوية', 'ركز على الفكرة الرئيسية', 'احذف التفاصيل غير المهمة']
+      };
+    }
+
+    // Basic keyword validation
+    List<String> commonWords = ['في', 'من', 'إلى', 'على', 'مع', 'بعد', 'قبل', 'هذا', 'ذلك'];
+    List<String> userWords = userSummary.split(' ').where((word) =>
+    word.length > 2 && !commonWords.contains(word)).toList();
+    List<String> storyWords = originalStory.split(' ').where((word) =>
+    word.length > 2 && !commonWords.contains(word)).toList();
+
+    int matchCount = 0;
+    for (String userWord in userWords) {
+      if (storyWords.any((storyWord) => storyWord.contains(userWord) || userWord.contains(storyWord))) {
+        matchCount++;
+      }
+    }
+
+    double score = userWords.isNotEmpty ? (matchCount / userWords.length) * 100 : 0;
+
+    if (score >= 60) {
+      return {
+        'is_valid': true,
+        'score': score.round(),
+        'feedback': 'ممتاز! ملخص جيد يغطي النقاط الأساسية للقصة.',
+        'suggestions': []
+      };
+    } else if (score >= 40) {
+      return {
+        'is_valid': true,
+        'score': score.round(),
+        'feedback': 'جيد! لكن يمكن تحسين الملخص بإضافة المزيد من التفاصيل المهمة.',
+        'suggestions': ['أضف المزيد من الأحداث الرئيسية', 'اذكر النتيجة أو الدرس المستفاد']
+      };
+    } else {
+      return {
+        'is_valid': false,
+        'score': score.round(),
+        'feedback': 'الملخص يحتاج إلى تحسين. لم يغطِ النقاط الأساسية للقصة.',
+        'suggestions': ['اقرأ القصة مرة أخرى', 'ركز على الشخصيات الرئيسية', 'اذكر الأحداث المهمة']
+      };
+    }
+  }
+
   void _showSuggestionsDialog(List<dynamic> suggestions) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            S.of(context).improvementSuggestions,
+          title: const Text(
+            'اقتراحات للتحسين',
             textAlign: TextAlign.right,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: suggestions.map<Widget>((suggestion) =>
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Row(
                     textDirection: TextDirection.rtl,
                     children: [
-                      const Icon(Icons.lightbulb_outline, color: Colors.amber, size: 16),
-                      const SizedBox(width: 8),
+                      const Icon(Icons.lightbulb_outline, color: Colors.amber, size: 20),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           suggestion.toString(),
                           textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            height: 1.8,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
@@ -203,7 +263,18 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(S.of(context).ok),
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF7B68EE),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'حسناً',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         );
@@ -211,35 +282,218 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
     );
   }
 
-  void _nextStory() {
+  void _selectQuizAnswer(int index) async {
+    if (_quizAnswered) return;
+
     setState(() {
-      _currentStoryIndex = (_currentStoryIndex + 1) % _stories.length;
-      _summaryController.clear();
-      _feedbackMessage = null;
+      _selectedAnswerIndex = index;
+      _quizAnswered = true;
+      _showQuizResult = true;
     });
+
+    // Update score based on answer
+    bool isCorrect = index == _correctAnswerIndex;
+    int score = isCorrect ? 10 : 5;
+
+    try {
+      await AddScoreService.updateScore(
+        score: score,
+        outOf: 10, // Total possible score
+      );
+    } catch (e) {
+      print('Error updating score: $e');
+    }
+
+    // Show result dialog
+    _showQuizResultDialog(isCorrect);
   }
 
-  void _previousStory() {
+  void _showQuizResultDialog(bool isCorrect) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: (isCorrect ? Colors.green : Colors.orange).withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isCorrect ? Icons.celebration : Icons.lightbulb,
+                  size: 60,
+                  color: isCorrect ? Colors.green : Colors.orange,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Title
+              Text(
+                isCorrect ? '🎉 مبروك! 🎉' : '💡 تعلم واكتشف 💡',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: isCorrect ? Colors.green : Colors.orange,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 15),
+
+              // Message
+              Text(
+                isCorrect
+                    ? 'أحسنت! إجابتك صحيحة تماماً!\nلقد حصلت على 10 نقاط'
+                    : 'لا بأس، يمكنك المحاولة مرة أخرى!\nحصلت على 5 نقاط للمحاولة',
+                style: const TextStyle(
+                  fontSize: 18,
+                  height: 1.8,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF2D3748),
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              // Show correct answer if wrong
+              if (!isCorrect) ...[
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green.withOpacity(0.3)),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'الإجابة الصحيحة:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _quizOptions[_correctAnswerIndex],
+                        style: const TextStyle(
+                          fontSize: 16,
+                          height: 1.6,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF2D3748),
+                        ),
+                        textAlign: TextAlign.center,
+                        textDirection: TextDirection.rtl,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Try Again Button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _loadNewStory();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7B68EE),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'قصة جديدة',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                // Continue Button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      if (!isCorrect) {
+                        _resetQuiz();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isCorrect ? Colors.green : Colors.orange,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      isCorrect ? 'متابعة' : 'حاول مرة أخرى',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _loadNewStory() {
     setState(() {
-      _currentStoryIndex = _currentStoryIndex > 0 ? _currentStoryIndex - 1 : _stories.length - 1;
       _summaryController.clear();
       _feedbackMessage = null;
+      _selectedAnswerIndex = null;
+      _showQuizResult = false;
+      _quizAnswered = false;
+    });
+    _loadRandomStories();
+  }
+
+  void _resetQuiz() {
+    setState(() {
+      _selectedAnswerIndex = null;
+      _showQuizResult = false;
+      _quizAnswered = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         title: Text(
-          args['gameName'],
+          args['gameName'] ?? 'تلخيص القصص',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
+            fontSize: 20,
           ),
         ),
         backgroundColor: const Color(0xFF7B68EE),
@@ -251,292 +505,339 @@ class _ArabicStorySummarizeWidgetState extends State<ArabicStorySummarizeWidget>
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: () {
-              setState(() {
-                _summaryController.clear();
-                _feedbackMessage = null;
-              });
-            },
+            onPressed: _loadNewStory,
+            tooltip: 'قصة جديدة',
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: _isLoadingStories
+          ? const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7B68EE)),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'جاري تحميل القصص...',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      )
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Story Navigation
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: _previousStory,
-                  icon: const Icon(Icons.arrow_back_ios, size: 16),
-                  label: Text(S.of(context).previous),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey.shade600,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+            // Story Display Card (Dyslexic-friendly)
+            if (_mainStory != null) ...[
+              Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(25),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF9C88FF), Color(0xFF7B68EE)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
                   ),
-                ),
-                Text(
-                  S.of(context).storyCounter(_currentStoryIndex + 1, _stories.length),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D3748),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: const Icon(
+                              Icons.book_outlined,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          const Text(
+                            'القصة',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              _mainStory!['kind'] ?? 'قصة',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      // Dyslexic-friendly story text
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFFDF5), // Cream background
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Text(
+                          _mainStory!['story'],
+                          style: const TextStyle(
+                            fontSize: 18, // Larger font size
+                            height: 2.0, // Increased line spacing
+                            color: Color(0xFF2D3748),
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5, // Better letter spacing
+                          ),
+                          textAlign: TextAlign.right,
+                          textDirection: TextDirection.rtl,
+                        ),
+                      ),
+                      if (_mainStory!['morale'] != null) ...[
+                        const SizedBox(height: 15),
+                        Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: Colors.yellow.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.orange.withOpacity(0.3),
+                              width: 2,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.lightbulb, color: Colors.orange, size: 20),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'الدرس المستفاد: ${_mainStory!['morale']}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF2D3748),
+                                    height: 1.8,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                  textDirection: TextDirection.rtl,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-                ElevatedButton.icon(
-                  onPressed: _nextStory,
-                  icon: const Icon(Icons.arrow_forward_ios, size: 16),
-                  label: Text(S.of(context).next),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey.shade600,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
+              ),
+
+              const SizedBox(height: 25),
+
+              // Feedback Message
+              if (_feedbackMessage != null)
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.only(bottom: 25),
+                  decoration: BoxDecoration(
+                    color: _feedbackColor?.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
+                      color: _feedbackColor ?? Colors.grey,
+                      width: 2,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _feedbackColor == Colors.green
+                            ? Icons.check_circle_outline
+                            : _feedbackColor == Colors.blue
+                            ? Icons.thumb_up_outlined
+                            : _feedbackColor == Colors.red
+                            ? Icons.error_outline
+                            : Icons.info_outline,
+                        color: _feedbackColor,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Text(
+                          _feedbackMessage!,
+                          style: TextStyle(
+                            color: _feedbackColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            height: 1.6,
+                          ),
+                          textAlign: TextAlign.right,
+                          textDirection: TextDirection.rtl,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              // Quiz Section
+              if (_quizOptions.isNotEmpty) ...[
+                Card(
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(25),
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF9A8B), Color(0xFFFE7A9B)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: const Icon(
+                                Icons.quiz_outlined,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 15),
+                            const Text(
+                              'اختبار سريع',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFFDF5),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'أي من الملخصات التالية يناسب القصة التي قرأتها؟',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF2D3748),
+                                  height: 1.8,
+                                ),
+                                textAlign: TextAlign.right,
+                                textDirection: TextDirection.rtl,
+                              ),
+                              const SizedBox(height: 20),
+                              ...List.generate(_quizOptions.length, (index) {
+                                bool isSelected = _selectedAnswerIndex == index;
+                                bool isCorrect = index == _correctAnswerIndex;
+                                bool showResult = _showQuizResult;
+
+                                Color? cardColor;
+                                Color borderColor = Colors.grey;
+                                if (showResult) {
+                                  if (isCorrect) {
+                                    cardColor = Colors.green.withOpacity(0.2);
+                                    borderColor = Colors.green;
+                                  } else if (isSelected && !isCorrect) {
+                                    cardColor = Colors.red.withOpacity(0.2);
+                                    borderColor = Colors.red;
+                                  }
+                                } else if (isSelected) {
+                                  cardColor = Colors.blue.withOpacity(0.1);
+                                  borderColor = Colors.blue;
+                                }
+
+                                return GestureDetector(
+                                  onTap: () => _selectQuizAnswer(index),
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 15),
+                                    padding: const EdgeInsets.all(18),
+                                    decoration: BoxDecoration(
+                                      color: cardColor ?? Colors.grey.withOpacity(0.05),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: borderColor,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        if (showResult) ...[
+                                          Icon(
+                                            isCorrect ? Icons.check_circle : (isSelected && !isCorrect ? Icons.cancel : Icons.radio_button_unchecked),
+                                            color: isCorrect ? Colors.green : (isSelected && !isCorrect ? Colors.red : Colors.grey),
+                                            size: 24,
+                                          ),
+                                          const SizedBox(width: 15),
+                                        ],
+                                        Expanded(
+                                          child: Text(
+                                            _quizOptions[index],
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Color(0xFF2D3748),
+                                              height: 1.8,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.right,
+                                            textDirection: TextDirection.rtl,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // Story Display Card
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF9C88FF), Color(0xFF7B68EE)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.book_outlined,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          S.of(context).story,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Container(
-                      padding: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        _stories[_currentStoryIndex],
-                        style: const TextStyle(
-                          fontSize: 16,
-                          height: 1.6,
-                          color: Color(0xFF2D3748),
-                        ),
-                        textAlign: TextAlign.right,
-                        textDirection: TextDirection.rtl,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 25),
-
-            // Summary Input Section
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4FD1C7).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.edit_outlined,
-                            color: Color(0xFF4FD1C7),
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          S.of(context).writeSummaryHere,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2D3748),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: TextField(
-                        controller: _summaryController,
-                        textDirection: TextDirection.rtl,
-                        textAlign: TextAlign.right,
-                        maxLines: 6,
-                        decoration: InputDecoration(
-                          hintText: S.of(context).summaryHint,
-                          hintStyle: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.all(15),
-                        ),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          height: 1.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Feedback Message
-            if (_feedbackMessage != null)
-              Container(
-                padding: const EdgeInsets.all(15),
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  color: _feedbackColor?.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: _feedbackColor ?? Colors.grey,
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      _feedbackColor == Colors.green
-                          ? Icons.check_circle_outline
-                          : _feedbackColor == Colors.blue
-                          ? Icons.thumb_up_outlined
-                          : _feedbackColor == Colors.red
-                          ? Icons.error_outline
-                          : Icons.info_outline,
-                      color: _feedbackColor,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        _feedbackMessage!,
-                        style: TextStyle(
-                          color: _feedbackColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.right,
-                        textDirection: TextDirection.rtl,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-            // Check Summary Button
-            SizedBox(
-              height: 55,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _checkSummary,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4FD1C7),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  elevation: 3,
-                ),
-                child: _isLoading
-                    ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      S.of(context).checking,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                )
-                    : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.check_circle_outline),
-                    const SizedBox(width: 10),
-                    Text(
-                      S.of(context).checkSummary,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            ],
           ],
         ),
       ),
