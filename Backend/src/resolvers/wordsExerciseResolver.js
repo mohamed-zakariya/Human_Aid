@@ -85,7 +85,11 @@ const progress = await Exercisesprogress.findOne({
       if (!validLevels.includes(level)) {
         throw new Error('Invalid level');
       }
-      return await Words.find({ level });
+      // Return 4 random words for the given level
+      return await Words.aggregate([
+        { $match: { level } },
+        { $sample: { size: 4 } }
+      ]);
     },
     
   },
