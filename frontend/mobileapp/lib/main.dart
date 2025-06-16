@@ -275,11 +275,17 @@ class _MyAppState extends State<MyApp> {
           '/letters_game_5': (context) => const LetterLevel3Game(),
 
 
-          '/words_game_1': (context) => const SpellingGameScreen(),
+          '/words_game_1': (context) => const SpellingGameScreen("Beginner"),
           '/words_game_2': (context) => DirectionInstructionsPage(),
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
+
+
           '/words_game_5': (context) => const HandDetectionGameWidget(),
-          '/words_game_6': (context) => const MonthsOrderGameScreen(),
+          '/words_game_6': (context) => const SpellingGameScreen("Intermediate"),
+
+
+          '/words_game_7': (context) => const MonthsOrderGameScreen(),
+          '/words_game_8': (context) => const SpellingGameScreen("Advanced"),
 
 
           '/story_game_1': (context) => StoryInputScreen(),

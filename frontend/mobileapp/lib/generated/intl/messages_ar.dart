@@ -229,7 +229,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "drawLetter": m6,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "هذا البريد الإلكتروني مسجّل بالفعل"),
-        "emailHint": MessageLookupByLibrary.simpleMessage("lexfix@gmail.com"),
+        "emailHint": MessageLookupByLibrary.simpleMessage("البريد الالكتروني"),
         "emailHint2":
             MessageLookupByLibrary.simpleMessage("******aid@gmail.com"),
         "emailInvalid": MessageLookupByLibrary.simpleMessage(
@@ -601,7 +601,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "userTitle": MessageLookupByLibrary.simpleMessage("سجل لنفسك"),
         "usernameExist":
             MessageLookupByLibrary.simpleMessage("اسم المستخدم مأخوذ بالفعل"),
-        "usernameHint": MessageLookupByLibrary.simpleMessage("lexfix123"),
+        "usernameHint": MessageLookupByLibrary.simpleMessage("اسم المستخدم"),
         "usernameRequired":
             MessageLookupByLibrary.simpleMessage("يجب إدخال اسم المستخدم"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(

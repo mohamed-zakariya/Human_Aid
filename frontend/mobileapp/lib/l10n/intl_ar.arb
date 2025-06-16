@@ -227,7 +227,7 @@
     "readAloud": "اقرأ بصوت عالٍ",
     "genderValidationError": "اختار النوع",
     "birthdateValidation": "يرجى اختيار تاريخ الميلاد",
-    "usernameHint": "lexfix123",
+    "usernameHint": "اسم المستخدم",
 
 
 
@@ -265,7 +265,7 @@
     "guardianButton": "ولي أمر",
     "userButton": "مستخدم",
     "loginTitle": "تسجيل الدُّخول",
-    "emailHint": "lexfix@gmail.com",
+    "emailHint": "البريد الالكتروني",
     "passwordHint": "●●●●●●●",
     "forgotPassword": "نسيت كلمة المرور؟",
     "loginButton": "تسجيل الدخول",

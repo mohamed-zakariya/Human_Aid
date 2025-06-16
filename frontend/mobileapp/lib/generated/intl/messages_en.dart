@@ -229,7 +229,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "drawLetter": m6,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "This email is already registered"),
-        "emailHint": MessageLookupByLibrary.simpleMessage("lexfix@gmail.com"),
+        "emailHint": MessageLookupByLibrary.simpleMessage("Email"),
         "emailHint2":
             MessageLookupByLibrary.simpleMessage("******aid@gmail.com"),
         "emailInvalid":
@@ -606,7 +606,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Register for yourself"),
         "usernameExist": MessageLookupByLibrary.simpleMessage(
             "This username is already taken"),
-        "usernameHint": MessageLookupByLibrary.simpleMessage("lexfix123"),
+        "usernameHint": MessageLookupByLibrary.simpleMessage("Username"),
         "usernameRequired":
             MessageLookupByLibrary.simpleMessage("Username must be entered"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(

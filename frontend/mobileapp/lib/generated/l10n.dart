@@ -2320,10 +2320,10 @@ class S {
     );
   }
 
-  /// `lexfix123`
+  /// `Username`
   String get usernameHint {
     return Intl.message(
-      'lexfix123',
+      'Username',
       name: 'usernameHint',
       desc: '',
       args: [],
@@ -2520,10 +2520,10 @@ class S {
     );
   }
 
-  /// `lexfix@gmail.com`
+  /// `Email`
   String get emailHint {
     return Intl.message(
-      'lexfix@gmail.com',
+      'Email',
       name: 'emailHint',
       desc: '',
       args: [],

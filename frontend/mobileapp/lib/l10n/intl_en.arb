@@ -227,7 +227,7 @@
     "readAloud": "Read Aloud",
     "genderValidationError": "Please select a gender",
     "birthdateValidation": "Please select a birthdate",
-    "usernameHint": "lexfix123",
+    "usernameHint": "Username",
 
 
 
@@ -278,7 +278,7 @@
     "guardianButton": "Guardian",
     "userButton": "User",
     "loginTitle": "Login",
-    "emailHint": "lexfix@gmail.com",
+    "emailHint": "Email",
     "passwordHint": "●●●●●●●",
     "forgotPassword": "Forgot Password?",
     "loginButton": "Login",
