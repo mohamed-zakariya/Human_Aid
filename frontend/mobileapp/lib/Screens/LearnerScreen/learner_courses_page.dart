@@ -4,6 +4,8 @@ import 'package:mobileapp/Services/learner_home_service.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/level.dart';
 import 'package:mobileapp/Services/level_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../../generated/l10n.dart';
 import '../../models/game.dart';
 
@@ -20,6 +22,11 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
   Future<List<Map<String, dynamic>>>? _exercisesFuture;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+
+  // Tutorial keys
+  final GlobalKey _firstCourseKey = GlobalKey();
+  final GlobalKey _expandButtonKey = GlobalKey();
+  final GlobalKey _playButtonKey = GlobalKey();
 
   // vibrant colour palette
   final Color _primaryColor   = const Color(0xFF6C63FF);
@@ -45,7 +52,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
   String _safeExerciseName(Map<String, dynamic> ex, BuildContext ctx) {
     final isArabic  = Localizations.localeOf(ctx).languageCode == 'ar';
     final candidate =
-        isArabic ? ex['arabic_name'] as String? : ex['name'] as String?;
+    isArabic ? ex['arabic_name'] as String? : ex['name'] as String?;
     return candidate?.trim().isNotEmpty == true
         ? candidate!
         : (isArabic ? 'تمرين' : 'Exercise');
@@ -63,6 +70,181 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
           LearnerHomeService.fetchLearnerHomeData(widget.learner!.id!);
       _animationController.forward();
     }
+
+    // Check and show tutorial after the page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndShowTutorial();
+    });
+  }
+
+  bool _canShowTutorial() {
+    // Check if the required keys have widgets attached
+    return _firstCourseKey.currentContext != null;
+  }
+
+  Future<void> _checkAndShowTutorial() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasShown = prefs.getBool('hasShownCoursePageTutorial') ?? false;
+
+    if (!hasShown) {
+      // Wait for the exercises to load completely
+      await _exercisesFuture;
+
+      // Additional delay to ensure widgets are rendered
+      await Future.delayed(const Duration(milliseconds: 1500));
+
+      // Check if the context is still mounted and widgets exist
+      if (!mounted) return;
+
+      // Verify that the target widgets exist before showing tutorial
+      if (_canShowTutorial()) {
+        await prefs.setBool('hasShownCoursePageTutorial', true);
+        _showTutorial();
+      }
+    }
+  }
+
+
+  void _showTutorial() {
+    if (!mounted) return;
+
+    try {
+      TutorialCoachMark(
+        targets: _createTargets(),
+        colorShadow: Colors.black.withOpacity(0.8),
+        textSkip: S.of(context).tutorialSkip,
+        paddingFocus: 8,
+        alignSkip: Alignment.bottomRight,
+        onFinish: () {
+          print("Course page tutorial finished");
+        },
+        onClickTarget: (target) {
+          print('onClickTarget: $target');
+        },
+        onSkip: () {
+          print("Course page tutorial skipped");
+          return true;
+        },
+      ).show(context: context);
+    } catch (e) {
+      print("Error showing tutorial: $e");
+    }
+  }
+
+  List<TargetFocus> _createTargets() {
+    return [
+      TargetFocus(
+        identify: "CourseCard",
+        keyTarget: _firstCourseKey,
+        alignSkip: Alignment.topLeft,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      S.of(context).tutorialCourseCardTitle,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      S.of(context).tutorialCourseCardDescription,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "PlayButton",
+        keyTarget: _playButtonKey,
+        alignSkip: Alignment.topLeft,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      S.of(context).tutorialPlayButtonTitle,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      S.of(context).tutorialPlayButtonDescription,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "ExpandButton",
+        keyTarget: _expandButtonKey,
+        alignSkip: Alignment.topLeft,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      S.of(context).tutorialExpandButtonTitle,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      S.of(context).tutorialExpandButtonDescription,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ];
   }
 
   @override
@@ -128,7 +310,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
                         ],
                       ),
                       child:
-                          const Icon(Icons.school, color: Colors.white, size: 38),
+                      const Icon(Icons.school, color: Colors.white, size: 38),
                     ),
                     const SizedBox(width: 20),
                     Expanded(
@@ -159,120 +341,128 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
   // FutureBuilder wrapper
   // --------------------------------------------------------------------------
   Widget _buildContent(bool isArabic) => FutureBuilder<List<Map<String, dynamic>>>(
-        future: _exercisesFuture,
-        builder: (ctx, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return _buildLoadingState();
-          }
-          if (snap.hasError) {
-            return _buildErrorState(snap.error.toString(), isArabic);
-          }
-          final exercises = snap.data ?? [];
-          if (exercises.isEmpty) {
-            return _buildEmptyState(isArabic);
-          }
-          return _buildExercisesList(exercises, isArabic);
-        },
-      );
+    future: _exercisesFuture,
+    builder: (ctx, snap) {
+      if (snap.connectionState == ConnectionState.waiting) {
+        return _buildLoadingState();
+      }
+      if (snap.hasError) {
+        return _buildErrorState(snap.error.toString(), isArabic);
+      }
+      final exercises = snap.data ?? [];
+      if (exercises.isEmpty) {
+        return _buildEmptyState(isArabic);
+      }
+      return _buildExercisesList(exercises, isArabic);
+    },
+  );
 
   // --------------------------------------------------------------------------
   // Loading / error / empty
   // --------------------------------------------------------------------------
   Widget _buildLoadingState() => Column(
-        children: List.generate(
-            3,
+    children: List.generate(
+        3,
             (_) => Container(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  height: 160,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(.15),
-                          spreadRadius: 2,
-                          blurRadius: 15,
-                          offset: const Offset(0, 8)),
-                    ],
-                  ),
-                  child: const Center(
-                      child: CircularProgressIndicator(strokeWidth: 3)),
-                )),
-      );
+          margin: const EdgeInsets.only(bottom: 20),
+          height: 160,
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.withOpacity(.15),
+                  spreadRadius: 2,
+                  blurRadius: 15,
+                  offset: const Offset(0, 8)),
+            ],
+          ),
+          child: const Center(
+              child: CircularProgressIndicator(strokeWidth: 3)),
+        )),
+  );
 
   Widget _buildErrorState(String error, bool isArabic) => Container(
-        padding: const EdgeInsets.all(40),
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.red.withOpacity(.1), Colors.red.withOpacity(.05)]),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.red.withOpacity(.2), width: 2)),
-        child: Column(
-          children: [
-            Icon(Icons.error_outline, color: Colors.red[400], size: 60),
-            const SizedBox(height: 20),
-            Text(isArabic ? 'حدث خطأ' : 'Something went wrong',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red[700])),
-            const SizedBox(height: 12),
-            Text(error,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.red[600])),
-          ],
-        ),
-      );
+    padding: const EdgeInsets.all(40),
+    decoration: BoxDecoration(
+        gradient: LinearGradient(
+            colors: [Colors.red.withOpacity(.1), Colors.red.withOpacity(.05)]),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.red.withOpacity(.2), width: 2)),
+    child: Column(
+      children: [
+        Icon(Icons.error_outline, color: Colors.red[400], size: 60),
+        const SizedBox(height: 20),
+        Text(isArabic ? 'حدث خطأ' : 'Something went wrong',
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.red[700])),
+        const SizedBox(height: 12),
+        Text(error,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.red[600])),
+      ],
+    ),
+  );
 
   Widget _buildEmptyState(bool isArabic) => Container(
-        padding: const EdgeInsets.all(50),
-        child: Column(
-          children: [
-            Icon(Icons.quiz_outlined, size: 100, color: Colors.grey[400]),
-            const SizedBox(height: 24),
-            Text(S.of(context).noExercisesAvailable,
-                style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500)),
-          ],
-        ),
-      );
+    padding: const EdgeInsets.all(50),
+    child: Column(
+      children: [
+        Icon(Icons.quiz_outlined, size: 100, color: Colors.grey[400]),
+        const SizedBox(height: 24),
+        Text(S.of(context).noExercisesAvailable,
+            style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 18,
+                fontWeight: FontWeight.w500)),
+      ],
+    ),
+  );
 
   // --------------------------------------------------------------------------
   // Exercise list
   // --------------------------------------------------------------------------
-  Widget _buildExercisesList(List<Map<String, dynamic>> exercises, bool isArabic) =>
-      Column(
-        children: exercises.asMap().entries.map((e) {
-          final idx = e.key;
-          final ex  = e.value;
-          return AnimatedContainer(
-            duration: Duration(milliseconds: 300 + idx * 100),
-            child: _ExerciseExpansionTile(
-              exercise:       ex,
-              learner:        widget.learner!,
-              isArabic:       isArabic,
-              primaryColor:   _primaryColor,
-              secondaryColor: _secondaryColor,
-              accentColor:    _accentColor,
-              cardColor:      _getCardColor(idx),
-              safeGameName:   _safeGameName,
-              safeExerciseName: _safeExerciseName,
-            ),
-          );
-        }).toList(),
-      );
+  Widget _buildExercisesList(List<Map<String, dynamic>> exercises, bool isArabic) {
+
+
+    return Column(
+      children: exercises.asMap().entries.map((e) {
+        final idx = e.key;
+        final ex = e.value;
+        return AnimatedContainer(
+          duration: Duration(milliseconds: 300 + idx * 100),
+          child: _ExerciseExpansionTile(
+            key: idx == 0 ? _firstCourseKey : null,
+            exercise: ex,
+            learner: widget.learner!,
+            isArabic: isArabic,
+            primaryColor: _primaryColor,
+            secondaryColor: _secondaryColor,
+            accentColor: _accentColor,
+            cardColor: _getCardColor(idx),
+            safeGameName: _safeGameName,
+            safeExerciseName: _safeExerciseName,
+            playButtonKey: idx == 0 ? _playButtonKey : null,
+            expandButtonKey: idx == 0 ? _expandButtonKey : null,
+          ),
+        );
+      }).toList(),
+    );
+  }
+
 
   Color _getCardColor(int i) =>
       [_cardColor1, _cardColor2, _cardColor3, _cardColor4, _cardColor5][i % 5];
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// Expansion-tile widget (only the navigation bits changed)
+// Expansion-tile widget (updated with tutorial keys and level logo navigation)
 // ═════════════════════════════════════════════════════════════════════════════
 class _ExerciseExpansionTile extends StatefulWidget {
   const _ExerciseExpansionTile({
+    Key? key,
     required this.exercise,
     required this.learner,
     required this.isArabic,
@@ -282,7 +472,9 @@ class _ExerciseExpansionTile extends StatefulWidget {
     required this.cardColor,
     required this.safeGameName,
     required this.safeExerciseName,
-  });
+    this.playButtonKey,
+    this.expandButtonKey,
+  }) : super(key: key);
 
   final Map<String, dynamic>                   exercise;
   final Learner                                learner;
@@ -293,6 +485,8 @@ class _ExerciseExpansionTile extends StatefulWidget {
   final Color                                  cardColor;
   final String Function(Game, BuildContext)    safeGameName;
   final String Function(Map<String, dynamic>, BuildContext) safeExerciseName;
+  final GlobalKey?                             playButtonKey;
+  final GlobalKey?                             expandButtonKey;
 
   @override
   State<_ExerciseExpansionTile> createState() => _ExerciseExpansionTileState();
@@ -304,18 +498,19 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
   Future<List<Level>>? _levelsFuture;
 
   late AnimationController _expansionController;
-  late Animation<double>   _rotationAnimation;
+  late Animation<double> _rotationAnimation;
 
   @override
   void initState() {
     super.initState();
     _expansionController =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+        AnimationController(
+            vsync: this, duration: const Duration(milliseconds: 300));
     _rotationAnimation =
         Tween<double>(begin: 0, end: .5).animate(CurvedAnimation(
-      parent: _expansionController,
-      curve: Curves.easeInOut,
-    ));
+          parent: _expansionController,
+          curve: Curves.easeInOut,
+        ));
   }
 
   @override
@@ -328,26 +523,34 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
 
   void _goToMainExercise() {
     Navigator.pushNamed(context, '/exercise-levels', arguments: {
-      'exerciseId'        : widget.exercise['id'],
-      'exerciseName'      : widget.safeExerciseName(widget.exercise, context),
+      'exerciseId': widget.exercise['id'],
+      'exerciseName': widget.safeExerciseName(widget.exercise, context),
       'exerciseArabicName': widget.exercise['arabic_name'],
-      'learner'           : widget.learner,
+      'learner': widget.learner,
     });
   }
 
   void _goToLevel(Level level) {
     Navigator.pushNamed(context, '/games', arguments: {
-      'level'     : level,
-      'learner'   : widget.learner,
+      'level': level,
+      'learner': widget.learner,
+      'exerciseId': widget.exercise['id'],
+    });
+  }
+
+  void _goToLevelInfo(Level level) {
+    Navigator.pushNamed(context, '/level-info', arguments: {
+      'level': level,
+      'learner': widget.learner,
       'exerciseId': widget.exercise['id'],
     });
   }
 
   void _goToGame(Game game) {
     Navigator.pushNamed(context, '/${game.gameId}', arguments: {
-      'gameId'  : game.gameId,
+      'gameId': game.gameId,
       'gameName': widget.safeGameName(game, context),
-      'learner' : widget.learner,
+      'learner': widget.learner,
     });
   }
 
@@ -366,10 +569,13 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     });
   }
 
+
+
+
   @override
   Widget build(BuildContext context) {
     final exercise = widget.exercise;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
@@ -400,7 +606,8 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
               height: _expanded ? null : 0,
-              child: _expanded ? _buildExpandedContent() : const SizedBox.shrink(),
+              child: _expanded ? _buildExpandedContent() : const SizedBox
+                  .shrink(),
             ),
           ],
         ),
@@ -439,9 +646,9 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.isArabic 
-                    ? (exercise['arabic_name'] ?? 'Unknown') 
-                    : (exercise['name'] ?? 'Unknown'),
+                  widget.isArabic
+                      ? (exercise['arabic_name'] ?? 'Unknown')
+                      : (exercise['name'] ?? 'Unknown'),
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -450,9 +657,9 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  widget.isArabic 
-                    ? (exercise['arabic_description'] ?? '') 
-                    : (exercise['english_description'] ?? ''),
+                  widget.isArabic
+                      ? (exercise['arabic_description'] ?? '')
+                      : (exercise['english_description'] ?? ''),
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white.withOpacity(0.9),
@@ -468,6 +675,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
           Column(
             children: [
               _buildActionButton(
+                key: widget.playButtonKey,
                 icon: Icons.play_circle_fill,
                 color: Colors.white,
                 onPressed: _goToMainExercise,
@@ -483,12 +691,14 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
   }
 
   Widget _buildActionButton({
+    Key? key,
     required IconData icon,
     required Color color,
     required VoidCallback onPressed,
     required String tooltip,
   }) {
     return Container(
+      key: key,
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
@@ -505,6 +715,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
 
   Widget _buildExpandButton() {
     return Container(
+      key: widget.expandButtonKey,
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
@@ -564,7 +775,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
               ),
             );
           }
-          
+
           final levels = snapshot.data ?? [];
           if (levels.isEmpty) {
             return Container(
@@ -581,7 +792,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
               ),
             );
           }
-          
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -624,26 +835,33 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
         children: [
           Row(
             children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [widget.cardColor, widget.cardColor.withOpacity(0.7)],
-                  ),
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: widget.cardColor.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+              InkWell(
+                onTap: () => _goToLevelInfo(level),
+                borderRadius: BorderRadius.circular(15),
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        widget.cardColor,
+                        widget.cardColor.withOpacity(0.7)
+                      ],
                     ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.layers,
-                  color: Colors.white,
-                  size: 24,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: widget.cardColor.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.layers,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -679,7 +897,8 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
             Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: level.games.map((game) => _buildGameChip(game)).toList(),
+              children: level.games.map((game) => _buildGameChip(game))
+                  .toList(),
             ),
           ] else
             Padding(

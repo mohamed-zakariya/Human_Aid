@@ -25,7 +25,11 @@ import 'package:mobileapp/Screens/SignUp/signupmain.dart';
 import 'package:mobileapp/Screens/scentence_pronunciation_screen.dart';
 import 'package:mobileapp/Screens/word_pronunciation_screen.dart';
 import 'package:mobileapp/Services/learner_home_service.dart';
+
+
+
 import 'package:mobileapp/generated/l10n.dart';
+
 import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/parent.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/quizapp.dart';
@@ -46,6 +50,7 @@ import 'Screens/object_detection_exercise_screen.dart';
 import 'Services/user_service.dart';
 import 'SplashLoadingScreen.dart';
 import 'models/level.dart';
+
 
 
 void main() {
@@ -77,6 +82,10 @@ class _MyAppState extends State<MyApp> {
   }
   Future<void> _loadInitialScreen() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasShownCourseTutorial', false);
+    await prefs.setBool('hasShownCoursePageTutorial', false);
+
+
     final bool onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
 
     if (!onboardingSeen) {

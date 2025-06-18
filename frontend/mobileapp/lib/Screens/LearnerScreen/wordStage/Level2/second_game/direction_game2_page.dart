@@ -450,7 +450,7 @@ class _DirectionGameSecondPageState extends State<DirectionGameSecondPage> with 
                 ),
               ),
               child: Text(
-                S.of(context).Return,
+                S.of(context).returnBack,
                 style: const TextStyle(fontSize: 16),
               ),
             ),
