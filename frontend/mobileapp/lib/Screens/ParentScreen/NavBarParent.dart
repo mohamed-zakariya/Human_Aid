@@ -63,7 +63,7 @@ class _NavBarParentState extends State<NavBarParent>
                 children: [
                   _buildNavItem(
                     icon: Icons.home_rounded,
-                    title: S.of(context).ParentNavBarHome,
+                    title: S.of(context).parentNavBarHome,
                     onTap: () {
                       // Navigator.pop(context);
                       widget.onSelectScreen(HomeScreen(parent: widget.parent!));
@@ -75,7 +75,7 @@ class _NavBarParentState extends State<NavBarParent>
 
                   _buildNavItem(
                     icon: Icons.person,
-                    title: S.of(context).ParentNavBarProfile,
+                    title: S.of(context).parentNavBarProfile,
                     onTap: () {
                       // Navigator.pop(context);
                       widget.onSelectScreen(ProgressDetails(parent: widget.parent));
@@ -96,7 +96,7 @@ class _NavBarParentState extends State<NavBarParent>
 
                   _buildNavItem(
                     icon: Icons.language,
-                    title: S.of(context).ParentNavBarChangeLanguage,
+                    title: S.of(context).parentNavBarChangeLanguage,
                     onTap: () {
                       Navigator.pop(context);
                       _showModernLanguageDialog(context);
@@ -108,7 +108,7 @@ class _NavBarParentState extends State<NavBarParent>
 
                   _buildNavItem(
                     icon: Icons.logout_rounded,
-                    title: S.of(context).ParentNavBarLogout,
+                    title: S.of(context).parentNavBarLogout,
                     onTap: () {
                       Navigator.pop(context);
                       _showLogoutDialog(context);
@@ -272,7 +272,7 @@ class _NavBarParentState extends State<NavBarParent>
         ),
       ),
       child: Text(
-        S.of(context).ParentNavBarFooterVersion,
+        S.of(context).parentNavBarFooterVersion,
         style: const TextStyle(
           fontSize: 12,
           color: Color(0xFFBDC3C7),
@@ -324,7 +324,7 @@ class _NavBarParentState extends State<NavBarParent>
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
-                        S.of(context).ParentNavBarChooseLanguage,
+                        S.of(context).parentNavBarChooseLanguage,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -482,7 +482,7 @@ class _NavBarParentState extends State<NavBarParent>
                 const SizedBox(height: 24),
 
                 Text(
-                  S.of(context).ParentNavBarLogoutConfirmation,
+                  S.of(context).parentNavBarLogoutConfirmation,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -493,7 +493,7 @@ class _NavBarParentState extends State<NavBarParent>
                 const SizedBox(height: 12),
 
                 Text(
-                  S.of(context).ParentNavBarLogoutPrompt,
+                  S.of(context).parentNavBarLogoutPrompt,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 16,

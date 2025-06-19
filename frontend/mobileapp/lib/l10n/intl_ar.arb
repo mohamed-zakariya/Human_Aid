@@ -24,10 +24,10 @@
     "continuesignuptitle": "تَسْجِيلُ بَيَانَاتِ الطِّفْلِ",
     "createaccountbutton": "إنشاء الحساب",
     "signupbutton": "استمرار",
-    "ParentNavBarHome": "القائمة",
-    "ParentNavBarChangeLanguage": "اختر اللغة",
-    "ParentNavBarSettings": "الاعدادات",
-    "ParentNavBarLogout": "تسجيل الخروج",
+    "parentNavBarHome": "القائمة",
+    "parentNavBarChangeLanguage": "اختر اللغة",
+    "parentNavBarSettings": "الاعدادات",
+    "parentNavBarLogout": "تسجيل الخروج",
     "usernameRequired": "يجب إدخال اسم المستخدم",
     "usernameShort": "يجب أن يكون اسم المستخدم على الأقل 3 أحرف",
     "usernameExist": "اسم المستخدم مأخوذ بالفعل",
@@ -134,7 +134,7 @@
     "tapToHearDirection": "اضغط على السهم لسماع الاتجاه",
     "speakDirectionTemplate": "الاتجاه في {direction}",
     "instructionSpeech": "سيكون لكل سؤال مؤقت 8 ثوانٍ للإجابة. اسحب الصورة وضعها في الاتجاه الصحيح. بعد كل سؤال، سيتم عرض الاتجاه الصحيح.",
-    "Return": "العودة",
+    "returnBack": "العودة",
     "dontWorryTryAgain": "لا تقلق، حاول مرة أخرى",
     "tryingHardGreat": "أنت تحاول بجد، هذا رائع",
     "tryingIsFirstStep": "المحاولة هي الخطوة الأولى",
@@ -201,15 +201,15 @@
     "no_award": "لا توجد جائزة",
     "learner_details": "تفاصيل المتعلم",
     "no_learner_data_available": "لا توجد بيانات متاحة للمتعلم.",
-    "ParentNavBarLearnerMembers": "أعضاء المتعلمين",
-    "ParentNavBarLearnersProgress": "تقدم المتعلمين",
-    "ParentNavBarChooseLanguage": "اختر اللغة",
-    "ParentNavBarEnglish": "الإنجليزية",
-    "ParentNavBarArabic": "العربية",
-    "ParentNavBarLogoutConfirmation": "تأكيد تسجيل الخروج",
-    "ParentNavBarLogoutPrompt": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
-    "ParentNavBarFooterVersion": "تطبيق التعلم الإصدار 2.0",
-    "ParentNavBarProfile": "حساب تعريفي",
+    "parentNavBarLearnerMembers": "أعضاء المتعلمين",
+    "parentNavBarLearnersProgress": "تقدم المتعلمين",
+    "parentNavBarChooseLanguage": "اختر اللغة",
+    "parentNavBarEnglish": "الإنجليزية",
+    "parentNavBarArabic": "العربية",
+    "parentNavBarLogoutConfirmation": "تأكيد تسجيل الخروج",
+    "parentNavBarLogoutPrompt": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+    "parentNavBarFooterVersion": "تطبيق التعلم الإصدار 2.0",
+    "parentNavBarProfile": "حساب تعريفي",
     "improvementSuggestions": "اقتراحات للتحسين",
     "ok": "حسناً",
     "previous": "السابقة",
@@ -227,7 +227,19 @@
     "readAloud": "اقرأ بصوت عالٍ",
     "genderValidationError": "اختار النوع",
     "birthdateValidation": "يرجى اختيار تاريخ الميلاد",
-    "usernameHint": "lexfix123",
+    "usernameHint": "اسم المستخدم",
+    "tutorialCourseTitle": "اضغط هنا لاستكشاف الدورات التدريبية الخاصة بك!",
+    "tutorialCourseSubtitle": "اضغط للانتقال إلى قائمة الدورات",
+    "tutorialSkip": "تخطي",
+    "tutorialCourseCardTitle": "هذه هي دورتك",
+    "tutorialCourseCardDescription": "انقر هنا لاستكشاف مواد التعلم.",
+    "tutorialPlayButtonTitle": "زر التشغيل",
+    "tutorialPlayButtonDescription": "اضغط على هذا الزر لبدء التمرين.",
+    "tutorialExpandButtonTitle": "عرض المزيد",
+    "tutorialExpandButtonDescription": "انقر لرؤية المزيد من المحتوى أو التفاصيل.",
+
+
+
 
 
 
@@ -265,7 +277,7 @@
     "guardianButton": "ولي أمر",
     "userButton": "مستخدم",
     "loginTitle": "تسجيل الدُّخول",
-    "emailHint": "lexfix@gmail.com",
+    "emailHint": "البريد الالكتروني",
     "passwordHint": "●●●●●●●",
     "forgotPassword": "نسيت كلمة المرور؟",
     "loginButton": "تسجيل الدخول",
@@ -411,11 +423,10 @@
     "finalLevelSuccess": "🌟 مذهل! لقد أتقنت ترتيب جميع الأشهر!",
     "gameCompleted": "تم الإكمال!",
     "orderMonthsCorrectly": "رتب الأشهر بشكل صحيح.",
-    "wordsGame3Title": "لعبة الأشهر",
-    "LearnerNavBarHome": "الرئيسية",
-    "LearnerNavBarCourses": "الدورات",
-    "LearnerNavBarProfile": "الملف الشخصي",
-    "LearnerNavBarMenu": "القائمة",
+    "learnerNavBarHome": "الرئيسية",
+    "learnerNavBarCourses": "الدورات",
+    "learnerNavBarProfile": "الملف الشخصي",
+    "learnerNavBarMenu": "القائمة",
     "logoutSubtitle": "تسجيل الخروج بأمان",
     "cancelButton": "إلغاء",
     "logoutConfirmationTitle": "تأكيد تسجيل الخروج",

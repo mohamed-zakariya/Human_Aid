@@ -24,7 +24,7 @@ class NavBarLearner extends StatelessWidget {
     return Drawer(
       elevation: 0,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -183,7 +183,7 @@ class NavBarLearner extends StatelessWidget {
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                S.of(context).LearnerNavBarMenu,
+                                S.of(context).learnerNavBarMenu,
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -198,8 +198,8 @@ class NavBarLearner extends StatelessWidget {
                           _buildNavigationCard(
                             context: context,
                             icon: Icons.home_rounded,
-                            title: S.of(context).LearnerNavBarHome,
-                            subtitle: S.of(context).ParentNavBarHome,
+                            title: S.of(context).learnerNavBarHome,
+                            subtitle: S.of(context).parentNavBarHome,
                             gradient: const LinearGradient(
                               colors: [Color(0xFF6C63FF), Color(0xFF4A80F0)],
                             ),
@@ -214,7 +214,7 @@ class NavBarLearner extends StatelessWidget {
                           _buildNavigationCard(
                             context: context,
                             icon: Icons.menu_book_rounded,
-                            title: S.of(context).LearnerNavBarCourses,
+                            title: S.of(context).learnerNavBarCourses,
                             subtitle: S.of(context).availableExercises,
                             gradient: const LinearGradient(
                               colors: [Color(0xFF4A80F0), Color(0xFF3AA8A8)],
@@ -230,8 +230,8 @@ class NavBarLearner extends StatelessWidget {
                           _buildNavigationCard(
                             context: context,
                             icon: Icons.person_rounded,
-                            title: S.of(context).LearnerNavBarProfile,
-                            subtitle: S.of(context).ParentNavBarSettings,
+                            title: S.of(context).learnerNavBarProfile,
+                            subtitle: S.of(context).parentNavBarSettings,
                             gradient: const LinearGradient(
                               colors: [Color(0xFF3AA8A8), Color(0xFF2DD4BF)],
                             ),
@@ -259,7 +259,7 @@ class NavBarLearner extends StatelessWidget {
                                 _buildSettingsItem(
                                   context: context,
                                   icon: Icons.language_rounded,
-                                  title: S.of(context).ParentNavBarSettings, // fallback to existing localized key
+                                  title: S.of(context).parentNavBarSettings, // fallback to existing localized key
                                   subtitle: isArabic ? S.of(context).arabicLanguage : S.of(context).englishLanguage,
                                   onTap: () {
                                     Navigator.pop(context);
@@ -272,7 +272,7 @@ class NavBarLearner extends StatelessWidget {
                                 _buildSettingsItem(
                                   context: context,
                                   icon: Icons.logout_rounded,
-                                  title: S.of(context).ParentNavBarLogout,
+                                  title: S.of(context).parentNavBarLogout,
                                   subtitle: S.of(context).logoutSubtitle,
                                   isLogout: true,
                                   onTap: () {

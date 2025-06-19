@@ -89,36 +89,6 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "LearnerNavBarCourses": MessageLookupByLibrary.simpleMessage("الدورات"),
-        "LearnerNavBarHome": MessageLookupByLibrary.simpleMessage("الرئيسية"),
-        "LearnerNavBarMenu": MessageLookupByLibrary.simpleMessage("القائمة"),
-        "LearnerNavBarProfile":
-            MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
-        "ParentNavBarArabic": MessageLookupByLibrary.simpleMessage("العربية"),
-        "ParentNavBarChangeLanguage":
-            MessageLookupByLibrary.simpleMessage("اختر اللغة"),
-        "ParentNavBarChooseLanguage":
-            MessageLookupByLibrary.simpleMessage("اختر اللغة"),
-        "ParentNavBarEnglish":
-            MessageLookupByLibrary.simpleMessage("الإنجليزية"),
-        "ParentNavBarFooterVersion":
-            MessageLookupByLibrary.simpleMessage("تطبيق التعلم الإصدار 2.0"),
-        "ParentNavBarHome": MessageLookupByLibrary.simpleMessage("القائمة"),
-        "ParentNavBarLearnerMembers":
-            MessageLookupByLibrary.simpleMessage("أعضاء المتعلمين"),
-        "ParentNavBarLearnersProgress":
-            MessageLookupByLibrary.simpleMessage("تقدم المتعلمين"),
-        "ParentNavBarLogout":
-            MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
-        "ParentNavBarLogoutConfirmation":
-            MessageLookupByLibrary.simpleMessage("تأكيد تسجيل الخروج"),
-        "ParentNavBarLogoutPrompt": MessageLookupByLibrary.simpleMessage(
-            "هل أنت متأكد أنك تريد تسجيل الخروج؟"),
-        "ParentNavBarProfile":
-            MessageLookupByLibrary.simpleMessage("حساب تعريفي"),
-        "ParentNavBarSettings":
-            MessageLookupByLibrary.simpleMessage("الاعدادات"),
-        "Return": MessageLookupByLibrary.simpleMessage("العودة"),
         "accuracy": MessageLookupByLibrary.simpleMessage("الدقة"),
         "add": MessageLookupByLibrary.simpleMessage("إضافة"),
         "addNewLearner":
@@ -229,7 +199,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "drawLetter": m6,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "هذا البريد الإلكتروني مسجّل بالفعل"),
-        "emailHint": MessageLookupByLibrary.simpleMessage("lexfix@gmail.com"),
+        "emailHint": MessageLookupByLibrary.simpleMessage("البريد الالكتروني"),
         "emailHint2":
             MessageLookupByLibrary.simpleMessage("******aid@gmail.com"),
         "emailInvalid": MessageLookupByLibrary.simpleMessage(
@@ -355,6 +325,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "label_letters": MessageLookupByLibrary.simpleMessage("الحروف"),
         "label_sentences": MessageLookupByLibrary.simpleMessage("الجمل"),
         "label_words": MessageLookupByLibrary.simpleMessage("الكلمات"),
+        "learnerNavBarCourses": MessageLookupByLibrary.simpleMessage("الدورات"),
+        "learnerNavBarHome": MessageLookupByLibrary.simpleMessage("الرئيسية"),
+        "learnerNavBarMenu": MessageLookupByLibrary.simpleMessage("القائمة"),
+        "learnerNavBarProfile":
+            MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
         "learner_details":
             MessageLookupByLibrary.simpleMessage("تفاصيل المتعلم"),
         "learner_members":
@@ -448,6 +423,30 @@ class MessageLookup extends MessageLookupByLibrary {
             "بِرَجَاءِإدْخَالِ رَمْزِالتَّحْقق"),
         "outOfTries": MessageLookupByLibrary.simpleMessage(
             "انتهت المحاولات! سننتقل للكلمة التالية..."),
+        "parentNavBarArabic": MessageLookupByLibrary.simpleMessage("العربية"),
+        "parentNavBarChangeLanguage":
+            MessageLookupByLibrary.simpleMessage("اختر اللغة"),
+        "parentNavBarChooseLanguage":
+            MessageLookupByLibrary.simpleMessage("اختر اللغة"),
+        "parentNavBarEnglish":
+            MessageLookupByLibrary.simpleMessage("الإنجليزية"),
+        "parentNavBarFooterVersion":
+            MessageLookupByLibrary.simpleMessage("تطبيق التعلم الإصدار 2.0"),
+        "parentNavBarHome": MessageLookupByLibrary.simpleMessage("القائمة"),
+        "parentNavBarLearnerMembers":
+            MessageLookupByLibrary.simpleMessage("أعضاء المتعلمين"),
+        "parentNavBarLearnersProgress":
+            MessageLookupByLibrary.simpleMessage("تقدم المتعلمين"),
+        "parentNavBarLogout":
+            MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
+        "parentNavBarLogoutConfirmation":
+            MessageLookupByLibrary.simpleMessage("تأكيد تسجيل الخروج"),
+        "parentNavBarLogoutPrompt": MessageLookupByLibrary.simpleMessage(
+            "هل أنت متأكد أنك تريد تسجيل الخروج؟"),
+        "parentNavBarProfile":
+            MessageLookupByLibrary.simpleMessage("حساب تعريفي"),
+        "parentNavBarSettings":
+            MessageLookupByLibrary.simpleMessage("الاعدادات"),
         "passwordHint": MessageLookupByLibrary.simpleMessage("●●●●●●●"),
         "passwordMismatch":
             MessageLookupByLibrary.simpleMessage("كلمتا المرور غير متطابقتين"),
@@ -487,6 +486,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "انتهى الوقت المسموح للتسجيل!"),
         "restart": MessageLookupByLibrary.simpleMessage("ابدأ من جديد"),
         "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
+        "returnBack": MessageLookupByLibrary.simpleMessage("العودة"),
         "right": MessageLookupByLibrary.simpleMessage("يمين"),
         "roundLabel": m23,
         "roundLabel2": MessageLookupByLibrary.simpleMessage("الجولة"),
@@ -592,6 +592,23 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("المحاولة هي الخطوة الأولى"),
         "ttsInstructions": MessageLookupByLibrary.simpleMessage(
             "سيكون لكل سؤال مؤقت 5 ثوانٍ للإجابة. انظر إلى شكل الاتجاه بعناية واختر الجملة الصحيحة. بعد كل سؤال، سيتم عرض الإجابة الصحيحة."),
+        "tutorialCourseCardDescription": MessageLookupByLibrary.simpleMessage(
+            "انقر هنا لاستكشاف مواد التعلم."),
+        "tutorialCourseCardTitle":
+            MessageLookupByLibrary.simpleMessage("هذه هي دورتك"),
+        "tutorialCourseSubtitle": MessageLookupByLibrary.simpleMessage(
+            "اضغط للانتقال إلى قائمة الدورات"),
+        "tutorialCourseTitle": MessageLookupByLibrary.simpleMessage(
+            "اضغط هنا لاستكشاف الدورات التدريبية الخاصة بك!"),
+        "tutorialExpandButtonDescription": MessageLookupByLibrary.simpleMessage(
+            "انقر لرؤية المزيد من المحتوى أو التفاصيل."),
+        "tutorialExpandButtonTitle":
+            MessageLookupByLibrary.simpleMessage("عرض المزيد"),
+        "tutorialPlayButtonDescription": MessageLookupByLibrary.simpleMessage(
+            "اضغط على هذا الزر لبدء التمرين."),
+        "tutorialPlayButtonTitle":
+            MessageLookupByLibrary.simpleMessage("زر التشغيل"),
+        "tutorialSkip": MessageLookupByLibrary.simpleMessage("تخطي"),
         "up": MessageLookupByLibrary.simpleMessage("أعلى"),
         "upLeft": MessageLookupByLibrary.simpleMessage("أعلى يسار"),
         "upRight": MessageLookupByLibrary.simpleMessage("أعلى يمين"),
@@ -601,7 +618,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "userTitle": MessageLookupByLibrary.simpleMessage("سجل لنفسك"),
         "usernameExist":
             MessageLookupByLibrary.simpleMessage("اسم المستخدم مأخوذ بالفعل"),
-        "usernameHint": MessageLookupByLibrary.simpleMessage("lexfix123"),
+        "usernameHint": MessageLookupByLibrary.simpleMessage("اسم المستخدم"),
         "usernameRequired":
             MessageLookupByLibrary.simpleMessage("يجب إدخال اسم المستخدم"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(
@@ -615,7 +632,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "wellDone": MessageLookupByLibrary.simpleMessage(" !أحسنت ✅"),
         "whatIsDirection":
             MessageLookupByLibrary.simpleMessage("ما هو الاتجاه؟"),
-        "wordsGame3Title": MessageLookupByLibrary.simpleMessage("لعبة الأشهر"),
+        "wordsGame3Title": MessageLookupByLibrary.simpleMessage("لعبة الشهور"),
         "writeSummaryHere":
             MessageLookupByLibrary.simpleMessage("اكتب ملخصك هنا"),
         "wrongAnswer": m32,

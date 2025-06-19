@@ -25,7 +25,11 @@ import 'package:mobileapp/Screens/SignUp/signupmain.dart';
 import 'package:mobileapp/Screens/scentence_pronunciation_screen.dart';
 import 'package:mobileapp/Screens/word_pronunciation_screen.dart';
 import 'package:mobileapp/Services/learner_home_service.dart';
+
+
+
 import 'package:mobileapp/generated/l10n.dart';
+
 import 'package:mobileapp/models/learner.dart';
 import 'package:mobileapp/models/parent.dart';
 import 'package:mobileapp/Screens/LearnerScreen/sentenceTest/quizapp.dart';
@@ -46,6 +50,7 @@ import 'Screens/object_detection_exercise_screen.dart';
 import 'Services/user_service.dart';
 import 'SplashLoadingScreen.dart';
 import 'models/level.dart';
+
 
 
 void main() {
@@ -77,6 +82,10 @@ class _MyAppState extends State<MyApp> {
   }
   Future<void> _loadInitialScreen() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasShownCourseTutorial', false);
+    await prefs.setBool('hasShownCoursePageTutorial', false);
+
+
     final bool onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
 
     if (!onboardingSeen) {
@@ -275,11 +284,17 @@ class _MyAppState extends State<MyApp> {
           '/letters_game_5': (context) => const LetterLevel3Game(),
 
 
-          '/words_game_1': (context) => const SpellingGameScreen(),
+          '/words_game_1': (context) => const SpellingGameScreen("Beginner"),
           '/words_game_2': (context) => DirectionInstructionsPage(),
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
+
+
           '/words_game_5': (context) => const HandDetectionGameWidget(),
-          '/words_game_6': (context) => const MonthsOrderGameScreen(),
+          '/words_game_6': (context) => const SpellingGameScreen("Intermediate"),
+
+
+          '/words_game_7': (context) => const MonthsOrderGameScreen(),
+          '/words_game_8': (context) => const SpellingGameScreen("Advanced"),
 
 
           '/story_game_1': (context) => StoryInputScreen(),

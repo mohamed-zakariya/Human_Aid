@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:math';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Import TTS service
 import 'package:mobileapp/Services/tts_service.dart';
 
 import '../../../../../../Services/add_score_service.dart';
+import '../../../../../../Services/word_service_second_part.dart';
 import '../widgets/help_sheet.dart';
 import '../widgets/letter_slot.dart';
 import '../widgets/letter_title.dart';
@@ -38,6 +40,10 @@ class AppLocalizations {
       'instructions': 'Instructions',
       'drag_letters': 'Drag letters to spell the word shown in the image',
       'choose_synonym': 'Then choose the correct synonym from the options below',
+      'loading_words': 'Loading words...',
+      'error_loading_words': 'Error loading words. Please try again.',
+      'loading_next_round': 'Loading next round...',
+      'preparing_round': 'Preparing round...',
     },
     'ar': {
       'spelling_game': 'لعبة التهجئة',
@@ -62,6 +68,10 @@ class AppLocalizations {
       'instructions': 'التعليمات',
       'drag_letters': 'اسحب الحروف لتهجئة الكلمة الموضحة في الصورة',
       'choose_synonym': 'ثم اختر المرادف الصحيح من الخيارات أدناه',
+      'loading_words': 'جاري تحميل الكلمات...',
+      'error_loading_words': 'خطأ في تحميل الكلمات. يرجى المحاولة مرة أخرى.',
+      'loading_next_round': 'جاري تحميل الجولة التالية...',
+      'preparing_round': 'جاري تحضير الجولة...',
     },
   };
 
@@ -70,7 +80,7 @@ class AppLocalizations {
   }
 }
 
-// Models
+// Updated WordModel to work with the new service
 class WordModel {
   final String word;
   final String image;
@@ -83,11 +93,23 @@ class WordModel {
     required this.synonymChoices,
     required this.correctSynonym,
   });
+
+  // Factory constructor to create from GameWords
+  factory WordModel.fromGameWords(GameWords gameWords) {
+    return WordModel(
+      word: gameWords.mainWord.word,
+      image: gameWords.mainWord.imageUrl,
+      synonymChoices: gameWords.synonymChoices.map((w) => w.word).toList(),
+      correctSynonym: gameWords.mainWord.word, // The main word is the correct answer
+    );
+  }
 }
 
 // Main Game Screen
 class SpellingGameScreen extends StatefulWidget {
-  const SpellingGameScreen({super.key});
+  final String level;
+
+  const SpellingGameScreen(this.level, {super.key});
 
   @override
   State<SpellingGameScreen> createState() => _SpellingGameScreenState();
@@ -105,30 +127,26 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
   // Localization
   String currentLocale = 'ar'; // Default to Arabic since this is for Arabic practice
 
-  final List<WordModel> wordList = [
-    WordModel(
-      word: "تفاحة",
-      image: "assets/images/Apple.png",
-      synonymChoices: ["فاكهة", "خضار", "مكتب", "سيارة"],
-      correctSynonym: "فاكهة",
-    ),
-    WordModel(
-      word: "كرسي",
-      image: "assets/images/Chair.png",
-      synonymChoices: ["مقعد", "باب", "كتاب", "تفاحة"],
-      correctSynonym: "مقعد",
-    ),
-    WordModel(
-      word: "منزل",
-      image: "assets/images/House.jpg",
-      synonymChoices: ["بيت", "طريق", "قلM", "سوق"],
-      correctSynonym: "بيت",
-    ),
-  ];
+  // SharedPreferences keys and values
+  String? exerciseId;
+  String? levelId;
+  String? learnerId;
+  String? gameId;
+  String? roundKey;
+  String? scoreKey;
+  String? levelGameId;
 
+  // Game state - Changed to single round approach
+  WordModel? currentWordModel;
+  WordModel? nextWordModel; // Preload next round
+  bool isLoadingCurrentWord = true;
+  bool isLoadingNextWord = false;
+  String? errorMessage;
+
+  int totalRounds = 10; // Add this to your class variables (same as maxRounds)
   int currentRound = 0;
   int totalScore = 0;
-  int totalRounds = 0;
+  int maxRounds = 10; // Set a maximum number of rounds or make it configurable
   List<String?> selectedLetters = [];
   late List<String> shuffledLetters;
   bool isCorrect = false;
@@ -140,7 +158,7 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
   bool isSpellingComplete = false;
 
   // Timer variables
-  int timeLeft = 20; // 60 seconds per round
+  int timeLeft = 20; // 20 seconds per round
   Timer? gameTimer;
   bool timerActive = false;
 
@@ -152,7 +170,6 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
   @override
   void initState() {
     super.initState();
-    totalRounds = wordList.length;
 
     _successAnimationController = AnimationController(
       vsync: this,
@@ -176,7 +193,125 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
 
     // Initialize sound effects
     _initSoundEffects();
-    _loadRound();
+    _initializeGame();
+  }
+
+  Future<void> _initializeGame() async {
+    await _initializeFromSharedPreferences();
+    await _loadCurrentRoundWord();
+  }
+
+  Future<WordModel> _loadWordFromService() async {
+    try {
+      // Get single game word for current round
+      final gameWordsList = await WordsService.getMultipleGameWords(widget.level, 1);
+
+      if (gameWordsList == null || gameWordsList.isEmpty) {
+        throw Exception('No words available');
+      }
+
+      return WordModel.fromGameWords(gameWordsList.first);
+    } catch (e) {
+      print('Error loading word: $e');
+      throw e;
+    }
+  }
+
+  Future<void> _loadCurrentRoundWord() async {
+    if (currentRound >= maxRounds) {
+      _showCompletionDialog();
+      return;
+    }
+
+    try {
+      setState(() {
+        isLoadingCurrentWord = true;
+        errorMessage = null;
+      });
+
+      final wordModel = await _loadWordFromService();
+
+      if (mounted) { // Check if widget is still mounted
+        setState(() {
+          currentWordModel = wordModel;
+          isLoadingCurrentWord = false;
+        });
+
+        _setupRound();
+        _preloadNextWord();
+      }
+    } catch (e) {
+      print('Error loading current round word: $e');
+      if (mounted) {
+        setState(() {
+          errorMessage = AppLocalizations.translate('error_loading_words', currentLocale);
+          isLoadingCurrentWord = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _preloadNextWord() async {
+    if (currentRound >= maxRounds - 1) return; // Don't preload if this is the last round
+
+    try {
+      setState(() {
+        isLoadingNextWord = true;
+      });
+
+      final wordModel = await _loadWordFromService();
+
+      setState(() {
+        nextWordModel = wordModel;
+        isLoadingNextWord = false;
+      });
+    } catch (e) {
+      print('Error preloading next word: $e');
+      setState(() {
+        isLoadingNextWord = false;
+      });
+    }
+  }
+
+  Future<void> _initializeFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the stored IDs from SharedPreferences
+    exerciseId = prefs.getString('exerciseId');
+    levelId = prefs.getString('levelId');
+    learnerId = prefs.getString('learnerId');
+    gameId = prefs.getString('gameId');
+    levelGameId = prefs.getString('levelGameId');
+    print("mmmmmmmmmmmmmmmm");
+    print(levelGameId);
+    print(gameId);
+
+    if (levelId != null && gameId != null) {
+      // Create keys for this specific level and game
+      roundKey = '${levelId}_${gameId}_${levelGameId}_round';
+      scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
+
+      // Initialize round and score from SharedPreferences
+      currentRound = prefs.getInt(roundKey!) ?? 0;
+      totalScore = prefs.getInt(scoreKey!) ?? 0;
+
+      // Ensure currentRound is within bounds
+      if (currentRound < 0) currentRound = 0;
+      if (currentRound >= maxRounds) currentRound = maxRounds - 1;
+
+      // Ensure score is within bounds
+      if (totalScore < 0) totalScore = 0;
+      if (totalScore > maxRounds * 2) totalScore = maxRounds * 2;
+    }
+  }
+
+  Future<void> _saveProgressToSharedPreferences() async {
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, currentRound);
+      await prefs.setInt(scoreKey!, totalScore);
+      print('Progress saved: Round $currentRound, Score $totalScore'); // Add for debugging
+    }
   }
 
   Future<void> _initSoundEffects() async {
@@ -233,9 +368,14 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     super.dispose();
   }
 
-  void _loadRound() {
-    final wordModel = wordList[currentRound];
-    final word = wordModel.word;
+  void _setupRound() {
+    if (currentWordModel == null) return;
+
+    // Cancel existing timer first
+    gameTimer?.cancel();
+    timerActive = false;
+
+    final word = currentWordModel!.word;
 
     shuffledLetters = word.split('')..shuffle(Random());
     selectedLetters = List.filled(word.length, null);
@@ -255,6 +395,8 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     _synonymSectionController.reset();
     _nextButtonController.reset();
     _motivationController.reset();
+
+    setState(() {});
   }
 
   void _startTimer() {
@@ -289,6 +431,9 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
 
     _motivationController.forward();
 
+    // Save progress before showing dialog
+    _saveProgressToSharedPreferences();
+
     // Show time up dialog
     Future.delayed(const Duration(milliseconds: 500), () {
       _showMotivationDialog(false, isTimeUp: true);
@@ -296,8 +441,10 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
   }
 
   void _checkSpelling() {
+    if (currentWordModel == null) return;
+
     final userAnswer = selectedLetters.join();
-    final correctWord = wordList[currentRound].word;
+    final correctWord = currentWordModel!.word;
 
     if (userAnswer == correctWord) {
       _playSound(_correctPlayer);
@@ -325,7 +472,9 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
   }
 
   void _onSynonymDropped(String choice) {
-    final correct = wordList[currentRound].correctSynonym;
+    if (currentWordModel == null || roundCompleted) return;
+
+    final correct = currentWordModel!.correctSynonym;
 
     _playSound(_dropPlayer);
 
@@ -355,11 +504,17 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
 
     _motivationController.forward();
 
+    // Save progress after completing round
+    _saveProgressToSharedPreferences();
+
     // Show motivation dialog
     Future.delayed(const Duration(milliseconds: 500), () {
       _showMotivationDialog(synonymCorrect);
     });
   }
+
+
+  
 
   void _showMotivationDialog(bool synonymCorrect, {bool isTimeUp = false}) {
     String motivation;
@@ -400,7 +555,7 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
           children: [
             const SizedBox(height: 10),
             Text(
-              "${AppLocalizations.translate('question', currentLocale)} ${currentRound + 1} / $totalRounds",
+              "${AppLocalizations.translate('question', currentLocale)} ${currentRound + 1} / $maxRounds",
               style: const TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
@@ -419,8 +574,17 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               ),
-              child: Text(
-                currentRound < totalRounds - 1
+              child: isLoadingNextWord
+                  ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+                  : Text(
+                currentRound < maxRounds - 1
                     ? AppLocalizations.translate('next_round', currentLocale)
                     : AppLocalizations.translate('final_round', currentLocale),
                 style: const TextStyle(fontSize: 16),
@@ -437,32 +601,50 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     return AppLocalizations.translate(randomKey, currentLocale);
   }
 
-  void _nextRound() {
-    if (currentRound < totalRounds - 1) {
+  void _nextRound() async {
+    if (currentRound < maxRounds - 1) {
       setState(() {
         currentRound++;
-        _loadRound();
       });
+      await _saveProgressToSharedPreferences();
+
+      // Use preloaded word if available, otherwise load new one
+      if (nextWordModel != null) {
+        setState(() {
+          currentWordModel = nextWordModel;
+          nextWordModel = null;
+        });
+        _setupRound();
+        // Preload next word in background
+        _preloadNextWord();
+      } else {
+        // Fallback: load current round word if preloading failed
+        await _loadCurrentRoundWord();
+      }
     } else {
       _showCompletionDialog();
     }
   }
 
-  void _showCompletionDialog() {
-
-
-
+  void _showCompletionDialog() async {
     _playSound(_successPlayer);
 
     // Submit score to backend
-    AddScoreService.updateScore(
+    await AddScoreService.updateScore(
       score: totalScore,
-      outOf: totalRounds, // Max 2 points per round
+      outOf: maxRounds * 2, // Max 2 points per round
     );
+
+    // Clear the saved progress since game is completed
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(roundKey!);
+      await prefs.remove(scoreKey!);
+    }
 
     String finalMotivation;
     String emoji;
-    double percentage = (totalScore / (totalRounds * 2)) * 100;
+    double percentage = (totalScore / (maxRounds * 2)) * 100;
 
     if (percentage >= 90) {
       finalMotivation = AppLocalizations.translate('perfect_score', currentLocale);
@@ -502,11 +684,7 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
                 onPressed: () {
                   _playSound(_clickPlayer);
                   Navigator.pop(context);
-                  setState(() {
-                    totalScore = 0;
-                    currentRound = 0;
-                    _loadRound();
-                  });
+                  _restartGame();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF7F73FF),
@@ -553,9 +731,36 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
     );
   }
 
+
+
+  void _restartGame() async {
+    setState(() {
+      currentRound = 0;
+      totalScore = 0;
+      currentWordModel = null;
+      nextWordModel = null;
+    });
+
+    // Reset SharedPreferences for this game
+    if (roundKey != null && scoreKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(roundKey!, 0);
+      await prefs.setInt(scoreKey!, 0);
+    }
+
+    // Load first round
+    await _loadCurrentRoundWord();
+  }
+
+
+
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
-
     currentLocale = Localizations.localeOf(context).languageCode;
 
 
@@ -566,8 +771,63 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
       currentLocale = args['locale'];
     }
 
-    final word = wordList[currentRound].word;
-    final image = wordList[currentRound].image;
+    // Show loading screen if no word is loaded yet
+    if (isLoadingCurrentWord || currentWordModel == null) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              _playSound(_clickPlayer);
+              Navigator.of(context).pop();
+            },
+          ),
+          title: Text(
+            args?['gameName'] ?? AppLocalizations.translate('spelling_game', currentLocale),
+            style: const TextStyle(color: Colors.white),
+          ),
+          centerTitle: true,
+          backgroundColor: const Color(0xFF7F73FF),
+          elevation: 0,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7F73FF)),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                errorMessage ?? AppLocalizations.translate('loading_words', currentLocale),
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (errorMessage != null) ...[
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    await _loadCurrentRoundWord();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF7F73FF),
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
+
+    final word = currentWordModel!.word;
+    final image = currentWordModel!.image;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -580,7 +840,7 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
           },
         ),
         title: Text(
-          args?['gameName'],
+          args?['gameName'] ?? AppLocalizations.translate('spelling_game', currentLocale),
           style: const TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -716,50 +976,64 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(image, fit: BoxFit.cover),
+                      child: Image.network(
+                        image,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                  (loadingProgress.expectedTotalBytes ?? 1)
+                                  : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.broken_image);
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
 
-                  // Letter slots
-                  // In your SpellingGameScreen build method, replace the letter slots section with this:
+                  // Letter slots - Always RTL direction like Arabic
+                  Localizations.localeOf(context).languageCode == 'en'
+                      ? Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: List.generate(word.length, (index) {
+                      return LetterSlot(
+                        letter: selectedLetters[index],
+                        onAccept: (data) {
+                          setState(() {
+                            selectedLetters[index] = data;
+                            if (!selectedLetters.contains(null)) _checkSpelling();
+                          });
+                        },
+                      );
+                    }).reversed.toList(), // Reversed for RTL (Arabic, Hebrew, etc.)
+                  )
+                      : Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: List.generate(word.length, (index) {
+                      return LetterSlot(
+                        letter: selectedLetters[index],
+                        onAccept: (data) {
+                          setState(() {
+                            selectedLetters[index] = data;
+                            if (!selectedLetters.contains(null)) _checkSpelling();
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
 
-// Letter slots - Always RTL direction like Arabic
-                Localizations.localeOf(context).languageCode == 'en'
-                    ? Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: List.generate(word.length, (index) {
-                    return LetterSlot(
-                      letter: selectedLetters[index],
-                      onAccept: (data) {
-                        setState(() {
-                          selectedLetters[index] = data;
-                          if (!selectedLetters.contains(null)) _checkSpelling();
-                        });
-                      },
-                    );
-                  }).reversed.toList(), // Reversed for RTL (Arabic, Hebrew, etc.)
-                )
-                    : Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: List.generate(word.length, (index) {
-                    return LetterSlot(
-                      letter: selectedLetters[index],
-                      onAccept: (data) {
-                        setState(() {
-                          selectedLetters[index] = data;
-                          if (!selectedLetters.contains(null)) _checkSpelling();
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-
-                const SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
                   // Letter tiles
                   Wrap(
@@ -810,7 +1084,7 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
                   // Synonym section
                   if (showSynonymSection)
                     SynonymSection(
-                      choices: wordList[currentRound].synonymChoices,
+                      choices: currentWordModel!.synonymChoices,
                       droppedSynonym: droppedSynonym,
                       synonymMatched: synonymMatched,
                       onDropped: _onSynonymDropped,
@@ -824,4 +1098,5 @@ class _SpellingGameScreenState extends State<SpellingGameScreen> with TickerProv
       ),
     );
   }
+
 }

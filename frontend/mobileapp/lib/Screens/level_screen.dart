@@ -223,6 +223,22 @@ class _LevelScreenState extends State<LevelScreen> {
       await prefs.setString('levelId',    widget.level.id);
       await prefs.setString('learnerId',  widget.learner.id ?? '');
       await prefs.setString('gameId',     game.id);
+      await prefs.setString('levelGameId',     game.gameId);
+
+
+      String roundKey = '${widget.level.id}_${game.id}_${game.gameId}_round';
+      if (!prefs.containsKey(roundKey)) {
+        await prefs.setInt(roundKey, 1);
+      }
+
+      String scoreKey = '${widget.level.id}_${game.id}_${game.gameId}_score';
+      if (!prefs.containsKey(scoreKey)) {
+        await prefs.setInt(scoreKey, 0);
+      }
+
+
+
+
 
       Navigator.pushNamed(
         ctx,

@@ -3,8 +3,10 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../generated/l10n.dart';
+import '../../../../Services/add_score_service.dart';
 
 class ArabicLetterTracingExercise extends StatefulWidget {
   const ArabicLetterTracingExercise({Key? key}) : super(key: key);
@@ -21,7 +23,9 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
     'ف', 'ق', 'ك', 'ل', 'م', 'ن',
     'هـ', 'و', 'ي'
   ];
+
   int currentLetterIndex = 0;
+  int completedLetters = 0; // Track completed letters for scoring
   List<List<Offset>> strokes = <List<Offset>>[];
   List<Offset> currentStroke = <Offset>[];
   final GlobalKey _paintKey = GlobalKey();
@@ -29,6 +33,16 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
   bool _isCorrectTracing = false;
   double _accuracy = 0.0;
   bool _isDrawing = false;
+  bool isLoading = true;
+
+  // SharedPreferences keys and values
+  String? exerciseId;
+  String? levelId;
+  String? learnerId;
+  String? gameId;
+  String? letterIndexKey;
+  String? completedLettersKey;
+  String? levelGameId;
 
   // For letter shape analysis
   List<Offset> _letterPixels = [];
@@ -39,6 +53,48 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
     super.initState();
     _initTts();
     _canvasSize = const Size(300, 300);
+    _initializeFromSharedPreferences();
+  }
+
+  Future<void> _initializeFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the stored IDs from SharedPreferences
+    exerciseId = prefs.getString('exerciseId');
+    levelId = prefs.getString('levelId');
+    learnerId = prefs.getString('learnerId');
+    gameId = prefs.getString('gameId');
+    levelGameId = prefs.getString('levelGameId');
+
+    if (levelId != null && gameId != null) {
+      // Create keys for this specific level and game
+      letterIndexKey = '${levelId}_${gameId}_${levelGameId}_letterIndex';
+      completedLettersKey = '${levelId}_${gameId}_${levelGameId}_completedLetters';
+
+      // Initialize letter index and completed count from SharedPreferences
+      currentLetterIndex = prefs.getInt(letterIndexKey!) ?? 0;
+      completedLetters = prefs.getInt(completedLettersKey!) ?? 0;
+
+      // Ensure currentLetterIndex is within bounds
+      if (currentLetterIndex < 0) currentLetterIndex = 0;
+      if (currentLetterIndex >= arabicLetters.length) currentLetterIndex = arabicLetters.length - 1;
+
+      // Ensure completedLetters is within bounds
+      if (completedLetters < 0) completedLetters = 0;
+      if (completedLetters > arabicLetters.length) completedLetters = arabicLetters.length;
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> _saveProgressToSharedPreferences() async {
+    if (letterIndexKey != null && completedLettersKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(letterIndexKey!, currentLetterIndex);
+      await prefs.setInt(completedLettersKey!, completedLetters);
+    }
   }
 
   Future<void> _initTts() async {
@@ -383,6 +439,9 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
     });
 
     if (_isCorrectTracing) {
+      // Increment completed letters count
+      completedLetters++;
+      await _saveProgressToSharedPreferences();
       _showSuccessMessage();
     } else {
       _showTryAgainMessage();
@@ -431,7 +490,7 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
         ),
         actions: [
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
               if (currentLetterIndex < arabicLetters.length - 1) {
                 setState(() {
@@ -441,6 +500,8 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
                   _isCorrectTracing = false;
                   _accuracy = 0.0;
                 });
+                // Save progress after moving to next letter
+                await _saveProgressToSharedPreferences();
               } else {
                 _showEncouragementMessage();
               }
@@ -455,7 +516,20 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
     );
   }
 
-  void _showEncouragementMessage() {
+  void _showEncouragementMessage() async {
+    // Send the score to the service (completed letters out of total letters)
+    await AddScoreService.updateScore(
+      score: completedLetters,
+      outOf: arabicLetters.length,
+    );
+
+    // Clear the saved progress since exercise is completed
+    if (letterIndexKey != null && completedLettersKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(letterIndexKey!);
+      await prefs.remove(completedLettersKey!);
+    }
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -471,6 +545,11 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text("You've completed tracing all the Arabic letters! Great job!"),
+            const SizedBox(height: 10),
+            Text(
+              "Letters completed: $completedLetters/${arabicLetters.length}",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 20),
             Image.asset(
               'assets/images/celebration.png',
@@ -484,22 +563,44 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              setState(() {
-                currentLetterIndex = 0;
-                strokes.clear();
-                currentStroke = [];
-                _isCorrectTracing = false;
-                _accuracy = 0.0;
-              });
+              _restartExercise();
             },
             child: Text(
               S.of(context).restart,
               style: const TextStyle(color: Color(0xFF7F6DF3)),
             ),
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context); // Exit the exercise
+            },
+            child: const Text(
+              "Exit",
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  void _restartExercise() async {
+    setState(() {
+      currentLetterIndex = 0;
+      completedLetters = 0;
+      strokes.clear();
+      currentStroke = [];
+      _isCorrectTracing = false;
+      _accuracy = 0.0;
+    });
+
+    // Reset SharedPreferences for this exercise
+    if (letterIndexKey != null && completedLettersKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(letterIndexKey!, 0);
+      await prefs.setInt(completedLettersKey!, 0);
+    }
   }
 
   void _showTryAgainMessage() {
@@ -558,6 +659,12 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     String currentLetter = arabicLetters[currentLetterIndex];
     return Scaffold(
       appBar: AppBar(
@@ -593,6 +700,11 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
                       backgroundColor: Colors.white.withOpacity(0.3),
                       valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    "✓ $completedLetters",
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

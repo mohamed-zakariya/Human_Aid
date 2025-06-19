@@ -116,7 +116,7 @@ class _LoginScreenUserState extends State<LoginScreenUser> {
                     color: Colors.grey[400]
                   ),
                   fillColor: const Color.fromARGB(26, 108, 99, 255),
-                  prefixIcon: const Icon(Icons.email_outlined),
+                  prefixIcon: const Icon(Icons.person_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,

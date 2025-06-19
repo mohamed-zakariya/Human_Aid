@@ -291,40 +291,40 @@ class S {
   }
 
   /// `Home`
-  String get ParentNavBarHome {
+  String get parentNavBarHome {
     return Intl.message(
       'Home',
-      name: 'ParentNavBarHome',
+      name: 'parentNavBarHome',
       desc: '',
       args: [],
     );
   }
 
   /// `Choose Language`
-  String get ParentNavBarChangeLanguage {
+  String get parentNavBarChangeLanguage {
     return Intl.message(
       'Choose Language',
-      name: 'ParentNavBarChangeLanguage',
+      name: 'parentNavBarChangeLanguage',
       desc: '',
       args: [],
     );
   }
 
   /// `Settings`
-  String get ParentNavBarSettings {
+  String get parentNavBarSettings {
     return Intl.message(
       'Settings',
-      name: 'ParentNavBarSettings',
+      name: 'parentNavBarSettings',
       desc: '',
       args: [],
     );
   }
 
   /// `Logout`
-  String get ParentNavBarLogout {
+  String get parentNavBarLogout {
     return Intl.message(
       'Logout',
-      name: 'ParentNavBarLogout',
+      name: 'parentNavBarLogout',
       desc: '',
       args: [],
     );
@@ -1391,10 +1391,10 @@ class S {
   }
 
   /// `Return`
-  String get Return {
+  String get returnBack {
     return Intl.message(
       'Return',
-      name: 'Return',
+      name: 'returnBack',
       desc: '',
       args: [],
     );
@@ -2061,90 +2061,90 @@ class S {
   }
 
   /// `Learner Members`
-  String get ParentNavBarLearnerMembers {
+  String get parentNavBarLearnerMembers {
     return Intl.message(
       'Learner Members',
-      name: 'ParentNavBarLearnerMembers',
+      name: 'parentNavBarLearnerMembers',
       desc: '',
       args: [],
     );
   }
 
   /// `Learners Progress`
-  String get ParentNavBarLearnersProgress {
+  String get parentNavBarLearnersProgress {
     return Intl.message(
       'Learners Progress',
-      name: 'ParentNavBarLearnersProgress',
+      name: 'parentNavBarLearnersProgress',
       desc: '',
       args: [],
     );
   }
 
   /// `Choose Language`
-  String get ParentNavBarChooseLanguage {
+  String get parentNavBarChooseLanguage {
     return Intl.message(
       'Choose Language',
-      name: 'ParentNavBarChooseLanguage',
+      name: 'parentNavBarChooseLanguage',
       desc: '',
       args: [],
     );
   }
 
   /// `English`
-  String get ParentNavBarEnglish {
+  String get parentNavBarEnglish {
     return Intl.message(
       'English',
-      name: 'ParentNavBarEnglish',
+      name: 'parentNavBarEnglish',
       desc: '',
       args: [],
     );
   }
 
   /// `Arabic`
-  String get ParentNavBarArabic {
+  String get parentNavBarArabic {
     return Intl.message(
       'Arabic',
-      name: 'ParentNavBarArabic',
+      name: 'parentNavBarArabic',
       desc: '',
       args: [],
     );
   }
 
   /// `Logout Confirmation`
-  String get ParentNavBarLogoutConfirmation {
+  String get parentNavBarLogoutConfirmation {
     return Intl.message(
       'Logout Confirmation',
-      name: 'ParentNavBarLogoutConfirmation',
+      name: 'parentNavBarLogoutConfirmation',
       desc: '',
       args: [],
     );
   }
 
   /// `Are you sure you want to logout?`
-  String get ParentNavBarLogoutPrompt {
+  String get parentNavBarLogoutPrompt {
     return Intl.message(
       'Are you sure you want to logout?',
-      name: 'ParentNavBarLogoutPrompt',
+      name: 'parentNavBarLogoutPrompt',
       desc: '',
       args: [],
     );
   }
 
   /// `Learning App v2.0`
-  String get ParentNavBarFooterVersion {
+  String get parentNavBarFooterVersion {
     return Intl.message(
       'Learning App v2.0',
-      name: 'ParentNavBarFooterVersion',
+      name: 'parentNavBarFooterVersion',
       desc: '',
       args: [],
     );
   }
 
   /// `Profile`
-  String get ParentNavBarProfile {
+  String get parentNavBarProfile {
     return Intl.message(
       'Profile',
-      name: 'ParentNavBarProfile',
+      name: 'parentNavBarProfile',
       desc: '',
       args: [],
     );
@@ -2320,11 +2320,101 @@ class S {
     );
   }
 
-  /// `lexfix123`
+  /// `Username`
   String get usernameHint {
     return Intl.message(
-      'lexfix123',
+      'Username',
       name: 'usernameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click here to explore your courses!`
+  String get tutorialCourseTitle {
+    return Intl.message(
+      'Click here to explore your courses!',
+      name: 'tutorialCourseTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to navigate to your course list`
+  String get tutorialCourseSubtitle {
+    return Intl.message(
+      'Tap to navigate to your course list',
+      name: 'tutorialCourseSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Skip`
+  String get tutorialSkip {
+    return Intl.message(
+      'Skip',
+      name: 'tutorialSkip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This is your course`
+  String get tutorialCourseCardTitle {
+    return Intl.message(
+      'This is your course',
+      name: 'tutorialCourseCardTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click here to explore the learning materials.`
+  String get tutorialCourseCardDescription {
+    return Intl.message(
+      'Click here to explore the learning materials.',
+      name: 'tutorialCourseCardDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play Button`
+  String get tutorialPlayButtonTitle {
+    return Intl.message(
+      'Play Button',
+      name: 'tutorialPlayButtonTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap this button to start the exercise.`
+  String get tutorialPlayButtonDescription {
+    return Intl.message(
+      'Tap this button to start the exercise.',
+      name: 'tutorialPlayButtonDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expand View`
+  String get tutorialExpandButtonTitle {
+    return Intl.message(
+      'Expand View',
+      name: 'tutorialExpandButtonTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click to see more content or details.`
+  String get tutorialExpandButtonDescription {
+    return Intl.message(
+      'Click to see more content or details.',
+      name: 'tutorialExpandButtonDescription',
       desc: '',
       args: [],
     );
@@ -2520,10 +2610,10 @@ class S {
     );
   }
 
-  /// `lexfix@gmail.com`
+  /// `Email`
   String get emailHint {
     return Intl.message(
-      'lexfix@gmail.com',
+      'Email',
       name: 'emailHint',
       desc: '',
       args: [],
@@ -3333,40 +3423,40 @@ class S {
   }
 
   /// `Home`
-  String get LearnerNavBarHome {
+  String get learnerNavBarHome {
     return Intl.message(
       'Home',
-      name: 'LearnerNavBarHome',
+      name: 'learnerNavBarHome',
       desc: '',
       args: [],
     );
   }
 
   /// `Courses`
-  String get LearnerNavBarCourses {
+  String get learnerNavBarCourses {
     return Intl.message(
       'Courses',
-      name: 'LearnerNavBarCourses',
+      name: 'learnerNavBarCourses',
       desc: '',
       args: [],
     );
   }
 
   /// `Profile`
-  String get LearnerNavBarProfile {
+  String get learnerNavBarProfile {
     return Intl.message(
       'Profile',
-      name: 'LearnerNavBarProfile',
+      name: 'learnerNavBarProfile',
       desc: '',
       args: [],
     );
   }
 
   /// `Menu`
-  String get LearnerNavBarMenu {
+  String get learnerNavBarMenu {
     return Intl.message(
       'Menu',
-      name: 'LearnerNavBarMenu',
+      name: 'learnerNavBarMenu',
       desc: '',
       args: [],
     );

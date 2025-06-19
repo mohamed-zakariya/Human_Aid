@@ -93,32 +93,6 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "LearnerNavBarCourses": MessageLookupByLibrary.simpleMessage("Courses"),
-        "LearnerNavBarHome": MessageLookupByLibrary.simpleMessage("Home"),
-        "LearnerNavBarMenu": MessageLookupByLibrary.simpleMessage("Menu"),
-        "LearnerNavBarProfile": MessageLookupByLibrary.simpleMessage("Profile"),
-        "ParentNavBarArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
-        "ParentNavBarChangeLanguage":
-            MessageLookupByLibrary.simpleMessage("Choose Language"),
-        "ParentNavBarChooseLanguage":
-            MessageLookupByLibrary.simpleMessage("Choose Language"),
-        "ParentNavBarEnglish": MessageLookupByLibrary.simpleMessage("English"),
-        "ParentNavBarFooterVersion":
-            MessageLookupByLibrary.simpleMessage("Learning App v2.0"),
-        "ParentNavBarHome": MessageLookupByLibrary.simpleMessage("Home"),
-        "ParentNavBarLearnerMembers":
-            MessageLookupByLibrary.simpleMessage("Learner Members"),
-        "ParentNavBarLearnersProgress":
-            MessageLookupByLibrary.simpleMessage("Learners Progress"),
-        "ParentNavBarLogout": MessageLookupByLibrary.simpleMessage("Logout"),
-        "ParentNavBarLogoutConfirmation":
-            MessageLookupByLibrary.simpleMessage("Logout Confirmation"),
-        "ParentNavBarLogoutPrompt": MessageLookupByLibrary.simpleMessage(
-            "Are you sure you want to logout?"),
-        "ParentNavBarProfile": MessageLookupByLibrary.simpleMessage("Profile"),
-        "ParentNavBarSettings":
-            MessageLookupByLibrary.simpleMessage("Settings"),
-        "Return": MessageLookupByLibrary.simpleMessage("Return"),
         "accuracy": MessageLookupByLibrary.simpleMessage("accuracy"),
         "add": MessageLookupByLibrary.simpleMessage("Add"),
         "addNewLearner":
@@ -229,7 +203,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "drawLetter": m6,
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "This email is already registered"),
-        "emailHint": MessageLookupByLibrary.simpleMessage("lexfix@gmail.com"),
+        "emailHint": MessageLookupByLibrary.simpleMessage("Email"),
         "emailHint2":
             MessageLookupByLibrary.simpleMessage("******aid@gmail.com"),
         "emailInvalid":
@@ -358,6 +332,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "label_letters": MessageLookupByLibrary.simpleMessage("Letters"),
         "label_sentences": MessageLookupByLibrary.simpleMessage("Sentences"),
         "label_words": MessageLookupByLibrary.simpleMessage("Words"),
+        "learnerNavBarCourses": MessageLookupByLibrary.simpleMessage("Courses"),
+        "learnerNavBarHome": MessageLookupByLibrary.simpleMessage("Home"),
+        "learnerNavBarMenu": MessageLookupByLibrary.simpleMessage("Menu"),
+        "learnerNavBarProfile": MessageLookupByLibrary.simpleMessage("Profile"),
         "learner_details":
             MessageLookupByLibrary.simpleMessage("Learner Details"),
         "learner_members":
@@ -452,6 +430,27 @@ class MessageLookup extends MessageLookupByLibrary {
             "Please enter the verification code"),
         "outOfTries": MessageLookupByLibrary.simpleMessage(
             "No attempts left! Moving to the next word..."),
+        "parentNavBarArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
+        "parentNavBarChangeLanguage":
+            MessageLookupByLibrary.simpleMessage("Choose Language"),
+        "parentNavBarChooseLanguage":
+            MessageLookupByLibrary.simpleMessage("Choose Language"),
+        "parentNavBarEnglish": MessageLookupByLibrary.simpleMessage("English"),
+        "parentNavBarFooterVersion":
+            MessageLookupByLibrary.simpleMessage("Learning App v2.0"),
+        "parentNavBarHome": MessageLookupByLibrary.simpleMessage("Home"),
+        "parentNavBarLearnerMembers":
+            MessageLookupByLibrary.simpleMessage("Learner Members"),
+        "parentNavBarLearnersProgress":
+            MessageLookupByLibrary.simpleMessage("Learners Progress"),
+        "parentNavBarLogout": MessageLookupByLibrary.simpleMessage("Logout"),
+        "parentNavBarLogoutConfirmation":
+            MessageLookupByLibrary.simpleMessage("Logout Confirmation"),
+        "parentNavBarLogoutPrompt": MessageLookupByLibrary.simpleMessage(
+            "Are you sure you want to logout?"),
+        "parentNavBarProfile": MessageLookupByLibrary.simpleMessage("Profile"),
+        "parentNavBarSettings":
+            MessageLookupByLibrary.simpleMessage("Settings"),
         "passwordHint": MessageLookupByLibrary.simpleMessage("●●●●●●●"),
         "passwordMismatch":
             MessageLookupByLibrary.simpleMessage("Passwords do not match"),
@@ -493,6 +492,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Recording time limit reached!"),
         "restart": MessageLookupByLibrary.simpleMessage("Restart"),
         "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+        "returnBack": MessageLookupByLibrary.simpleMessage("Return"),
         "right": MessageLookupByLibrary.simpleMessage("Right"),
         "roundLabel": m23,
         "roundLabel2": MessageLookupByLibrary.simpleMessage("Round"),
@@ -596,6 +596,23 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Trying is the first step"),
         "ttsInstructions": MessageLookupByLibrary.simpleMessage(
             "Each question has 5 seconds to answer. Look carefully at the direction shape and choose the correct sentence. After each question, the correct answer will be shown."),
+        "tutorialCourseCardDescription": MessageLookupByLibrary.simpleMessage(
+            "Click here to explore the learning materials."),
+        "tutorialCourseCardTitle":
+            MessageLookupByLibrary.simpleMessage("This is your course"),
+        "tutorialCourseSubtitle": MessageLookupByLibrary.simpleMessage(
+            "Tap to navigate to your course list"),
+        "tutorialCourseTitle": MessageLookupByLibrary.simpleMessage(
+            "Click here to explore your courses!"),
+        "tutorialExpandButtonDescription": MessageLookupByLibrary.simpleMessage(
+            "Click to see more content or details."),
+        "tutorialExpandButtonTitle":
+            MessageLookupByLibrary.simpleMessage("Expand View"),
+        "tutorialPlayButtonDescription": MessageLookupByLibrary.simpleMessage(
+            "Tap this button to start the exercise."),
+        "tutorialPlayButtonTitle":
+            MessageLookupByLibrary.simpleMessage("Play Button"),
+        "tutorialSkip": MessageLookupByLibrary.simpleMessage("Skip"),
         "up": MessageLookupByLibrary.simpleMessage("Up"),
         "upLeft": MessageLookupByLibrary.simpleMessage("Up Left"),
         "upRight": MessageLookupByLibrary.simpleMessage("Up Right"),
@@ -606,7 +623,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Register for yourself"),
         "usernameExist": MessageLookupByLibrary.simpleMessage(
             "This username is already taken"),
-        "usernameHint": MessageLookupByLibrary.simpleMessage("lexfix123"),
+        "usernameHint": MessageLookupByLibrary.simpleMessage("Username"),
         "usernameRequired":
             MessageLookupByLibrary.simpleMessage("Username must be entered"),
         "usernameShort": MessageLookupByLibrary.simpleMessage(
