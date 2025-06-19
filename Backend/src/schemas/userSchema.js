@@ -31,6 +31,8 @@ type Exercise {
   arabic_description:String!
   progress: ExerciseStats
   levels: [Level!]!
+  progress_imageUrl: String
+  exercise_imageUrl: String
 }
 type Game {
   _id: ID!

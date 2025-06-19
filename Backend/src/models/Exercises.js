@@ -28,6 +28,8 @@ const exercisesSchema = new Schema ({
     english_description : { type: String,required: true },
     arabic_description: { type: String,required: true },
     levels: [levelSchema], // Array of levels for this exercise
+    progress_imageUrl: { type: String },
+    exercise_imageUrl: { type: String },
 });
 
 

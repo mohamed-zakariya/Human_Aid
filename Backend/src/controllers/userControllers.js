@@ -286,6 +286,8 @@ export const learnerHomePage = async (userId) => {
         type: exercise.exercise_type,
         english_description: exercise.english_description,
         arabic_description: exercise.arabic_description,
+        progress_imageUrl: exercise.progress_imageUrl,
+        exercise_imageUrl: exercise.exercise_imageUrl,
 
         progress: stats
           ? {
