@@ -27,7 +27,7 @@ class AuthParentService {
       }
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:5500/auth/google'),
+        Uri.parse('https://human-aid-deployment.onrender.com/auth/google'),
         headers: {
           'Content-Type': 'application/json',
         },
