@@ -240,6 +240,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "exit": MessageLookupByLibrary.simpleMessage("Exit"),
         "exitExerciseQuestion":
             MessageLookupByLibrary.simpleMessage("هل تريد الخروج من التمرين؟"),
+        "expandLevelsDescription": MessageLookupByLibrary.simpleMessage(
+            "Tap this button to explore all available levels and games for this exercise. You need to tap it to continue!"),
+        "expandLevelsTitle":
+            MessageLookupByLibrary.simpleMessage("View Available Levels"),
         "explore": MessageLookupByLibrary.simpleMessage("Explore"),
         "explore_message": MessageLookupByLibrary.simpleMessage(
             "Let\'s explore some insights today"),
@@ -266,6 +270,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "game_sessions": MessageLookupByLibrary.simpleMessage("game sessions"),
         "game_summary": MessageLookupByLibrary.simpleMessage("Game Summary"),
         "games": MessageLookupByLibrary.simpleMessage("Games"),
+        "gamesNavigationDescription": MessageLookupByLibrary.simpleMessage(
+            "Tap any game chip to go directly to that game within the course."),
+        "gamesNavigationTitle":
+            MessageLookupByLibrary.simpleMessage("Games Navigation"),
         "genderFemale": MessageLookupByLibrary.simpleMessage("Female"),
         "genderMale": MessageLookupByLibrary.simpleMessage("Male"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("Select Gender"),
@@ -355,6 +363,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "Keep going! You\'re getting better with each try!"),
         "levelSuccess": m12,
         "levels": MessageLookupByLibrary.simpleMessage("Levels"),
+        "levelsSectionDescription": MessageLookupByLibrary.simpleMessage(
+            "These are the available levels for this course. Each level includes unique games and activities to help you learn."),
+        "levelsSectionTitle":
+            MessageLookupByLibrary.simpleMessage("Course Levels"),
         "listen": MessageLookupByLibrary.simpleMessage("Listen"),
         "listenAgain": m13,
         "listenToLetter":
@@ -368,6 +380,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Logout Confirmation"),
         "logoutSubtitle":
             MessageLookupByLibrary.simpleMessage("Sign out securely"),
+        "mainCourseNavigationDescription": MessageLookupByLibrary.simpleMessage(
+            "Tap this play button to go to the main course page. You must tap it to complete the tutorial!"),
+        "mainCourseNavigationTitle":
+            MessageLookupByLibrary.simpleMessage("Main Course Navigation"),
         "manage_learners":
             MessageLookupByLibrary.simpleMessage("Manage your learners"),
         "monitor_daily_activities": MessageLookupByLibrary.simpleMessage(
@@ -596,8 +612,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Trying is the first step"),
         "ttsInstructions": MessageLookupByLibrary.simpleMessage(
             "Each question has 5 seconds to answer. Look carefully at the direction shape and choose the correct sentence. After each question, the correct answer will be shown."),
-        "tutorialCourseCardDescription": MessageLookupByLibrary.simpleMessage(
-            "Click here to explore the learning materials."),
+        "tutorialCourseCardDescription":
+            MessageLookupByLibrary.simpleMessage("Tap here to proceed."),
         "tutorialCourseCardTitle":
             MessageLookupByLibrary.simpleMessage("This is your course"),
         "tutorialCourseSubtitle": MessageLookupByLibrary.simpleMessage(
@@ -632,6 +648,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "veryGreat": MessageLookupByLibrary.simpleMessage("Very great"),
         "verySmart": MessageLookupByLibrary.simpleMessage("You\'re very smart"),
         "view_details": MessageLookupByLibrary.simpleMessage("view Detials"),
+        "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("Welcome Back, "),
         "wellDone": MessageLookupByLibrary.simpleMessage("Well done! ✅"),

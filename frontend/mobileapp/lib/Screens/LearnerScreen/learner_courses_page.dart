@@ -29,6 +29,8 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
   final GlobalKey _playButtonKey = GlobalKey();
   final GlobalKey _levelsKey = GlobalKey();
   final GlobalKey _gameChipsKey = GlobalKey();
+  final GlobalKey _levelButtonKey = GlobalKey();
+
 
   bool _isTutorialActive = false;
   bool _isExpansionInProgress = false;
@@ -102,7 +104,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
       await _exercisesFuture;
 
       // Additional delay to ensure widgets are rendered
-      await Future.delayed(const Duration(milliseconds: 1500));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       // Check if the context is still mounted and widgets exist
       if (!mounted) return;
@@ -314,9 +316,10 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
             print('onClickTarget: ${target.identify} at step: $_currentTutorialStep');
 
             if (target.identify == "LevelsSection") {
+            } else if (target.identify == "LevelButton") {
             } else if (target.identify == "GameChips") {
             } else if (target.identify == "PlayButton") {
-              _nextTutorialStep();
+              // _nextTutorialStep();
               _navigateToMainExercise();
             }
           },
@@ -363,7 +366,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
     List<TargetFocus> targets = [];
 
     // Only add targets if the keys exist and have contexts
-    if (_levelsKey.currentContext != null) {
+    if (_levelsKey.currentContext != null || true) {
 
       print("Expanded targets not ready, retrying in 300ms...");
 
@@ -377,13 +380,13 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
               align: ContentAlign.top,
               builder: (context, controller) {
                 return Container(
-                  padding: const EdgeInsets.all(20),
-                  child: const Column(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 45),
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Available Levels",
+                        S.of(context).levelsSectionTitle,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -392,7 +395,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "These are the levels for this exercise. Each level contains different games and activities.",
+                        S.of(context).levelsSectionDescription,
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 14,
@@ -408,11 +411,12 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
       );
     }
 
-    if (_gameChipsKey.currentContext != null) {
+    // Add the new level button target
+    if (_levelButtonKey.currentContext != null || true) {
       targets.add(
         TargetFocus(
-          identify: "GameChips",
-          keyTarget: _gameChipsKey,
+          identify: "LevelButton",
+          keyTarget: _levelButtonKey,
           alignSkip: Alignment.topLeft,
           contents: [
             TargetContent(
@@ -425,16 +429,16 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Games Navigation",
-                        style: const TextStyle(
+                        S.of(context).levelsSectionTitle,
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                       Text(
-                        "Click on any game chip to navigate directly to that specific game.",
+                        S.of(context).levelsSectionDescription,
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 14,
@@ -450,6 +454,47 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
       );
     }
 
+    if (_gameChipsKey.currentContext != null || true) {
+      targets.add(
+        TargetFocus(
+          identify: "GameChips",
+          keyTarget: _gameChipsKey,
+          alignSkip: Alignment.topLeft,
+          contents: [
+            TargetContent(
+              align: ContentAlign.top,
+              builder: (context, controller) {
+                return Container(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 50),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        S.of(context).gamesNavigationTitle,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        S.of(context).gamesNavigationDescription,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
     // Always add the play button target
     targets.add(
       TargetFocus(
@@ -462,13 +507,13 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
             align: ContentAlign.top,
             builder: (context, controller) {
               return Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Main Exercise Navigation",
+                      S.of(context).mainCourseNavigationTitle,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -477,7 +522,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "Click this play button to navigate to the main exercise page. You must click it to finish the tutorial!",
+                      S.of(context).mainCourseNavigationDescription,
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 14,
@@ -553,7 +598,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Expand to See Levels",
+                      S.of(context).expandLevelsTitle,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -562,7 +607,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "Click this button to see all available levels and games for this exercise. You must click it to continue!",
+                      S.of(context).expandLevelsDescription,
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 14,
@@ -785,6 +830,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
             expandButtonKey: idx == 0 ? _expandButtonKey : null,
             levelsKey: idx == 0 ? _levelsKey : null,
             gameChipsKey: idx == 0 ? _gameChipsKey : null,
+            levelButtonKey: idx == 0 ? _levelButtonKey : null, // Add this line
             isTutorialActive: _isTutorialActive,
           ),
         );
@@ -815,6 +861,7 @@ class _ExerciseExpansionTile extends StatefulWidget {
     this.expandButtonKey,
     this.levelsKey,
     this.gameChipsKey,
+    this.levelButtonKey, // Add this line
     this.containerKey,
     this.isTutorialActive = false,
   }) : super(key: key);
@@ -832,6 +879,7 @@ class _ExerciseExpansionTile extends StatefulWidget {
   final GlobalKey?                             expandButtonKey;
   final GlobalKey?                             levelsKey;
   final GlobalKey?                             gameChipsKey;
+  final GlobalKey?                             levelButtonKey; // Add this line
   final GlobalKey?                             containerKey;
   final bool                                   isTutorialActive;
 
@@ -845,6 +893,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
   bool _expanded = false;
   Future<List<Level>>? _levelsFuture;
   bool _gameChipKeyAssigned = false;
+  bool _levelButtonKeyAssigned = false; // Add this line
 
   late AnimationController _expansionController;
   late Animation<double> _rotationAnimation;
@@ -1187,6 +1236,12 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
   }
 
   Widget _buildLevelCard(Level level) {
+
+    final shouldAssignKey = widget.levelButtonKey != null && !_levelButtonKeyAssigned;
+    if (shouldAssignKey) {
+      _levelButtonKeyAssigned = true;
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
@@ -1248,6 +1303,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
                 ),
               ),
               _buildActionButton(
+                key: shouldAssignKey ? widget.levelButtonKey : null, // Add this line
                 icon: Icons.school,
                 color: widget.cardColor,
                 onPressed: () => _goToLevel(level),

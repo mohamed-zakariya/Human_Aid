@@ -78,16 +78,26 @@ class _MyAppState extends State<MyApp> {
     _loadInitialScreen();
   }
 
-  void _setLocale(Locale locale) {
+  void _setLocale(Locale locale) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('locale', locale.languageCode);
     setState(() {
       _locale = locale;
     });
   }
+
+
   Future<void> _loadInitialScreen() async {
     final prefs = await SharedPreferences.getInstance();
+
+    // Load saved locale from preferences
+    final String? savedLocaleCode = prefs.getString('locale');
+    if (savedLocaleCode != null) {
+      _locale = Locale(savedLocaleCode);
+    }
+
     await prefs.setBool('hasShownCourseTutorial', false);
     await prefs.setBool('hasShownCoursePageTutorial', false);
-
 
     final bool onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
 
@@ -102,11 +112,6 @@ class _MyAppState extends State<MyApp> {
     final String? userRole = prefs.getString('role');
     final String? refreshToken = prefs.getString('refreshToken');
     final String? accessToken = prefs.getString('accessToken');
-
-    print(userId);
-    print(userRole);
-    print(refreshToken);
-    print(accessToken);
 
     if (userId != null && userRole != null && refreshToken != null && refreshToken.isNotEmpty) {
       if (userRole == "parent") {
@@ -128,7 +133,7 @@ class _MyAppState extends State<MyApp> {
       }
     }
 
-    // Fallback to intro if anything is missing or invalid
+    // Fallback
     setState(() {
       _initialScreen = IntroScreen(onLocaleChange: _setLocale);
     });

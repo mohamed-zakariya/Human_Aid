@@ -58,43 +58,44 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
       _isTutorialActive = true;
     });
 
-    TutorialCoachMark(
-      targets: _createTargets(),
-      colorShadow: Colors.black.withOpacity(0.8),
-      textSkip: S.of(context).tutorialSkip,
-      paddingFocus: 8,
-      alignSkip: Alignment.bottomRight,
-      onFinish: () {
-        print("Tutorial finished");
-        // Use Future.microtask to defer setState
-        Future.microtask(() {
-          if (mounted) {
-            setState(() {
-              _isTutorialActive = false;
-            });
+    Future.delayed(const Duration(milliseconds: 4000), () {
+      if (!mounted || !_isTutorialActive) return;
+
+      TutorialCoachMark(
+        targets: _createTargets(),
+        colorShadow: Colors.black.withOpacity(0.8),
+        textSkip: S.of(context).tutorialSkip,
+        paddingFocus: 8,
+        alignSkip: Alignment.bottomRight,
+        onFinish: () {
+          print("Tutorial finished");
+          Future.microtask(() {
+            if (mounted) {
+              setState(() {
+                _isTutorialActive = false;
+              });
+            }
+          });
+        },
+        onClickTarget: (target) {
+          print('onClickTarget: $target');
+          if (target.identify == "CoursesTab") {
+            _selectPage(1);
           }
-        });
-      },
-      onClickTarget: (target) {
-        print('onClickTarget: $target');
-        // When courses button is clicked during tutorial, navigate to courses
-        if (target.identify == "CoursesTab") {
-          _selectPage(1);
-        }
-      },
-      onSkip: () {
-        print("Tutorial skipped");
-        // Use Future.microtask to defer setState
-        Future.microtask(() {
-          if (mounted) {
-            setState(() {
-              _isTutorialActive = false;
-            });
-          }
-        });
-        return true;
-      },
-    ).show(context: context);
+        },
+        onSkip: () {
+          print("Tutorial skipped");
+          Future.microtask(() {
+            if (mounted) {
+              setState(() {
+                _isTutorialActive = false;
+              });
+            }
+          });
+          return true;
+        },
+      ).show(context: context);
+    });
   }
 
   List<TargetFocus> _createTargets() {
