@@ -299,10 +299,10 @@ export const learnerHomePage = async (userId) => {
     });
 
     const order = [
-      "Letters Exercise",
-      "Words Exercise",
-      "Sentences Exercise",
-      "Story Exercise"
+      "Letters Stage",
+      "Words Stage",
+      "Sentences Stage",
+      "Story Stage"
     ];
 
     const sorted = exercisesWithProgress.sort(
