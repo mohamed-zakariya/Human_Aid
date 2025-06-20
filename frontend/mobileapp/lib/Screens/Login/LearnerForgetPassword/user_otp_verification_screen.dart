@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-import '../../Services/password_reset_service.dart';
-import '../../generated/l10n.dart';
-import '../widgets/language_toggle_icon.dart';
+import '../../../Services/user_password_reset_service.dart';
+import '../../../generated/l10n.dart';
+import '../../widgets/language_toggle_icon.dart';
 
-class OTPVerificationScreen extends StatelessWidget {
+class UserOTPVerificationScreen extends StatelessWidget {
   final Function(Locale) onLocaleChange;
 
-  const OTPVerificationScreen({super.key, required this.onLocaleChange});
+  const UserOTPVerificationScreen({super.key, required this.onLocaleChange});
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +88,7 @@ class OTPVerificationScreen extends StatelessWidget {
 
                   try {
                     print("Sending OTP: $otp for email: $email");  // Debugging line
-                    String token = await PasswordResetService.verifyOTP(email, otp);
+                    String token = await UserPasswordResetService.verifyOTP(email, otp);
                     print("Received Token: $token");  // Debugging line
 
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -96,7 +96,7 @@ class OTPVerificationScreen extends StatelessWidget {
                     );
 
                     // Navigate to change password screen, passing the token
-                    Navigator.pushNamed(context, '/change-password', arguments: token);
+                    Navigator.pushNamed(context, '/user-change-password', arguments: token);
                   } catch (e) {
                     print("Error received: $e");  // Debugging line
                     ScaffoldMessenger.of(context).showSnackBar(

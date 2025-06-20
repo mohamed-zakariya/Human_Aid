@@ -366,6 +366,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "listenToLetter":
             MessageLookupByLibrary.simpleMessage("استمع إلى الحرف"),
         "loginButton": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
+        "loginSubtitle": MessageLookupByLibrary.simpleMessage(
+            "مرحبًا بعودتك! الرجاء تسجيل الدخول للمتابعة"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("تسجيل الدُّخول"),
         "logoutButton": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
         "logoutConfirmationMessage": MessageLookupByLibrary.simpleMessage(

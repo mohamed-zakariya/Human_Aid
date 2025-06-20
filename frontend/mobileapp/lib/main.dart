@@ -38,14 +38,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Screens/LearnerScreen/storyStage/Level2/story_summarize.dart';
 import 'Screens/LearnerScreen/wordStage/Level2/first_game/direction_game1_page.dart';
 import 'Screens/LearnerScreen/wordStage/Level3/word_level3_game.dart';
-import 'Screens/Login/change_password_screen.dart';
-import 'Screens/Login/forgot_password_screen.dart';
+import 'Screens/Login/ParentForgetPassword/change_password_screen.dart';
+import 'Screens/Login/ParentForgetPassword/forgot_password_screen.dart';
 import 'Screens/Login/login_screen_gaurdian.dart';
 import 'Screens/Login/login_screen_user.dart';
-import 'Screens/Login/otp_verification_screen.dart';
-import 'Screens/Login/user_change_password_screen.dart';
-import 'Screens/Login/user_forgot_password_screen.dart';
-import 'Screens/Login/user_otp_verification_screen.dart';
+import 'Screens/Login/ParentForgetPassword/otp_verification_screen.dart';
+import 'Screens/Login/LearnerForgetPassword/user_change_password_screen.dart';
+import 'Screens/Login/LearnerForgetPassword/user_forgot_password_screen.dart';
+import 'Screens/Login/LearnerForgetPassword/user_otp_verification_screen.dart';
 import 'Screens/ParentScreen/ParentMain.dart';
 import 'Screens/exercises_levels_screen.dart';
 import 'Screens/level_screen.dart';
@@ -140,10 +140,6 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -171,7 +167,70 @@ class _MyAppState extends State<MyApp> {
           '/user-otp-verification': (context) => UserOTPVerificationScreen(onLocaleChange: _setLocale),
           '/user-change-password': (context) => UserChangePasswordScreen(onLocaleChange: _setLocale),
 
-            '/words_level_1': (context) {
+
+          '/signupAdult': (context) => const Signupadult(),
+          '/signup1': (context) => const Signupmain(),
+          '/signup2': (context) {
+            final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
+            return Continuesignup(parent: parent);
+          },
+
+          '/parentHome': (context) {
+            final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
+            return ParentMain(parent: parent, onLocaleChange: _setLocale,);
+          },
+
+          '/Learner-Home': (context) {
+            final learner = ModalRoute.of(context)!.settings.arguments as Learner;
+            return LearnerHomeScreen(
+              onLocaleChange: _setLocale,
+              learner: learner,
+            );
+          },
+          '/exercise-levels': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return ExerciseLevelsScreen(
+              exerciseId: args['exerciseId'] as String,
+              exerciseName: args['exerciseName'] as String,
+              exerciseArabicName: args['exerciseArabicName'] as String,
+              learner: args['learner'] as Learner,
+            );
+          },
+          '/games': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+            return LevelScreen(
+              level: args['level'] as Level,
+              learner: args['learner'] as Learner,
+              exerciseId: args['exerciseId'] as String,
+              levelObjectId: args['levelObjectId'] as String,
+              exerciseImageUrl: args['exerciseImageUrl'] as String,
+            );
+          },
+
+
+
+          // LETTER STAGE
+
+          // LEVEL CONTENT
+          '/letters_level_1': (context) => const LetterLevel1(),
+          '/letters_level_3': (context) => const LetterLevel3(),
+
+          // LEVEL1 GAMES
+          '/letters_game_1': (context) => const ArabicLetterTracingExercise(),
+
+          // LEVEL2 GAMES
+          '/letters_game_3': (context) => const LetterLevel2Game(),
+          '/letters_game_4': (context) => const LetterLevel2Game2(),
+
+          // LEVEL3 GAMES
+          '/letters_game_5': (context) => const LetterLevel3Game(),
+
+
+          // WORD STAGE GAMES
+
+          // STAGE CONTENT
+
+          '/words_level_1': (context) {
             final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
             if (args == null) {
               return const Scaffold(
@@ -216,14 +275,25 @@ class _MyAppState extends State<MyApp> {
               levelId: args['levelId'], // This is now the MongoDB ObjectId
             );
           },
-          // '/words_game_4': (context) {
-          //   final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          //   return ObjectDetectionExerciseScreen(
-          //     onLocaleChange: _setLocale,
-          //     learner: args['learner'] as Learner,
-          //     exerciseId: args['exerciseId'] as String,
-          //   );
-          // },
+
+          // LEVEL 1 GAMES
+          '/words_game_1': (context) => const SpellingGameScreen("Beginner"),
+
+
+          // LEVEL 2 GAMES
+          '/words_game_2': (context) => DirectionInstructionsPage(),
+          '/words_game_3': (context) => DirectionInstructionsSecondPage(),
+          '/words_game_5': (context) => const SpellingGameScreen("Intermediate"),
+          // '/words_game_8': (context) => const HandDetectionGameWidget(),
+
+          // LEVEL 3 GAMES
+          '/words_game_6': (context) => const MonthsOrderGameScreen(),
+          '/words_game_7': (context) => const SpellingGameScreen("Advanced"),
+
+
+          // SENTENCE STAGE
+
+          // STAGE CONTENT
 
           '/sentences_level_1': (context) {
             final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
@@ -240,76 +310,14 @@ class _MyAppState extends State<MyApp> {
             );
           },
 
-          '/signupAdult': (context) => const Signupadult(),
-          '/signup1': (context) => const Signupmain(),
-          '/signup2': (context) {
-            final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
-            return Continuesignup(parent: parent);
-          },
-
-          '/parentHome': (context) {
-            final Parent parent = ModalRoute.of(context)!.settings.arguments as Parent;
-            return ParentMain(parent: parent, onLocaleChange: _setLocale,);
-          },
-
-          '/Learner-Home': (context) {
-            final learner = ModalRoute.of(context)!.settings.arguments as Learner;
-            return LearnerHomeScreen(
-              onLocaleChange: _setLocale,
-              learner: learner,
-            );
-          },
-          '/exercise-levels': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-            return ExerciseLevelsScreen(
-              exerciseId: args['exerciseId'] as String,
-              exerciseName: args['exerciseName'] as String,
-              exerciseArabicName: args['exerciseArabicName'] as String,
-              learner: args['learner'] as Learner,
-            );
-          },
-          '/games': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-            return LevelScreen(
-              level: args['level'] as Level,
-              learner: args['learner'] as Learner,
-              exerciseId: args['exerciseId'] as String,
-              levelObjectId: args['levelObjectId'] as String,
-              exerciseImageUrl: args['exerciseImageUrl'] as String,
-            );
-          },
-          '/letters_level_1': (context) => const LetterLevel1(),
-
-          // '/letters_level_2': (context) {
-          //   final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          //   return LetterLevel2(
-          //     learner: args['learner'] as Learner,
-          //     exerciseId: args['exerciseId'] as String,
-          //     levelId: args['levelId'] as String, // Add the levelId parameter
-          //   );
-          // },
-
-          '/letters_level_3': (context) => const LetterLevel3(),
-          '/letters_game_1': (context) => const ArabicLetterTracingExercise(),
-          '/letters_game_3': (context) => const LetterLevel2Game(),
-          '/letters_game_4': (context) => const LetterLevel2Game2(),
-          '/letters_game_5': (context) => const LetterLevel3Game(),
 
 
-          '/words_game_1': (context) => const SpellingGameScreen("Beginner"),
-          '/words_game_2': (context) => DirectionInstructionsPage(),
-          '/words_game_3': (context) => DirectionInstructionsSecondPage(),
+          // STORY STAGE GAMES
 
-
-          '/words_game_5': (context) => const HandDetectionGameWidget(),
-          '/words_game_6': (context) => const SpellingGameScreen("Intermediate"),
-
-
-          '/words_game_7': (context) => const MonthsOrderGameScreen(),
-          '/words_game_8': (context) => const SpellingGameScreen("Advanced"),
-
-
+          // LEVEL 1 GAMES
           '/story_game_1': (context) => StoryInputScreen(),
+
+          // LEVEL 2 GAMES
           '/story_game_2': (context) => const ArabicStorySummarizeWidget(),
 
 

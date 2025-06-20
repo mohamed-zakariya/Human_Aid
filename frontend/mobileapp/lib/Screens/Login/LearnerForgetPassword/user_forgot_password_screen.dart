@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../Services/user_password_reset_service.dart';
-import '../../generated/l10n.dart';
-import '../widgets/language_toggle_icon.dart';
+import '../../../Services/user_password_reset_service.dart';
+import '../../../generated/l10n.dart';
+import '../../widgets/language_toggle_icon.dart';
 
 class UserForgotPasswordPage extends StatefulWidget {
   final Function(Locale) onLocaleChange;

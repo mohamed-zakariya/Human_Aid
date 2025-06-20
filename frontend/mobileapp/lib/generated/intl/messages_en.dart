@@ -372,6 +372,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "listenToLetter":
             MessageLookupByLibrary.simpleMessage("Listen to Letter"),
         "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
+        "loginSubtitle": MessageLookupByLibrary.simpleMessage(
+            "Welcome back! Please sign in to continue"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("Login"),
         "logoutButton": MessageLookupByLibrary.simpleMessage("Logout"),
         "logoutConfirmationMessage": MessageLookupByLibrary.simpleMessage(

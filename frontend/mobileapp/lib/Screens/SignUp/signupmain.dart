@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mobileapp/Screens/widgets/MaleFemale.dart';
 import 'package:mobileapp/Screens/SignUp/ProgressBar.dart';
-import 'package:mobileapp/Screens/widgets/SignupCountryDropdown.dart';
 import 'package:mobileapp/Screens/widgets/SignupEmailInputField.dart';
 import 'package:mobileapp/Screens/widgets/SignupInputField.dart';
 import 'package:mobileapp/Screens/SignUp/SignupPhoneNumberField.dart';
@@ -13,6 +12,8 @@ import 'package:mobileapp/Services/signup_service.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/models/parent.dart';
 
+import '../widgets/GuardianDate.dart';
+import '../widgets/GuardianSignupCountryDropdown.dart';
 import '../widgets/date.dart';
 
 
@@ -111,7 +112,7 @@ class _SignupmainState extends State<Signupmain> {
           '/signup2',
           arguments: parent
       );
-    
+
     } else {
       print("Failed to create account: Parent is null");
     }
@@ -183,7 +184,7 @@ class _SignupmainState extends State<Signupmain> {
                 // Signupinputfield(S.of(context).signupinputfieldusername, S.of(context).signuptitleusername, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, usernameController, Validators.validateUsername),
                 SignupInputFieldEmail(S.of(context).signupinputfieldemail, S.of(context).signuptitleemail, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, emailController, true),
                 Signupphonenumberfield(S.of(context).signuptitlephonenumber, phoneNumberController),
-                SignupCountryDropdown(
+                Guardiansignupcountrydropdown(
                     S.of(context).signupinputfieldnationality,
                     S.of(context).signuptitlenationality,
                     108, 99, 255, 0.1, 0, 0, 0, 0.3,
@@ -204,7 +205,7 @@ class _SignupmainState extends State<Signupmain> {
                 Signupinputfield(S.of(context).signupinputfieldpassword, S.of(context).signuptitlepassword, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, passwordController, Validators.validatePassword),
                 Signupinputfield(S.of(context).signupinputfieldpassword, S.of(context).signuptitleconfirmpassword, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, confirmPasswordController, validateConfirmPassword),
                 // Signupinputfield(S.of(context).signupinputfieldbirthdate, S.of(context).signuptitlebirthdate, 108, 99, 255, 0.1, 0, 0, 0, 0.3, true, false, birthdateController),
-                DateTimePicker(
+                GuardianDateTimePicker(
                   controller: birthdateController,
                   quardian: true,
                   validator: (value) {

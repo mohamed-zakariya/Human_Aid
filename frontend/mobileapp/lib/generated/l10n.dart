@@ -2510,6 +2510,16 @@ class S {
     );
   }
 
+  /// `Welcome back! Please sign in to continue`
+  String get loginSubtitle {
+    return Intl.message(
+      'Welcome back! Please sign in to continue',
+      name: 'loginSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Close`
   String get close {
     return Intl.message(
