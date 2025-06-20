@@ -11,6 +11,7 @@ class LevelScreen extends StatefulWidget {
   final Learner learner;
   final String  exerciseId;
   final String  levelObjectId; // MongoDB ObjectId for mutation
+  final String  exerciseImageUrl;
 
   const LevelScreen({
     Key? key,
@@ -18,6 +19,7 @@ class LevelScreen extends StatefulWidget {
     required this.learner,
     required this.exerciseId,
     required this.levelObjectId,
+    required this.exerciseImageUrl,
   }) : super(key: key);
 
   @override
@@ -77,6 +79,19 @@ class _LevelScreenState extends State<LevelScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
+                ),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: 0.1,
+                        child: Image.network(
+                          widget.exerciseImageUrl,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -158,11 +173,11 @@ class _LevelScreenState extends State<LevelScreen> {
       child: InkWell(
         onTap: () => Navigator.pushNamed(
           ctx,
-          '/${widget.level.levelId}', // e.g. "/letters_level_1"
+          '/${widget.level.levelId}',
             arguments: {
             'learner':    widget.learner,
             'exerciseId': widget.exerciseId,
-            'levelId':    widget.levelObjectId, // Pass the MongoDB ObjectId
+            'levelId':    widget.levelObjectId,
           },
         ),
         borderRadius: BorderRadius.circular(16),

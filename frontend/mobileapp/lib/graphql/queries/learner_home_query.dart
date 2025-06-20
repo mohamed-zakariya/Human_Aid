@@ -11,6 +11,8 @@ const String getLearnerHomePageQuery = r'''
         accuracyPercentage
         score
       }
+      progress_imageUrl
+      exercise_imageUrl
     }
   }
 ''';

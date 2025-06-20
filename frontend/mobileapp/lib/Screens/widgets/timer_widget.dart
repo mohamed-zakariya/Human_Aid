@@ -6,7 +6,7 @@ class TimerWidget extends StatelessWidget {
   final int maxRecordingSeconds;
   final String Function(int) formatTime;
 
-  const TimerWidget({
+    const TimerWidget({
     Key? key,
     required this.isRecording,
     required this.timerSeconds,
@@ -16,27 +16,32 @@ class TimerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05), // Responsive padding
       child: Column(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: isRecording
-                  ? (timerSeconds / maxRecordingSeconds)
-                  : 0,
-              minHeight: 8,
-              backgroundColor: Colors.white,
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+            child: SizedBox(
+              height: screenHeight * 0.01, // Responsive progress bar height
+              child: LinearProgressIndicator(
+                value: isRecording
+                    ? (timerSeconds / maxRecordingSeconds)
+                    : 0,
+                backgroundColor: Colors.white,
+                valueColor:
+                    const AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+              ),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: screenHeight * 0.01),
           Text(
             formatTime(timerSeconds),
-            style: const TextStyle(
-              fontSize: 18,
+            style: TextStyle(
+              fontSize: (screenWidth * 0.045).clamp(16.0, 20.0), // Responsive font size
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),

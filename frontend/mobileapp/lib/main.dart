@@ -43,6 +43,9 @@ import 'Screens/Login/forgot_password_screen.dart';
 import 'Screens/Login/login_screen_gaurdian.dart';
 import 'Screens/Login/login_screen_user.dart';
 import 'Screens/Login/otp_verification_screen.dart';
+import 'Screens/Login/user_change_password_screen.dart';
+import 'Screens/Login/user_forgot_password_screen.dart';
+import 'Screens/Login/user_otp_verification_screen.dart';
 import 'Screens/ParentScreen/ParentMain.dart';
 import 'Screens/exercises_levels_screen.dart';
 import 'Screens/level_screen.dart';
@@ -159,6 +162,9 @@ class _MyAppState extends State<MyApp> {
           '/forgot-password': (context) => ForgotPasswordPage(onLocaleChange: _setLocale),
           '/otp-verification': (context) => OTPVerificationScreen(onLocaleChange: _setLocale),
           '/change-password': (context) => ChangePasswordScreen(onLocaleChange: _setLocale),
+          '/user-forgot-password': (context) => UserForgotPasswordPage(onLocaleChange: _setLocale),
+          '/user-otp-verification': (context) => UserOTPVerificationScreen(onLocaleChange: _setLocale),
+          '/user-change-password': (context) => UserChangePasswordScreen(onLocaleChange: _setLocale),
 
             '/words_level_1': (context) {
             final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
@@ -263,7 +269,8 @@ class _MyAppState extends State<MyApp> {
               level: args['level'] as Level,
               learner: args['learner'] as Learner,
               exerciseId: args['exerciseId'] as String,
-              levelObjectId: args['levelObjectId'] as String, // Pass the MongoDB ObjectId
+              levelObjectId: args['levelObjectId'] as String,
+              exerciseImageUrl: args['exerciseImageUrl'] as String,
             );
           },
           '/letters_level_1': (context) => const LetterLevel1(),

@@ -46,7 +46,6 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   String _currentWordId = "";
   String? _currentWordImage;
 
-
   int _attemptsLeft = 3;
   String _username = "";
   String _userId = "";
@@ -116,13 +115,13 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
       _isProcessing = true;
       _feedbackMessage = "";
       _isCorrect = null;
+      _attemptsLeft = 3; // Reset attempts when loading new word
     });
 
     // Map levelId to backend key for fetching words only
     String backendLevelKey = _getBackendLevelKey(widget.levelId);
 
     final Word? fetchedWord = await WordsService.fetchRandomWord(backendLevelKey, _exerciseId);
-
 
     if (fetchedWord == null) {
       // Handle "no words" scenario
@@ -140,7 +139,6 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
       _currentWordId = fetchedWord.id;
       _wordLetters = fetchedWord.text.split('');
       _currentWordImage = fetchedWord.imageUrl;
-
       _isProcessing = false;
     });
   }
@@ -150,6 +148,7 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
     try {
       await _audioService.startRecording();
 
+      if (!mounted) return;
       setState(() {
         _isRecording = true;
         _timerSeconds = 0;
@@ -158,17 +157,21 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
       });
 
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (!mounted) return;
         setState(() => _timerSeconds++);
         if (_timerSeconds >= _maxRecordingSeconds) {
           _stopRecording();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(S.of(context).recordingTimeout)),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(S.of(context).recordingTimeout)),
+            );
+          }
         }
       });
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).recordingStartError('$e'))),
+        SnackBar(content: Text(S.of(context).recordingStartError('e'))),
       );
     }
   }
@@ -176,7 +179,9 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   /// Stop recording + timer
   Future<String?> _stopRecording() async {
     _timer?.cancel();
-    setState(() => _isRecording = false);
+    if (mounted) {
+      setState(() => _isRecording = false);
+    }
     return await _audioService.stopRecording();
   }
 
@@ -208,70 +213,86 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
     }
   }
 
-  
-/// Process the speech recording
+  /// Process the speech recording with updated attempts logic
   Future<void> _processSpeech(String audioPath) async {
-    setState(() {
-      _isProcessing = true;
-      _feedbackMessage = S.of(context).processingRecording;
-    });
+    if (mounted) {
+      setState(() {
+        _isProcessing = true;
+        _feedbackMessage = S.of(context).processingRecording;
+      });
+    }
 
     try {
       final result = await SpeechService.processSpeech(
         userId: _userId,
         exerciseId: _exerciseId,
         wordId: _currentWordId,
-        levelId: _levelId, // <-- send as received from LevelScreen
+        levelId: _levelId,
         correctWord: _currentWord,
         audioFilePath: audioPath,
       );
 
-      setState(() {
-        _isProcessing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
 
       if (result != null) {
         final bool isCorrect = result['isCorrect'] as bool;
         final String transcript = result['transcript'] as String;
         final String message = result['message'] as String;
 
-        setState(() {
-          _feedbackMessage =
-              "${S.of(context).transcriptLabel}: $transcript\n$message";
-          _isCorrect = isCorrect;
-        });
-
-        if (!isCorrect) {
+        if (mounted) {
           setState(() {
-            _attemptsLeft = _attemptsLeft > 0 ? _attemptsLeft - 1 : 0;
+            _feedbackMessage =
+                "[S.of(context).transcriptLabel]: $transcript\n$message";
+            _isCorrect = isCorrect;
           });
+        }
+
+        if (isCorrect) {
+          // If correct, wait a moment then load new word automatically
+          await Future.delayed(const Duration(seconds: 2));
+          if (mounted) _loadWord();
+        } else {
+          // If incorrect, decrease attempts
+          if (mounted) {
+            setState(() {
+              _attemptsLeft = _attemptsLeft > 0 ? _attemptsLeft - 1 : 0;
+            });
+          }
+          // If no attempts left, automatically load new word
           if (_attemptsLeft == 0) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(S.of(context).outOfTries)),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(S.of(context).outOfTries)),
+              );
+            }
             await Future.delayed(const Duration(seconds: 2));
-            _loadWord();
+            if (mounted) _loadWord(); // This will reset attempts to 3
           }
         }
       } else {
-        setState(() {
-          _feedbackMessage = S.of(context).processingError;
-        });
+        if (mounted) {
+          setState(() {
+            _feedbackMessage = S.of(context).processingError;
+          });
+        }
       }
     } catch (e) {
-      setState(() {
-        _isProcessing = false;
-        _feedbackMessage = S.of(context).recordingError('$e');
-      });
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+          _feedbackMessage = S.of(context).recordingError('e');
+        });
+      }
     }
   }
 
   /// When "التالي" is pressed, fetch a new word
   void _onNextButtonPressed() {
-    _loadWord();
-    setState(() {
-      _attemptsLeft = 3;
-    });
+    _loadWord(); // This will reset attempts to 3
   }
 
   /// Format seconds as mm:ss
@@ -337,143 +358,179 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              // Image
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 12.0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _currentWordImage != null
-                      ? Image.network(
-                          _currentWordImage!,
-                          height: 150,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                              Icons.broken_image,
-                              size: 150,
-                              color: Colors.grey,
-                            );
-                          },
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const SizedBox(
-                              height: 150,
-                              child: Center(child: CircularProgressIndicator()),
-                            );
-                          },
-                        )
-                      : const Icon(
-                          Icons.image_not_supported,
-                          size: 150,
-                          color: Colors.grey,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Calculate responsive dimensions based on screen size
+              final screenHeight = constraints.maxHeight;
+              final screenWidth = constraints.maxWidth;
+              
+              // Define proportional sizes
+              final imageHeight = screenHeight * 0.18; // 18% of screen height
+              final wordFontSize = screenWidth * 0.1; // 10% of screen width, capped
+              final buttonHeight = screenHeight * 0.07; // 7% of screen height
+              
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: screenHeight),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      children: [
+                        // Image with aspect ratio preservation
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.06, // 6% of screen width
+                            vertical: screenHeight * 0.015, // 1.5% of screen height
+                          ),
+                          child: SizedBox(
+                            height: imageHeight,
+                            child: Center(
+                              child: _currentWordImage != null
+                                  ? AspectRatio(
+                                      aspectRatio: 1.0, // Square aspect ratio
+                                      child: Image.network(
+                                        _currentWordImage!,
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Icon(
+                                            Icons.broken_image,
+                                            size: imageHeight * 0.8,
+                                            color: Colors.grey,
+                                          );
+                                        },
+                                        loadingBuilder: (context, child, loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return SizedBox(
+                                            height: imageHeight,
+                                            child: const Center(child: CircularProgressIndicator()),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.image_not_supported,
+                                      size: imageHeight * 0.8,
+                                      color: Colors.grey,
+                                    ),
+                            ),
+                          ),
                         ),
 
-                  ],
-                ),
-              ),
+                        SizedBox(height: screenHeight * 0.012), // 1.2% of screen height
 
-              const SizedBox(height: 10),
+                        // Word text with responsive font size
+                        Text(
+                          _currentWord,
+                          style: TextStyle(
+                            fontSize: wordFontSize.clamp(24.0, 48.0), // Clamp between 24-48
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
 
-              // Word text
-              Text(
-                _currentWord,
-                style: const TextStyle(
-                  fontSize: 42,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-              ),
+                        SizedBox(height: screenHeight * 0.02), // 2% of screen height
 
-              const SizedBox(height: 16),
+                        // Attempts text
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                          child: Column(
+                            children: [
+                              Text(
+                                S.of(context).dontWorry,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: (screenWidth * 0.04).clamp(14.0, 18.0), 
+                                  color: Colors.black87
+                                ),
+                              ),
+                              SizedBox(height: screenHeight * 0.005),
+                              Text(
+                                S.of(context).attemptsLeft(_attemptsLeft),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: (screenWidth * 0.04).clamp(14.0, 18.0), 
+                                  color: Colors.black87
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
 
-              // Attempts text
-              Column(
-                children: [
-                  Text(
-                    S.of(context).dontWorry,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    S.of(context).attemptsLeft(_attemptsLeft),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                ],
-              ),
+                        SizedBox(height: screenHeight * 0.012),
 
-              const SizedBox(height: 10),
+                        // Feedback message
+                        FeedbackWidget(
+                          isProcessing: _isProcessing,
+                          isCorrect: _isCorrect,
+                          feedbackMessage: _feedbackMessage,
+                        ),
 
-              // Feedback message
-              FeedbackWidget(
-                isProcessing: _isProcessing,
-                isCorrect: _isCorrect,
-                feedbackMessage: _feedbackMessage,
-              ),
+                        SizedBox(height: screenHeight * 0.012),
 
-              const SizedBox(height: 10),
+                        // Timer + Progress
+                        TimerWidget(
+                          isRecording: _isRecording,
+                          timerSeconds: _timerSeconds,
+                          maxRecordingSeconds: _maxRecordingSeconds,
+                          formatTime: _formatTime,
+                        ),
 
-              // Timer + Progress
-              TimerWidget(
-                isRecording: _isRecording,
-                timerSeconds: _timerSeconds,
-                maxRecordingSeconds: _maxRecordingSeconds,
-                formatTime: _formatTime,
-              ),
+                        SizedBox(height: screenHeight * 0.037),
 
-              const SizedBox(height: 30),
+                        // Letters with responsive sizing
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+                          child: LettersWidget(letters: _wordLetters),
+                        ),
 
-              // Letters
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: LettersWidget(letters: _wordLetters),
-              ),
+                        SizedBox(height: screenHeight * 0.037),
 
-              const SizedBox(height: 30),
+                        // Control buttons (Wrong, Record, Correct)
+                        RecordingControls(
+                          isRecording: _isRecording,
+                          isProcessing: _isProcessing,
+                          onWrongButtonPressed: _onWrongButtonPressed,
+                          onRecordButtonPressed: _onRecordButtonPressed,
+                          onCorrectButtonPressed: _onCorrectButtonPressed,
+                        ),
 
-              // Control buttons (Wrong, Record, Correct)
-              RecordingControls(
-                isRecording: _isRecording,
-                isProcessing: _isProcessing,
-                onWrongButtonPressed: _onWrongButtonPressed,
-                onRecordButtonPressed: _onRecordButtonPressed,
-                onCorrectButtonPressed: _onCorrectButtonPressed,
-              ),
+                        const Spacer(),
 
-              const Spacer(),
-
-              // Next button
-              Container(
-                width: double.infinity,
-                height: 56,
-                margin: const EdgeInsets.fromLTRB(16, 8, 16, 20),
-                child: ElevatedButton(
-                  onPressed: _isProcessing ? null : _onNextButtonPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey[200],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                        // Next button with responsive sizing
+                        Container(
+                          width: double.infinity,
+                          height: buttonHeight.clamp(50.0, 70.0), // Clamp button height
+                          margin: EdgeInsets.fromLTRB(
+                            screenWidth * 0.04, 
+                            screenHeight * 0.01, 
+                            screenWidth * 0.04, 
+                            screenHeight * 0.025
+                          ),
+                          child: ElevatedButton(
+                            onPressed: _isProcessing ? null : _onNextButtonPressed,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueGrey[200],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 2,
+                              disabledBackgroundColor: Colors.grey.shade300,
+                            ),
+                            child: Text(
+                              S.of(context).nextButton,
+                              style: TextStyle(
+                                fontSize: (screenWidth * 0.055).clamp(18.0, 26.0), // Responsive font size
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    elevation: 2,
-                    disabledBackgroundColor: Colors.grey.shade300,
-                  ),
-                  child: Text(
-                    S.of(context).nextButton,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
                   ),
                 ),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
