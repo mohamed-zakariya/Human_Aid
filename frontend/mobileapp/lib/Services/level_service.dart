@@ -12,6 +12,7 @@ class LevelService {
           id
           name
           arabic_name
+          exercise_imageUrl
           levels {
             _id
             level_id
@@ -76,6 +77,48 @@ class LevelService {
     } catch (e) {
       print('Error fetching levels: $e');
       return [];
+    }
+  }
+
+  /// Returns both the levels for the requested exercise and the exercise object itself
+  static Future<Map<String, dynamic>> getLevelsAndExercise(String exerciseId) async {
+    try {
+      final GraphQLClient client = await GraphQLService.getClient();
+      final QueryResult result = await client.query(
+        QueryOptions(
+          document: gql(_levelsQuery),
+        ),
+      );
+      final QueryResult? handledResult = await GraphQLService.handleAuthErrors(
+        result: result,
+        role: 'user',
+        retryRequest: () => _runQuery(client),
+      );
+      if (handledResult == null || handledResult.hasException) {
+        throw Exception(
+          handledResult?.exception?.toString() ?? 'Failed to fetch levels',
+        );
+      }
+      final List exercises = handledResult.data?['getLevelsForExercises'] ?? [];
+      final Map? exercise = exercises.firstWhere(
+        (e) => e['id'] == exerciseId,
+        orElse: () => null,
+      );
+      if (exercise == null) {
+        throw Exception('Exercise $exerciseId not found');
+      }
+      final List levelsData = exercise['levels'] as List;
+      final List<Level> levels = levelsData.map<Level>((levelData) => Level.fromJson(levelData)).toList();
+      return {
+        'levels': levels,
+        'exercise': exercise,
+      };
+    } catch (e) {
+      print('Error fetching levels and exercise: $e');
+      return {
+        'levels': <Level>[],
+        'exercise': null,
+      };
     }
   }
 

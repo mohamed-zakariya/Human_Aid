@@ -27,6 +27,7 @@ class LearnerHomeService {
         return [];
       }
 
+      // No change needed here, just ensure the new fields are available in the returned data
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
       rethrow;

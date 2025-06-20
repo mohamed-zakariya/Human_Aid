@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+
 import '../models/level.dart';
 import '../models/learner.dart';
-import '../services/level_service.dart';
+import '../Services/level_service.dart';
+import '../graphql/graphql_client.dart';
 import '../../generated/l10n.dart';
 import 'level_screen.dart';
 import 'widgets/level_card.dart';
@@ -10,6 +13,7 @@ class ExerciseLevelsScreen extends StatefulWidget {
   final String exerciseId;
   final String exerciseName;
   final String exerciseArabicName;
+  final String? exerciseImageUrl; // Now optional
   final Learner learner;
 
   const ExerciseLevelsScreen({
@@ -17,6 +21,7 @@ class ExerciseLevelsScreen extends StatefulWidget {
     required this.exerciseId,
     required this.exerciseName,
     required this.exerciseArabicName,
+    this.exerciseImageUrl, // Not required
     required this.learner,
   }) : super(key: key);
 
@@ -26,12 +31,28 @@ class ExerciseLevelsScreen extends StatefulWidget {
 
 class _ExerciseLevelsScreenState extends State<ExerciseLevelsScreen> {
   late Future<List<Level>> _levelsFuture;
+  String? _exerciseImageUrl;
+  bool _loadingImage = false;
   final Color _primaryColor = const Color(0xFF6C63FF);
-  
+  String? _pendingExerciseId;
+
   @override
   void initState() {
     super.initState();
-    _levelsFuture = LevelService.getLevelsForExercise(widget.exerciseId);
+    _exerciseImageUrl = widget.exerciseImageUrl;
+    _levelsFuture = _fetchLevelsAndMaybeImage();
+  }
+
+  Future<List<Level>> _fetchLevelsAndMaybeImage() async {
+    // Use the new service method to get both levels and exercise object
+    final result = await LevelService.getLevelsAndExercise(widget.exerciseId);
+    final exercise = result['exercise'];
+    if (_exerciseImageUrl == null && exercise != null && exercise['exercise_imageUrl'] != null) {
+      setState(() {
+        _exerciseImageUrl = exercise['exercise_imageUrl'] as String?;
+      });
+    }
+    return result['levels'] as List<Level>;
   }
 
   void _navigateToGames(Level level) {
@@ -43,7 +64,8 @@ class _ExerciseLevelsScreenState extends State<ExerciseLevelsScreen> {
           level: level,
           learner: widget.learner,
           exerciseId: widget.exerciseId,
-          levelObjectId: level.id, // Pass the MongoDB ObjectId
+          levelObjectId: level.id,
+          exerciseImageUrl: _exerciseImageUrl ?? '',
         ),
       ),
     );
@@ -83,16 +105,18 @@ class _ExerciseLevelsScreenState extends State<ExerciseLevelsScreen> {
                 ),
                 child: Stack(
                   children: [
-                    // Background pattern (optional)
-                    Positioned.fill(
-                      child: Opacity(
-                        opacity: 0.1,
-                        child: Image.network(
-                          'https://drive.google.com/uc?export=view&id=1IS7-4KoNMd5WgBGHdOvyhs2XWb4VA4RC',
-                          fit: BoxFit.cover,
+                    if (_loadingImage)
+                      const Center(child: CircularProgressIndicator())
+                    else if (_exerciseImageUrl != null && _exerciseImageUrl!.isNotEmpty)
+                      Positioned.fill(
+                        child: Opacity(
+                          opacity: 0.1,
+                          child: Image.network(
+                            _exerciseImageUrl!,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
                     // Decorative shapes
                     Positioned(
                       right: -50,

@@ -1,5 +1,5 @@
+// feedback_widget.dart
 import 'package:flutter/material.dart';
-// Import your generated localization class (S)
 import '../../generated/l10n.dart';
 
 class FeedbackWidget extends StatelessWidget {
@@ -28,15 +28,19 @@ class FeedbackWidget extends StatelessWidget {
     }
 
     if (feedbackMessage.isNotEmpty) {
-      return _buildFeedbackMessage();
+      return _buildFeedbackMessage(context);
     }
 
     return const SizedBox.shrink();
   }
 
   Widget _buildProcessingIndicator(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(screenWidth * 0.03), // Responsive padding
+      margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -51,15 +55,19 @@ class FeedbackWidget extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const CircularProgressIndicator(
-            strokeWidth: 2.5,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+          SizedBox(
+            width: screenWidth * 0.05, // Responsive size
+            height: screenWidth * 0.05,
+            child: const CircularProgressIndicator(
+              strokeWidth: 2.5,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+            ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: screenWidth * 0.03),
           Text(
-            S.of(context).feedbackWidgetAnalyzing, // Localized string
+            S.of(context).feedbackWidgetAnalyzing,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: (screenWidth * 0.04).clamp(14.0, 18.0), // Responsive font size
               color: Colors.grey[700],
               fontWeight: FontWeight.w600,
             ),
@@ -69,7 +77,10 @@ class FeedbackWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFeedbackMessage() {
+  Widget _buildFeedbackMessage(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    
     final Color primaryColor = isCorrect == true
         ? Colors.green
         : isCorrect == false
@@ -83,10 +94,13 @@ class FeedbackWidget extends StatelessWidget {
             : Icons.info_rounded;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
       child: Container(
         key: ValueKey(feedbackMessage),
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+        padding: EdgeInsets.symmetric(
+          vertical: screenHeight * 0.017, 
+          horizontal: screenWidth * 0.045
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
@@ -108,14 +122,14 @@ class FeedbackWidget extends StatelessWidget {
             Icon(
               icon,
               color: primaryColor,
-              size: 28,
+              size: screenWidth * 0.07, // Responsive icon size
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: screenWidth * 0.04),
             Expanded(
               child: Text(
                 feedbackMessage,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: (screenWidth * 0.04).clamp(14.0, 18.0), // Responsive font size
                   fontWeight: FontWeight.w600,
                   color: primaryColor,
                   height: 1.4,
