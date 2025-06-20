@@ -380,7 +380,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
               align: ContentAlign.top,
               builder: (context, controller) {
                 return Container(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 45),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 60),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,

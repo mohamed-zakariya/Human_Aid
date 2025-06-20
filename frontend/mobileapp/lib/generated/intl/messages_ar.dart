@@ -158,6 +158,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "بعد كل سؤال، سيتم عرض الاتجاه الصحيح."),
         "correctDirectionIs": m3,
         "correctFeedback": MessageLookupByLibrary.simpleMessage("أحسنت! 🎉"),
+        "coursesTabDescription": MessageLookupByLibrary.simpleMessage(
+            "يمكنك الوصول إلى جميع دوراتك من هنا. تصفح الدروس المتاحة وتابع تقدمك."),
+        "coursesTabTitle": MessageLookupByLibrary.simpleMessage("دوراتك"),
         "createAccountGaurdian":
             MessageLookupByLibrary.simpleMessage("إنشاء حساب ولي أمر"),
         "createAccountUser":
@@ -197,6 +200,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "drawInstruction": MessageLookupByLibrary.simpleMessage(
             "المس وارسم في أي مكان على اللوحة"),
         "drawLetter": m6,
+        "drawerMenuDescription": MessageLookupByLibrary.simpleMessage(
+            "اضغط على قائمة التنقل لفتح القائمة الجانبية. يمكنك تغيير اللغة أو تسجيل الخروج من هنا."),
+        "drawerMenuTitle": MessageLookupByLibrary.simpleMessage("قائمة التنقل"),
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "هذا البريد الإلكتروني مسجّل بالفعل"),
         "emailHint": MessageLookupByLibrary.simpleMessage("البريد الالكتروني"),
@@ -485,6 +491,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "حدث خطأ أثناء معالجة التسجيل"),
         "processingRecording":
             MessageLookupByLibrary.simpleMessage("جاري معالجة التسجيل..."),
+        "profileTabDescription": MessageLookupByLibrary.simpleMessage(
+            "اضغط هنا لعرض وتحديث معلومات ملفك الشخصي. قم بإدارة التفاصيل والتفضيلات الخاصة بك."),
+        "profileTabTitle": MessageLookupByLibrary.simpleMessage("ملفك الشخصي"),
         "progressCompleted": m18,
         "progressPoints": m19,
         "progressWillBeLost":

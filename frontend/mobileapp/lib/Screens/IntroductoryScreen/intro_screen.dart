@@ -235,7 +235,7 @@ class IntroScreen extends StatelessWidget {
               text: S.of(context).guardianButton,
               onPressed: () => Navigator.pushNamed(context, '/login_gaurdian'),
               gradient: const LinearGradient(
-                colors: [Color(0xFFE91E63), Color(0xFFAD1457)],
+                colors: [Color(0xFFFDA3C1), Color(0xFFE91E63)],
               ),
               icon: Icons.family_restroom,
               isTablet: isTablet,

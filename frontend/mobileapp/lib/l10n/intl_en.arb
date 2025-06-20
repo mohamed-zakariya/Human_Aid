@@ -247,7 +247,12 @@
     "mainCourseNavigationDescription": "Tap this play button to go to the main course page. You must tap it to complete the tutorial!",
     "welcome": "Welcome",
     "loginSubtitle": "Welcome back! Please sign in to continue",
-
+    "drawerMenuTitle": "Navigation Menu",
+    "drawerMenuDescription": "Tap these Navigation Menu to open the side menu. Here you can change your language preferences and log out when needed.",
+    "profileTabTitle": "Your Profile",
+    "profileTabDescription": "Tap here to view and update your profile information. Manage your personal details and preferences.",
+    "coursesTabTitle": "Your Courses",
+    "coursesTabDescription": "Access all your courses here. Browse available lessons, track your progress, and continue your learning journey.",
 
 
 

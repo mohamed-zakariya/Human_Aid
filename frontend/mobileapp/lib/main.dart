@@ -98,6 +98,8 @@ class _MyAppState extends State<MyApp> {
 
     await prefs.setBool('hasShownCourseTutorial', false);
     await prefs.setBool('hasShownCoursePageTutorial', false);
+    await prefs.setBool('parentTutorialSeen', false);
+
 
     final bool onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
 
