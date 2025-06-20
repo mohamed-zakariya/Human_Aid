@@ -232,13 +232,21 @@
     "tutorialCourseSubtitle": "اضغط للانتقال إلى قائمة الدورات",
     "tutorialSkip": "تخطي",
     "tutorialCourseCardTitle": "هذه هي دورتك",
-    "tutorialCourseCardDescription": "انقر هنا لاستكشاف مواد التعلم.",
+    "tutorialCourseCardDescription": "اضغط هنا للمتابعة.",
     "tutorialPlayButtonTitle": "زر التشغيل",
     "tutorialPlayButtonDescription": "اضغط على هذا الزر لبدء التمرين.",
     "tutorialExpandButtonTitle": "عرض المزيد",
     "tutorialExpandButtonDescription": "انقر لرؤية المزيد من المحتوى أو التفاصيل.",
-
-
+    "expandLevelsTitle": "عرض المستويات المتاحة",
+    "expandLevelsDescription": "اضغط على هذا الزر لاستكشاف جميع المستويات والألعاب المتاحة لهذا التمرين. يجب الضغط للمتابعة!",
+    "levelsSectionTitle": "مستويات الدورة",
+    "levelsSectionDescription": "هذه هي المستويات المتاحة لهذه الدورة. يحتوي كل مستوى على ألعاب وأنشطة مختلفة تساعدك على التعلم.",
+    "gamesNavigationTitle": "التنقل بين الألعاب",
+    "gamesNavigationDescription": "اضغط على أي لعبة للانتقال مباشرةً إلى تلك اللعبة ضمن الدورة.",
+    "mainCourseNavigationTitle": "التنقل إلى الدورة الرئيسية",
+    "mainCourseNavigationDescription": "اضغط على زر التشغيل للانتقال إلى صفحة الدورة الرئيسية. يجب الضغط لإكمال الشرح!",
+    "welcome": "مرحبا",
+    "loginSubtitle": "مرحبًا بعودتك! الرجاء تسجيل الدخول للمتابعة",
 
 
 

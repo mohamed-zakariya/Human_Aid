@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../Services/password_reset_service.dart';
-import '../../generated/l10n.dart';
-import '../widgets/language_toggle_icon.dart';
+import '../../../Services/user_password_reset_service.dart';
+import '../../../generated/l10n.dart';
+import '../../widgets/language_toggle_icon.dart';
 
-class ForgotPasswordPage extends StatefulWidget {
+class UserForgotPasswordPage extends StatefulWidget {
   final Function(Locale) onLocaleChange;
 
-  const ForgotPasswordPage({super.key, required this.onLocaleChange});
+  const UserForgotPasswordPage({super.key, required this.onLocaleChange});
 
   @override
-  _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
+  _UserForgotPasswordPageState createState() => _UserForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+class _UserForgotPasswordPageState extends State<UserForgotPasswordPage> {
   final TextEditingController emailController = TextEditingController();
 
   @override
@@ -73,9 +73,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     }
 
                     try {
-                      String response = await PasswordResetService.forgotPassword(email);
+                      String response = await UserPasswordResetService.forgotPassword(email);
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response)));
-                      Navigator.pushNamed(context, '/otp-verification', arguments: email);
+                      Navigator.pushNamed(context, '/user-otp-verification', arguments: email);
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Error: ${e.toString()}")),

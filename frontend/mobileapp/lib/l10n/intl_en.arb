@@ -232,11 +232,21 @@
     "tutorialCourseSubtitle": "Tap to navigate to your course list",
     "tutorialSkip": "Skip",
     "tutorialCourseCardTitle": "This is your course",
-    "tutorialCourseCardDescription": "Click here to explore the learning materials.",
+    "tutorialCourseCardDescription": "Tap here to proceed.",
     "tutorialPlayButtonTitle": "Play Button",
     "tutorialPlayButtonDescription": "Tap this button to start the exercise.",
     "tutorialExpandButtonTitle": "Expand View",
     "tutorialExpandButtonDescription": "Click to see more content or details.",
+    "expandLevelsTitle": "View Available Levels",
+    "expandLevelsDescription": "Tap this button to explore all available levels and games for this exercise. You need to tap it to continue!",
+    "levelsSectionTitle": "Course Levels",
+    "levelsSectionDescription": "These are the available levels for this course. Each level includes unique games and activities to help you learn.",
+    "gamesNavigationTitle": "Games Navigation",
+    "gamesNavigationDescription": "Tap any game chip to go directly to that game within the course.",
+    "mainCourseNavigationTitle": "Main Course Navigation",
+    "mainCourseNavigationDescription": "Tap this play button to go to the main course page. You must tap it to complete the tutorial!",
+    "welcome": "Welcome",
+    "loginSubtitle": "Welcome back! Please sign in to continue",
 
 
 
@@ -267,7 +277,8 @@
 
 
 
-    "close": "Close",
+
+"close": "Close",
     "accuracy": "accuracy",
     "title1": "Welcome to your special world\nwhere learning is fun",
     "desc1": "I'm your friend (the app). Let me take you on a daily journey of progress and growth.",

@@ -13,55 +13,36 @@ class ExerciseCard extends StatelessWidget {
   final int lecturesCount;
   final Learner learner;
   final Color color;
+  final String exerciseImageUrl;
+  final VoidCallback? onTap;
 
   const ExerciseCard({
     Key? key,
     required this.exerciseId,
     required this.imageUrl,
     required this.title,
-    this.arabicTitle = '',  // Default empty string for backward compatibility
+    this.arabicTitle = '', // Default empty string for backward compatibility
     required this.lecturesCount,
     required this.learner,
     required this.color,
+    required this.exerciseImageUrl,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Convert `lecturesCount` to string to pass into placeholder
     final String progressString = lecturesCount.toString();
     final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ExerciseLevelsScreen(
-              exerciseId: exerciseId,
-              exerciseName: title,
-              exerciseArabicName: arabicTitle.isNotEmpty ? arabicTitle : title,
-              learner: learner,
-            ),
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
         ),
+        elevation: 4,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Course image
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(12),
@@ -72,19 +53,17 @@ class ExerciseCard extends StatelessWidget {
                     imageUrl,
                     height: 100,
                     width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 100,
-                        width: double.infinity,
-                        color: color.withOpacity(0.2),
-                        child: Icon(
-                          Icons.image_not_supported_outlined,
-                          color: color,
-                          size: 40,
-                        ),
-                      );
-                    },
+                    fit: BoxFit.fill,
+                    errorBuilder: (_, __, ___) => Container(
+                      height: 100,
+                      width: double.infinity,
+                      color: color.withOpacity(0.2),
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        color: color,
+                        size: 40,
+                      ),
+                    ),
                   ),
                   if (lecturesCount > 0)
                     Positioned(

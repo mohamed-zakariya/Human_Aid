@@ -3,16 +3,12 @@ import 'package:mobileapp/Screens/LearnerScreen/NavBarLearner.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import '../../generated/l10n.dart';
 import 'learner_dashboard_page.dart';
 import 'learner_courses_page.dart';
 import 'learner_profile_page.dart';
 
-
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-
-
 
 class LearnerHomeScreen extends StatefulWidget {
   final Function(Locale) onLocaleChange;
@@ -35,6 +31,9 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
 
   final GlobalKey _coursesKey = GlobalKey();
 
+  // Add this variable to track tutorial state
+  bool _isTutorialActive = false;
+
   @override
   void initState() {
     super.initState();
@@ -42,8 +41,6 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndShowTutorial();
     });
-
-
   }
 
   Future<void> _checkAndShowTutorial() async {
@@ -57,23 +54,48 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
   }
 
   void _showTutorial() {
-    TutorialCoachMark(
-      targets: _createTargets(),
-      colorShadow: Colors.black.withOpacity(0.8),
-      textSkip: S.of(context).tutorialSkip,
-      paddingFocus: 8,
-      alignSkip: Alignment.bottomRight,
-      onFinish: () {
-        print("Tutorial finished");
-      },
-      onClickTarget: (target) {
-        print('onClickTarget: $target');
-      },
-      onSkip: () {
-        print("Tutorial skipped");
-        return true;
-      },
-    ).show(context: context);
+    setState(() {
+      _isTutorialActive = true;
+    });
+
+    Future.delayed(const Duration(milliseconds: 4000), () {
+      if (!mounted || !_isTutorialActive) return;
+
+      TutorialCoachMark(
+        targets: _createTargets(),
+        colorShadow: Colors.black.withOpacity(0.8),
+        textSkip: S.of(context).tutorialSkip,
+        paddingFocus: 8,
+        alignSkip: Alignment.bottomRight,
+        onFinish: () {
+          print("Tutorial finished");
+          Future.microtask(() {
+            if (mounted) {
+              setState(() {
+                _isTutorialActive = false;
+              });
+            }
+          });
+        },
+        onClickTarget: (target) {
+          print('onClickTarget: $target');
+          if (target.identify == "CoursesTab") {
+            _selectPage(1);
+          }
+        },
+        onSkip: () {
+          print("Tutorial skipped");
+          Future.microtask(() {
+            if (mounted) {
+              setState(() {
+                _isTutorialActive = false;
+              });
+            }
+          });
+          return true;
+        },
+      ).show(context: context);
+    });
   }
 
   List<TargetFocus> _createTargets() {
@@ -118,7 +140,6 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
     ];
   }
 
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -126,6 +147,11 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
   }
 
   void _selectPage(int pageIndex) {
+    // Prevent page changes during tutorial unless it's the courses page
+    if (_isTutorialActive && pageIndex != 1) {
+      return;
+    }
+
     setState(() {
       _currentIndex = pageIndex;
     });
@@ -138,103 +164,163 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: NavBarLearner(
-        learner: widget.learner,
-        onLocaleChange: widget.onLocaleChange,
-      ),
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: _primaryColor,
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
+      children: [
+        Scaffold(
+          drawer: NavBarLearner(
+            learner: widget.learner,
+            onLocaleChange: widget.onLocaleChange,
+          ),
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: _primaryColor,
+            iconTheme: const IconThemeData(color: Colors.white),
+            leading: _isTutorialActive
+                ? Container() // Hide drawer button during tutorial
+                : null,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  S.of(context).helloLabel,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 16,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      S.of(context).helloLabel,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.learner?.name ?? 'User',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  widget.learner?.name ?? 'User',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.white,
+                  child: CircleAvatar(
+                    radius: 22,
+                    backgroundColor: Colors.white,
+                    child: ClipOval(
+                      child: Image.asset(
+                        widget.learner!.gender == 'male'
+                            ? 'assets/images/child2.png'
+                            : 'assets/images/child1.png',
+                        width: 65,
+                        height: 65,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: Colors.white,
-              child: CircleAvatar(
-                radius: 22,
-                backgroundColor: Colors.white,
-                child: ClipOval(
-                  child: Image.asset(
-                    widget.learner!.gender == 'male'
-                        ? 'assets/images/child2.png'
-                        : 'assets/images/child1.png',
-                    width: 65,
-                    height: 65,
-                    fit: BoxFit.cover,
-                  ),
+          ),
+          body: AbsorbPointer(
+            absorbing: _isTutorialActive,
+            child: PageView(
+              controller: _pageController,
+              physics: _isTutorialActive
+                  ? const NeverScrollableScrollPhysics()
+                  : null,
+              onPageChanged: (index) => setState(() => _currentIndex = index),
+              children: [
+                LearnerDashboardPage(
+                  learner: widget.learner,
+                  onLocaleChange: widget.onLocaleChange,
+                  onSelectPage: _selectPage,
                 ),
+                LearnerCoursesPage(learner: widget.learner),
+                const LearnerProfilePage(),
+              ],
+            ),
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: _selectPage,
+            selectedItemColor: _primaryColor,
+            unselectedItemColor: Colors.grey,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.home_outlined),
+                activeIcon: const Icon(Icons.home),
+                label: S.of(context).bottomNavHome,
+              ),
+              BottomNavigationBarItem(
+                icon: Container(
+                  key: _coursesKey,
+                  child: const Icon(Icons.menu_book_outlined),
+                ),
+                activeIcon: const Icon(Icons.menu_book),
+                label: S.of(context).bottomNavCourses,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.person_outline),
+                activeIcon: const Icon(Icons.person),
+                label: S.of(context).bottomNavProfile,
+              ),
+            ],
+          ),
+        ),
+        // Invisible overlay to block interactions during tutorial
+        if (_isTutorialActive)
+          Positioned.fill(
+            child: Container(
+              color: Colors.transparent,
+              child: Stack(
+                children: [
+                  // This will block all interactions except the courses button
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: () {}, // Absorb taps
+                      child: Container(color: Colors.transparent),
+                    ),
+                  ),
+                  // Allow only the courses button to be clickable
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: kBottomNavigationBarHeight,
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {}, // Block home button
+                              child: Container(color: Colors.transparent),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(), // Allow courses button (don't block)
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {}, // Block profile button
+                              child: Container(color: Colors.transparent),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) => setState(() => _currentIndex = index),
-        children: [
-          LearnerDashboardPage(
-            learner: widget.learner,
-            onLocaleChange: widget.onLocaleChange,
-            onSelectPage: _selectPage,
           ),
-          LearnerCoursesPage(learner: widget.learner),
-          const LearnerProfilePage(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _selectPage,
-        selectedItemColor: _primaryColor,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home_outlined),
-            activeIcon: const Icon(Icons.home),
-            label: S.of(context).bottomNavHome,
-          ),
-          BottomNavigationBarItem(
-            icon: Container(
-              key: _coursesKey,
-              child: const Icon(Icons.menu_book_outlined),
-            ),
-            activeIcon: const Icon(Icons.menu_book),
-            label: S.of(context).bottomNavCourses,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person_outline),
-            activeIcon: const Icon(Icons.person),
-            label: S.of(context).bottomNavProfile,
-          ),
-        ],
-      ),
+      ],
     );
   }
 }

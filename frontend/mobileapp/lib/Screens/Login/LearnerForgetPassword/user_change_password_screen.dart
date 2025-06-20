@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../Services/password_reset_service.dart';
-import '../../generated/l10n.dart';
+import '../../../Services/user_password_reset_service.dart';
+import '../../../generated/l10n.dart';
 
-class ChangePasswordScreen extends StatefulWidget {
+class UserChangePasswordScreen extends StatefulWidget {
   final Function(Locale) onLocaleChange;
 
-  const ChangePasswordScreen({super.key, required this.onLocaleChange});
+  const UserChangePasswordScreen({super.key, required this.onLocaleChange});
 
   @override
-  _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
+  _UserChangePasswordScreenState createState() => _UserChangePasswordScreenState();
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+class _UserChangePasswordScreenState extends State<UserChangePasswordScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
@@ -94,7 +94,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     }
 
                     try {
-                      String response = await PasswordResetService.resetPassword(token, newPassword);
+                      String response = await UserPasswordResetService.resetPassword(token, newPassword);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(response)),
                       );

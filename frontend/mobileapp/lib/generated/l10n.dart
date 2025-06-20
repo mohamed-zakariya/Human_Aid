@@ -2370,10 +2370,10 @@ class S {
     );
   }
 
-  /// `Click here to explore the learning materials.`
+  /// `Tap here to proceed.`
   String get tutorialCourseCardDescription {
     return Intl.message(
-      'Click here to explore the learning materials.',
+      'Tap here to proceed.',
       name: 'tutorialCourseCardDescription',
       desc: '',
       args: [],
@@ -2415,6 +2415,106 @@ class S {
     return Intl.message(
       'Click to see more content or details.',
       name: 'tutorialExpandButtonDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Available Levels`
+  String get expandLevelsTitle {
+    return Intl.message(
+      'View Available Levels',
+      name: 'expandLevelsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap this button to explore all available levels and games for this exercise. You need to tap it to continue!`
+  String get expandLevelsDescription {
+    return Intl.message(
+      'Tap this button to explore all available levels and games for this exercise. You need to tap it to continue!',
+      name: 'expandLevelsDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Course Levels`
+  String get levelsSectionTitle {
+    return Intl.message(
+      'Course Levels',
+      name: 'levelsSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `These are the available levels for this course. Each level includes unique games and activities to help you learn.`
+  String get levelsSectionDescription {
+    return Intl.message(
+      'These are the available levels for this course. Each level includes unique games and activities to help you learn.',
+      name: 'levelsSectionDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Games Navigation`
+  String get gamesNavigationTitle {
+    return Intl.message(
+      'Games Navigation',
+      name: 'gamesNavigationTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap any game chip to go directly to that game within the course.`
+  String get gamesNavigationDescription {
+    return Intl.message(
+      'Tap any game chip to go directly to that game within the course.',
+      name: 'gamesNavigationDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Main Course Navigation`
+  String get mainCourseNavigationTitle {
+    return Intl.message(
+      'Main Course Navigation',
+      name: 'mainCourseNavigationTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap this play button to go to the main course page. You must tap it to complete the tutorial!`
+  String get mainCourseNavigationDescription {
+    return Intl.message(
+      'Tap this play button to go to the main course page. You must tap it to complete the tutorial!',
+      name: 'mainCourseNavigationDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome`
+  String get welcome {
+    return Intl.message(
+      'Welcome',
+      name: 'welcome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome back! Please sign in to continue`
+  String get loginSubtitle {
+    return Intl.message(
+      'Welcome back! Please sign in to continue',
+      name: 'loginSubtitle',
       desc: '',
       args: [],
     );

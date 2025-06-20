@@ -570,7 +570,7 @@ class NavBarLearner extends StatelessWidget {
                     color: const Color(0xFF6C63FF).withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.language_rounded,
                     color: const Color(0xFF6C63FF),
                     size: 32,

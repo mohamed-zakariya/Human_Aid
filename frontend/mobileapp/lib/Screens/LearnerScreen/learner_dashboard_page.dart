@@ -151,6 +151,9 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                                   const Color(0xFF3AA8A8),
                                 ];
 
+                                // Use progress_imageUrl from API if available
+                                final progressImageUrl = exercise['progress_imageUrl'] ?? 'https://drive.google.com/uc?export=download&id=13ApwO6STUQtZKqC5cPD5U83QXEOMoBCc';
+
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 16),
                                   child: ProgressCard(
@@ -159,8 +162,7 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                                     lessonCount: score is int ? score : (score as num).toInt(),
                                     backgroundColor:
                                         colors[index % colors.length],
-                                    imageUrl:
-                                        'https://drive.google.com/uc?export=download&id=13ApwO6STUQtZKqC5cPD5U83QXEOMoBCc',
+                                    imageUrl: progressImageUrl,
                                     progressValue: accuracy / 100,
                                   ),
                                 );
@@ -223,15 +225,31 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                                   (progress?['accuracyPercentage'] ?? 0.0)
                                       .toDouble();
 
+                              // Use exercise_imageUrl from API if available
+                              final exerciseImageUrl = exercise['exercise_imageUrl'] ?? 'https://drive.google.com/uc?export=view&id=1IS7-4KoNMd5WgBGHdOvyhs2XWb4VA4RC';
+
                               return ExerciseCard(
-                                exerciseId: exerciseId,       // FIX #2
-                                imageUrl:
-                                    'https://drive.google.com/uc?export=view&id=1IS7-4KoNMd5WgBGHdOvyhs2XWb4VA4RC',
+                                exerciseId: exerciseId,
+                                imageUrl: exerciseImageUrl,
                                 title: title ?? 'Unknown',
                                 arabicTitle: arabicTitle,
                                 lecturesCount: accuracy.toInt(),
                                 learner: widget.learner!,
                                 color: _primaryColor,
+                                exerciseImageUrl: exerciseImageUrl,
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/exercise-levels',
+                                    arguments: {
+                                      'exerciseId': exerciseId,
+                                      'exerciseName': title ?? 'Unknown',
+                                      'exerciseArabicName': arabicTitle,
+                                      'exerciseImageUrl': exerciseImageUrl,
+                                      'learner': widget.learner!,
+                                    },
+                                  );
+                                },
                               );
                             },
                           ),

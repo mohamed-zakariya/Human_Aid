@@ -236,6 +236,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "exit": MessageLookupByLibrary.simpleMessage("إنهاء"),
         "exitExerciseQuestion":
             MessageLookupByLibrary.simpleMessage("هل تريد الخروج من التمرين؟"),
+        "expandLevelsDescription": MessageLookupByLibrary.simpleMessage(
+            "اضغط على هذا الزر لاستكشاف جميع المستويات والألعاب المتاحة لهذا التمرين. يجب الضغط للمتابعة!"),
+        "expandLevelsTitle":
+            MessageLookupByLibrary.simpleMessage("عرض المستويات المتاحة"),
         "explore": MessageLookupByLibrary.simpleMessage("استكشاف"),
         "explore_message":
             MessageLookupByLibrary.simpleMessage("لنستكشف بعض الأفكار اليوم"),
@@ -262,6 +266,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "game_sessions": MessageLookupByLibrary.simpleMessage("جلسات الألعاب"),
         "game_summary": MessageLookupByLibrary.simpleMessage("ملخص الألعاب"),
         "games": MessageLookupByLibrary.simpleMessage("ألعاب"),
+        "gamesNavigationDescription": MessageLookupByLibrary.simpleMessage(
+            "اضغط على أي لعبة للانتقال مباشرةً إلى تلك اللعبة ضمن الدورة."),
+        "gamesNavigationTitle":
+            MessageLookupByLibrary.simpleMessage("التنقل بين الألعاب"),
         "genderFemale": MessageLookupByLibrary.simpleMessage("انثي"),
         "genderMale": MessageLookupByLibrary.simpleMessage("ذكر"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("اختار النوع"),
@@ -349,11 +357,17 @@ class MessageLookup extends MessageLookupByLibrary {
             "واصل! أنت تتحسن مع كل محاولة!"),
         "levelSuccess": m12,
         "levels": MessageLookupByLibrary.simpleMessage("المستويات"),
+        "levelsSectionDescription": MessageLookupByLibrary.simpleMessage(
+            "هذه هي المستويات المتاحة لهذه الدورة. يحتوي كل مستوى على ألعاب وأنشطة مختلفة تساعدك على التعلم."),
+        "levelsSectionTitle":
+            MessageLookupByLibrary.simpleMessage("مستويات الدورة"),
         "listen": MessageLookupByLibrary.simpleMessage("استمع"),
         "listenAgain": m13,
         "listenToLetter":
             MessageLookupByLibrary.simpleMessage("استمع إلى الحرف"),
         "loginButton": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
+        "loginSubtitle": MessageLookupByLibrary.simpleMessage(
+            "مرحبًا بعودتك! الرجاء تسجيل الدخول للمتابعة"),
         "loginTitle": MessageLookupByLibrary.simpleMessage("تسجيل الدُّخول"),
         "logoutButton": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
         "logoutConfirmationMessage": MessageLookupByLibrary.simpleMessage(
@@ -362,6 +376,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("تأكيد تسجيل الخروج"),
         "logoutSubtitle":
             MessageLookupByLibrary.simpleMessage("تسجيل الخروج بأمان"),
+        "mainCourseNavigationDescription": MessageLookupByLibrary.simpleMessage(
+            "اضغط على زر التشغيل للانتقال إلى صفحة الدورة الرئيسية. يجب الضغط لإكمال الشرح!"),
+        "mainCourseNavigationTitle":
+            MessageLookupByLibrary.simpleMessage("التنقل إلى الدورة الرئيسية"),
         "manage_learners":
             MessageLookupByLibrary.simpleMessage("إدارة المتعلمين"),
         "monitor_daily_activities": MessageLookupByLibrary.simpleMessage(
@@ -592,8 +610,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("المحاولة هي الخطوة الأولى"),
         "ttsInstructions": MessageLookupByLibrary.simpleMessage(
             "سيكون لكل سؤال مؤقت 5 ثوانٍ للإجابة. انظر إلى شكل الاتجاه بعناية واختر الجملة الصحيحة. بعد كل سؤال، سيتم عرض الإجابة الصحيحة."),
-        "tutorialCourseCardDescription": MessageLookupByLibrary.simpleMessage(
-            "انقر هنا لاستكشاف مواد التعلم."),
+        "tutorialCourseCardDescription":
+            MessageLookupByLibrary.simpleMessage("اضغط هنا للمتابعة."),
         "tutorialCourseCardTitle":
             MessageLookupByLibrary.simpleMessage("هذه هي دورتك"),
         "tutorialCourseSubtitle": MessageLookupByLibrary.simpleMessage(
@@ -627,6 +645,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "veryGreat": MessageLookupByLibrary.simpleMessage("رائع جداً"),
         "verySmart": MessageLookupByLibrary.simpleMessage("أنت ذكي جداً"),
         "view_details": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
+        "welcome": MessageLookupByLibrary.simpleMessage("مرحبا"),
         "welcome_message":
             MessageLookupByLibrary.simpleMessage("مرحبًا بعودتك، "),
         "wellDone": MessageLookupByLibrary.simpleMessage(" !أحسنت ✅"),

@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Services/signup_service.dart';
 import '../../models/learner.dart';
 import '../../models/parent.dart';
+import '../widgets/GuardianDate.dart';
+import '../widgets/GuardianSignupCountryDropdown.dart';
 import '../widgets/SignupCountryDropdown.dart';
 import '../widgets/date.dart';
 
@@ -240,7 +242,7 @@ class _ContinuesignupState extends State<Continuesignup> {
               usernameControllers[id]!,
                   (value) => value!.isEmpty ? 'Username is required' : null,
             ),
-            SignupCountryDropdown(
+            Guardiansignupcountrydropdown(
               S.of(context).signupinputfieldnationality,
               S.of(context).signuptitlenationality,
               255, 255, 255, 0.1,
@@ -283,7 +285,7 @@ class _ContinuesignupState extends State<Continuesignup> {
                 return null;
               },
             ),
-            DateTimePicker(
+            GuardianDateTimePicker(
               controller: birthdateControllers[id]!,
               quardian: false,
               validator: (value) {
