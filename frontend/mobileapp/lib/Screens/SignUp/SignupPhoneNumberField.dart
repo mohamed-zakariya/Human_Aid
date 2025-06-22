@@ -26,7 +26,7 @@ class Signupphonenumberfield extends StatelessWidget {
             fontSize: 18
           ),),
           Container(
-            width: 300,
+            width: MediaQuery.of(context).size.width,
             height: 55,
             margin: const EdgeInsets.fromLTRB(0, 3, 0, 3),
               padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),

@@ -135,6 +135,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     List<Color> colors = [
       const Color(0xFF6C63FF),
       const Color(0xFFFF6B9D),
@@ -177,21 +178,21 @@ class _ProgressDetailsState extends State<ProgressDetails> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header Section
+            // Compact Header Section
             Container(
-              padding: const EdgeInsets.all(24),
-              child: Column(
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+              child: Row(
                 children: [
-                  // Progress Illustration
+                  // Smaller Progress Illustration
                   Container(
-                    width: 120,
-                    height: 120,
+                    width: 60,
+                    height: 60,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4ECDC4).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(16),
                       child: Image.asset(
                         "assets/images/progress.png",
                         fit: BoxFit.cover,
@@ -199,33 +200,39 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(width: 16),
 
-                  Text(
-                      S.of(context).track_learning_progress,
-                    style: const TextStyle(
-                      color: Color(0xFF2C3E50),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Text(
-                      S.of(context).monitor_daily_activities,
-                    style: TextStyle(
-                      color: const Color(0xFF7F8C8D),
-                      fontSize: 14,
+                  // Text content beside image
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          S.of(context).track_learning_progress,
+                          style: const TextStyle(
+                            color: Color(0xFF2C3E50),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          S.of(context).monitor_daily_activities,
+                          style: const TextStyle(
+                            color: Color(0xFF7F8C8D),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
 
-            // Modern Date Selector
+            // Compact Date Selector
             Container(
-              height: 80,
+              height: 60,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -237,13 +244,13 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                   return GestureDetector(
                     onTap: () => setState(() => selectedDay = day),
                     child: Container(
-                      width: screenWidth / 5.5,
+                      width: screenWidth / 6,
                       margin: const EdgeInsets.only(right: 8),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? const Color(0xFF4ECDC4)
                             : const Color(0xFFF8F9FA),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(12),
                         border: isSelected
                             ? null
                             : Border.all(color: const Color(0xFFE9ECEF)),
@@ -257,18 +264,18 @@ class _ProgressDetailsState extends State<ProgressDetails> {
                               color: isSelected
                                   ? Colors.white
                                   : const Color(0xFF7F8C8D),
-                              fontSize: 12,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           Text(
                             day.split(' ')[1], // Day number (e.g., "6")
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
                                   : const Color(0xFF2C3E50),
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -280,9 +287,9 @@ class _ProgressDetailsState extends State<ProgressDetails> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-            // Progress Content
+            // Progress Content - More space allocated
             Expanded(
               child: learnerProgress[selectedDay]?.isEmpty ?? true
                   ? _buildEmptyState()
@@ -300,35 +307,38 @@ class _ProgressDetailsState extends State<ProgressDetails> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 80,
-            height: 80,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
               color: const Color(0xFF7F8C8D).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
               Icons.analytics_outlined,
-              size: 40,
+              size: 30,
               color: Color(0xFF7F8C8D),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text(
             S.of(context).no_progress_data,
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Color(0xFF7F8C8D),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
               S.of(context).no_learning_activities,
-            style: TextStyle(
-              fontSize: 14,
-              color: const Color(0xFF7F8C8D).withOpacity(0.7),
+              style: TextStyle(
+                fontSize: 12,
+                color: const Color(0xFF7F8C8D).withOpacity(0.7),
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -343,7 +353,7 @@ class _ProgressDetailsState extends State<ProgressDetails> {
         itemBuilder: (context, index) {
           var progress = learnerProgress[selectedDay]![index];
           return Container(
-            margin: const EdgeInsets.only(bottom: 16),
+            margin: const EdgeInsets.only(bottom: 12),
             child: Childcard(
               title: S.of(context).progress_summary,
               learnerName: progress['name'] ?? "Unknown",
