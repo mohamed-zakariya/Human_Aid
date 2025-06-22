@@ -925,13 +925,36 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     });
   }
 
-  void _goToLevel(Level level) {
-    Navigator.pushNamed(context, '/games', arguments: {
-      'level': level,
-      'learner': widget.learner,
-      'exerciseId': widget.exercise['id'],
-    });
+  void _goToLevel(Level level) async {
+  try {
+    // Fetch the exercise object and levels for this exercise
+    final data = await LevelService.getLevelsAndExercise(widget.exercise['id']);
+    final exercise = data['exercise'];
+    if (exercise == null) throw Exception('Exercise not found');
+    // Find the level object in the exercise's levels array that matches this level
+    final levels = exercise['levels'] as List<dynamic>;
+    final levelObj = levels.firstWhere(
+      (l) => l['level_id'] == level.levelId,
+      orElse: () => null,
+    );
+    if (levelObj == null) throw Exception('Level not found');
+    final String levelObjectId = levelObj['_id']?.toString() ?? '';
+    if (levelObjectId.isEmpty) throw Exception('Level ObjectId not found');
+    Navigator.pushNamed(
+      context,
+      '/${level.levelId}',
+      arguments: {
+        'learner': widget.learner,
+        'exerciseId': widget.exercise['id'],
+        'levelId': levelObjectId,
+      },
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to start exercise: $e')),
+    );
   }
+}
 
   void _goToLevelInfo(Level level) {
     Navigator.pushNamed(context, '/level-info', arguments: {

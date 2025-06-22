@@ -258,6 +258,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
           drawer: NavBarLearner(
             learner: widget.learner,
             onLocaleChange: widget.onLocaleChange,
+            onPageSelected: _selectPage, // Pass the _selectPage function here
           ),
           appBar: AppBar(
             elevation: 0,
@@ -330,7 +331,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                 // Wrap the dashboard page to add tutorial keys
                 _buildDashboardWithTutorialKeys(),
                 LearnerCoursesPage(learner: widget.learner),
-                const LearnerProfilePage(),
+                LearnerProfilePage(learnerId: widget.learner?.id), 
               ],
             ),
           ),
