@@ -96,9 +96,9 @@ class _MyAppState extends State<MyApp> {
       _locale = Locale(savedLocaleCode);
     }
 
-    await prefs.setBool('hasShownCourseTutorial', false);
-    await prefs.setBool('hasShownCoursePageTutorial', false);
-    await prefs.setBool('parentTutorialSeen', false);
+    // await prefs.setBool('hasShownCourseTutorial', false);
+    // await prefs.setBool('hasShownCoursePageTutorial', false);
+    // await prefs.setBool('parentTutorialSeen', false);
 
 
     final bool onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
