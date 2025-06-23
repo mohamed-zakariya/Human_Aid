@@ -488,6 +488,40 @@
                 "type": "int"
             }
         }
+    },
+    "loadingWords": "Loading words...",
+    "@loadingWords": {
+        "description": "Message shown while fetching words from the server"
+    },
+    
+    "allWordsCompleted": "Great job! You've completed all words!",
+    "@allWordsCompleted": {
+        "description": "Success message when user finishes all words in the exercise"
+    },
+    
+    "congratulations": "Congratulations!",
+    "@congratulations": {
+        "description": "Title for completion dialog"
+    },
+    
+    "completedAllWords": "You have successfully completed all words in this exercise!",
+    "@completedAllWords": {
+        "description": "Message in completion dialog explaining the achievement"
+    },
+    
+    "finish": "Finish",
+    "@finish": {
+        "description": "Button text to finish the exercise and go back"
+    },
+    
+    "startOver": "Start Over",
+    "@startOver": {
+        "description": "Button text to restart the exercise with the same words"
+    },
+    
+    "viewResults": "View Results",
+    "@viewResults": {
+        "description": "Button text when all words are completed to view final results"
     }
 
 }
