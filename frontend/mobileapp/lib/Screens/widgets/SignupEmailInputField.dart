@@ -68,6 +68,7 @@ class _SignupInputFieldEmailState extends State<SignupInputFieldEmail> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.fromLTRB(0, 30, 0, 3),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +81,7 @@ class _SignupInputFieldEmailState extends State<SignupInputFieldEmail> {
             ),
           ),
           Container(
-            width: 300,
+            width: MediaQuery.of(context).size.width,
             height: 55,
             padding: EdgeInsets.fromLTRB(isArabic() ? 0 : 8, 0, isArabic() ? 8 : 0, 0),
             decoration: BoxDecoration(

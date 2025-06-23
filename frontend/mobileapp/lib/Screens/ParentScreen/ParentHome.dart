@@ -440,7 +440,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                    S.of(context).great_progress,
+                      S.of(context).great_progress,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -448,7 +448,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       ),
                     ),
                     Text(
-                    S.of(context).learners_completed_activities(5),
+                      S.of(context).learners_completed_activities(5),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],

@@ -29,6 +29,9 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
   late PageController _pageController;
   final Color _primaryColor = const Color(0xFF6C63FF);
 
+  // Global keys for tutorial targets
+  final GlobalKey _drawerKey = GlobalKey();
+  final GlobalKey _profileKey = GlobalKey();
   final GlobalKey _coursesKey = GlobalKey();
 
   // Add this variable to track tutorial state
@@ -58,14 +61,14 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
       _isTutorialActive = true;
     });
 
-    Future.delayed(const Duration(milliseconds: 4000), () {
+    Future.delayed(const Duration(milliseconds: 1000), () {
       if (!mounted || !_isTutorialActive) return;
 
       TutorialCoachMark(
         targets: _createTargets(),
         colorShadow: Colors.black.withOpacity(0.8),
         textSkip: S.of(context).tutorialSkip,
-        paddingFocus: 8,
+        paddingFocus: 10,
         alignSkip: Alignment.bottomRight,
         onFinish: () {
           print("Tutorial finished");
@@ -78,9 +81,13 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
           });
         },
         onClickTarget: (target) {
-          print('onClickTarget: $target');
-          if (target.identify == "CoursesTab") {
-            _selectPage(1);
+          print('onClickTarget: ${target.identify}');
+          // Handle specific target clicks if needed
+          switch (target.identify) {
+            case "CoursesTab":
+              _selectPage(1);
+              break;
+          // Profile tab just highlights, no navigation
           }
         },
         onSkip: () {
@@ -99,11 +106,53 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
   }
 
   List<TargetFocus> _createTargets() {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
     return [
+      // Step 1: Drawer menu
       TargetFocus(
-        identify: "CoursesTab",
-        keyTarget: _coursesKey,
-        alignSkip: Alignment.topLeft,
+        identify: "DrawerMenu",
+        keyTarget: _drawerKey,
+        alignSkip: isRtl ? Alignment.topLeft : Alignment.topRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      S.of(context).drawerMenuTitle,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      S.of(context).drawerMenuDescription,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+
+      // Step 2: Profile tab
+      TargetFocus(
+        identify: "ProfileTab",
+        keyTarget: _profileKey,
+        alignSkip: isRtl ? Alignment.topRight : Alignment.topLeft,
         contents: [
           TargetContent(
             align: ContentAlign.top,
@@ -115,7 +164,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      S.of(context).tutorialCourseTitle,
+                      S.of(context).profileTabTitle,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -124,7 +173,46 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      S.of(context).tutorialCourseSubtitle,
+                      S.of(context).profileTabDescription,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+
+      // Step 3: Courses tab
+      TargetFocus(
+        identify: "CoursesTab",
+        keyTarget: _coursesKey,
+        alignSkip: isRtl ? Alignment.topRight : Alignment.topLeft,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      S.of(context).coursesTabTitle,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      S.of(context).coursesTabDescription,
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 14,
@@ -147,7 +235,7 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
   }
 
   void _selectPage(int pageIndex) {
-    // Prevent page changes during tutorial unless it's the courses page
+    // Allow page changes during tutorial only for courses
     if (_isTutorialActive && pageIndex != 1) {
       return;
     }
@@ -170,14 +258,21 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
           drawer: NavBarLearner(
             learner: widget.learner,
             onLocaleChange: widget.onLocaleChange,
+            onPageSelected: _selectPage, // Pass the _selectPage function here
           ),
           appBar: AppBar(
             elevation: 0,
             backgroundColor: _primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
-            leading: _isTutorialActive
-                ? Container() // Hide drawer button during tutorial
-                : null,
+            leading: Builder(
+              builder: (context) => IconButton(
+                key: _drawerKey,
+                icon: const Icon(Icons.menu),
+                onPressed: _isTutorialActive
+                    ? null
+                    : () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -233,13 +328,10 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                   : null,
               onPageChanged: (index) => setState(() => _currentIndex = index),
               children: [
-                LearnerDashboardPage(
-                  learner: widget.learner,
-                  onLocaleChange: widget.onLocaleChange,
-                  onSelectPage: _selectPage,
-                ),
+                // Wrap the dashboard page to add tutorial keys
+                _buildDashboardWithTutorialKeys(),
                 LearnerCoursesPage(learner: widget.learner),
-                const LearnerProfilePage(),
+                LearnerProfilePage(learnerId: widget.learner?.id), 
               ],
             ),
           ),
@@ -266,28 +358,31 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                 label: S.of(context).bottomNavCourses,
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.person_outline),
+                icon: Container(
+                  key: _profileKey,
+                  child: const Icon(Icons.person_outline),
+                ),
                 activeIcon: const Icon(Icons.person),
                 label: S.of(context).bottomNavProfile,
               ),
             ],
           ),
         ),
-        // Invisible overlay to block interactions during tutorial
+        // Selective overlay to allow specific interactions during tutorial
         if (_isTutorialActive)
           Positioned.fill(
             child: Container(
               color: Colors.transparent,
               child: Stack(
                 children: [
-                  // This will block all interactions except the courses button
+                  // Block most interactions
                   Positioned.fill(
                     child: GestureDetector(
                       onTap: () {}, // Absorb taps
                       child: Container(color: Colors.transparent),
                     ),
                   ),
-                  // Allow only the courses button to be clickable
+                  // Allow bottom navigation interactions
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -304,11 +399,11 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
                             ),
                           ),
                           Expanded(
-                            child: Container(), // Allow courses button (don't block)
+                            child: Container(), // Allow courses button
                           ),
                           Expanded(
                             child: GestureDetector(
-                              onTap: () {}, // Block profile button
+                              onTap: () {}, // Block profile button navigation
                               child: Container(color: Colors.transparent),
                             ),
                           ),
@@ -321,6 +416,15 @@ class _LearnerHomeScreenState extends State<LearnerHomeScreen> {
             ),
           ),
       ],
+    );
+  }
+
+  Widget _buildDashboardWithTutorialKeys() {
+    // Return the dashboard without tutorial key overlays since we removed those steps
+    return LearnerDashboardPage(
+      learner: widget.learner,
+      onLocaleChange: widget.onLocaleChange,
+      onSelectPage: _selectPage,
     );
   }
 }

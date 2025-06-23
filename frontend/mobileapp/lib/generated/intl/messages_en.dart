@@ -162,6 +162,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "correctDirectionIs": m3,
         "correctFeedback":
             MessageLookupByLibrary.simpleMessage("Well done! 🎉"),
+        "coursesTabDescription": MessageLookupByLibrary.simpleMessage(
+            "Access all your courses here. Browse available lessons, track your progress, and continue your learning journey."),
+        "coursesTabTitle": MessageLookupByLibrary.simpleMessage("Your Courses"),
         "createAccountGaurdian":
             MessageLookupByLibrary.simpleMessage("Create a gaurdian account"),
         "createAccountUser":
@@ -201,6 +204,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "drawInstruction": MessageLookupByLibrary.simpleMessage(
             "Touch and draw anywhere on the canvas"),
         "drawLetter": m6,
+        "drawerMenuDescription": MessageLookupByLibrary.simpleMessage(
+            "Tap these Navigation Menu to open the side menu. Here you can change your language preferences and log out when needed."),
+        "drawerMenuTitle":
+            MessageLookupByLibrary.simpleMessage("Navigation Menu"),
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "This email is already registered"),
         "emailHint": MessageLookupByLibrary.simpleMessage("Email"),
@@ -489,6 +496,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "An error occurred while processing"),
         "processingRecording": MessageLookupByLibrary.simpleMessage(
             "Processing your recording..."),
+        "profileTabDescription": MessageLookupByLibrary.simpleMessage(
+            "Tap here to view and update your profile information. Manage your personal details and preferences."),
+        "profileTabTitle": MessageLookupByLibrary.simpleMessage("Your Profile"),
         "progressCompleted": m18,
         "progressPoints": m19,
         "progressWillBeLost":

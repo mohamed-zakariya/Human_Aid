@@ -57,8 +57,8 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
   String _safeGameName(Game game, BuildContext ctx) {
     final isArabic  = Localizations.localeOf(ctx).languageCode == 'ar';
     final candidate = isArabic ? game.arabicName : game.name;
-    return candidate?.trim().isNotEmpty == true
-        ? candidate!
+    return candidate.trim().isNotEmpty == true
+        ? candidate
         : (isArabic ? 'لعبة' : 'Game');
   }
 
@@ -269,14 +269,14 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
 
           print("4jjjjjjjjjjjjjjjjj");
           // Add a small delay before showing expanded tutorial
-          Future.delayed(Duration(milliseconds: 1000), () {
+          Future.delayed(const Duration(milliseconds: 1000), () {
             print("5jjjjjjjjjjjjjjjjj");
             _showExpandedTutorial();
           });
         }
       } else {
         // Continue checking
-        Future.delayed(Duration(milliseconds: checkInterval), checkExpansion);
+        Future.delayed(const Duration(milliseconds: checkInterval), checkExpansion);
       }
     }
 
@@ -284,66 +284,63 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
     checkExpansion();
   }
 
-  void _showExpandedTutorial() {
+  void _showExpandedTutorial() async {
     if (!mounted) return;
 
-    print("6jjjjjjjjjjjjjjj");
-    print(mounted);
-    print(_isTutorialActive);
     setState(() {
       _isTutorialActive = true;
     });
-    // Wait a bit more to ensure the expanded content is fully rendered
-    Future.delayed(Duration(milliseconds: 500), () {
-      
-      if (!mounted || !_isTutorialActive) return;
 
-      try {
-        _tutorialCoachMark = TutorialCoachMark(
-          targets: _createExpandedTargets(),
-          colorShadow: Colors.black.withOpacity(0.8),
-          textSkip: S.of(context).tutorialSkip,
-          paddingFocus: 8,
-          alignSkip: Alignment.bottomRight,
-          onFinish: () {
-            setState(() {
-              _isTutorialActive = false;
-              _currentTutorialStep = 0;
-            });
-            print("Course page tutorial finished at step: $_currentTutorialStep");
-          },
-          onClickTarget: (target) {
-            print('onClickTarget: ${target.identify} at step: $_currentTutorialStep');
-
-            if (target.identify == "LevelsSection") {
-            } else if (target.identify == "LevelButton") {
-            } else if (target.identify == "GameChips") {
-            } else if (target.identify == "PlayButton") {
-              // _nextTutorialStep();
-              _navigateToMainExercise();
-            }
-          },
-          onSkip: () {
-            setState(() {
-              _isTutorialActive = false;
-              _currentTutorialStep = 0;
-            });
-            print("Course page tutorial skipped at step: $_currentTutorialStep");
-            return true;
-          },
-        );
-
-        _tutorialCoachMark!.show(context: context);
-      } catch (e) {
-        print("Error showing expanded tutorial: $e");
-        // Fallback - end tutorial
-        setState(() {
-          _isTutorialActive = false;
-          _currentTutorialStep = 0;
-        });
+    // Retry context check
+    for (int i = 0; i < 5; i++) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      if (_levelsKey.currentContext != null &&
+          _levelButtonKey.currentContext != null &&
+          _gameChipsKey.currentContext != null &&
+          _playButtonKey.currentContext != null) {
+        break;
       }
-    });
+    }
+
+    if (!mounted || !_isTutorialActive) return;
+
+    try {
+      _tutorialCoachMark = TutorialCoachMark(
+        targets: _createExpandedTargets(),
+        colorShadow: Colors.black.withOpacity(0.8),
+        textSkip: S.of(context).tutorialSkip,
+        paddingFocus: 8,
+        alignSkip: Alignment.bottomRight,
+        onFinish: () {
+          setState(() {
+            _isTutorialActive = false;
+            _currentTutorialStep = 0;
+          });
+        },
+        onClickTarget: (target) {
+          if (target.identify == "PlayButton") {
+            _navigateToMainExercise();
+          }
+        },
+        onSkip: () {
+          setState(() {
+            _isTutorialActive = false;
+            _currentTutorialStep = 0;
+          });
+          return true;
+        },
+      );
+
+      _tutorialCoachMark!.show(context: context);
+    } catch (e) {
+      print("Error showing expanded tutorial: $e");
+      setState(() {
+        _isTutorialActive = false;
+        _currentTutorialStep = 0;
+      });
+    }
   }
+
 
 
   void _navigateToMainExercise() {
@@ -380,7 +377,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
               align: ContentAlign.top,
               builder: (context, controller) {
                 return Container(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 45),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 60),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -412,7 +409,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
     }
 
     // Add the new level button target
-    if (_levelButtonKey.currentContext != null || true) {
+    if (_levelButtonKey.currentContext != null) {
       targets.add(
         TargetFocus(
           identify: "LevelButton",
@@ -430,13 +427,13 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
                     children: [
                       Text(
                         S.of(context).levelsSectionTitle,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         S.of(context).levelsSectionDescription,
                         style: const TextStyle(
@@ -454,7 +451,7 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
       );
     }
 
-    if (_gameChipsKey.currentContext != null || true) {
+    if (_gameChipsKey.currentContext != null) {
       targets.add(
         TargetFocus(
           identify: "GameChips",
@@ -472,13 +469,13 @@ class _LearnerCoursesPageState extends State<LearnerCoursesPage>
                     children: [
                       Text(
                         S.of(context).gamesNavigationTitle,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         S.of(context).gamesNavigationDescription,
                         style: const TextStyle(
@@ -928,13 +925,36 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     });
   }
 
-  void _goToLevel(Level level) {
-    Navigator.pushNamed(context, '/games', arguments: {
-      'level': level,
-      'learner': widget.learner,
-      'exerciseId': widget.exercise['id'],
-    });
+  void _goToLevel(Level level) async {
+  try {
+    // Fetch the exercise object and levels for this exercise
+    final data = await LevelService.getLevelsAndExercise(widget.exercise['id']);
+    final exercise = data['exercise'];
+    if (exercise == null) throw Exception('Exercise not found');
+    // Find the level object in the exercise's levels array that matches this level
+    final levels = exercise['levels'] as List<dynamic>;
+    final levelObj = levels.firstWhere(
+      (l) => l['level_id'] == level.levelId,
+      orElse: () => null,
+    );
+    if (levelObj == null) throw Exception('Level not found');
+    final String levelObjectId = levelObj['_id']?.toString() ?? '';
+    if (levelObjectId.isEmpty) throw Exception('Level ObjectId not found');
+    Navigator.pushNamed(
+      context,
+      '/${level.levelId}',
+      arguments: {
+        'learner': widget.learner,
+        'exerciseId': widget.exercise['id'],
+        'levelId': levelObjectId,
+      },
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to start exercise: $e')),
+    );
   }
+}
 
   void _goToLevelInfo(Level level) {
     Navigator.pushNamed(context, '/level-info', arguments: {

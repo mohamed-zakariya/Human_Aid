@@ -36,6 +36,7 @@ class _LearnerProgressDetailsPageState extends State<LearnerProgressDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late Map<String, Map<String, dynamic>> gameStats;
+  bool _isHeaderExpanded = false; // Add this state variable
 
   @override
   void initState() {
@@ -44,70 +45,8 @@ class _LearnerProgressDetailsPageState extends State<LearnerProgressDetailsPage>
     _calculateGameStats();
   }
 
-  void _calculateGameStats() {
-    gameStats = {};
-
-    for (var gameAttempt in widget.gameAttempts) {
-      final levelName = gameAttempt.levelName ?? 'Unknown Level';
-      final gameName = gameAttempt.gameName ?? 'Unknown Game';
-      final key = '$levelName|$gameName';
-
-      if (!gameStats.containsKey(key)) {
-        gameStats[key] = {
-          'levelName': levelName,
-          'gameName': gameName,
-          'attempts': 0,
-          'totalScore': 0,
-          'bestScore': 0,
-          'averageScore': 0.0,
-          'scores': <int>[],
-          'timestamps': <String>[],
-        };
-      }
-
-      // Iterate through all attempts within this game attempt
-      for (var attempt in gameAttempt.attempts) {
-        final score = attempt.score;
-
-        gameStats[key]!['attempts'] = (gameStats[key]!['attempts'] as int) + 1;
-        gameStats[key]!['totalScore'] = (gameStats[key]!['totalScore'] as int) + score;
-        (gameStats[key]!['scores'] as List<int>).add(score);
-
-        if (attempt.timestamp != null) {
-          (gameStats[key]!['timestamps'] as List<String>).add(attempt.timestamp!);
-        }
-
-        if (score > (gameStats[key]!['bestScore'] as int)) {
-          gameStats[key]!['bestScore'] = score;
-        }
-      }
-
-      // Calculate average score for this game
-      final scores = gameStats[key]!['scores'] as List<int>;
-      if (scores.isNotEmpty) {
-        gameStats[key]!['averageScore'] =
-            scores.reduce((a, b) => a + b) / scores.length;
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final totalCorrect = widget.correctWords.length +
-        widget.correctLetters.length +
-        widget.correctSentences.length;
-    final totalIncorrect = widget.incorrectWords.length +
-        widget.incorrectLetters.length +
-        widget.incorrectSentences.length;
-    final total = totalCorrect + totalIncorrect;
-    final accuracy = total > 0 ? (totalCorrect / total * 100).round() : 0;
-
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
@@ -131,124 +70,8 @@ class _LearnerProgressDetailsPageState extends State<LearnerProgressDetailsPage>
       ),
       body: Column(
         children: [
-          // Enhanced Stats Header
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            const Color(0xFF3498DB),
-                            const Color(0xFF2980B9),
-                          ],
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          widget.learnerName[0].toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.learnerName,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF2C3E50),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "@${widget.username}",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            _getAccuracyColor(accuracy),
-                            _getAccuracyColor(accuracy).withOpacity(0.8),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _getAccuracyColor(accuracy).withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        "$accuracy%",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildEnhancedStatCard(
-                          "Total Attempts",
-                          total.toString(),
-                          const Color(0xFF3498DB),
-                          Icons.assessment
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildEnhancedStatCard(
-                          "Correct",
-                          totalCorrect.toString(),
-                          const Color(0xFF27AE60),
-                          Icons.check_circle
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildEnhancedStatCard(
-                          "Incorrect",
-                          totalIncorrect.toString(),
-                          const Color(0xFFE74C3C),
-                          Icons.cancel
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          // Collapsible Header
+          _buildCollapsibleHeader(),
 
           // Enhanced Tab Navigation
           Container(
@@ -298,6 +121,285 @@ class _LearnerProgressDetailsPageState extends State<LearnerProgressDetailsPage>
       ),
     );
   }
+  Widget _buildCollapsibleHeader() {
+    final totalCorrect = widget.correctWords.length +
+        widget.correctLetters.length +
+        widget.correctSentences.length;
+    final totalIncorrect = widget.incorrectWords.length +
+        widget.incorrectLetters.length +
+        widget.incorrectSentences.length;
+    final total = totalCorrect + totalIncorrect;
+    final accuracy = total > 0 ? (totalCorrect / total * 100).round() : 0;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      color: Colors.white,
+      child: Column(
+        children: [
+          // Compact Header - Always Visible
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // User Avatar
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF3498DB),
+                        const Color(0xFF2980B9),
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      widget.learnerName[0].toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                // User Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.learnerName,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2C3E50),
+                        ),
+                      ),
+                      Text(
+                        "@${widget.username}",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Compact Stats
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _getAccuracyColor(accuracy).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "$accuracy%",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: _getAccuracyColor(accuracy),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 8),
+
+                // Toggle Button
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isHeaderExpanded = !_isHeaderExpanded;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3498DB).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: AnimatedRotation(
+                      turns: _isHeaderExpanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 300),
+                      child: const Icon(
+                        Icons.expand_more,
+                        color: Color(0xFF3498DB),
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Expanded Content - Conditional
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 300),
+            crossFadeState: _isHeaderExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox.shrink(),
+            secondChild: Container(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Column(
+                children: [
+                  // Detailed Stats Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildEnhancedStatCard(
+                            "Total Attempts",
+                            total.toString(),
+                            const Color(0xFF3498DB),
+                            Icons.assessment
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildEnhancedStatCard(
+                            "Correct",
+                            totalCorrect.toString(),
+                            const Color(0xFF27AE60),
+                            Icons.check_circle
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildEnhancedStatCard(
+                            "Incorrect",
+                            totalIncorrect.toString(),
+                            const Color(0xFFE74C3C),
+                            Icons.cancel
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Additional detailed info
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          _getAccuracyColor(accuracy).withOpacity(0.1),
+                          _getAccuracyColor(accuracy).withOpacity(0.05),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              "$accuracy%",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: _getAccuracyColor(accuracy),
+                              ),
+                            ),
+                            Text(
+                              "Accuracy",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          width: 1,
+                          height: 40,
+                          color: Colors.grey[300],
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              "${widget.gameAttempts.length}",
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF9B59B6),
+                              ),
+                            ),
+                            Text(
+                              "Games Played",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Add this method to your _LearnerProgressDetailsPageState class
+
+  void _calculateGameStats() {
+    gameStats = {};
+
+    if (widget.gameAttempts.isEmpty) {
+      return;
+    }
+
+    // Group games by level and calculate stats
+    Map<String, List<GameAttempt>> gamesByLevel = {};
+    for (var gameAttempt in widget.gameAttempts) {
+      final levelName = gameAttempt.levelName ?? 'Unknown Level';
+      if (!gamesByLevel.containsKey(levelName)) {
+        gamesByLevel[levelName] = [];
+      }
+      gamesByLevel[levelName]!.add(gameAttempt);
+    }
+
+    // Calculate stats for each level
+    gamesByLevel.forEach((levelName, games) {
+      int totalAttempts = games.fold(0, (sum, game) => sum + game.attempts.length);
+      int bestScore = 0;
+      int totalScore = 0;
+
+      for (var game in games) {
+        for (var attempt in game.attempts) {
+          totalScore += attempt.score;
+          if (attempt.score > bestScore) {
+            bestScore = attempt.score;
+          }
+        }
+      }
+
+      double averageScore = totalAttempts > 0 ? totalScore / totalAttempts : 0;
+
+      gameStats[levelName] = {
+        'gamesCount': games.length,
+        'totalAttempts': totalAttempts,
+        'bestScore': bestScore,
+        'averageScore': averageScore,
+        'totalScore': totalScore,
+      };
+    });
+  }
+
 
   Color _getAccuracyColor(int accuracy) {
     if (accuracy >= 80) return const Color(0xFF27AE60);

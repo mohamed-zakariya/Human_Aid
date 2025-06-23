@@ -2520,6 +2520,66 @@ class S {
     );
   }
 
+  /// `Navigation Menu`
+  String get drawerMenuTitle {
+    return Intl.message(
+      'Navigation Menu',
+      name: 'drawerMenuTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap these Navigation Menu to open the side menu. Here you can change your language preferences and log out when needed.`
+  String get drawerMenuDescription {
+    return Intl.message(
+      'Tap these Navigation Menu to open the side menu. Here you can change your language preferences and log out when needed.',
+      name: 'drawerMenuDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your Profile`
+  String get profileTabTitle {
+    return Intl.message(
+      'Your Profile',
+      name: 'profileTabTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap here to view and update your profile information. Manage your personal details and preferences.`
+  String get profileTabDescription {
+    return Intl.message(
+      'Tap here to view and update your profile information. Manage your personal details and preferences.',
+      name: 'profileTabDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your Courses`
+  String get coursesTabTitle {
+    return Intl.message(
+      'Your Courses',
+      name: 'coursesTabTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Access all your courses here. Browse available lessons, track your progress, and continue your learning journey.`
+  String get coursesTabDescription {
+    return Intl.message(
+      'Access all your courses here. Browse available lessons, track your progress, and continue your learning journey.',
+      name: 'coursesTabDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Close`
   String get close {
     return Intl.message(
