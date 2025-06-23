@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../config/jwtConfig.js";
 import Parents from "../models/Parents.js";
 import Exercises from "../models/Exercises.js";
+import Users from "../models/Users.js"; 
 import { sendWelcomeEmail } from '../config/emailConfig.js';
 import { sendParentWelcomeEmail } from '../config/emailConfig.js';
 import DailyAttemptTracking from "../models/DailyAttemptTracking.js";
@@ -72,6 +73,9 @@ export const signUpParent = async ({ name,email, password, phoneNumber, national
     }
     const existingParent = await Parents.findOne({ email });
     if (existingParent) throw new Error(" Email already exists");
+
+    const existingUser = await Users.findOne({ email });
+    if (existingUser) throw new Error("Email already exists in users");
 
     const hashedPassword = await bcrypt.hash(password, 7);
 

@@ -201,7 +201,9 @@ async function updateOverallProgress(userId, exerciseId, levelId, sentenceId, sp
     });
   }
 
-  let exerciseProgress = overall.progress_by_exercise.find((p) => p.exercise_id.toString() === exerciseId.toString());
+  let exerciseProgress = overall.progress_by_exercise.find(
+    (p) => p.exercise_id.toString() === exerciseId.toString()
+  );
 
   if (!exerciseProgress) {
     exerciseProgress = {
@@ -220,21 +222,28 @@ async function updateOverallProgress(userId, exerciseId, levelId, sentenceId, sp
 
   const stats = exerciseProgress.stats;
 
-  const alreadyAttempted = stats.total_correct.items.includes(correctSentence) || stats.total_incorrect.items.includes(correctSentence);
-
-  if (!alreadyAttempted) {
-    stats.total_items_attempted += 1;
-  }
-
+  // First, clean up old state by removing the sentence from both lists
   stats.total_correct.items = stats.total_correct.items.filter((s) => s !== correctSentence);
   stats.total_incorrect.items = stats.total_incorrect.items.filter((s) => s !== correctSentence);
 
+  // Then, check if it was already attempted
+  const alreadyAttempted =
+    stats.total_correct.items.includes(correctSentence) ||
+    stats.total_incorrect.items.includes(correctSentence);
+
+  // Add sentence to the appropriate list
   if (isCorrect) {
     stats.total_correct.items.push(correctSentence);
   } else {
     stats.total_incorrect.items.push(correctSentence);
   }
 
+  // Count as a new attempt only if it's a unique sentence
+  if (!alreadyAttempted) {
+    stats.total_items_attempted += 1;
+  }
+
+  // Update counts and accuracy
   stats.total_correct.count = stats.total_correct.items.length;
   stats.total_incorrect.count = stats.total_incorrect.items.length;
 
@@ -242,8 +251,10 @@ async function updateOverallProgress(userId, exerciseId, levelId, sentenceId, sp
     ? (stats.total_correct.count / stats.total_items_attempted) * 100
     : 0;
 
+  // Add time spent
   stats.time_spent_seconds += timeSpent || 0;
 
+  // Aggregate overall stats
   let totalCorrect = 0;
   let totalAttempted = 0;
   let totalTime = 0;
@@ -263,16 +274,6 @@ async function updateOverallProgress(userId, exerciseId, levelId, sentenceId, sp
   return overall;
 }
 
-function cleanupAudio(filePath) {
-  if (filePath) {
-    try {
-      fs.unlinkSync(filePath);
-      console.log(`Audio file deleted: ${filePath}`);
-    } catch (err) {
-      console.error(`Failed to delete audio file: ${filePath}`, err.message);
-    }
-  }
-}
 
 
   // export const updateSentenceProgress = async ({

@@ -65,19 +65,17 @@ export const userResolvers = {
         totalTimeSpent,
       };
     },   
-     getLearnerDataById: async (_, { userId }) => {
-      console.log(userId);
-      const user = await Users.findOne({ _id: userId });
-      console.log(user);
+  //    getLearnerDataById: async (_, { userId }) => {
+  //     console.log(userId);
+  //     const user = await Users.findOne({ _id: userId });
+  //     console.log(user);
     
-      if (!user) {
-          throw new Error(`No progress found for user with ID: ${userId}`);
-      }
-      return user;
-  }, 
-    
-
-    
+  //     if (!user) {
+  //         throw new Error(`No progress found for user with ID: ${userId}`);
+  //     }
+  //     return user;
+  // }, 
+  
   },
   Mutation: {
     login: async (_, { username, password }) => {
@@ -108,5 +106,46 @@ export const userResolvers = {
     resetUserPassword: async (_, { token, newPassword }) => {
       return await resetUserPassword(token, newPassword);
     },
+    updateUserProfile: async (_, { input }) => {
+  const { userId, ...updateFields } = input;
+
+  try {
+    const user = await Users.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Update only the provided fields
+    Object.keys(updateFields).forEach((key) => {
+      if (updateFields[key] !== undefined) {
+        user[key] = updateFields[key];
+      }
+    });
+
+    await user.save();
+
+    return {
+      success: true,
+      message: "Profile updated successfully",
+      updatedUser: user,
+    };
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return {
+      success: false,
+      message: error.message,
+      updatedUser: null,
+    };
+  }
+},
+getLearnerDataById: async (_, { userId }) => {
+    const user = await Users.findById(userId);
+    if (!user) {
+      throw new Error(`No user found with ID: ${userId}`);
+    }
+    user.lastActiveDate = new Date();
+    await user.save();
+    return user;
+  }
   },
 };

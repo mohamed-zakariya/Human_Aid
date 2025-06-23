@@ -340,3 +340,95 @@ export const sendEmailWithAttachment = async ({
 
   await transporter.sendMail(mailOptions);
 };
+
+export const sendInactivityEmail = async (email, recipientType, name, lastActiveDate, childName = null) => {
+  const formattedDate = new Date(lastActiveDate).toLocaleDateString("en-US", {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  const subject =
+    recipientType === "adult"
+      ? "We Miss You on LexFix!"
+      : "Your Child's Progress Needs Attention";
+
+  const message = recipientType === "adult"
+    ? `<p>We noticed you haven’t been active on LexFix since <strong>${formattedDate}</strong>.</p>
+       <p>Consistent practice is key to improving your skills. We encourage you to log back in and continue your journey!</p>`
+    : `<p>We noticed that your child, <strong>${childName}</strong>, hasn’t been active on LexFix since <strong>${formattedDate}</strong>.</p>
+       <p>Regular use of LexFix is essential for their learning progress. We recommend checking in and encouraging them to continue their learning journey.</p>`;
+
+  const mailOptions = {
+    from: `"LexFix App" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: subject,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+          }
+          .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          }
+          .header {
+            background-color: #6a0dad;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+          }
+          .content {
+            padding: 20px;
+          }
+          .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin-top: 20px;
+            background-color: #6a0dad;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+          }
+          .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="email-container">
+          <div class="header">
+            <h2>We Miss You at LexFix</h2>
+          </div>
+          <div class="content">
+            <p>Dear ${name},</p>
+            ${message}
+            <a href="https://your-lexfix-app-link.com" class="btn">Return to LexFix</a>
+            <p style="margin-top: 30px;">Warm regards,<br/>The LexFix Team</p>
+          </div>
+          <div class="footer">
+            <p>© 2025 LexFix. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `
+  };
+
+  await transporter.sendMail(mailOptions);
+};

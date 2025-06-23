@@ -113,6 +113,8 @@ export const signUpAdult = async ({ name, username, email, password, phoneNumber
      }
     const existingUser = await Users.findOne({ $or: [{ username }, { email }] });
     if (existingUser) throw new Error('Username or Email already exists');
+    const existingParent = await Parents.findOne({ email });
+    if (existingParent) throw new Error('Email already exists in parents');
 
     const hashedPassword = await bcrypt.hash(password, 7);
 

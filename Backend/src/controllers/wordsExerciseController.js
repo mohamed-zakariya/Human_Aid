@@ -322,7 +322,6 @@ if (!levelProgress) {
   };
 }
 
-
 async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, correctWord, isCorrect, timeSpent, session) {
   let overall = await OverallProgress.findOne({ user_id: userId }).session(session);
 
@@ -360,25 +359,25 @@ async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, cor
 
   const stats = exerciseProgress.stats;
 
-  // Check if this word has already been attempted (exists in either correct or incorrect)
-  const alreadyAttempted = 
-    stats.total_correct.items.includes(correctWord) || 
-    stats.total_incorrect.items.includes(correctWord);
-
-  // If it's a new word, count it as a new attempt
-  if (!alreadyAttempted) {
-    stats.total_items_attempted += 1;
-  }
-
-  // Remove the word from both lists to clean up state
+  // Remove the word from both correct and incorrect lists (clean up)
   stats.total_correct.items = stats.total_correct.items.filter(w => w !== correctWord);
   stats.total_incorrect.items = stats.total_incorrect.items.filter(w => w !== correctWord);
 
-  // Add word to correct or incorrect list based on result
+  // Check if the word was not previously attempted
+  const alreadyAttempted =
+    stats.total_correct.items.includes(correctWord) ||
+    stats.total_incorrect.items.includes(correctWord);
+
+  // Add to correct or incorrect list based on result
   if (isCorrect) {
     stats.total_correct.items.push(correctWord);
   } else {
     stats.total_incorrect.items.push(correctWord);
+  }
+
+  // If it was not already attempted, count it as a new unique attempt
+  if (!alreadyAttempted) {
+    stats.total_items_attempted += 1;
   }
 
   // Update counts
@@ -412,4 +411,3 @@ async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, cor
   await overall.save({ session });
   return overall;
 }
-

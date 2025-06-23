@@ -29,6 +29,11 @@ type UserStats {
   numParents: Int!
 }
 
+type EmailResult {
+  success: Boolean!
+  message: String!
+}
+
 type Query {
   getWords: [Word!]!
   getWord(id: ID!): Word
@@ -55,6 +60,7 @@ type Mutation {
   createStory(story: String!, kind: String!, summary: String, morale: String!): Story!
   updateStory(id: ID!, story: String, kind: String, summary: String, morale: String): Story!
   deleteStory(id: ID!): Story!
+  sendInactivityEmailToUser(userId: ID!, parentId: ID): EmailResult!
 }
 
 type AuthPayload {
