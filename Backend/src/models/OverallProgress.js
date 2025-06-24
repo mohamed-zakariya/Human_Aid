@@ -5,7 +5,7 @@ const { Schema, model, Types } = mongoose;
 const statsSchema = new Schema({
   total_correct: {
     count: { type: Number, required: true, default: 0 },
-    items: [{ type: String }] // list of correct words/letters/sentences
+    items: [{ type: String }], // list of correct words/letters/sentences
   },
   total_incorrect: {
     count: { type: Number, required: true, default: 0 },
@@ -14,7 +14,8 @@ const statsSchema = new Schema({
   total_items_attempted: { type: Number, required: true, default: 0 },
   accuracy_percentage: { type: Number, required: true, min: 0, max: 100 },
   average_game_score: { type: Number, required: true, default: 0 },
-  time_spent_seconds: { type: Number, required: true, default: 0 }
+  time_spent_seconds: { type: Number, required: true, default: 0 },
+  progress_percentage: { type: Number, default: 0 ,min:0, max: 100},
 }, { _id: false });
 
 // Sub-schema for individual exercise progress

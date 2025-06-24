@@ -44,12 +44,14 @@ type OverallProgress {
   combinedAccuracy: Float!
   averageScoreAll: Float!
   totalTimeSpent: Int!
+  progressPercentage: Float
 }
 type ExerciseStats {
   exerciseId: ID!
   accuracyPercentage: Float!
   score: Float!
   timeSpentSeconds: Int!
+  progressPercentage: Float
 }
 type Level {
   _id: ID!
