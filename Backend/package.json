@@ -3,7 +3,7 @@
     "@apollo/server": "^4.11.2",
     "arabic-persian-reshaper": "^1.0.1",
     "arabic-reshaper": "^1.1.0",
-    "axios": "^1.8.3",
+    "axios": "^1.10.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "bidi-js": "^1.0.3",
