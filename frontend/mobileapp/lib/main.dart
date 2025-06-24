@@ -26,8 +26,6 @@ import 'package:mobileapp/Screens/scentence_pronunciation_screen.dart';
 import 'package:mobileapp/Screens/word_pronunciation_screen.dart';
 import 'package:mobileapp/Services/learner_home_service.dart';
 
-
-
 import 'package:mobileapp/generated/l10n.dart';
 
 import 'package:mobileapp/models/learner.dart';
@@ -53,10 +51,13 @@ import 'Screens/object_detection_exercise_screen.dart';
 import 'Services/user_service.dart';
 import 'SplashLoadingScreen.dart';
 import 'models/level.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:mobileapp/Services/notification_service.dart';
 
-
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  // 🔔 Don't call NotificationService.init() here - call it after user is logged in
   runApp(const MyApp());
 }
 
@@ -86,7 +87,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-
   Future<void> _loadInitialScreen() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -99,7 +99,6 @@ class _MyAppState extends State<MyApp> {
     // await prefs.setBool('hasShownCourseTutorial', false);
     // await prefs.setBool('hasShownCoursePageTutorial', false);
     // await prefs.setBool('parentTutorialSeen', false);
-
 
     final bool onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
 
@@ -116,9 +115,13 @@ class _MyAppState extends State<MyApp> {
     final String? accessToken = prefs.getString('accessToken');
 
     if (userId != null && userRole != null && refreshToken != null && refreshToken.isNotEmpty) {
+      // 🔔 Initialize notification service with user data after confirming user is logged in
+      await NotificationService.init();
+      
       if (userRole == "parent") {
         final parent = await UserService.getParentById(userId);
         if (parent != null) {
+          await NotificationService.updateLastOpened();
           setState(() {
             _initialScreen = ParentMain(parent: parent, onLocaleChange: _setLocale);
           });
@@ -127,6 +130,7 @@ class _MyAppState extends State<MyApp> {
       } else if (userRole == "learner") {
         final learner = await UserService.getLearnerById(userId);
         if (learner != null) {
+          await NotificationService.updateLastOpened();
           setState(() {
             _initialScreen = LearnerHomeScreen(learner: learner, onLocaleChange: _setLocale);
           });
@@ -140,7 +144,6 @@ class _MyAppState extends State<MyApp> {
       _initialScreen = IntroScreen(onLocaleChange: _setLocale);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +171,6 @@ class _MyAppState extends State<MyApp> {
           '/user-forgot-password': (context) => UserForgotPasswordPage(onLocaleChange: _setLocale),
           '/user-otp-verification': (context) => UserOTPVerificationScreen(onLocaleChange: _setLocale),
           '/user-change-password': (context) => UserChangePasswordScreen(onLocaleChange: _setLocale),
-
 
           '/signupAdult': (context) => const Signupadult(),
           '/signup1': (context) => const Signupmain(),
@@ -209,8 +211,6 @@ class _MyAppState extends State<MyApp> {
             );
           },
 
-
-
           // LETTER STAGE
 
           // LEVEL CONTENT
@@ -226,7 +226,6 @@ class _MyAppState extends State<MyApp> {
 
           // LEVEL3 GAMES
           '/letters_game_5': (context) => const LetterLevel3Game(),
-
 
           // WORD STAGE GAMES
 
@@ -281,7 +280,6 @@ class _MyAppState extends State<MyApp> {
           // LEVEL 1 GAMES
           '/words_game_1': (context) => const SpellingGameScreen("Beginner"),
 
-
           // LEVEL 2 GAMES
           '/words_game_2': (context) => DirectionInstructionsPage(),
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
@@ -291,7 +289,6 @@ class _MyAppState extends State<MyApp> {
           // LEVEL 3 GAMES
           '/words_game_6': (context) => const MonthsOrderGameScreen(),
           '/words_game_7': (context) => const SpellingGameScreen("Advanced"),
-
 
           // SENTENCE STAGE
 
@@ -312,8 +309,6 @@ class _MyAppState extends State<MyApp> {
             );
           },
 
-
-
           // STORY STAGE GAMES
 
           // LEVEL 1 GAMES
@@ -321,7 +316,6 @@ class _MyAppState extends State<MyApp> {
 
           // LEVEL 2 GAMES
           '/story_game_2': (context) => const ArabicStorySummarizeWidget(),
-
 
         },
       onUnknownRoute: (settings) => MaterialPageRoute(
@@ -343,5 +337,3 @@ class _MyAppState extends State<MyApp> {
 //     return const Login();
 //   }
 // }
-
-
