@@ -44,12 +44,14 @@ type OverallProgress {
   combinedAccuracy: Float!
   averageScoreAll: Float!
   totalTimeSpent: Int!
+  progressPercentage: Float
 }
 type ExerciseStats {
   exerciseId: ID!
   accuracyPercentage: Float!
   score: Float!
   timeSpentSeconds: Int!
+  progressPercentage: Float
 }
 type Level {
   _id: ID!
@@ -113,6 +115,12 @@ type signUpAdultdResponse{
   message: String!
   }
 
+  type UpdateProfileResponse {
+  success: Boolean!
+  message: String!
+  updatedUser: User
+}
+
   extend type Query {
     users: [User!]
     checkUserUsernameExists(username: String!): UsernameCheckResponse!
@@ -120,7 +128,9 @@ type signUpAdultdResponse{
     learnerHomePage(userId: ID!): [Exercise!]!
     getLevelsForExercises: [Exercise!]!
     learnerProfile(userId: ID!): LearnerProfile!
-    getLearnerDataById(userId: ID!): User!
+    # getLearnerDataById(userId: ID!): User!
+    
+    
   }
 
   extend type Mutation {
@@ -164,6 +174,10 @@ type signUpAdultdResponse{
       token: String!
       newPassword: String!
     ): ResetPasswordResponse!
+
+    updateUserProfile(input: UpdateUserProfileInput!): UpdateProfileResponse!
+
+    getLearnerDataById(userId: ID!): User!
   }
   input AddChildData{
     parentId: ID!
@@ -186,4 +200,15 @@ type signUpAdultdResponse{
     gender: String!
     role: String!
   }
+  input UpdateUserProfileInput {
+  userId: ID!
+  name: String
+  username: String
+  email: String
+  phoneNumber: String
+  nationality: String
+  birthdate: String
+  gender: String
+  currentStage: String
+}
 `;

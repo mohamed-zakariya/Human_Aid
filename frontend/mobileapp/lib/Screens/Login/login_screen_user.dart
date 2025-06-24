@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Services/notification_service.dart';
 import '../../generated/l10n.dart';
 import '../../models/learner.dart';
 import '../widgets/language_toggle_icon.dart';
@@ -85,35 +86,44 @@ class _LoginScreenUserState extends State<LoginScreenUser> with TickerProviderSt
   }
 
   void handleLoginUser() async {
-    if (!_formKey.currentState!.validate() || !_isFormValid) return;
+  if (!_formKey.currentState!.validate() || !_isFormValid) return;
 
-    setState(() => _isLoading = true);
+  setState(() => _isLoading = true);
 
-    try {
-      String username = _usernameController.text.trim();
-      String password = _passwordController.text.trim();
+  try {
+    String username = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
 
-      Learner? learner = await AuthService.loginLearner(username, password);
-      if (learner != null) {
-        await _setOnboardingSeen();
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/Learner-Home', arguments: learner);
-        }
-      } else {
-        if (mounted) {
-          _showErrorSnackBar(context, "Invalid username or password");
-        }
-      }
-    } catch (e) {
+    Learner? learner = await AuthService.loginLearner(username, password);
+    if (learner != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('onboardingSeen', true);
+      
+      // Save user data to SharedPreferences
+      await prefs.setString('userId', learner.id ?? '');
+      await prefs.setString('role', 'learner');
+      
+      // Initialize notification service with the logged-in user
+      await NotificationService.init();
+      
       if (mounted) {
-        _showErrorSnackBar(context, "An error occurred during login");
+        Navigator.pushReplacementNamed(context, '/Learner-Home', arguments: learner);
       }
-    } finally {
+    } else {
       if (mounted) {
-        setState(() => _isLoading = false);
+        _showErrorSnackBar(context, "Invalid username or password");
       }
     }
+  } catch (e) {
+    if (mounted) {
+      _showErrorSnackBar(context, "An error occurred during login");
+    }
+  } finally {
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
+}
 
   void _showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(

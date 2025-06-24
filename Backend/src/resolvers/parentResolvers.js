@@ -25,9 +25,15 @@ export const parentResolvers = {
     getLearnerDailyAttempts: async(_, {parentId}) => {
       return await getLearnerDailyAttempts(parentId);
     },
-    getParentDataById: async(_, {parentId}) => {
-      return await getParentDataById(parentId);
-    },
+parentProfile: async (_, { parentId }) => {
+  const parent = await Parents.findById(parentId).populate("linkedChildren");
+
+  if (!parent) {
+    throw new Error("Parent not found");
+  }
+
+  return parent;
+}
 
   },
   Mutation: {
@@ -52,5 +58,37 @@ export const parentResolvers = {
     resetParentPassword: async (_, { token, newPassword }) => {
       return await resetParentPassword(token, newPassword);
     },
+    updateParentProfile: async (_, { input }) => {
+  const { parentId, ...updateFields } = input;
+
+  try {
+    const parent = await Parents.findById(parentId);
+    if (!parent) {
+      throw new Error("Parent not found");
+    }
+
+    // Update provided fields only
+    Object.keys(updateFields).forEach((key) => {
+      if (updateFields[key] !== undefined) {
+        parent[key] = updateFields[key];
+      }
+    });
+
+    await parent.save();
+
+    return {
+      success: true,
+      message: "Parent profile updated successfully",
+      updatedParent: parent,
+    };
+  } catch (error) {
+    console.error("Error updating parent profile:", error);
+    return {
+      success: false,
+      message: error.message,
+      updatedParent: null,
+    };
+  }
+}
   },
 };

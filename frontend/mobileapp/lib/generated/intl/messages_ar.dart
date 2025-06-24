@@ -99,6 +99,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("إِنْشَاءُ حِسَابٍ كمتعلم"),
         "all": MessageLookupByLibrary.simpleMessage("جميع"),
+        "allWordsCompleted": MessageLookupByLibrary.simpleMessage(
+            "عمل رائع! لقد أكملت جميع الكلمات!"),
         "amazing": MessageLookupByLibrary.simpleMessage("مذهل! 😎"),
         "appTitle": MessageLookupByLibrary.simpleMessage("تمرين كشف الأشياء"),
         "apple": MessageLookupByLibrary.simpleMessage("تفاحة"),
@@ -141,11 +143,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
         "completedAllLetters":
             MessageLookupByLibrary.simpleMessage("🎉 لقد أنهيت جميع الحروف!"),
+        "completedAllWords": MessageLookupByLibrary.simpleMessage(
+            "لقد أكملت بنجاح جميع الكلمات في هذا التمرين!"),
         "confirm": MessageLookupByLibrary.simpleMessage("تأكيد"),
         "confirmPasswordHint":
             MessageLookupByLibrary.simpleMessage("تأكيد كلمة المرور"),
         "confirmPasswordRequired":
             MessageLookupByLibrary.simpleMessage("يجب تأكيد كلمة المرور"),
+        "congratulations": MessageLookupByLibrary.simpleMessage("مبروك!"),
         "continueButton": MessageLookupByLibrary.simpleMessage("استمرار"),
         "continueLearning":
             MessageLookupByLibrary.simpleMessage("واصل التعلُّم"),
@@ -254,6 +259,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "finalLevelSuccess": MessageLookupByLibrary.simpleMessage(
             "🌟 مذهل! لقد أتقنت ترتيب جميع الأشهر!"),
         "finalScore": m8,
+        "finish": MessageLookupByLibrary.simpleMessage("إنهاء"),
         "finishTracing": MessageLookupByLibrary.simpleMessage("✅ إنهاء التتبع"),
         "fishGameTitle":
             MessageLookupByLibrary.simpleMessage("لعبة الأسماك بالحروف"),
@@ -371,6 +377,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "listenAgain": m13,
         "listenToLetter":
             MessageLookupByLibrary.simpleMessage("استمع إلى الحرف"),
+        "loadingWords":
+            MessageLookupByLibrary.simpleMessage("جاري تحميل الكلمات..."),
         "loginButton": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
         "loginSubtitle": MessageLookupByLibrary.simpleMessage(
             "مرحبًا بعودتك! الرجاء تسجيل الدخول للمتابعة"),
@@ -564,6 +572,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "spellingGame": MessageLookupByLibrary.simpleMessage("لعبة التهجئة"),
         "spoon": MessageLookupByLibrary.simpleMessage("ملعقة"),
         "startExercise": MessageLookupByLibrary.simpleMessage("ابدأ التمرين"),
+        "startOver": MessageLookupByLibrary.simpleMessage("ابدأ من جديد"),
         "stat_correct": MessageLookupByLibrary.simpleMessage("صحيح"),
         "stat_incorrect": MessageLookupByLibrary.simpleMessage("خاطئ"),
         "stat_total": MessageLookupByLibrary.simpleMessage("الإجمالي"),
@@ -653,6 +662,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "verify": MessageLookupByLibrary.simpleMessage("تحقق"),
         "veryGreat": MessageLookupByLibrary.simpleMessage("رائع جداً"),
         "verySmart": MessageLookupByLibrary.simpleMessage("أنت ذكي جداً"),
+        "viewResults": MessageLookupByLibrary.simpleMessage("عرض النتائج"),
         "view_details": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
         "welcome": MessageLookupByLibrary.simpleMessage("مرحبا"),
         "welcome_message":

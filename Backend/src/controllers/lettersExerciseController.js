@@ -209,7 +209,9 @@ async function updateOverallProgress(userId, exerciseId, letterId, spokenLetter,
     });
   }
 
-  let exerciseProgress = overall.progress_by_exercise.find((p) => p.exercise_id.toString() === exerciseId.toString());
+  let exerciseProgress = overall.progress_by_exercise.find(
+    (p) => p.exercise_id.toString() === exerciseId.toString()
+  );
 
   if (!exerciseProgress) {
     exerciseProgress = {
@@ -228,21 +230,28 @@ async function updateOverallProgress(userId, exerciseId, letterId, spokenLetter,
 
   const stats = exerciseProgress.stats;
 
-  const alreadyAttempted = stats.total_correct.items.includes(correctLetter) || stats.total_incorrect.items.includes(correctLetter);
-
-  if (!alreadyAttempted) {
-    stats.total_items_attempted += 1;
-  }
-
+  // First, remove the letter from both correct and incorrect lists (to avoid duplicates)
   stats.total_correct.items = stats.total_correct.items.filter((l) => l !== correctLetter);
   stats.total_incorrect.items = stats.total_incorrect.items.filter((l) => l !== correctLetter);
 
+  // Check if this letter has already been attempted (after cleanup)
+  const alreadyAttempted =
+    stats.total_correct.items.includes(correctLetter) ||
+    stats.total_incorrect.items.includes(correctLetter);
+
+  // Add to the appropriate list based on correctness
   if (isCorrect) {
     stats.total_correct.items.push(correctLetter);
   } else {
     stats.total_incorrect.items.push(correctLetter);
   }
 
+  // Count as a new unique attempt only if not already attempted
+  if (!alreadyAttempted) {
+    stats.total_items_attempted += 1;
+  }
+
+  // Update counts and accuracy
   stats.total_correct.count = stats.total_correct.items.length;
   stats.total_incorrect.count = stats.total_incorrect.items.length;
 
@@ -250,8 +259,10 @@ async function updateOverallProgress(userId, exerciseId, letterId, spokenLetter,
     ? (stats.total_correct.count / stats.total_items_attempted) * 100
     : 0;
 
+  // Time tracking
   stats.time_spent_seconds += timeSpent || 0;
 
+  // Update overall progress (combined)
   let totalCorrect = 0;
   let totalAttempted = 0;
   let totalTime = 0;

@@ -29,11 +29,11 @@ class NavBarLearner extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF6C63FF),
-              const Color(0xFF4A80F0),
-              const Color(0xFF3AA8A8),
+              Color(0xFF6C63FF),
+              Color(0xFF4A80F0),
+              Color(0xFF3AA8A8),
             ],
-            stops: const [0.0, 0.5, 1.0],
+            stops: [0.0, 0.5, 1.0],
           ),
         ),
         child: SafeArea(
@@ -194,7 +194,7 @@ class NavBarLearner extends StatelessWidget {
                           ),
                           const SizedBox(height: 24),
                           
-                          // Navigation Cards
+                          // Navigation Cards - Made fully clickable with enhanced feedback
                           _buildNavigationCard(
                             context: context,
                             icon: Icons.home_rounded,
@@ -205,7 +205,10 @@ class NavBarLearner extends StatelessWidget {
                             ),
                             onTap: () {
                               Navigator.pop(context);
-                              onPageSelected?.call(0);
+                              // Add a small delay to ensure smooth drawer closing animation
+                              Future.delayed(const Duration(milliseconds: 100), () {
+                                onPageSelected?.call(0);
+                              });
                             },
                           ),
                           
@@ -221,7 +224,10 @@ class NavBarLearner extends StatelessWidget {
                             ),
                             onTap: () {
                               Navigator.pop(context);
-                              onPageSelected?.call(1);
+                              // Add a small delay to ensure smooth drawer closing animation
+                              Future.delayed(const Duration(milliseconds: 100), () {
+                                onPageSelected?.call(1);
+                              });
                             },
                           ),
                           
@@ -237,7 +243,10 @@ class NavBarLearner extends StatelessWidget {
                             ),
                             onTap: () {
                               Navigator.pop(context);
-                              onPageSelected?.call(2);
+                              // Add a small delay to ensure smooth drawer closing animation
+                              Future.delayed(const Duration(milliseconds: 100), () {
+                                onPageSelected?.call(2);
+                              });
                             },
                           ),
                           
@@ -305,66 +314,74 @@ class NavBarLearner extends StatelessWidget {
     required Gradient gradient,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        splashColor: Colors.white.withOpacity(0.3),
+        highlightColor: Colors.white.withOpacity(0.1),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: gradient,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
               ),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+            ],
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    ),
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 24,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.white.withOpacity(0.7),
+                  size: 16,
+                ),
+              ],
             ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              color: Colors.white.withOpacity(0.7),
-              size: 16,
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -378,55 +395,61 @@ class NavBarLearner extends StatelessWidget {
     required VoidCallback onTap,
     bool isLogout = false,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: isLogout 
-                    ? Colors.red.withOpacity(0.1) 
-                    : const Color(0xFF6C63FF).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        splashColor: (isLogout ? Colors.red : const Color(0xFF6C63FF)).withOpacity(0.1),
+        highlightColor: (isLogout ? Colors.red : const Color(0xFF6C63FF)).withOpacity(0.05),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isLogout 
+                      ? Colors.red.withOpacity(0.1) 
+                      : const Color(0xFF6C63FF).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  color: isLogout ? Colors.red : const Color(0xFF6C63FF),
+                  size: 20,
+                ),
               ),
-              child: Icon(
-                icon,
-                color: isLogout ? Colors.red : const Color(0xFF6C63FF),
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isLogout ? Colors.red : Colors.black87,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isLogout ? Colors.red : Colors.black87,
+                      ),
                     ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 14,
-              color: Colors.grey[400],
-            ),
-          ],
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 14,
+                color: Colors.grey[400],
+              ),
+            ],
+          ),
         ),
       ),
     );

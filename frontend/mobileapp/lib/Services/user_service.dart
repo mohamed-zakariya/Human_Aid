@@ -57,7 +57,7 @@ class UserService {
     final client = await GraphQLService.getClient();
 
     const String query = r'''
-      query getLearnerDataById($userId: ID!) {
+      mutation getLearnerDataById($userId: ID!) {
         getLearnerDataById(userId: $userId) {
           id
           name

@@ -64,6 +64,12 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   String _feedbackMessage = "";
   bool? _isCorrect;
 
+  // NEW: Variables for managing the word list
+  List<Word> _allWords = [];
+  int _currentWordIndex = 0;
+  bool _isLoadingWords = false;
+  bool _allWordsCompleted = false;
+
   // NEW: We'll store the ExerciseService
   late ExerciseService _exerciseService;
 
@@ -74,7 +80,9 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
     _levelId = widget.levelId;
     _username = widget.initialLearner.name;
     _userId = widget.initialLearner.id!;
-    _loadWord();
+    
+    // Load all words at the beginning
+    _loadAllWords();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_userId.isEmpty) {
@@ -109,38 +117,130 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
     super.dispose();
   }
 
-  /// Fetch a random word from the database
-  Future<void> _loadWord() async {
+  /// NEW: Fetch all words at the beginning
+  Future<void> _loadAllWords() async {
     setState(() {
+      _isLoadingWords = true;
       _isProcessing = true;
-      _feedbackMessage = "";
-      _isCorrect = null;
-      _attemptsLeft = 3; // Reset attempts when loading new word
+      _feedbackMessage = "Loading words..."; // Use static text initially
     });
 
-    // Map levelId to backend key for fetching words only
+    // Map levelId to backend key for fetching words
     String backendLevelKey = _getBackendLevelKey(widget.levelId);
 
-    final Word? fetchedWord = await WordsService.fetchRandomWord(backendLevelKey, _exerciseId);
+    final List<Word>? fetchedWords = await WordsService.fetchAllWords(backendLevelKey, _exerciseId);
 
-    if (fetchedWord == null) {
-      // Handle "no words" scenario
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).noWordsAvailable)),
-      );
+    if (fetchedWords == null || fetchedWords.isEmpty) {
+      // Handle "no words" scenario - use mounted check for ScaffoldMessenger
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("No words available")), // Static text for now
+        );
+      }
       setState(() {
+        _isLoadingWords = false;
         _isProcessing = false;
+        _allWordsCompleted = true;
       });
       return;
     }
 
     setState(() {
-      _currentWord = fetchedWord.text;
-      _currentWordId = fetchedWord.id;
-      _wordLetters = fetchedWord.text.split('');
-      _currentWordImage = fetchedWord.imageUrl;
+      _allWords = fetchedWords;
+      _currentWordIndex = 0;
+      _isLoadingWords = false;
+      _allWordsCompleted = false;
+    });
+
+    // Load the first word
+    _loadCurrentWord();
+  }
+
+  /// NEW: Load the current word from the local list
+  void _loadCurrentWord() {
+    if (_allWords.isEmpty) {
+      setState(() {
+        _allWordsCompleted = true;
+        _isProcessing = false;
+      });
+      return;
+    }
+
+    // Check if we've completed all words
+    if (_currentWordIndex >= _allWords.length) {
+      setState(() {
+        _allWordsCompleted = true;
+        _isProcessing = false;
+        _feedbackMessage = S.of(context).allWordsCompleted; // Add this to your localization
+      });
+      
+      // Show completion dialog or navigate back
+      _showCompletionDialog();
+      return;
+    }
+
+    final currentWord = _allWords[_currentWordIndex];
+
+    setState(() {
+      _currentWord = currentWord.text;
+      _currentWordId = currentWord.id;
+      _wordLetters = currentWord.text.split('');
+      _currentWordImage = currentWord.imageUrl;
+      _attemptsLeft = 3; // Reset attempts for new word
+      _feedbackMessage = "";
+      _isCorrect = null;
       _isProcessing = false;
     });
+  }
+
+  /// NEW: Move to the next word in the list
+  void _moveToNextWord() {
+    if (_allWordsCompleted) return;
+    
+    setState(() {
+      _currentWordIndex++;
+    });
+    
+    _loadCurrentWord();
+  }
+
+  /// NEW: Show completion dialog when all words are finished
+  void _showCompletionDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(S.of(dialogContext).congratulations),
+          content: Text(S.of(dialogContext).completedAllWords),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close dialog
+                Navigator.of(context).pop(); // Go back to previous screen
+              },
+              child: Text(S.of(dialogContext).finish),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close dialog
+                _restartExercise();
+              },
+              child: Text(S.of(dialogContext).startOver),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// NEW: Restart the exercise with the same words
+  void _restartExercise() {
+    setState(() {
+      _currentWordIndex = 0;
+      _allWordsCompleted = false;
+    });
+    _loadCurrentWord();
   }
 
   /// Start recording + timer
@@ -171,7 +271,7 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).recordingStartError('e'))),
+        SnackBar(content: Text(S.of(context).recordingStartError('e'))),
       );
     }
   }
@@ -246,15 +346,15 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
         if (mounted) {
           setState(() {
             _feedbackMessage =
-                "[S.of(context).transcriptLabel]: $transcript\n$message";
+                "[S.of(context).transcriptLabel]: $transcript\n$message";
             _isCorrect = isCorrect;
           });
         }
 
         if (isCorrect) {
-          // If correct, wait a moment then load new word automatically
+          // If correct, wait a moment then move to next word
           await Future.delayed(const Duration(seconds: 2));
-          if (mounted) _loadWord();
+          if (mounted) _moveToNextWord();
         } else {
           // If incorrect, decrease attempts
           if (mounted) {
@@ -262,7 +362,7 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
               _attemptsLeft = _attemptsLeft > 0 ? _attemptsLeft - 1 : 0;
             });
           }
-          // If no attempts left, automatically load new word
+          // If no attempts left, automatically move to next word
           if (_attemptsLeft == 0) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -270,7 +370,7 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
               );
             }
             await Future.delayed(const Duration(seconds: 2));
-            if (mounted) _loadWord(); // This will reset attempts to 3
+            if (mounted) _moveToNextWord();
           }
         }
       } else {
@@ -284,15 +384,19 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
       if (mounted) {
         setState(() {
           _isProcessing = false;
-          _feedbackMessage = S.of(context).recordingError('e');
+          _feedbackMessage = S.of(context).recordingError('e');
         });
       }
     }
   }
 
-  /// When "التالي" is pressed, fetch a new word
+  /// When "التالي" is pressed, move to next word
   void _onNextButtonPressed() {
-    _loadWord(); // This will reset attempts to 3
+    if (_allWordsCompleted) {
+      _showCompletionDialog();
+    } else {
+      _moveToNextWord();
+    }
   }
 
   /// Format seconds as mm:ss
@@ -313,6 +417,35 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Show loading screen while words are being fetched
+    if (_isLoadingWords) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+          elevation: 0,
+          title: Text(
+            "Loading words...",
+            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 20),
+              Text("Loading words..."), // You can localize this
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       // AppBar
       appBar: AppBar(
@@ -336,6 +469,16 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
                 fontWeight: FontWeight.w500,
               ),
             ),
+            // NEW: Show progress
+            if (_allWords.isNotEmpty)
+              Text(
+                "${_currentWordIndex + 1} / ${_allWords.length}",
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
           ],
         ),
         centerTitle: true,
@@ -508,7 +651,9 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
                           child: ElevatedButton(
                             onPressed: _isProcessing ? null : _onNextButtonPressed,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueGrey[200],
+                              backgroundColor: _allWordsCompleted 
+                                  ? Colors.green[200] 
+                                  : Colors.blueGrey[200],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -516,7 +661,9 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
                               disabledBackgroundColor: Colors.grey.shade300,
                             ),
                             child: Text(
-                              S.of(context).nextButton,
+                              _allWordsCompleted 
+                                  ? S.of(context).viewResults
+                                  : S.of(context).nextButton,
                               style: TextStyle(
                                 fontSize: (screenWidth * 0.055).clamp(18.0, 26.0), // Responsive font size
                                 fontWeight: FontWeight.bold,

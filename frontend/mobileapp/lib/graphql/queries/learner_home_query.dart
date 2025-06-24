@@ -10,6 +10,7 @@ const String getLearnerHomePageQuery = r'''
       progress {
         accuracyPercentage
         score
+        progressPercentage
       }
       progress_imageUrl
       exercise_imageUrl

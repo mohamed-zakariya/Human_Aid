@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../config/jwtConfig.js";
 import Parents from "../models/Parents.js";
 import Exercises from "../models/Exercises.js";
+import Users from "../models/Users.js"; 
 import { sendWelcomeEmail } from '../config/emailConfig.js';
 import { sendParentWelcomeEmail } from '../config/emailConfig.js';
 import DailyAttemptTracking from "../models/DailyAttemptTracking.js";
@@ -72,6 +73,9 @@ export const signUpParent = async ({ name,email, password, phoneNumber, national
     }
     const existingParent = await Parents.findOne({ email });
     if (existingParent) throw new Error(" Email already exists");
+
+    const existingUser = await Users.findOne({ email });
+    if (existingUser) throw new Error("Email already exists in users");
 
     const hashedPassword = await bcrypt.hash(password, 7);
 
@@ -190,6 +194,7 @@ export const getLearnerProgress = async (parentId) => {
               level_id: 1,
               correct_items: 1,
               incorrect_items: 1,
+              progress_percentage: 1,
               games: {
                 game_id: 1,
                 scores: 1
@@ -252,10 +257,32 @@ export const getLearnerOverallProgress = async (parentId) => {
                 }
             },
             {
-                $project: {
-                    id: "$_id",
-                    progress: 1
+              $project: {
+              id: "$_id",
+              progress: {
+                $map: {
+                  input: "$progress",
+                  as: "p",
+                  in: {
+                    user_id: "$$p.user_id",
+                    name: "$$p.name",
+                    username: "$$p.username",
+                    overall_stats: "$$p.overall_stats",
+                    progress_by_exercise: {
+                      $map: {
+                        input: "$$p.progress_by_exercise",
+                        as: "ex",
+                        in: {
+                          exercise_id: "$$ex.exercise_id",
+                          progress_percentage: "$$ex.stats.progress_percentage", // <-- Add this line
+                          stats: "$$ex.stats"
+                        }
+                      }
+                    }
+                  }
                 }
+              }
+            }
             }
         ]);
 

@@ -54,6 +54,7 @@ type LevelProgress {
   level_id: ID!
   correct_items: [String!]
   incorrect_items: [String!]
+  progress_percentage: Float 
   games: [GameProgress!]
 }
 
@@ -87,6 +88,7 @@ type Stats {
   accuracy_percentage: Float!
   average_game_score: Float!
   time_spent_seconds: Int!
+  progress_percentage: Float
 }
 
 type StatDetails {
@@ -151,6 +153,12 @@ type GameAttemptEntry {
   timestamp: String
 }
 
+type UpdateParentProfileResponse {
+  success: Boolean!
+  message: String!
+  updatedParent: Parent
+}
+
 extend type Query {
   parents: [Parent!]
   checkParentEmailExists(email: String!): EmailCheckResponse!
@@ -158,7 +166,7 @@ extend type Query {
   getLearnerOverallProgress(parentId: ID!): LearneroverallProgress
   getParentChildren(parentId: ID!): [User!]
   getLearnerDailyAttempts(parentId: ID!): [LearnerDailyAttempts]
-  getParentDataById(parentId: ID!): Parent
+  parentProfile(parentId: ID!): Parent
 }
 
 extend type Mutation {
@@ -192,12 +200,24 @@ extend type Mutation {
     token: String!
     newPassword: String!
   ): ResetPasswordResponse!
+
+  updateParentProfile(input: UpdateParentProfileInput!): UpdateParentProfileResponse!
 }
 
 input AddParentData {
   name: String!
   email: String!
   password: String
+  phoneNumber: String
+  nationality: String
+  birthdate: String
+  gender: String
+}
+
+input UpdateParentProfileInput {
+  parentId: ID!
+  name: String
+  email: String
   phoneNumber: String
   nationality: String
   birthdate: String

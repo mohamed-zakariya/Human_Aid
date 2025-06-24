@@ -7,6 +7,8 @@ import { GraphQLUpload } from 'graphql-upload';
 import Sentences from '../models/Sentences.js';
 import Parents from '../models/Parents.js';
 import Stories from "../models/Stories.js";
+import { sendInactivityEmail } from "../config/emailConfig.js";
+import dayjs from "dayjs";
 import mongoose from 'mongoose';
 import Exercisesprogress from '../models/Exercisesprogress.js';
 
@@ -173,6 +175,29 @@ async updateWord(_, { id, word, level, image,synonym }) {
       if (!deletedStory) throw new Error("Story not found");
       return deletedStory;
     },
+    sendInactivityEmailToUser: async (_, { userId, parentId }) => {
+  const user = await Users.findById(userId);
+  if (!user) throw new Error("User not found");
+
+  if (!user.lastActiveDate) throw new Error("No last_active_date found for user");
+
+  if (user.role === 'adult') {
+    await sendInactivityEmail(user.email, "adult", user.username, user.lastActiveDate);
+    return { success: true, message: "Email sent to adult learner." };
+  }
+
+  if (user.role === 'child') {
+    if (!parentId) throw new Error("Parent ID required for child users");
+
+    const parent = await Parents.findById(parentId);
+    if (!parent) throw new Error("Parent not found");
+
+    await sendInactivityEmail(parent.email, "parent", parent.name, user.lastActiveDate, user.username);
+    return { success: true, message: "Email sent to parent about child's inactivity." };
+  }
+
+  throw new Error("Invalid user role");
+},
   },
 
   Query: {
