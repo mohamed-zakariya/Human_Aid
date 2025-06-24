@@ -5,6 +5,7 @@ import 'package:mobileapp/Services/auth_service.dart';
 import 'package:mobileapp/Services/google_auth_parent_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Services/notification_service.dart';
 import '../../generated/l10n.dart';
 import '../../models/parent.dart';
 import '../widgets/language_toggle_icon.dart';
@@ -85,77 +86,93 @@ class _LoginScreenGaurdianState extends State<LoginScreenGaurdian>
   }
 
   void handleLogin() async {
-    if (!_formKey.currentState!.validate()) return;
+  if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+  setState(() {
+    _isLoading = true;
+  });
 
-    try {
-      String email = _emailController.text.trim();
-      String password = _passwordController.text;
+  try {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text;
 
-      Parent? parent = await AuthService.loginParent(email, password);
-      if (parent != null) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('onboardingSeen', true);
-        Navigator.pushReplacementNamed(
-            context,
-            '/parentHome',
-            arguments: parent);
-      } else {
-        _showErrorSnackBar("Invalid email or password. Please try again.");
-      }
-    } catch (e) {
-      _showErrorSnackBar("Login failed. Please check your connection and try again.");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+    Parent? parent = await AuthService.loginParent(email, password);
+    if (parent != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('onboardingSeen', true);
+      
+      // Save user data to SharedPreferences
+      await prefs.setString('userId', parent.id ?? '');
+      await prefs.setString('role', 'parent');
+      
+      // Initialize notification service with the logged-in user
+      await NotificationService.init();
+      
+      Navigator.pushReplacementNamed(
+          context,
+          '/parentHome',
+          arguments: parent);
+    } else {
+      _showErrorSnackBar("Invalid email or password. Please try again.");
     }
+  } catch (e) {
+    _showErrorSnackBar("Login failed. Please check your connection and try again.");
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
 
   void _handleGoogleLogin() async {
-    setState(() {
-      _isGoogleLoading = true;
-    });
+  setState(() {
+    _isGoogleLoading = true;
+  });
 
-    try {
-      final authService = AuthParentService();
-      final user = await authService.signInWithGoogle();
+  try {
+    final authService = AuthParentService();
+    final user = await authService.signInWithGoogle();
 
-      if (user != null) {
-        final parentJson = user['parent'] as Map<String, dynamic>?;
-        if (parentJson != null) {
-          final parent = Parent.fromJson({
-            "id": parentJson["_id"],
-            "name": parentJson["name"],
-            "email": parentJson["email"],
-            "phoneNumber": parentJson["phoneNumber"] ?? "",
-            "birthdate": parentJson["birthdate"] ?? "",
-            "nationality": parentJson["nationality"] ?? "",
-            "gender": parentJson["gender"] ?? "",
-          });
+    if (user != null) {
+      final parentJson = user['parent'] as Map<String, dynamic>?;
+      if (parentJson != null) {
+        final parent = Parent.fromJson({
+          "id": parentJson["_id"],
+          "name": parentJson["name"],
+          "email": parentJson["email"],
+          "phoneNumber": parentJson["phoneNumber"] ?? "",
+          "birthdate": parentJson["birthdate"] ?? "",
+          "nationality": parentJson["nationality"] ?? "",
+          "gender": parentJson["gender"] ?? "",
+        });
 
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('onboardingSeen', true);
-          Navigator.pushReplacementNamed(
-            context,
-            '/parentHome',
-            arguments: parent,
-          );
-        }
-      } else {
-        _showErrorSnackBar("Google sign-in failed. Please try again.");
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('onboardingSeen', true);
+        
+        // Save user data to SharedPreferences
+        await prefs.setString('userId', parent.id ?? '');
+        await prefs.setString('role', 'parent');
+        
+        // Initialize notification service with the logged-in user
+        await NotificationService.init();
+        
+        Navigator.pushReplacementNamed(
+          context,
+          '/parentHome',
+          arguments: parent,
+        );
       }
-    } catch (e) {
+    } else {
       _showErrorSnackBar("Google sign-in failed. Please try again.");
-    } finally {
-      setState(() {
-        _isGoogleLoading = false;
-      });
     }
+  } catch (e) {
+    _showErrorSnackBar("Google sign-in failed. Please try again.");
+  } finally {
+    setState(() {
+      _isGoogleLoading = false;
+    });
   }
+}
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "928398679952",
+    "project_id": "lexfix",
+    "storage_bucket": "lexfix.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928398679952:android:b828f7d98d9150d3901d15",
+        "android_client_info": {
+          "package_name": "com.example.mobileapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFZbgCxOUcvJDhOsfuWoE7QALP6-VYHKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

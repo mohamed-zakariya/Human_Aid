@@ -142,7 +142,7 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
                                 final progress = exercise['progress'];
                                 final score = progress?['score'] ?? 0;
                                 final accuracy =
-                                    (progress?['accuracyPercentage'] ?? 0.0)
+                                    (progress?['progressPercentage'] ?? 0.0)
                                         .toDouble();
 
                                 final colors = [
@@ -222,7 +222,7 @@ class _LearnerDashboardPageState extends State<LearnerDashboardPage> {
 
                               final progress = exercise['progress'];
                               final accuracy =
-                                  (progress?['accuracyPercentage'] ?? 0.0)
+                                  (progress?['progressPercentage'] ?? 0.0)
                                       .toDouble();
 
                               // Use exercise_imageUrl from API if available
