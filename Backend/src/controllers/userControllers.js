@@ -295,6 +295,7 @@ export const learnerHomePage = async (userId) => {
           ? {
               accuracyPercentage: stats.accuracy_percentage,
               score: stats.average_game_score,
+              progressPercentage: stats.progress_percentage
             }
           : null,
       };

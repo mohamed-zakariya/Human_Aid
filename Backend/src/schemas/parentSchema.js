@@ -54,6 +54,7 @@ type LevelProgress {
   level_id: ID!
   correct_items: [String!]
   incorrect_items: [String!]
+  progress_percentage: Float 
   games: [GameProgress!]
 }
 
@@ -87,6 +88,7 @@ type Stats {
   accuracy_percentage: Float!
   average_game_score: Float!
   time_spent_seconds: Int!
+  progress_percentage: Float
 }
 
 type StatDetails {

@@ -12,6 +12,7 @@ const levelProgressSchema = new Schema({
   level_id: { type: Types.ObjectId, ref: 'Exercises.levels.level_id', required: true },
   correct_items: [{ type: String }],
   incorrect_items: [{ type: String }],
+  progress_percentage: { type: Number, default: 0 },
   games: [gameProgressSchema]
 }, { _id: false });
 
