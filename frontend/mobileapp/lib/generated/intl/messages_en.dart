@@ -103,6 +103,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("Create Account"),
         "all": MessageLookupByLibrary.simpleMessage("all"),
+        "allWordsCompleted": MessageLookupByLibrary.simpleMessage(
+            "Great job! You\'ve completed all words!"),
         "amazing": MessageLookupByLibrary.simpleMessage("Amazing! 😎"),
         "appTitle":
             MessageLookupByLibrary.simpleMessage("Object Detection Exercise"),
@@ -144,11 +146,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "close": MessageLookupByLibrary.simpleMessage("Close"),
         "completedAllLetters": MessageLookupByLibrary.simpleMessage(
             "🎉 You\'ve completed all letters!"),
+        "completedAllWords": MessageLookupByLibrary.simpleMessage(
+            "You have successfully completed all words in this exercise!"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "confirmPasswordHint":
             MessageLookupByLibrary.simpleMessage("Confirm Password"),
         "confirmPasswordRequired": MessageLookupByLibrary.simpleMessage(
             "Confirm password is required"),
+        "congratulations":
+            MessageLookupByLibrary.simpleMessage("Congratulations!"),
         "continueButton": MessageLookupByLibrary.simpleMessage("Continue"),
         "continueLearning":
             MessageLookupByLibrary.simpleMessage("Continue Learning"),
@@ -259,6 +265,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "finalLevelSuccess": MessageLookupByLibrary.simpleMessage(
             "🌟 Incredible! You\'ve mastered all month orders!"),
         "finalScore": m8,
+        "finish": MessageLookupByLibrary.simpleMessage("Finish"),
         "finishTracing":
             MessageLookupByLibrary.simpleMessage("✅ Finish Tracing"),
         "fishGameTitle":
@@ -378,6 +385,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "listenAgain": m13,
         "listenToLetter":
             MessageLookupByLibrary.simpleMessage("Listen to Letter"),
+        "loadingWords":
+            MessageLookupByLibrary.simpleMessage("Loading words..."),
         "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
         "loginSubtitle": MessageLookupByLibrary.simpleMessage(
             "Welcome back! Please sign in to continue"),
@@ -568,6 +577,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "spellingGame": MessageLookupByLibrary.simpleMessage("Spelling Game"),
         "spoon": MessageLookupByLibrary.simpleMessage("spoon"),
         "startExercise": MessageLookupByLibrary.simpleMessage("Start Exercise"),
+        "startOver": MessageLookupByLibrary.simpleMessage("Start Over"),
         "stat_correct": MessageLookupByLibrary.simpleMessage("Correct"),
         "stat_incorrect": MessageLookupByLibrary.simpleMessage("Incorrect"),
         "stat_total": MessageLookupByLibrary.simpleMessage("Total"),
@@ -659,6 +669,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "verify": MessageLookupByLibrary.simpleMessage("Verify"),
         "veryGreat": MessageLookupByLibrary.simpleMessage("Very great"),
         "verySmart": MessageLookupByLibrary.simpleMessage("You\'re very smart"),
+        "viewResults": MessageLookupByLibrary.simpleMessage("View Results"),
         "view_details": MessageLookupByLibrary.simpleMessage("view Detials"),
         "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
         "welcome_message":

@@ -478,5 +478,39 @@
                 "type": "int"
             }
         }
+    },
+    "loadingWords": "جاري تحميل الكلمات...",
+    "@loadingWords": {
+        "description": "Message shown while fetching words from the server"
+    },
+    
+    "allWordsCompleted": "عمل رائع! لقد أكملت جميع الكلمات!",
+    "@allWordsCompleted": {
+        "description": "Success message when user finishes all words in the exercise"
+    },
+    
+    "congratulations": "مبروك!",
+    "@congratulations": {
+        "description": "Title for completion dialog"
+    },
+    
+    "completedAllWords": "لقد أكملت بنجاح جميع الكلمات في هذا التمرين!",
+    "@completedAllWords": {
+        "description": "Message in completion dialog explaining the achievement"
+    },
+    
+    "finish": "إنهاء",
+    "@finish": {
+        "description": "Button text to finish the exercise and go back"
+    },
+    
+    "startOver": "ابدأ من جديد",
+    "@startOver": {
+        "description": "Button text to restart the exercise with the same words"
+    },
+    
+    "viewResults": "عرض النتائج",
+    "@viewResults": {
+        "description": "Button text when all words are completed to view final results"
     }
 }

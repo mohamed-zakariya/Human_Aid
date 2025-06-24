@@ -3871,6 +3871,76 @@ class S {
       args: [score],
     );
   }
+
+  /// `Loading words...`
+  String get loadingWords {
+    return Intl.message(
+      'Loading words...',
+      name: 'loadingWords',
+      desc: 'Message shown while fetching words from the server',
+      args: [],
+    );
+  }
+
+  /// `Great job! You've completed all words!`
+  String get allWordsCompleted {
+    return Intl.message(
+      'Great job! You\'ve completed all words!',
+      name: 'allWordsCompleted',
+      desc: 'Success message when user finishes all words in the exercise',
+      args: [],
+    );
+  }
+
+  /// `Congratulations!`
+  String get congratulations {
+    return Intl.message(
+      'Congratulations!',
+      name: 'congratulations',
+      desc: 'Title for completion dialog',
+      args: [],
+    );
+  }
+
+  /// `You have successfully completed all words in this exercise!`
+  String get completedAllWords {
+    return Intl.message(
+      'You have successfully completed all words in this exercise!',
+      name: 'completedAllWords',
+      desc: 'Message in completion dialog explaining the achievement',
+      args: [],
+    );
+  }
+
+  /// `Finish`
+  String get finish {
+    return Intl.message(
+      'Finish',
+      name: 'finish',
+      desc: 'Button text to finish the exercise and go back',
+      args: [],
+    );
+  }
+
+  /// `Start Over`
+  String get startOver {
+    return Intl.message(
+      'Start Over',
+      name: 'startOver',
+      desc: 'Button text to restart the exercise with the same words',
+      args: [],
+    );
+  }
+
+  /// `View Results`
+  String get viewResults {
+    return Intl.message(
+      'View Results',
+      name: 'viewResults',
+      desc: 'Button text when all words are completed to view final results',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
