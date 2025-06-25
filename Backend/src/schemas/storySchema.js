@@ -19,13 +19,14 @@ export const storyGeneratorTypeDefs = `#graphql
       heroType: String
     ): JobResponse!
 
-    generateQuestions(story: String!): [Question!]!
+    generateQuestions(story: String!): JobResponse!
   }
 
 
-  type Query {
-    getStoryJobStatus(jobId: ID!): JobStatusResponse!
-  }
+type Query {
+  getStoryJobStatus(jobId: ID!): JobStatusResponse!
+  getQuestionsJobStatus(jobId: ID!): QuestionsJobStatusResponse!
+}
 
 
   type JobResponse {
@@ -35,6 +36,13 @@ export const storyGeneratorTypeDefs = `#graphql
   type JobStatusResponse {
     status: String!
     story: String
+    error: String
+  }
+
+
+  type QuestionsJobStatusResponse {
+    status: String!
+    questions: [Question]
     error: String
   }
 

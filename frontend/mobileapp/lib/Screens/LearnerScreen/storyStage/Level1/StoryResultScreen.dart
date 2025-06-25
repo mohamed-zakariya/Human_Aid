@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
 
-import '../../../../Services/generate_questions_service.dart';
-import '../../../../Services/generate_stories_service.dart';
+import '../../../../Services/stories_service.dart';
 import '../../../../Services/story_score_service.dart';
+import '../../../../models/questions.dart';
 import 'StoryQuestionsScreen.dart';
 
 class StoryResultScreen extends StatefulWidget {
@@ -30,7 +30,6 @@ class StoryResultScreen extends StatefulWidget {
 
 class _StoryResultScreenState extends State<StoryResultScreen>
     with TickerProviderStateMixin {
-  final GenerateQuestionsService _questionService = GenerateQuestionsService();
   final StoryDatabaseService _databaseService = StoryDatabaseService();
 
   // TTS related variables
@@ -39,11 +38,16 @@ class _StoryResultScreenState extends State<StoryResultScreen>
 
   // Story generation variables
   String? generatedStory;
-  String? currentJobId;
+  String? currentStoryJobId;
   String storyGenerationStatus = "pending"; // pending, processing, completed, failed, timeout
   String? storyGenerationError;
 
+  // Questions generation variables
+  String? currentQuestionsJobId;
+  String questionsGenerationStatus = "pending";
+  String? questionsGenerationError;
   List<Question>? questions;
+
   Map<String, dynamic>? savedStoryData;
 
   // Loading states
@@ -53,7 +57,8 @@ class _StoryResultScreenState extends State<StoryResultScreen>
 
   // Timer variables
   Timer? _readingTimer;
-  Timer? _pollingTimer;
+  Timer? _storyPollingTimer;
+  Timer? _questionsPollingTimer;
   int _remainingSeconds = 60;
   bool _canAccessQuestions = false;
 
@@ -178,7 +183,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       });
 
       // Step 1: Start story generation and get job ID
-      final String? jobId = await GenerateStoriesService.generateArabicStory(
+      final String? jobId = await StoriesService.generateArabicStory(
         age: widget.age,
         topic: widget.topic,
         setting: widget.setting,
@@ -199,7 +204,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       }
 
       setState(() {
-        currentJobId = jobId;
+        currentStoryJobId = jobId;
         storyGenerationStatus = "processing";
       });
 
@@ -217,12 +222,12 @@ class _StoryResultScreenState extends State<StoryResultScreen>
   }
 
   void _startPollingForStory() {
-    if (currentJobId == null) return;
+    if (currentStoryJobId == null) return;
 
-    _pollingTimer = Timer.periodic(Duration(seconds: 2), (timer) async {
+    _storyPollingTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       try {
-        final statusResult = await GenerateStoriesService.getStoryJobStatus(
-          jobId: currentJobId!,
+        final statusResult = await StoriesService.getStoryJobStatus(
+          jobId: currentStoryJobId!,
           role: widget.role,
         );
 
@@ -252,7 +257,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
 
               _startReadingTimer();
               _saveStoryToDatabase();
-              _generateQuestions();
+              _generateQuestions(); // Start questions generation
             } else {
               setState(() {
                 storyGenerationStatus = "failed";
@@ -283,21 +288,147 @@ class _StoryResultScreenState extends State<StoryResultScreen>
         }
 
       } catch (e) {
-        print("Error during polling: $e");
+        print("Error during story polling: $e");
         // Don't stop polling for temporary errors
       }
     });
 
     // Set a maximum polling timeout (e.g., 60 seconds)
     Timer(Duration(seconds: 60), () {
-      if (_pollingTimer?.isActive == true) {
-        _pollingTimer?.cancel();
+      if (_storyPollingTimer?.isActive == true) {
+        _storyPollingTimer?.cancel();
         setState(() {
           storyGenerationStatus = "timeout";
           storyGenerationError = "انتهت مهلة توليد القصة";
           isStoryLoading = false;
         });
         _showErrorMessage("انتهت مهلة توليد القصة. يرجى المحاولة مرة أخرى.");
+      }
+    });
+  }
+
+  Future<void> _generateQuestions() async {
+    if (generatedStory == null || generatedStory!.isEmpty) return;
+
+    setState(() {
+      isQuestionsLoading = true;
+      questionsGenerationStatus = "pending";
+      questionsGenerationError = null;
+    });
+
+    try {
+      // Step 1: Start questions generation using StoriesService
+      final String? jobId = await StoriesService.generateQuestions(
+        story: generatedStory!,
+        role: widget.role,
+      );
+
+      if (jobId == null) {
+        setState(() {
+          questionsGenerationStatus = "failed";
+          questionsGenerationError = "فشل في بدء توليد الأسئلة";
+          isQuestionsLoading = false;
+        });
+        _showErrorMessage("فشل في بدء توليد الأسئلة");
+        return;
+      }
+
+      setState(() {
+        currentQuestionsJobId = jobId;
+        questionsGenerationStatus = "processing";
+      });
+
+      // Step 2: Start polling for questions completion
+      _startPollingForQuestions();
+
+    } catch (e) {
+      setState(() {
+        questionsGenerationStatus = "failed";
+        questionsGenerationError = e.toString();
+        isQuestionsLoading = false;
+      });
+      print('Error generating questions: $e');
+    }
+  }
+
+  void _startPollingForQuestions() {
+    if (currentQuestionsJobId == null) return;
+
+    _questionsPollingTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
+      try {
+        final statusResult = await StoriesService.getQuestionsJobStatus(
+          jobId: currentQuestionsJobId!,
+          role: widget.role,
+        );
+
+        if (statusResult == null) {
+          print("Failed to get questions status, retrying...");
+          return;
+        }
+
+        final String status = statusResult["status"] ?? "";
+        final List<Question>? questionsData = statusResult["questions"];
+        final String? error = statusResult["error"];
+
+        setState(() {
+          questionsGenerationStatus = status;
+          if (error != null) questionsGenerationError = error;
+        });
+
+        switch (status) {
+          case "completed":
+            timer.cancel();
+            if (questionsData != null && questionsData.isNotEmpty) {
+              setState(() {
+                questions = questionsData;
+                isQuestionsLoading = false;
+              });
+              print("Questions generation completed successfully! Generated ${questionsData.length} questions");
+            } else {
+              setState(() {
+                questionsGenerationStatus = "failed";
+                questionsGenerationError = "تم إنشاء الأسئلة ولكنها فارغة";
+                isQuestionsLoading = false;
+              });
+              print("Questions generated but empty");
+            }
+            break;
+
+          case "failed":
+            timer.cancel();
+            setState(() {
+              isQuestionsLoading = false;
+            });
+            print("Questions generation failed: ${error ?? 'خطأ غير معروف'}");
+            break;
+
+          case "pending":
+          case "processing":
+          // Continue polling
+            print("Questions generation in progress...");
+            break;
+
+          default:
+            print("Unknown questions status: $status");
+            break;
+        }
+
+      } catch (e) {
+        print("Error during questions polling: $e");
+        // Don't stop polling for temporary errors
+      }
+    });
+
+    // Set a maximum polling timeout for questions (e.g., 45 seconds)
+    Timer(Duration(seconds: 45), () {
+      if (_questionsPollingTimer?.isActive == true) {
+        _questionsPollingTimer?.cancel();
+        setState(() {
+          questionsGenerationStatus = "timeout";
+          questionsGenerationError = "انتهت مهلة توليد الأسئلة";
+          isQuestionsLoading = false;
+        });
+        print("Questions generation polling timed out");
       }
     });
   }
@@ -359,27 +490,6 @@ class _StoryResultScreenState extends State<StoryResultScreen>
         _pulseController.stop();
       }
     });
-  }
-
-  Future<void> _generateQuestions() async {
-    if (generatedStory == null) return;
-
-    setState(() {
-      isQuestionsLoading = true;
-    });
-
-    try {
-      final generatedQuestions = await _questionService.generateQuestionsFromStory(generatedStory!);
-      setState(() {
-        questions = generatedQuestions;
-        isQuestionsLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isQuestionsLoading = false;
-      });
-      print('Error generating questions: $e');
-    }
   }
 
   String _formatTime(int seconds) {
@@ -541,24 +651,6 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  // if (currentJobId != null) ...[
-                  //   SizedBox(height: 16),
-                  //   Container(
-                  //     padding: EdgeInsets.all(12),
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.grey[100],
-                  //       borderRadius: BorderRadius.circular(8),
-                  //     ),
-                  //     child: Text(
-                  //       "معرف المهمة: ${currentJobId!.substring(0, 8)}...",
-                  //       style: TextStyle(
-                  //         fontSize: 12,
-                  //         color: Colors.grey[600],
-                  //         fontFamily: 'OpenDyslexic',
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ],
                 ],
               ],
             ),
@@ -709,6 +801,42 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                 ],
               ),
             ),
+            // Questions loading indicator
+            if (isQuestionsLoading) ...[
+              SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  border: Border.all(color: Colors.orange.shade200),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.orange.shade600),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "جاري تحضير الأسئلة التعليمية...",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.orange.shade700,
+                          fontFamily: 'OpenDyslexic',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -805,19 +933,43 @@ class _StoryResultScreenState extends State<StoryResultScreen>
   }
 
   Widget _buildQuestionsButton() {
+    // Determine if button should be enabled
+    bool canAccessQuestions = _canAccessQuestions &&
+        (questions != null || questionsGenerationStatus == "failed");
+
+    String buttonText;
+    IconData buttonIcon;
+
+    if (!_canAccessQuestions) {
+      buttonText = "الأسئلة مقفلة 🔒";
+      buttonIcon = Icons.lock;
+    } else if (isQuestionsLoading) {
+      buttonText = "جاري تحضير الأسئلة...";
+      buttonIcon = Icons.hourglass_empty;
+    } else if (questions != null) {
+      buttonText = "الأسئلة التعليمية 📘";
+      buttonIcon = Icons.quiz;
+    } else if (questionsGenerationStatus == "failed") {
+      buttonText = "فشل في تحضير الأسئلة ❌";
+      buttonIcon = Icons.error;
+    } else {
+      buttonText = "الأسئلة غير متاحة";
+      buttonIcon = Icons.block;
+    }
+
     return Container(
       margin: EdgeInsets.all(16),
       height: 56,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: _canAccessQuestions
+          colors: canAccessQuestions && questions != null
               ? [Color(0xFF6366F1), Color(0xFF8B5CF6)]
               : [Colors.grey[400]!, Colors.grey[500]!],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: _canAccessQuestions
+        boxShadow: canAccessQuestions && questions != null
             ? [
           BoxShadow(
             color: Colors.purple.withOpacity(0.4),
@@ -828,7 +980,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
             : [],
       ),
       child: ElevatedButton(
-        onPressed: _canAccessQuestions && questions != null
+        onPressed: canAccessQuestions && questions != null
             ? () {
           Navigator.push(
             context,
@@ -851,14 +1003,24 @@ class _StoryResultScreenState extends State<StoryResultScreen>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              _canAccessQuestions ? Icons.quiz : Icons.lock,
-              color: Colors.white,
-              size: 24,
-            ),
+            if (isQuestionsLoading)
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            else
+              Icon(
+                buttonIcon,
+                color: Colors.white,
+                size: 24,
+              ),
             const SizedBox(width: 8),
             Text(
-              _canAccessQuestions ? "الأسئلة التعليمية 📘" : "الأسئلة مقفلة 🔒",
+              buttonText,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -871,11 +1033,11 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       ),
     );
   }
-
   @override
   void dispose() {
     _readingTimer?.cancel();
-    _pollingTimer?.cancel();
+    _storyPollingTimer?.cancel(); // Fixed: was _pollingTimer, should be _storyPollingTimer
+    _questionsPollingTimer?.cancel(); // Add this line to cancel questions polling timer
     _pulseController.dispose();
     _progressController.dispose();
     _loadingController.dispose();
@@ -902,7 +1064,8 @@ class _StoryResultScreenState extends State<StoryResultScreen>
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             flutterTts.stop();
-            _pollingTimer?.cancel();
+            _storyPollingTimer?.cancel(); // Fixed: was _pollingTimer, should be _storyPollingTimer
+            _questionsPollingTimer?.cancel(); // Add this line
             Navigator.pop(context);
           },
         ),

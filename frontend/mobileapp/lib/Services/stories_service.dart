@@ -1,15 +1,12 @@
-// Enhanced GenerateStoriesService with Proper Authentication Handling
-import 'dart:convert';
-import 'dart:math';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobileapp/models/questions.dart';
 
 import '../graphql/graphql_client.dart';
 import '../graphql/queries/stories_query.dart';
 
-class GenerateStoriesService {
+class StoriesService {
 
+  /// Generate Arabic Story
   static Future<String?> generateArabicStory({
     required String topic,
     required String setting,
@@ -133,6 +130,8 @@ class GenerateStoriesService {
         // Clean and format the story if it exists
         if (rawStory != null && rawStory.isNotEmpty) {
           cleanedStory = _cleanAndFormatArabicText(rawStory);
+          print("cleaneeeeed");
+          print(cleanedStory);
         }
 
         return {
@@ -147,6 +146,233 @@ class GenerateStoriesService {
     } catch (e) {
       print("Error in getStoryJobStatus: $e");
       return null;
+    }
+  }
+
+  /// Generate Questions from Story
+  static Future<String?> generateQuestions({
+    required String story,
+    required String role,
+  }) async {
+    try {
+      final GraphQLClient client = await GraphQLService.getClient();
+
+      final QueryResult result = await client.mutate(
+        MutationOptions(
+          document: gql(generateQuestionsMutation),
+          variables: {
+            "story": story,
+          },
+        ),
+      );
+
+      // Handle authentication errors with proper retry function
+      final QueryResult? handledResult = await GraphQLService.handleAuthErrors(
+        result: result,
+        role: role,
+        retryRequest: () async {
+          final client = await GraphQLService.getClient();
+          return await client.mutate(
+            MutationOptions(
+              document: gql(generateQuestionsMutation),
+              variables: {
+                "story": story,
+              },
+            ),
+          );
+        },
+      );
+
+      if (handledResult == null) {
+        print("Authentication failed and could not be refreshed");
+        return null;
+      }
+
+      if (handledResult.hasException) {
+        print("Generate questions mutation failed: ${handledResult.exception}");
+        return null;
+      }
+
+      final String? jobId = handledResult.data?["generateQuestions"]?["jobId"];
+      print("Questions generation started with job ID: $jobId");
+      return jobId;
+
+    } catch (e) {
+      print("Error in generateQuestions: $e");
+      return null;
+    }
+  }
+
+  /// Get Questions Job Status - Check the progress of questions generation
+  static Future<Map<String, dynamic>?> getQuestionsJobStatus({
+    required String jobId,
+    required String role,
+  }) async {
+    try {
+      final GraphQLClient client = await GraphQLService.getClient();
+
+      final QueryResult result = await client.query(
+        QueryOptions(
+          document: gql(getQuestionsJobStatusQuery),
+          variables: {
+            "jobId": jobId,
+          },
+          fetchPolicy: FetchPolicy.networkOnly, // Always fetch from network for real-time status
+        ),
+      );
+
+      // Handle authentication errors with proper retry function
+      final QueryResult? handledResult = await GraphQLService.handleAuthErrors(
+        result: result,
+        role: role,
+        retryRequest: () async {
+          final client = await GraphQLService.getClient();
+          return await client.query(
+            QueryOptions(
+              document: gql(getQuestionsJobStatusQuery),
+              variables: {
+                "jobId": jobId,
+              },
+              fetchPolicy: FetchPolicy.networkOnly,
+            ),
+          );
+        },
+      );
+
+      if (handledResult == null) {
+        print("Authentication failed and could not be refreshed");
+        return null;
+      }
+
+      if (handledResult.hasException) {
+        print("Get questions status query failed: ${handledResult.exception}");
+        return null;
+      }
+
+      final questionsJobData = handledResult.data?["getQuestionsJobStatus"];
+
+      if (questionsJobData != null) {
+        List<Question>? questions;
+
+        // Parse questions if they exist
+        if (questionsJobData["questions"] != null) {
+          questions = (questionsJobData["questions"] as List)
+              .map((q) => Question.fromJson(q))
+              .toList();
+        }
+
+        return {
+          "questions": questions,
+          "status": questionsJobData["status"], // e.g., "pending", "completed", "failed"
+          "error": questionsJobData["error"],
+        };
+      }
+
+      return null;
+
+    } catch (e) {
+      print("Error in getQuestionsJobStatus: $e");
+      return null;
+    }
+  }
+
+  /// Poll for questions completion - Helper method to continuously check status
+  static Future<Map<String, dynamic>?> pollForQuestionsCompletion({
+    required String jobId,
+    required String role,
+    int maxAttempts = 30, // Maximum number of polling attempts
+    Duration pollInterval = const Duration(seconds: 2), // Polling interval
+  }) async {
+    int attempts = 0;
+
+    while (attempts < maxAttempts) {
+      try {
+        final statusResult = await getQuestionsJobStatus(
+          jobId: jobId,
+          role: role,
+        );
+
+        if (statusResult == null) {
+          attempts++;
+          await Future.delayed(pollInterval);
+          continue;
+        }
+
+        final String status = statusResult["status"] ?? "";
+
+        switch (status) {
+          case "completed":
+            print("Questions generation completed successfully!");
+            return statusResult;
+
+          case "failed":
+            print("Questions generation failed: ${statusResult["error"]}");
+            return statusResult;
+
+          case "pending":
+          case "processing":
+            print("Questions generation in progress... (attempt $attempts/$maxAttempts)");
+            attempts++;
+            await Future.delayed(pollInterval);
+            break;
+
+          default:
+            print("Unknown status: $status");
+            attempts++;
+            await Future.delayed(pollInterval);
+            break;
+        }
+
+      } catch (e) {
+        print("Error during questions polling attempt $attempts: $e");
+        attempts++;
+        await Future.delayed(pollInterval);
+      }
+    }
+
+    print("Questions generation polling timed out after $maxAttempts attempts");
+    return {
+      "questions": null,
+      "status": "timeout",
+      "error": "Questions generation timed out after ${maxAttempts * pollInterval.inSeconds} seconds"
+    };
+  }
+
+  /// Complete questions generation workflow - Generate and wait for completion
+  static Future<Map<String, dynamic>?> generateQuestionsComplete({
+    required String story,
+    required String role,
+  }) async {
+    try {
+      // Step 1: Start questions generation
+      final String? jobId = await generateQuestions(
+        story: story,
+        role: role,
+      );
+
+      if (jobId == null) {
+        return {
+          "questions": null,
+          "status": "failed",
+          "error": "Failed to start questions generation"
+        };
+      }
+
+      // Step 2: Poll for completion
+      final result = await pollForQuestionsCompletion(
+        jobId: jobId,
+        role: role,
+      );
+
+      return result;
+
+    } catch (e) {
+      print("Error in generateQuestionsComplete: $e");
+      return {
+        "questions": null,
+        "status": "failed",
+        "error": "Unexpected error: $e"
+      };
     }
   }
 
