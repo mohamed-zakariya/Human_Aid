@@ -248,11 +248,15 @@ async updateWord(_, { id, word, level, image,synonym }) {
       }
     }
 
-    return users.map(user => ({
-      id: user._id.toString(), // ✅ map _id to id
-      ...user,
-      parentId: user.role === 'child' ? childToParentMap.get(user._id.toString()) || null : null
-    }));
+  return users.map(user => {
+    const { _id, ...rest } = user; // 🔥 remove _id from the rest
+    return {
+      id: _id.toString(),         // ✅ GraphQL expects 'id'
+      ...rest,
+      parentId: user.role === 'child' ? childToParentMap.get(_id.toString()) || null : null
+    };
+  });
+
 
   },
   
