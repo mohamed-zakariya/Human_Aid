@@ -9,7 +9,7 @@ import '../../../../Services/story_score_service.dart';
 import 'StoryQuestionsScreen.dart';
 
 class StoryResultScreen extends StatefulWidget {
-  final String age, topic, setting, length, goal;
+  final String age, topic, setting, length, goal, role;
   final String? style, heroType, secondaryValues;
 
   const StoryResultScreen({
@@ -18,6 +18,7 @@ class StoryResultScreen extends StatefulWidget {
     required this.setting,
     required this.length,
     required this.goal,
+    required this.role,
     this.style,
     this.heroType,
     this.secondaryValues,
@@ -29,30 +30,40 @@ class StoryResultScreen extends StatefulWidget {
 
 class _StoryResultScreenState extends State<StoryResultScreen>
     with TickerProviderStateMixin {
-  final GenerateStoriesService _storyService = GenerateStoriesService();
   final GenerateQuestionsService _questionService = GenerateQuestionsService();
-  final StoryDatabaseService _databaseService = StoryDatabaseService(); // Add this line
+  final StoryDatabaseService _databaseService = StoryDatabaseService();
 
   // TTS related variables
   FlutterTts flutterTts = FlutterTts();
   bool isSpeaking = false;
 
+  // Story generation variables
   String? generatedStory;
+  String? currentJobId;
+  String storyGenerationStatus = "pending"; // pending, processing, completed, failed, timeout
+  String? storyGenerationError;
+
   List<Question>? questions;
-  Map<String, dynamic>? savedStoryData; // Add this to store database response
+  Map<String, dynamic>? savedStoryData;
+
+  // Loading states
   bool isStoryLoading = true;
   bool isQuestionsLoading = false;
-  bool isSavingToDatabase = false; // Add this for database saving status
+  bool isSavingToDatabase = false;
 
   // Timer variables
   Timer? _readingTimer;
+  Timer? _pollingTimer;
   int _remainingSeconds = 60;
   bool _canAccessQuestions = false;
 
+  // Animation controllers
   late AnimationController _pulseController;
   late AnimationController _progressController;
+  late AnimationController _loadingController;
   late Animation<double> _pulseAnimation;
   late Animation<double> _progressAnimation;
+  late Animation<double> _loadingAnimation;
 
   @override
   void initState() {
@@ -67,6 +78,11 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       duration: Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
+
+    _loadingController = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    )..repeat();
 
     // Dynamic duration based on story length
     int timerDuration = _getTimerDuration();
@@ -89,6 +105,14 @@ class _StoryResultScreenState extends State<StoryResultScreen>
     ).animate(CurvedAnimation(
       parent: _progressController,
       curve: Curves.linear,
+    ));
+
+    _loadingAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _loadingController,
+      curve: Curves.easeInOut,
     ));
   }
 
@@ -147,42 +171,149 @@ class _StoryResultScreenState extends State<StoryResultScreen>
 
   Future<void> _generateStory() async {
     try {
-      final story = await _storyService.generateArabicStory(
+      setState(() {
+        isStoryLoading = true;
+        storyGenerationStatus = "pending";
+        storyGenerationError = null;
+      });
+
+      // Step 1: Start story generation and get job ID
+      final String? jobId = await GenerateStoriesService.generateArabicStory(
         age: widget.age,
         topic: widget.topic,
         setting: widget.setting,
         length: widget.length,
         goal: widget.goal,
         heroType: widget.heroType,
+        role: widget.role,
       );
 
+      if (jobId == null) {
+        setState(() {
+          storyGenerationStatus = "failed";
+          storyGenerationError = "فشل في بدء توليد القصة";
+          isStoryLoading = false;
+        });
+        _showErrorMessage("فشل في بدء توليد القصة");
+        return;
+      }
+
       setState(() {
-        generatedStory = story;
-        isStoryLoading = false;
-        _remainingSeconds = _getTimerDuration();
+        currentJobId = jobId;
+        storyGenerationStatus = "processing";
       });
 
-      _startReadingTimer();
+      // Step 2: Start polling for story completion
+      _startPollingForStory();
 
-      // Save story to database after successful generation
-      _saveStoryToDatabase();
-
-      // Generate questions after saving to database
-      _generateQuestions();
     } catch (e) {
       setState(() {
+        storyGenerationStatus = "failed";
+        storyGenerationError = e.toString();
         isStoryLoading = false;
       });
+      _showErrorMessage('حدث خطأ أثناء توليد القصة: $e');
+    }
+  }
+
+  void _startPollingForStory() {
+    if (currentJobId == null) return;
+
+    _pollingTimer = Timer.periodic(Duration(seconds: 2), (timer) async {
+      try {
+        final statusResult = await GenerateStoriesService.getStoryJobStatus(
+          jobId: currentJobId!,
+          role: widget.role,
+        );
+
+        if (statusResult == null) {
+          print("Failed to get story status, retrying...");
+          return;
+        }
+
+        final String status = statusResult["status"] ?? "";
+        final String? story = statusResult["story"];
+        final String? error = statusResult["error"];
+
+        setState(() {
+          storyGenerationStatus = status;
+          if (error != null) storyGenerationError = error;
+        });
+
+        switch (status) {
+          case "completed":
+            timer.cancel();
+            if (story != null && story.isNotEmpty) {
+              setState(() {
+                generatedStory = story;
+                isStoryLoading = false;
+                _remainingSeconds = _getTimerDuration();
+              });
+
+              _startReadingTimer();
+              _saveStoryToDatabase();
+              _generateQuestions();
+            } else {
+              setState(() {
+                storyGenerationStatus = "failed";
+                storyGenerationError = "تم إنشاء القصة ولكنها فارغة";
+                isStoryLoading = false;
+              });
+              _showErrorMessage("تم إنشاء القصة ولكنها فارغة");
+            }
+            break;
+
+          case "failed":
+            timer.cancel();
+            setState(() {
+              isStoryLoading = false;
+            });
+            _showErrorMessage("فشل في توليد القصة: ${error ?? 'خطأ غير معروف'}");
+            break;
+
+          case "pending":
+          case "processing":
+          // Continue polling
+            print("Story generation in progress...");
+            break;
+
+          default:
+            print("Unknown status: $status");
+            break;
+        }
+
+      } catch (e) {
+        print("Error during polling: $e");
+        // Don't stop polling for temporary errors
+      }
+    });
+
+    // Set a maximum polling timeout (e.g., 60 seconds)
+    Timer(Duration(seconds: 60), () {
+      if (_pollingTimer?.isActive == true) {
+        _pollingTimer?.cancel();
+        setState(() {
+          storyGenerationStatus = "timeout";
+          storyGenerationError = "انتهت مهلة توليد القصة";
+          isStoryLoading = false;
+        });
+        _showErrorMessage("انتهت مهلة توليد القصة. يرجى المحاولة مرة أخرى.");
+      }
+    });
+  }
+
+  void _showErrorMessage(String message) {
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('حدث خطأ أثناء توليد القصة: $e'),
+          content: Text(message),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 5),
         ),
       );
     }
   }
 
-  // Add this new method to save story to database
   Future<void> _saveStoryToDatabase() async {
     if (generatedStory == null || generatedStory!.isEmpty) return;
 
@@ -210,7 +341,6 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       });
 
       print('Error saving story to database: $e');
-      // Show error message but don't stop the flow
     }
   }
 
@@ -258,6 +388,186 @@ class _StoryResultScreenState extends State<StoryResultScreen>
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
+  Widget _buildLoadingScreen() {
+    String loadingMessage;
+    String loadingDetail;
+    IconData loadingIcon;
+    Color loadingColor;
+
+    switch (storyGenerationStatus) {
+      case "pending":
+        loadingMessage = "جاري تحضير القصة...";
+        loadingDetail = "يتم الآن تحضير قصتك الخاصة";
+        loadingIcon = Icons.hourglass_empty;
+        loadingColor = Colors.orange;
+        break;
+      case "processing":
+        loadingMessage = "جاري كتابة قصتك...";
+        loadingDetail = "يتم الآن كتابة قصة رائعة خصيصاً لك";
+        loadingIcon = Icons.edit;
+        loadingColor = Color(0xFF6366F1);
+        break;
+      case "failed":
+        loadingMessage = "فشل في إنشاء القصة";
+        loadingDetail = storyGenerationError ?? "حدث خطأ غير متوقع";
+        loadingIcon = Icons.error;
+        loadingColor = Colors.red;
+        break;
+      case "timeout":
+        loadingMessage = "انتهت مهلة الانتظار";
+        loadingDetail = "يرجى المحاولة مرة أخرى";
+        loadingIcon = Icons.timer_off;
+        loadingColor = Colors.red;
+        break;
+      default:
+        loadingMessage = "جاري المعالجة...";
+        loadingDetail = "يرجى الانتظار";
+        loadingIcon = Icons.sync;
+        loadingColor = Color(0xFF6366F1);
+    }
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(32),
+            margin: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 15,
+                  offset: Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                if (storyGenerationStatus == "failed" || storyGenerationStatus == "timeout") ...[
+                  Icon(
+                    loadingIcon,
+                    size: 60,
+                    color: loadingColor,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    loadingMessage,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: loadingColor,
+                      fontFamily: 'OpenDyslexic',
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    loadingDetail,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                      fontFamily: 'OpenDyslexic',
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      _generateStory(); // Retry
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF6366F1),
+                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      "إعادة المحاولة",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'OpenDyslexic',
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  AnimatedBuilder(
+                    animation: _loadingAnimation,
+                    builder: (context, child) {
+                      return Transform.scale(
+                        scale: 0.8 + (_loadingAnimation.value * 0.2),
+                        child: Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: loadingColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Icon(
+                            loadingIcon,
+                            size: 48,
+                            color: loadingColor,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 24),
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(loadingColor),
+                  ),
+                  SizedBox(height: 24),
+                  Text(
+                    loadingMessage,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[800],
+                      fontFamily: 'OpenDyslexic',
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    loadingDetail,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                      fontFamily: 'OpenDyslexic',
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  // if (currentJobId != null) ...[
+                  //   SizedBox(height: 16),
+                  //   Container(
+                  //     padding: EdgeInsets.all(12),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.grey[100],
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //     child: Text(
+                  //       "معرف المهمة: ${currentJobId!.substring(0, 8)}...",
+                  //       style: TextStyle(
+                  //         fontSize: 12,
+                  //         color: Colors.grey[600],
+                  //         fontFamily: 'OpenDyslexic',
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ],
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildStoryCard() {
     return Container(
       margin: EdgeInsets.all(16),
@@ -298,19 +608,14 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            "قصتك الخاصة",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[800],
-                              fontFamily: 'OpenDyslexic',
-                            ),
-                          ),
-                          // Add database status indicator
-                        ],
+                      Text(
+                        "قصتك الخاصة",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                          fontFamily: 'OpenDyslexic',
+                        ),
                       ),
                       Text(
                         "موضوع: ${widget.topic}",
@@ -323,7 +628,6 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                     ],
                   ),
                 ),
-                // Simple Audio Button
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -342,8 +646,8 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                 ),
               ],
             ),
-            SizedBox(width: 8),
-            if (isSpeaking)
+            if (isSpeaking) ...[
+              SizedBox(height: 8),
               Text(
                 "جاري القراءة...",
                 style: TextStyle(
@@ -353,6 +657,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
                   fontFamily: 'OpenDyslexic',
                 ),
               ),
+            ],
             SizedBox(height: 24),
             Container(
               padding: EdgeInsets.all(20),
@@ -570,8 +875,10 @@ class _StoryResultScreenState extends State<StoryResultScreen>
   @override
   void dispose() {
     _readingTimer?.cancel();
+    _pollingTimer?.cancel();
     _pulseController.dispose();
     _progressController.dispose();
+    _loadingController.dispose();
     flutterTts.stop();
     super.dispose();
   }
@@ -595,58 +902,13 @@ class _StoryResultScreenState extends State<StoryResultScreen>
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             flutterTts.stop();
+            _pollingTimer?.cancel();
             Navigator.pop(context);
           },
         ),
       ),
       body: isStoryLoading
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6366F1)),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    "جاري كتابة قصتك الخاصة...",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[700],
-                      fontFamily: 'OpenDyslexic',
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "سيتم إنشاء قصة رائعة خصيصاً لك",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[500],
-                      fontFamily: 'OpenDyslexic',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      )
+          ? _buildLoadingScreen()
           : SingleChildScrollView(
         child: Column(
           children: [
