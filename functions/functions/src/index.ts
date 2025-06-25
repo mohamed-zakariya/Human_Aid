@@ -6,13 +6,17 @@ admin.initializeApp();
 export const sendScheduledNotifications = onSchedule(
   {
     schedule: "every day 10:00",
-    timeZone: "Africa/Cairo", // You can change to your local time zone
+    timeZone: "Africa/Cairo",
   },
   async (event) => {
     const db = admin.firestore();
-    const now = new Date();
+    const nowUTC = new Date();
 
-    console.log(`Running scheduled notification job at ${now.toISOString()}`);
+    // Adjust now to Africa/Cairo (UTC+3)
+    const cairoOffsetHours = 3;
+    const nowCairo = new Date(nowUTC.getTime() + cairoOffsetHours * 60 * 60 * 1000);
+
+    console.log(`📅 Running scheduled notification job at ${nowCairo.toISOString()} (Cairo time)`);
 
     const usersSnapshot = await db.collection("users").get();
 
@@ -21,12 +25,25 @@ export const sendScheduledNotifications = onSchedule(
       const token = data.fcmToken;
       const lastOpenedStr = data.lastOpened;
 
-      if (!token || !lastOpenedStr) continue;
+      if (!token || !lastOpenedStr) {
+        console.log(`⚠️ Skipping ${doc.id} - missing token or lastOpened`);
+        continue;
+      }
 
-      const lastOpened = new Date(lastOpenedStr);
-      const inactiveDays = (now.getTime() - lastOpened.getTime()) / (1000 * 60 * 60 * 24);
+      // Parse lastOpened assuming it's already in Cairo time
+      const lastOpened = new Date(`${lastOpenedStr}Z`);
 
-      if (inactiveDays >= 7) {
+      const inactiveHours = (nowCairo.getTime() - lastOpened.getTime()) / (1000 * 60 * 60);
+
+      console.log(`⏱ User ${doc.id} inactive for ${inactiveHours.toFixed(2)} hours`);
+
+      if (inactiveHours < 0) {
+        console.log(`🚫 Skipping ${doc.id} - lastOpened is in the future!`);
+        continue;
+      }
+
+      // Send inactivity notification if inactive ≥ 7 days (168 hours)
+      if (inactiveHours >= 168) {
         await admin.messaging().send({
           token,
           notification: {
@@ -34,9 +51,12 @@ export const sendScheduledNotifications = onSchedule(
             body: "You haven’t opened the app in 7 days. Let’s get back to learning!",
           },
         });
-        console.log(`Sent 7-day inactivity notification to ${doc.id}`);
+        console.log(`✅ Sent 7-day inactivity notification to ${doc.id}`);
+      } else {
+        console.log(`⏩ Skipped inactivity notification for ${doc.id}`);
       }
 
+      // Always send daily reminder
       await admin.messaging().send({
         token,
         notification: {
@@ -44,7 +64,7 @@ export const sendScheduledNotifications = onSchedule(
           body: "It’s 10AM! Time to learn something new today 📚",
         },
       });
-      console.log(`Sent 10AM reminder to ${doc.id}`);
+      console.log(`✅ Sent 10AM reminder to ${doc.id}`);
     }
   }
 );
