@@ -179,7 +179,7 @@ class AuthService {
     );
 
     if (result.hasException) {
-      print("email exist Error: ${result.exception.toString()}");
+      print("email exist Error:  ${result.exception.toString()}");
       return false;
     }
 
