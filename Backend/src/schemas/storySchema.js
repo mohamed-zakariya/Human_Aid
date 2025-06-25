@@ -21,4 +21,21 @@ export const storyGeneratorTypeDefs = `#graphql
 
     generateQuestions(story: String!): [Question!]!
   }
+
+
+  type Query {
+    getStoryJobStatus(jobId: ID!): JobStatusResponse!
+  }
+
+
+  type JobResponse {
+    jobId: ID!
+  }
+
+  type JobStatusResponse {
+    status: String!
+    story: String
+    error: String
+  }
+
 `;
