@@ -14,6 +14,7 @@ import '../../../../services/tts_service.dart';
 import '../../../../models/letter.dart';
 import '../../../../models/learner.dart';
 
+
 class LetterLevel2 extends StatefulWidget {
   final String exerciseId;
   final String levelId;
@@ -30,7 +31,12 @@ class LetterLevel2 extends StatefulWidget {
   State<LetterLevel2> createState() => _LetterLevel2State();
 }
 
+
 class _LetterLevel2State extends State<LetterLevel2> {
+
+
+
+
   // ─── controllers ───
   final CarouselSliderController _carousel = CarouselSliderController();
   final TTSService _tts = TTSService();
@@ -61,6 +67,11 @@ class _LetterLevel2State extends State<LetterLevel2> {
     levelId = widget.levelId;
     _tts.initialize(language: 'ar-EG');
     Future.microtask(_bootstrap);
+
+    print("helllllllo");
+    print(userId);
+    print(exerciseId);
+    print(levelId);
   }
 
   Future<void> _bootstrap() async {

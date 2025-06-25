@@ -964,9 +964,21 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     });
   }
 
-  void _goToGame(Game game) {
+  void _goToGame(Level level, Game game) async{
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('exerciseId', widget.exercise['id']);
+    await prefs.setString('levelId',    level.id);
+    await prefs.setString('learnerId',  widget.learner.id ?? '');
+    await prefs.setString('gameId',     game.id);
+    await prefs.setString('levelGameId',     game.gameId);
+
+
     Navigator.pushNamed(context, '/${game.gameId}', arguments: {
-      'gameId': game.gameId,
+      "levelId": level.levelId,
+      'gameId': game.id,
+      'levelGameId': game.gameId,
       'gameName': widget.safeGameName(game, context),
       'learner': widget.learner,
     });
@@ -1345,7 +1357,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
             Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: level.games.map((game) => _buildGameChip(game))
+              children: level.games.map((game) => _buildGameChip(level, game))
                   .toList(),
             ),
           ] else
@@ -1365,7 +1377,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     );
   }
 
-  Widget _buildGameChip(Game game) {
+  Widget _buildGameChip(Level level,Game game) {
     // Only assign the key to the very first game chip and only once
     final shouldAssignKey = widget.gameChipsKey != null && !_gameChipKeyAssigned;
     if (shouldAssignKey) {
@@ -1375,7 +1387,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     return Container(
       key: shouldAssignKey ? widget.gameChipsKey : null,
       child: InkWell(
-        onTap: () => _goToGame(game),
+        onTap: () => _goToGame(level, game),
         borderRadius: BorderRadius.circular(25),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

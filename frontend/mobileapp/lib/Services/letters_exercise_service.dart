@@ -98,12 +98,12 @@ class LetterExerciseService {
   /// (C) Calls the GraphQL `updateLetterProgress` mutation with the result.
   /// This returns the GraphQL response data (or null on error).
   static Future<Map<String, dynamic>?> _callUpdateLetterProgress({
-    required String userId,
+    String? userId,
     required String exerciseId,
     required String letterId,
     required String levelId,
-    required String fileUrl,
-    required String spokenLetter,
+    String? fileUrl,
+    String? spokenLetter,
   }) async {
     try {
       final client = await GraphQLService.getClient();
@@ -114,7 +114,7 @@ class LetterExerciseService {
           'exerciseId': exerciseId,
           'letterId': letterId,
           'levelId': levelId,
-          'audioFile': fileUrl,
+          if (fileUrl != null) 'audioFile': fileUrl,
           'spokenLetter': spokenLetter,
         },
       );
@@ -135,31 +135,40 @@ class LetterExerciseService {
   /// Upload, transcribe, and call the letter-specific mutation.
   /// Always returns a map the UI can display—even when something fails.
   static Future<Map<String, dynamic>> submitLetter({
-    required String userId,
+    String? userId,
     required String exerciseId,
     required String levelId,
     required Letter letter,
-    required String recordingPath,
+    String? recordingPath, // <-- make optional
+    String? spokenLetter, // <-- make optional
   }) async {
     try {
-      // Step 1: Upload
-      final fileUrl = await _uploadAudioFile(recordingPath);
-      if (fileUrl == null) {
-        return {
-          'isCorrect': false,
-          'message': 'فشل في رفع الملف الصوتي، حاول مجددًا.',
-          'updatedData': null,
-        };
-      }
+      String? fileUrl;
+      String? transcript;
 
-      // Step 2: Transcribe
-      final transcript = await _transcribeAudio(fileUrl);
-      if (transcript == null) {
-        return {
-          'isCorrect': false,
-          'message': 'تعذّر تحويل الصوت إلى نص، حاول مجددًا.',
-          'updatedData': null,
-        };
+      // Step 1: Upload if path provided
+      if (recordingPath != null && recordingPath.isNotEmpty) {
+        fileUrl = await _uploadAudioFile(recordingPath);
+        if (fileUrl == null) {
+          return {
+            'isCorrect': false,
+            'message': 'فشل في رفع الملف الصوتي، حاول مجددًا.',
+            'updatedData': null,
+          };
+        }
+
+        // Step 2: Transcribe
+        transcript = await _transcribeAudio(fileUrl);
+        if (transcript == null) {
+          return {
+            'isCorrect': false,
+            'message': 'تعذّر تحويل الصوت إلى نص، حاول مجددًا.',
+            'updatedData': null,
+          };
+        }
+      } else {
+        // If no audio provided, fallback to empty transcript or a default value
+        transcript = ''; // You could make this a required argument too
       }
 
       // Step 3: Call updateLetterProgress mutation
@@ -168,8 +177,10 @@ class LetterExerciseService {
         exerciseId: exerciseId,
         letterId: letter.id,
         levelId: levelId,
-        fileUrl: fileUrl,
-        spokenLetter: transcript,
+        fileUrl: fileUrl, // nullable
+        spokenLetter: (transcript != null && transcript.isNotEmpty)
+            ? transcript
+            : (spokenLetter ?? ''),
       );
 
       if (updatedData == null) {
@@ -195,4 +206,5 @@ class LetterExerciseService {
       };
     }
   }
+
 }

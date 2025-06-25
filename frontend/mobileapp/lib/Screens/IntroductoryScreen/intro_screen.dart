@@ -418,10 +418,10 @@ class IntroScreen extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF2E3440),
+                    color: Color(0xFF2E3440),
                     letterSpacing: 0.3,
                   ),
                   textAlign: textAlign,
@@ -429,9 +429,9 @@ class IntroScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   description,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 13,
-                    color: const Color(0xFF64748B),
+                    color: Color(0xFF64748B),
                     height: 1.4,
                     letterSpacing: 0.2,
                   ),

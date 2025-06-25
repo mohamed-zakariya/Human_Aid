@@ -20,7 +20,7 @@ mutation UpdateLetterProgress(
  $exerciseId:ID!,
  $letterId:ID!,
  $levelId:ID!,
- $audioFile:String!,
+ $audioFile:String,
  $spokenLetter:String!
 ){
   updateLetterProgress(
