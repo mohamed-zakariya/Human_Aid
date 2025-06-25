@@ -248,14 +248,14 @@ async updateWord(_, { id, word, level, image,synonym }) {
       }
     }
 
-    // Attach parentId to each user
-    const enrichedUsers = users.map(user => ({
+    return users.map(user => ({
+      id: user._id.toString(), // ✅ map _id to id
       ...user,
       parentId: user.role === 'child' ? childToParentMap.get(user._id.toString()) || null : null
     }));
 
-    return enrichedUsers;
   },
+  
   getStories: async () => {
       return await Stories.find();
     },
