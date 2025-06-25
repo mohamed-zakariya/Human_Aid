@@ -147,7 +147,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
 
   Future<void> _generateStory() async {
     try {
-      final Map<String, dynamic>? storyResult = await _storyService.generateArabicStory(
+      final story = await _storyService.generateArabicStory(
         age: widget.age,
         topic: widget.topic,
         setting: widget.setting,
@@ -157,35 +157,18 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       );
 
       setState(() {
-        // Extract the story text from the returned map
-        if (storyResult != null) {
-          generatedStory = storyResult['story'] as String?;
-        } else {
-          generatedStory = null;
-        }
-
+        generatedStory = story;
         isStoryLoading = false;
         _remainingSeconds = _getTimerDuration();
       });
 
-      // Only proceed if we have a story
-      if (generatedStory != null && generatedStory!.isNotEmpty) {
-        _startReadingTimer();
+      _startReadingTimer();
 
-        // Save story to database after successful generation
-        _saveStoryToDatabase();
+      // Save story to database after successful generation
+      _saveStoryToDatabase();
 
-        // Generate questions after saving to database
-        _generateQuestions();
-      } else {
-        // Handle case where no story was generated
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل في توليد القصة - لم يتم إرجاع محتوى'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Generate questions after saving to database
+      _generateQuestions();
     } catch (e) {
       setState(() {
         isStoryLoading = false;
@@ -198,6 +181,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
       );
     }
   }
+
   // Add this new method to save story to database
   Future<void> _saveStoryToDatabase() async {
     if (generatedStory == null || generatedStory!.isEmpty) return;

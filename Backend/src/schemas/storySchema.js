@@ -17,7 +17,7 @@ export const storyGeneratorTypeDefs = `#graphql
       age: String!,
       length: String!,
       heroType: String
-    ): String!
+    ): JobResponse!
 
     generateQuestions(story: String!): [Question!]!
   }
