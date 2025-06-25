@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobileapp/Services/auth_service.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/global/fns.dart';
 
-import '../../Services/check_exists.dart';
 
 class SignupInputFieldEmail extends StatefulWidget {
   const SignupInputFieldEmail(
@@ -56,8 +56,8 @@ class _SignupInputFieldEmailState extends State<SignupInputFieldEmail> {
   // Asynchronous check for existing Email
   Future<void> _checkEmailExists(String value) async {
     bool exists = widget.flag == true
-        ? await CheckExists.emailParentCheck(value)
-        : await CheckExists.emailLearnerCheck(value);
+        ? await AuthService.emailParentCheck(value)
+        : await AuthService.emailLearnerCheck(value);
 
     setState(() {
       _emailError = exists ? S.of(context).emailExist : null;

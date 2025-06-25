@@ -11,6 +11,7 @@ export const userTypeDefs = `#graphql
     role: String!
     currentStage: String
     lastActiveDate: String
+    parentId: ID
 }
 type LearnerProfile {
   name: String!

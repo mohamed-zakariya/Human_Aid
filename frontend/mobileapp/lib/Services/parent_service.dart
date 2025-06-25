@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/exercices_progress.dart';
 import '../models/overall_progress.dart';
+import '../models/parent.dart';
 
 class ParentService {
 
@@ -274,6 +275,57 @@ class ParentService {
     print("Data processing complete.");
     print(overallProgress);
     return overallProgress;
+  }
+
+
+  static Future<Parent?> getParentProfile(String? parentId) async {
+    final client = await GraphQLService.getClient();
+
+    final prefs = await SharedPreferences.getInstance();
+    String? refreshToken = prefs.getString("refreshToken");
+    print("tokkennnn $refreshToken");
+
+    final QueryResult result = await client.query(
+      QueryOptions(
+        document: gql(getParentProfileQuery),
+        variables: {"parentId": parentId},
+      ),
+    );
+
+    QueryResult? finalResult = await GraphQLService.handleAuthErrors(
+      result: result,
+      role: "parent",
+      retryRequest: () async {
+        final client = await GraphQLService.getClient();
+        return await client.query(
+          QueryOptions(
+            document: gql(getParentProfileQuery),
+            variables: {"parentId": parentId},
+          ),
+        );
+      },
+    );
+
+    if (finalResult != null) {
+      if (finalResult.hasException) {
+        print("Login Error: ${finalResult.exception.toString()}");
+        return null;
+      }
+
+      final dynamic rawData = finalResult.data?["parentProfile"];
+
+      if (rawData == null) {
+        print("Login Failed: No data returned.");
+        return null;
+      }
+
+      final Parent parent = Parent.fromJson(rawData);
+      print("Parent data fetched successfully");
+      return parent;
+    } else {
+      print("Request still failed even after retry.");
+      return null;
+    }
   }
 
 

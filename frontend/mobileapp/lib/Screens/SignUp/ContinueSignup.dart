@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:mobileapp/Screens/ParentScreen/ParentMain.dart';
 import 'package:mobileapp/Screens/widgets/MaleFemale.dart';
 import 'package:mobileapp/Screens/SignUp/ProgressBar.dart';
 import 'package:mobileapp/Screens/widgets/SignupInputField.dart';
@@ -9,15 +8,13 @@ import 'package:mobileapp/Screens/widgets/successSnackBar.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Services/auth_service.dart';
 import '../../Services/signup_service.dart';
-import '../../Services/check_exists.dart';
-import '../../models/learner.dart';
+
 import '../../models/parent.dart';
 import '../widgets/ChildSignupCountryDropdown.dart';
 import '../widgets/GuardianDate.dart';
-import '../widgets/GuardianSignupCountryDropdown.dart';
-import '../widgets/SignupCountryDropdown.dart';
-import '../widgets/date.dart';
+
 
 class Continuesignup extends StatefulWidget {
   final Parent? parent;
@@ -209,7 +206,7 @@ class _ContinuesignupState extends State<Continuesignup> {
     });
 
     try {
-      bool usernameExists = await CheckExists.usernameLearnerCheck(value);
+      bool usernameExists = await AuthService.usernameLearnerCheck(value);
 
       setState(() {
         isCheckingUsername[id] = false;

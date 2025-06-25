@@ -79,6 +79,11 @@ class _LetterLevel2GameState extends State<LetterLevel2Game> {
       roundKey = '${levelId}_${gameId}_${levelGameId}_round';
       scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
 
+      print("levelId" + levelId!);
+      print("gameId" + gameId!);
+      print("levelGameId" + levelGameId!);
+
+
       // Initialize round and score from SharedPreferences
       currentRound = prefs.getInt(roundKey!) ?? 1;
       score = prefs.getInt(scoreKey!) ?? 0;

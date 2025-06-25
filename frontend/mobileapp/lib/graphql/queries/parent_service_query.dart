@@ -136,3 +136,19 @@ query getLearnerOverallProgress(\$getLearnerOverallProgressParentId2: ID!){
 }
 
 """;
+
+const String getParentProfileQuery = """
+
+  query parentProfile(\$parentId: ID!) {
+    parentProfile(parentId: \$parentId) {
+      id
+      name
+      email
+      phoneNumber
+      nationality
+      birthdate
+      gender
+    }
+  }
+
+""";

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:mobileapp/Services/check_exists.dart';
 import 'package:mobileapp/generated/l10n.dart';
 
 class Validators{

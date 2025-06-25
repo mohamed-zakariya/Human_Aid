@@ -17,8 +17,8 @@ const String checkParentEmailExists = """
 
 const String checkUserEmailExists = """
   query checkUserEmailExists(\$email: String!){
-  checkUserEmailExists(email: \$email) {
-    emailExists
+    checkUserEmailExists(email: \$email) {
+      emailExists
+    }
   }
-}
 """;

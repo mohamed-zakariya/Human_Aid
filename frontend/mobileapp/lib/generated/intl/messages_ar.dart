@@ -98,6 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "add_word": MessageLookupByLibrary.simpleMessage("إضافة كلمة"),
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("إِنْشَاءُ حِسَابٍ كمتعلم"),
+        "age": MessageLookupByLibrary.simpleMessage("العمر"),
         "all": MessageLookupByLibrary.simpleMessage("جميع"),
         "allWordsCompleted": MessageLookupByLibrary.simpleMessage(
             "عمل رائع! لقد أكملت جميع الكلمات!"),
@@ -112,6 +113,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ball": MessageLookupByLibrary.simpleMessage("كرة"),
         "birthdateValidation":
             MessageLookupByLibrary.simpleMessage("يرجى اختيار تاريخ الميلاد"),
+        "birthday": MessageLookupByLibrary.simpleMessage("تاريخ الميلاد"),
         "book": MessageLookupByLibrary.simpleMessage("كتاب"),
         "bottomNavCourses": MessageLookupByLibrary.simpleMessage("الدورات"),
         "bottomNavHome": MessageLookupByLibrary.simpleMessage("الرئيسية"),
@@ -208,6 +210,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "drawerMenuDescription": MessageLookupByLibrary.simpleMessage(
             "اضغط على قائمة التنقل لفتح القائمة الجانبية. يمكنك تغيير اللغة أو تسجيل الخروج من هنا."),
         "drawerMenuTitle": MessageLookupByLibrary.simpleMessage("قائمة التنقل"),
+        "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "هذا البريد الإلكتروني مسجّل بالفعل"),
         "emailHint": MessageLookupByLibrary.simpleMessage("البريد الالكتروني"),
@@ -226,6 +229,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "لا يمكن ترك كلمة المرور فارغة"),
         "errorLoadingLevels":
             MessageLookupByLibrary.simpleMessage("خطأ في تحميل المستويات"),
+        "errorTitle": MessageLookupByLibrary.simpleMessage("عذراً! حدث خطأ ما"),
         "errorTryAgain":
             MessageLookupByLibrary.simpleMessage("حدث خطأ، حاول مرة أخرى"),
         "everyTryMakesStronger":
@@ -282,6 +286,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "اضغط على أي لعبة للانتقال مباشرةً إلى تلك اللعبة ضمن الدورة."),
         "gamesNavigationTitle":
             MessageLookupByLibrary.simpleMessage("التنقل بين الألعاب"),
+        "gender": MessageLookupByLibrary.simpleMessage("الجنس"),
         "genderFemale": MessageLookupByLibrary.simpleMessage("انثي"),
         "genderMale": MessageLookupByLibrary.simpleMessage("ذكر"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("اختار النوع"),
@@ -299,6 +304,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "guardianDescription": MessageLookupByLibrary.simpleMessage(
             "تسجيلك كولي أمر يمكنك من تسجيل و متابعة تقدم أحيانك، سواء كالوا أبناءك، طلابك، أو أي شخص تحت مسئوليتك"),
         "guardianTitle": MessageLookupByLibrary.simpleMessage("سجل لمن تحب"),
+        "hello": MessageLookupByLibrary.simpleMessage("مرحباً"),
         "helloLabel": MessageLookupByLibrary.simpleMessage("مرحباً،"),
         "help": MessageLookupByLibrary.simpleMessage("مساعدة"),
         "helpful_tips":
@@ -414,10 +420,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "أحسنت! لقد رتبت الشهور بشكل صحيح."),
         "monthsOrderTitle":
             MessageLookupByLibrary.simpleMessage("ترتيب الشهور"),
+        "nationality": MessageLookupByLibrary.simpleMessage("الجنسية"),
         "next": MessageLookupByLibrary.simpleMessage("التالي"),
         "nextButton": MessageLookupByLibrary.simpleMessage("التالي"),
         "nextExercise": MessageLookupByLibrary.simpleMessage("التمرين التالي"),
         "noAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
+        "noData": MessageLookupByLibrary.simpleMessage("لا توجد بيانات متاحة"),
         "noExercisesAvailable":
             MessageLookupByLibrary.simpleMessage("لا توجد تمارين متاحة"),
         "noGamesAvailable": MessageLookupByLibrary.simpleMessage(
@@ -487,7 +495,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "passwordShort": MessageLookupByLibrary.simpleMessage(
             "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل"),
         "pen": MessageLookupByLibrary.simpleMessage("قلم"),
+        "personalInfo":
+            MessageLookupByLibrary.simpleMessage("المعلومات الشخصية"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
+        "phoneNumber": MessageLookupByLibrary.simpleMessage("رقم الهاتف"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("ابحث"),
         "placeImageInDirection": m16,
         "plate": MessageLookupByLibrary.simpleMessage("طبق"),

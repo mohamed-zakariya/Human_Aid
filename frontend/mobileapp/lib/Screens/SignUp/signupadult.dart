@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobileapp/Screens/widgets/MaleFemale.dart';
-import 'package:mobileapp/Screens/widgets/SignupInputField.dart';
-import 'package:mobileapp/Screens/SignUp/SignupPhoneNumberField.dart';
-import 'package:mobileapp/Screens/widgets/SignupUsernameInputField.dart';
-import 'package:mobileapp/Services/check_exists.dart';
+
 import 'package:mobileapp/classes/validators.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/models/learner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Services/auth_service.dart';
 import '../../Services/signup_service.dart';
 import '../widgets/SignupCountryDropdown.dart';
-import '../widgets/SignupEmailInputField.dart';
 import '../widgets/date.dart';
 import '../widgets/successSnackBar.dart';
+
+
 
 class Signupadult extends StatefulWidget {
   const Signupadult({super.key});
@@ -97,7 +96,7 @@ class _SignupadultState extends State<Signupadult> {
     });
 
     try {
-      bool exists = await CheckExists.usernameLearnerCheck(username);
+      bool exists = await AuthService.usernameLearnerCheck(username);
 
       setState(() {
         _isCheckingUsername = false;
@@ -148,7 +147,7 @@ class _SignupadultState extends State<Signupadult> {
     });
 
     try {
-      bool exists = await CheckExists.emailLearnerCheck(email);
+      bool exists = await AuthService.emailLearnerCheck(email);
 
       setState(() {
         _isCheckingEmail = false;
