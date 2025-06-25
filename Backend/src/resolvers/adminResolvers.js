@@ -234,7 +234,27 @@ async updateWord(_, { id, word, level, image,synonym }) {
     return await Parents.find().populate('linkedChildren');
   },
   async getAllUsers() {
-  return await Users.find({ role: { $in: ['adult', 'child'] } });
+    // Fetch all users
+    const users = await Users.find({ role: { $in: ['adult', 'child'] } }).lean();
+
+    // Fetch parent-child mappings
+    const parents = await Parents.find({}, { _id: 1, linkedChildren: 1 }).lean();
+
+    // Create a map of childId → parentId
+    const childToParentMap = new Map();
+    for (const parent of parents) {
+      for (const childId of parent.linkedChildren || []) {
+        childToParentMap.set(childId.toString(), parent._id.toString());
+      }
+    }
+
+    // Attach parentId to each user
+    const enrichedUsers = users.map(user => ({
+      ...user,
+      parentId: user.role === 'child' ? childToParentMap.get(user._id.toString()) || null : null
+    }));
+
+    return enrichedUsers;
   },
   getStories: async () => {
       return await Stories.find();

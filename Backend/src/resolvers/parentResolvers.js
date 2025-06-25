@@ -25,15 +25,15 @@ export const parentResolvers = {
     getLearnerDailyAttempts: async(_, {parentId}) => {
       return await getLearnerDailyAttempts(parentId);
     },
-parentProfile: async (_, { parentId }) => {
-  const parent = await Parents.findById(parentId).populate("linkedChildren");
+    parentProfile: async (_, { parentId }) => {
+      const parent = await Parents.findById(parentId).populate("linkedChildren");
 
-  if (!parent) {
-    throw new Error("Parent not found");
-  }
+      if (!parent) {
+        throw new Error("Parent not found");
+      }
 
-  return parent;
-}
+      return parent;
+    }
 
   },
   Mutation: {

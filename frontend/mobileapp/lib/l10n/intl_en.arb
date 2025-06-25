@@ -253,7 +253,16 @@
     "profileTabDescription": "Tap here to view and update your profile information. Manage your personal details and preferences.",
     "coursesTabTitle": "Your Courses",
     "coursesTabDescription": "Access all your courses here. Browse available lessons, track your progress, and continue your learning journey.",
-
+    "hello": "Hello",
+    "phoneNumber": "Phone Number",
+    "nationality": "Nationality",
+    "gender": "Gender",
+    "birthday": "Birthday",
+    "age": "Age",
+    "personalInfo": "Personal Information",
+    "errorTitle": "Oops! Something went wrong",
+    "noData": "No profile data available",
+    "email": "Email",
 
 
 

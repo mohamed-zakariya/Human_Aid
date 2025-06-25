@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobileapp/Screens/ParentScreen/learnerMembersTab/LearnerDetails.dart';
 import 'package:mobileapp/Screens/ParentScreen/ParentMain.dart';
+import 'package:mobileapp/Screens/ParentScreen/profileParent.dart';
 
 import '../../Services/auth_service.dart';
 import '../../generated/l10n.dart';
@@ -78,7 +79,7 @@ class _NavBarParentState extends State<NavBarParent>
                     title: S.of(context).parentNavBarProfile,
                     onTap: () {
                       // Navigator.pop(context);
-                      widget.onSelectScreen(ProgressDetails(parent: widget.parent));
+                      widget.onSelectScreen(const ProfileParent());
                     },
                     color: const Color(0xFF4ECDC4),
                   ),
