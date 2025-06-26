@@ -3,434 +3,595 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { fileURLToPath } from 'url';
+import Exercises from '../models/Exercises.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Color palette
+// Enhanced color palette
 const colors = {
-  primary: '#2563eb',     // Blue
-  secondary: '#059669',   // Green
-  accent: '#dc2626',      // Red
-  light: '#f3f4f6',      // Light gray
-  dark: '#1f2937',       // Dark gray
-  text: '#374151',       // Medium gray
-  success: '#10b981',    // Success green
-  warning: '#f59e0b',    // Warning orange
-  error: '#ef4444'       // Error red
+  primary: '#2563eb', secondary: '#059669', accent: '#dc2626',
+  light: '#f3f4f6', dark: '#1f2937', text: '#374151',
+  success: '#10b981', warning: '#f59e0b', error: '#ef4444',
+  purple: '#8b5cf6', orange: '#f97316', teal: '#14b8a6'
 };
 
 function fixArabicSentence(sentence) {
   const words = sentence.trim().split(' ');
-  if (words.length !== 3) return sentence;
-  return `${words[2]} ${words[1]} ${words[0]}`;
+  return words.length !== 3 ? sentence : `${words[2]} ${words[1]} ${words[0]}`;
 }
 
-// Helper function to draw a rounded rectangle
 function drawRoundedRect(doc, x, y, width, height, radius = 5) {
   doc.roundedRect(x, y, width, height, radius);
 }
 
-// Helper function to create section headers
-function createSectionHeader(doc, title, color = colors.primary) {
+function createSectionHeader(doc, title, color = colors.primary, icon = '') {
   const currentY = doc.y;
-  
-  // Background rectangle
-  drawRoundedRect(doc, 50, currentY - 5, 495, 30, 8);
+  drawRoundedRect(doc, 50, currentY - 5, 495, 35, 8);
   doc.fillAndStroke(color, color);
   
-  // Header text
-  doc.fillColor('white')
-     .font('Helvetica-Bold')
-     .fontSize(14)
-     .text(title, 60, currentY + 5);
-  
-  doc.fillColor(colors.text);
-  doc.moveDown(1.5);
+  doc.fillColor('white').font('Helvetica-Bold').fontSize(14)
+     .text(`${icon} ${title}`, 65, currentY + 8);
+  doc.fillColor(colors.text).moveDown(2);
 }
 
-// Helper function to create info boxes
-function createInfoBox(doc, items, bgColor = colors.light) {
-  const startY = doc.y;
-  const boxHeight = items.length * 20 + 20;
+function createMetricCard(doc, title, value, subtitle, color, x, y, width = 120) {
+  drawRoundedRect(doc, x, y, width, 60, 8);
+  doc.fillAndStroke(colors.light, '#e5e7eb');
   
-  // Background box
-  drawRoundedRect(doc, 50, startY, 495, boxHeight, 5);
-  doc.fillAndStroke(bgColor, bgColor);
+  // Color accent bar
+  drawRoundedRect(doc, x, y, width, 8, 8);
+  doc.fillAndStroke(color, color);
   
-  doc.fillColor(colors.text);
-  doc.y = startY + 10;
-  
-  items.forEach(item => {
-    doc.font('Helvetica')
-       .fontSize(11)
-       .text(`• ${item}`, 65, doc.y, { width: 465 });
-    doc.moveDown(0.8);
-  });
-  
-  doc.moveDown(0.5);
+  doc.fillColor(color).font('Helvetica-Bold').fontSize(20)
+     .text(value, x + 10, y + 15, { width: width - 20, align: 'center' });
+  doc.fillColor(colors.text).font('Helvetica-Bold').fontSize(9)
+     .text(title, x + 10, y + 35, { width: width - 20, align: 'center' });
+  doc.font('Helvetica').fontSize(8).fillColor('#6b7280')
+     .text(subtitle, x + 10, y + 47, { width: width - 20, align: 'center' });
 }
 
-// Helper function to create progress bars
-function createProgressBar(doc, label, percentage, color = colors.primary) {
-  const barWidth = 200;
-  const barHeight = 12;
-  const startX = 300;
-  const startY = doc.y;
-  
-  // Label
-  doc.font('Helvetica')
-     .fontSize(10)
-     .fillColor(colors.text)
-     .text(label, 65, startY);
-  
-  // Background bar
-  drawRoundedRect(doc, startX, startY - 2, barWidth, barHeight, 6);
-  doc.fillAndStroke(colors.light, colors.light);
-  
-  // Progress bar
-  const progressWidth = (barWidth * percentage) / 100;
-  if (progressWidth > 0) {
-    drawRoundedRect(doc, startX, startY - 2, progressWidth, barHeight, 6);
-    doc.fillAndStroke(color, color);
+async function getExerciseDetails() {
+  try {
+    const exercises = await Exercises.find({});
+    const exerciseMap = new Map();
+
+    exercises.forEach(exercise => {
+      const exerciseId = exercise._id.toString();
+      exerciseMap.set(exerciseId, {
+        name: exercise.name,
+        arabic_name: exercise.arabic_name,
+        levels: new Map()
+      });
+
+      exercise.levels.forEach(level => {
+        const levelIdString = level._id.toString(); // ✅ Use _id
+        exerciseMap.get(exerciseId).levels.set(levelIdString, {
+          name: level.name,
+          arabic_name: level.arabic_name,
+          level_number: level.level_number,
+          games: new Map()
+        });
+
+        level.games.forEach(game => {
+          const gameIdString = game._id.toString(); // ✅ Use _id
+          exerciseMap.get(exerciseId).levels.get(levelIdString)
+                    .games.set(gameIdString, {
+            name: game.name,
+            arabic_name: game.arabic_name
+          });
+        });
+      });
+    });
+
+    return exerciseMap;
+  } catch (error) {
+    console.error('Error fetching exercise details:', error);
+    return new Map();
   }
-  
-  // Percentage text
-  doc.fillColor('white')
-     .font('Helvetica-Bold')
-     .fontSize(8)
-     .text(`${percentage.toFixed(1)}%`, startX + barWidth/2 - 15, startY + 1);
-  
-  doc.fillColor(colors.text);
-  doc.moveDown(1.2);
 }
 
-// Helper function to create status badges
-function createStatusBadge(doc, status, x, y) {
-  const isCorrect = status === 'Correct';
-  const badgeColor = isCorrect ? colors.success : colors.error;
-  const textColor = 'white';
-  
-  doc.fontSize(8);
-  const textWidth = doc.widthOfString(status);
-  const badgeWidth = textWidth + 12;
-  const badgeHeight = 16;
-  
-  drawRoundedRect(doc, x, y - 2, badgeWidth, badgeHeight, 8);
-  doc.fillAndStroke(badgeColor, badgeColor);
-  
-  doc.fillColor(textColor)
-     .font('Helvetica-Bold')
-     .text(status, x + 6, y + 2);
-  
-  doc.fillColor(colors.text);
-  return badgeWidth + 5;
+
+// Helper function to get exercise name from game attempt
+function getExerciseFromGameAttempt(gameAttempt, exerciseDetails) {
+  const gameObjectIdString = gameAttempt.game_id.toString();
+  const levelObjectIdString = gameAttempt.level_id.toString();
+
+  for (const [exerciseId, exercise] of exerciseDetails) {
+    for (const [levelId, level] of exercise.levels) {
+      if (levelId === levelObjectIdString) {
+        for (const [gameId, game] of level.games) {
+          if (gameId === gameObjectIdString) {
+            return {
+              exerciseName: exercise.name,
+              levelName: level.name,
+              gameName: game.name
+            };
+          }
+        }
+        return {
+          exerciseName: exercise.name,
+          levelName: level.name,
+          gameName: 'Unknown Game'
+        };
+      }
+    }
+  }
+
+  return {
+    exerciseName: 'Unknown Exercise',
+    levelName: 'Unknown Level',
+    gameName: 'Unknown Game'
+  };
 }
+
+// Helper function to get exercise name from level_id in attempts
+function getExerciseFromLevelId(levelId, exerciseDetails) {
+  const levelObjectIdString = levelId.toString();
+
+  for (const [exerciseId, exercise] of exerciseDetails) {
+    for (const [levelIdKey, level] of exercise.levels) {
+      if (levelIdKey === levelObjectIdString) {
+        return {
+          exerciseName: exercise.name,
+          levelName: level.name
+        };
+      }
+    }
+  }
+
+  return {
+    exerciseName: 'Unknown Exercise',
+    levelName: 'Unknown Level'
+  };
+}
+
 
 export const generateProgressPDF = async ({ learner, parent, dailyAttempts, overallProgress }) => {
-  const doc = new PDFDocument({ 
-    margin: 40, 
-    size: 'A4',
-    info: {
-      Title: `${learner.name} - Weekly Progress Report`,
-      Author: 'Learning App',
-      Subject: 'Student Progress Report'
-    }
-  });
-
+  const doc = new PDFDocument({ margin: 40, size: 'A4' });
   const fileName = `${learner.name.replace(/\s+/g, '_')}_Weekly_Report.pdf`;
   const filePath = path.join(os.tmpdir(), fileName);
-  const arabicFontPath = path.join(__dirname, 'Amiri-Regular.ttf');
 
-  doc.registerFont('Arabic', arabicFontPath);
-  
+  try {
+    const arabicFontPath = path.join(__dirname, 'Amiri-Regular.ttf');
+    doc.registerFont('Arabic', arabicFontPath);
+  } catch (error) {
+    console.warn('Arabic font not found, using default font');
+  }
+
   doc.pipe(fs.createWriteStream(filePath));
 
-  // Header with gradient-like effect
-  doc.rect(0, 0, 595, 120).fillAndStroke(colors.primary, colors.primary);
-  doc.rect(0, 120, 595, 10).fillAndStroke('#3b82f6', '#3b82f6');
+  const exerciseDetails = await getExerciseDetails();
+
+  // Enhanced Header
+  doc.rect(0, 0, 595, 130).fillAndStroke(colors.primary, colors.primary);
+  const gradient = doc.linearGradient(0, 0, 0, 130);
+  gradient.stop(0, colors.primary).stop(1, '#1d4ed8');
+  doc.rect(0, 0, 595, 130).fill(gradient);
+
+  doc.fillColor('white').font('Helvetica-Bold').fontSize(26)
+     .text('Weekly Progress Report', 50, 35);
   
-  // Add logo (if logo file exists)
-  const logoPath = path.join(__dirname, 'lexXfix-logo.jpg');
-  try {
-    if (fs.existsSync(logoPath)) {
-      doc.image(logoPath, 50, 25, { width: 120, height: 40 });
-    }
-  } catch (error) {
-    console.warn('Logo file not found, proceeding without logo');
-  }
-  
-  // Title
-  doc.fillColor('white')
-     .font('Helvetica-Bold')
-     .fontSize(24)
-     .text('Weekly Progress Report', 200, 40, { align: 'center' });
-  
-  // Student info section
-  doc.fontSize(12)
-     .text(`Student: ${learner.name}`, 50, 75)
-     .text(`Parent: ${parent.name}`, 50, 92)
-     .text(`Report Date: ${new Date().toDateString()}`, 350, 75)
-     .text(`Generated: ${new Date().toLocaleTimeString()}`, 350, 92);
+  doc.fontSize(14)
+     .text(`Student: ${learner.name}`, 50, 70)
+     .text(`Parent: ${parent.name}`, 50, 90)
+     .text(`${new Date().toDateString()}`, 350, 70)
+     .text(`${new Date().toLocaleTimeString()}`, 350, 90);
 
   doc.y = 150;
-  doc.fillColor(colors.text);
 
-  // Overall Progress Summary (if available)
+  // Key Metrics Dashboard
   if (overallProgress) {
     const stats = overallProgress.overall_stats;
-    createSectionHeader(doc, 'Overall Performance Summary', colors.primary);
+    createSectionHeader(doc, 'Performance Dashboard', colors.primary);
     
-    const summaryItems = [
-      `Total Learning Time: ${(stats.total_time_spent / 60).toFixed(1)} minutes`,
-      `Overall Accuracy: ${stats.combined_accuracy.toFixed(1)}%`,
-      `Average Games Score: ${stats.average_score_all.toFixed(1)}/10`,
-      `Exercises Completed: ${overallProgress.progress_by_exercise.length}`
-    ];
-    
-    createInfoBox(doc, summaryItems, '#eff6ff');
-    
-    // Progress bars for key metrics
-    doc.moveDown(0.5);
-    createProgressBar(doc, 'Overall Accuracy', stats.combined_accuracy, colors.success);
-    createProgressBar(doc, 'Average Games Score', (stats.average_score_all / 10) * 100, colors.primary);
+    // Metric cards row
+    const cardY = doc.y;
+    createMetricCard(doc, 'Learning Time', `${(stats.total_time_spent / 60).toFixed(0)}m`, 
+                     'Total minutes', colors.purple, 60, cardY);
+    createMetricCard(doc, 'Accuracy', `${stats.combined_accuracy.toFixed(0)}%`, 
+                     'Overall score', colors.success, 190, cardY);
+    createMetricCard(doc, 'Avg Games', `${stats.average_score_all.toFixed(1)}`, 
+                     'Out of 10', colors.orange, 320, cardY);
+    createMetricCard(doc, 'Exercises', `${overallProgress.progress_by_exercise.length}`, 
+                     'Completed', colors.teal, 450, cardY);
+
+    doc.y = cardY + 95;
   }
 
-  // Daily Attempts Section
-  if (dailyAttempts.length) {
+  // MOVED UP: Daily Learning Activities - Enhanced with detailed breakdown and exercise names
+  if (dailyAttempts.length > 0) {
     createSectionHeader(doc, 'Daily Learning Activities', colors.secondary);
     
     dailyAttempts.forEach((attempt, index) => {
-      // Check if we need a new page
-      if (doc.y > 700) {
-        doc.addPage();
-      }
+      if (doc.y > 680) doc.addPage();
       
       const dayTitle = `Day ${index + 1} - ${new Date(attempt.date).toLocaleDateString()}`;
-      
-      // Day header
-      doc.font('Helvetica-Bold')
-         .fontSize(12)
-         .fillColor(colors.secondary)
-         .text(dayTitle, 65);
-      doc.moveDown(0.5);
-
-      // Activity summary
-      const totalAttempts = attempt.words_attempts.length + 
-                           attempt.letters_attempts.length + 
+      const totalAttempts = attempt.words_attempts.length + attempt.letters_attempts.length + 
                            attempt.sentences_attempts.length;
       const correctAttempts = attempt.words_attempts.filter(w => w.is_correct).length +
                              attempt.letters_attempts.filter(l => l.is_correct).length +
                              attempt.sentences_attempts.filter(s => s.is_correct).length;
-      
       const accuracy = totalAttempts > 0 ? (correctAttempts / totalAttempts) * 100 : 0;
+
+      doc.font('Helvetica-Bold').fontSize(12).fillColor(colors.secondary)
+         .text(dayTitle, 65);
+      doc.moveDown(0.5);
       
-      createProgressBar(doc, `Daily Accuracy (${correctAttempts}/${totalAttempts})`, accuracy, colors.secondary);
+      if (totalAttempts > 0 || (attempt.game_attempts && attempt.game_attempts.length > 0)) {
+        doc.font('Helvetica').fontSize(10).fillColor(colors.text)
+           .text(`Total Practice Attempts: ${totalAttempts} | Correct: ${correctAttempts} | Accuracy: ${accuracy.toFixed(1)}%`, 85);
+        doc.moveDown(0.8);
 
-      // Words section
-      if (attempt.words_attempts.length > 0) {
-        doc.font('Helvetica-Bold')
-           .fontSize(11)
-           .fillColor(colors.text)
-           .text('Words Practice:', 75);
-        doc.moveDown(0.3);
-        
-        attempt.words_attempts.forEach((w, i) => {
-          const yPos = doc.y;
-          doc.font('Helvetica')
-             .fontSize(10)
-             .text(`${i + 1}.`, 85, yPos);
+        // Words Practice with Exercise Names
+        if (attempt.words_attempts.length > 0) {
+          doc.font('Helvetica-Bold').fontSize(10).fillColor(colors.primary)
+             .text('Words Practice:', 85);
+          doc.moveDown(0.3);
           
-          doc.font('Arabic')
-             .fontSize(12)
-             .text(w.correct_word, 105, yPos);
+          const correctWords = attempt.words_attempts.filter(w => w.is_correct);
+          const incorrectWords = attempt.words_attempts.filter(w => !w.is_correct);
           
-          const badgeX = 200;
-          createStatusBadge(doc, w.is_correct ? 'Correct' : 'Incorrect', badgeX, yPos);
-          
-          if (!w.is_correct) {
-            doc.font('Helvetica')
-               .fontSize(9)
-               .fillColor('#6b7280')
-               .text('Your answer: ', 300, yPos);
-            doc.font('Arabic')
-               .text(w.spoken_word, 360, yPos);
+          if (correctWords.length > 0) {
+            doc.font('Helvetica').fontSize(9).fillColor(colors.success)
+               .text(`✓ Correct (${correctWords.length}):`, 100);
+            
+            // Group by exercise
+            const wordsByExercise = new Map();
+            correctWords.forEach(w => {
+              const exerciseInfo = getExerciseFromLevelId(w.level_id, exerciseDetails);
+              const key = `${exerciseInfo.exerciseName} - ${exerciseInfo.levelName}`;
+              if (!wordsByExercise.has(key)) {
+                wordsByExercise.set(key, []);
+              }
+              wordsByExercise.get(key).push(w.correct_word);
+            });
+            
+            for (const [exerciseKey, words] of wordsByExercise) {
+              doc.font('Helvetica-Bold').fontSize(8).fillColor(colors.text)
+                 .text(`${exerciseKey}:`, 110);
+              try {
+                doc.font('Arabic').fontSize(9).fillColor(colors.text);
+              } catch (e) {
+                doc.font('Helvetica').fontSize(9).fillColor(colors.text);
+              }
+              doc.text(words.join('، '), 120, doc.y, { width: 410 });
+              doc.moveDown(0.4);
+            }
           }
           
-          doc.fillColor(colors.text);
-          doc.moveDown(0.8);
-        });
-        doc.moveDown(0.3);
-      }
+          if (incorrectWords.length > 0) {
+            doc.font('Helvetica').fontSize(9).fillColor(colors.error)
+               .text(`✗ Needs Practice (${incorrectWords.length}):`, 100);
+            
+            // Group by exercise
+            const wordsByExercise = new Map();
+            incorrectWords.forEach(w => {
+              const exerciseInfo = getExerciseFromLevelId(w.level_id, exerciseDetails);
+              const key = `${exerciseInfo.exerciseName} - ${exerciseInfo.levelName}`;
+              if (!wordsByExercise.has(key)) {
+                wordsByExercise.set(key, []);
+              }
+              wordsByExercise.get(key).push(`${w.correct_word} (said: ${w.spoken_word})`);
+            });
+            
+            for (const [exerciseKey, words] of wordsByExercise) {
+              doc.font('Helvetica-Bold').fontSize(8).fillColor(colors.text)
+                 .text(`${exerciseKey}:`, 110);
+              try {
+                doc.font('Arabic').fontSize(9).fillColor(colors.text);
+              } catch (e) {
+                doc.font('Helvetica').fontSize(9).fillColor(colors.text);
+              }
+              doc.text(words.join('، '), 120, doc.y, { width: 410 });
+              doc.moveDown(0.4);
+            }
+          }
+          doc.moveDown(0.3);
+        }
 
-      // Letters section
-      if (attempt.letters_attempts.length > 0) {
-        doc.font('Helvetica-Bold')
-           .fontSize(11)
-           .fillColor(colors.text)
-           .text('Letters Practice:', 75);
-        doc.moveDown(0.3);
-        
-        attempt.letters_attempts.forEach((l, i) => {
-          const yPos = doc.y;
-          doc.font('Helvetica')
-             .fontSize(10)
-             .text(`${i + 1}.`, 85, yPos);
+        // Letters Practice with Exercise Names
+        if (attempt.letters_attempts.length > 0) {
+          doc.font('Helvetica-Bold').fontSize(10).fillColor(colors.purple)
+             .text('Letters Practice:', 85);
+          doc.moveDown(0.3);
           
-          doc.font('Arabic')
-             .fontSize(12)
-             .text(l.correct_letter, 105, yPos);
+          const correctLetters = attempt.letters_attempts.filter(l => l.is_correct);
+          const incorrectLetters = attempt.letters_attempts.filter(l => !l.is_correct);
           
-          const badgeX = 200;
-          createStatusBadge(doc, l.is_correct ? 'Correct' : 'Incorrect', badgeX, yPos);
-          
-          if (!l.is_correct) {
-            doc.font('Helvetica')
-               .fontSize(9)
-               .fillColor('#6b7280')
-               .text('Your answer: ', 300, yPos);
-            doc.font('Arabic')
-               .text(l.spoken_letter, 360, yPos);
+          if (correctLetters.length > 0) {
+            doc.font('Helvetica').fontSize(9).fillColor(colors.success)
+               .text(`✓ Correct (${correctLetters.length}):`, 100);
+            
+            // Group by exercise
+            const lettersByExercise = new Map();
+            correctLetters.forEach(l => {
+              const exerciseInfo = getExerciseFromLevelId(l.level_id, exerciseDetails);
+              const key = `${exerciseInfo.exerciseName} - ${exerciseInfo.levelName}`;
+              if (!lettersByExercise.has(key)) {
+                lettersByExercise.set(key, []);
+              }
+              lettersByExercise.get(key).push(l.correct_letter);
+            });
+            
+            for (const [exerciseKey, letters] of lettersByExercise) {
+              doc.font('Helvetica-Bold').fontSize(8).fillColor(colors.text)
+                 .text(`${exerciseKey}:`, 110);
+              try {
+                doc.font('Arabic').fontSize(9).fillColor(colors.text);
+              } catch (e) {
+                doc.font('Helvetica').fontSize(9).fillColor(colors.text);
+              }
+              doc.text(letters.join('، '), 120, doc.y, { width: 410 });
+              doc.moveDown(0.4);
+            }
           }
           
-          doc.fillColor(colors.text);
-          doc.moveDown(0.8);
-        });
-        doc.moveDown(0.3);
-      }
+          if (incorrectLetters.length > 0) {
+            doc.font('Helvetica').fontSize(9).fillColor(colors.error)
+               .text(`✗ Needs Practice (${incorrectLetters.length}):`, 100);
+            
+            // Group by exercise
+            const lettersByExercise = new Map();
+            incorrectLetters.forEach(l => {
+              const exerciseInfo = getExerciseFromLevelId(l.level_id, exerciseDetails);
+              const key = `${exerciseInfo.exerciseName} - ${exerciseInfo.levelName}`;
+              if (!lettersByExercise.has(key)) {
+                lettersByExercise.set(key, []);
+              }
+              lettersByExercise.get(key).push(`${l.correct_letter} (said: ${l.spoken_letter})`);
+            });
+            
+            for (const [exerciseKey, letters] of lettersByExercise) {
+              doc.font('Helvetica-Bold').fontSize(8).fillColor(colors.text)
+                 .text(`${exerciseKey}:`, 110);
+              try {
+                doc.font('Arabic').fontSize(9).fillColor(colors.text);
+              } catch (e) {
+                doc.font('Helvetica').fontSize(9).fillColor(colors.text);
+              }
+              doc.text(letters.join('، '), 120, doc.y, { width: 410 });
+              doc.moveDown(0.4);
+            }
+          }
+          doc.moveDown(0.3);
+        }
 
-      // Sentences section
-      if (attempt.sentences_attempts.length > 0) {
-        doc.font('Helvetica-Bold')
-           .fontSize(11)
-           .fillColor(colors.text)
-           .text('Sentences Practice:', 75);
-        doc.moveDown(0.3);
-        
-        attempt.sentences_attempts.forEach((s, i) => {
-          const yPos = doc.y;
-          doc.font('Helvetica')
-             .fontSize(10)
-             .text(`${i + 1}.`, 85, yPos);
+        // Sentences Practice with Exercise Names
+        if (attempt.sentences_attempts.length > 0) {
+          doc.font('Helvetica-Bold').fontSize(10).fillColor(colors.orange)
+             .text('Sentences Practice:', 85);
+          doc.moveDown(0.3);
           
-          doc.font('Arabic')
-             .fontSize(11)
-             .text(fixArabicSentence(s.correct_sentence), 105, yPos, { width: 200 });
+          const correctSentences = attempt.sentences_attempts.filter(s => s.is_correct);
+          const incorrectSentences = attempt.sentences_attempts.filter(s => !s.is_correct);
           
-          const badgeX = 320;
-          createStatusBadge(doc, s.is_correct ? 'Correct' : 'Incorrect', badgeX, yPos);
+          if (correctSentences.length > 0) {
+            doc.font('Helvetica').fontSize(9).fillColor(colors.success)
+               .text(`✓ Correct (${correctSentences.length}):`, 100);
+            
+            // Group by exercise
+            const sentencesByExercise = new Map();
+            correctSentences.forEach(s => {
+              const exerciseInfo = getExerciseFromLevelId(s.level_id, exerciseDetails);
+              const key = `${exerciseInfo.exerciseName} - ${exerciseInfo.levelName}`;
+              if (!sentencesByExercise.has(key)) {
+                sentencesByExercise.set(key, []);
+              }
+              sentencesByExercise.get(key).push(s.correct_sentence);
+            });
+            
+            for (const [exerciseKey, sentences] of sentencesByExercise) {
+              doc.font('Helvetica-Bold').fontSize(8).fillColor(colors.text)
+                 .text(`${exerciseKey}:`, 110);
+              sentences.forEach(sentence => {
+                try {
+                  doc.font('Arabic').fontSize(9).fillColor(colors.text);
+                } catch (e) {
+                  doc.font('Helvetica').fontSize(9).fillColor(colors.text);
+                }
+                doc.text(`• ${sentence}`, 120, doc.y, { width: 410 });
+                doc.moveDown(0.3);
+              });
+              doc.moveDown(0.2);
+            }
+          }
           
-          if (!s.is_correct) {
+          if (incorrectSentences.length > 0) {
+            doc.font('Helvetica').fontSize(9).fillColor(colors.error)
+               .text(`✗ Needs Practice (${incorrectSentences.length}):`, 100);
+            
+            // Group by exercise
+            const sentencesByExercise = new Map();
+            incorrectSentences.forEach(s => {
+              const exerciseInfo = getExerciseFromLevelId(s.level_id, exerciseDetails);
+              const key = `${exerciseInfo.exerciseName} - ${exerciseInfo.levelName}`;
+              if (!sentencesByExercise.has(key)) {
+                sentencesByExercise.set(key, []);
+              }
+              sentencesByExercise.get(key).push(s);
+            });
+            
+            for (const [exerciseKey, sentences] of sentencesByExercise) {
+              doc.font('Helvetica-Bold').fontSize(8).fillColor(colors.text)
+                 .text(`${exerciseKey}:`, 110);
+              sentences.forEach(s => {
+                try {
+                  doc.font('Arabic').fontSize(9).fillColor(colors.text);
+                } catch (e) {
+                  doc.font('Helvetica').fontSize(9).fillColor(colors.text);
+                }
+                doc.text(`• ${s.correct_sentence}`, 120, doc.y, { width: 410 });
+                doc.font('Helvetica').fontSize(8).fillColor('#6b7280')
+                   .text(`(Said: ${s.spoken_sentence})`, 130, doc.y, { width: 400 });
+                doc.moveDown(0.4);
+              });
+              doc.moveDown(0.2);
+            }
+          }
+          doc.moveDown(0.3);
+        }
+
+        // Game Attempts with Full Exercise and Game Names
+        if (attempt.game_attempts && attempt.game_attempts.length > 0) {
+          doc.font('Helvetica-Bold').fontSize(10).fillColor(colors.teal)
+             .text('Games Played:', 85);
+          doc.moveDown(0.3);
+          
+          attempt.game_attempts.forEach(gameAttempt => {
+            const gameInfo = getExerciseFromGameAttempt(gameAttempt, exerciseDetails);
+            const scores = gameAttempt.attempts.map(a => a.score);
+            const avgScore = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : 'N/A';
+            const bestScore = scores.length > 0 ? Math.max(...scores) : 'N/A';
+            
+            doc.font('Helvetica').fontSize(9).fillColor(colors.text)
+               .text(`${gameInfo.exerciseName} - ${gameInfo.levelName}`, 100, doc.y, { width: 430 });
+            doc.moveDown(0.3);
+            doc.font('Helvetica').fontSize(8).fillColor('#6b7280')
+               .text(`Game: ${gameInfo.gameName} | Avg: ${avgScore}/10 | Best: ${bestScore}/10 | Attempts: ${scores.length}`, 110, doc.y, { width: 420 });
             doc.moveDown(0.5);
-            doc.font('Helvetica')
-               .fontSize(9)
-               .fillColor('#6b7280')
-               .text('Your answer: ', 105);
-            doc.font('Arabic')
-               .fontSize(10)
-               .text(fixArabicSentence(s.spoken_sentence), 105, doc.y + 12, { width: 300 });
-          }
-          
-          doc.fillColor(colors.text);
-          doc.moveDown(1.2);
-        });
-        doc.moveDown(0.3);
+          });
+          doc.moveDown(0.3);
+        }
+      } else {
+        doc.font('Helvetica').fontSize(10).fillColor('#6b7280')
+           .text('No practice activities recorded for this day', 85);
+        doc.moveDown(0.8);
       }
-
-      // Games section
-      if (attempt.game_attempts.length > 0) {
-        doc.font('Helvetica-Bold')
-           .fontSize(11)
-           .fillColor(colors.text)
-           .text('Games Played:', 75);
-        doc.moveDown(0.3);
-        
-        attempt.game_attempts.forEach((game, gi) => {
-          const scores = game.attempts.map(a => a.score).filter(s => s !== undefined);
-          if (scores.length > 0) {
-            const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
-            doc.font('Helvetica')
-               .fontSize(10)
-               .text(`Game ${gi + 1}: Average Games Score ${avgScore.toFixed(1)}/10 (${scores.length} attempts)`, 85);
-            doc.moveDown(0.5);
-          }
-        });
-        doc.moveDown(0.5);
-      }
-
-      // Add separator line
-      doc.moveTo(50, doc.y)
-         .lineTo(545, doc.y)
-         .strokeColor('#e5e7eb')
-         .stroke();
+      
+      // Day separator
+      doc.moveTo(60, doc.y).lineTo(535, doc.y).strokeColor('#e5e7eb').stroke();
       doc.moveDown(1);
     });
-  } else {
-    createSectionHeader(doc, 'Daily Activities', colors.secondary);
-    createInfoBox(doc, ['No learning activities recorded this week.'], '#fef3c7');
   }
 
-  // Detailed Progress Breakdown
+  // Weekly Activity Summary (moved after daily activities)
+  if (dailyAttempts.length > 0) {
+    if (doc.y > 600) doc.addPage();
+    createSectionHeader(doc, 'Weekly Activity Summary', colors.secondary);
+    
+    const totalDays = dailyAttempts.length;
+    const totalAttempts = dailyAttempts.reduce((sum, day) => 
+      sum + day.words_attempts.length + day.letters_attempts.length + 
+      day.sentences_attempts.length, 0);
+    const totalCorrect = dailyAttempts.reduce((sum, day) => 
+      sum + day.words_attempts.filter(w => w.is_correct).length +
+      day.letters_attempts.filter(l => l.is_correct).length +
+      day.sentences_attempts.filter(s => s.is_correct).length, 0);
+    const totalGameAttempts = dailyAttempts.reduce((sum, day) => 
+      sum + (day.game_attempts ? day.game_attempts.length : 0), 0);
+
+    const summaryItems = [
+      `Active Days: ${totalDays}/7 days`,
+      `Total Practice Attempts: ${totalAttempts}`,
+      `Correct Answers: ${totalCorrect}`,
+      `Weekly Accuracy: ${totalAttempts > 0 ? ((totalCorrect/totalAttempts)*100).toFixed(1) : 0}%`,
+      `Games Played: ${totalGameAttempts}`
+    ];
+
+    summaryItems.forEach(item => {
+      doc.font('Helvetica').fontSize(11).fillColor(colors.text)
+         .text(item, 65, doc.y);
+      doc.moveDown(0.6);
+    });
+    doc.moveDown(0.5);
+  }
+
+  // Exercise Progress Details (moved down)
   if (overallProgress && overallProgress.progress_by_exercise.length > 0) {
-    // Add new page for detailed breakdown
-    doc.addPage();
+    if (doc.y > 600) doc.addPage();
+    createSectionHeader(doc, 'Stage Progress Breakdown', colors.accent);
     
-    createSectionHeader(doc, 'Detailed Exercise Breakdown', colors.accent);
-    
-    overallProgress.progress_by_exercise.forEach((entry, i) => {
-      if (doc.y > 650) {
-        doc.addPage();
-      }
+    for (let i = 0; i < overallProgress.progress_by_exercise.length; i++) {
+      const entry = overallProgress.progress_by_exercise[i];
+      const exerciseInfo = exerciseDetails.get(entry.exercise_id.toString());
+      
+      if (doc.y > 650) doc.addPage();
       
       // Exercise header
-      doc.font('Helvetica-Bold')
-         .fontSize(12)
-         .fillColor(colors.accent)
-         .text(`Exercise ${i + 1}`, 65);
-      doc.moveDown(0.5);
+      const exerciseName = exerciseInfo ? exerciseInfo.name : `Exercise ${i + 1}`;
       
-      // Progress bars
-      createProgressBar(doc, 'Accuracy', entry.stats.accuracy_percentage, colors.success);
-      createProgressBar(doc, 'Average Games Score', (entry.stats.average_game_score / 10) * 100, colors.primary);
+      doc.font('Helvetica-Bold').fontSize(13).fillColor(colors.accent)
+         .text(`${exerciseName}`, 65, doc.y);
       
-      // Stats summary
-      const exerciseInfo = [
-        `Time Spent: ${(entry.stats.time_spent_seconds / 60).toFixed(1)} minutes`,
-        `Correct Answers: ${entry.stats.total_correct.count}`,
-        `Incorrect Answers: ${entry.stats.total_incorrect.count}`
-      ];
-      
-      createInfoBox(doc, exerciseInfo, '#f0fdf4');
-      
-      // Correct items
+      doc.y += 25;
+
+      // Stats grid
+      const statsY = doc.y;
+      createMetricCard(doc, 'Accuracy', `${entry.stats.accuracy_percentage.toFixed(0)}%`, 
+                       'Success rate', colors.success, 60, statsY, 110);
+      createMetricCard(doc, 'Time Spent', `${(entry.stats.time_spent_seconds/60).toFixed(0)}m`, 
+                       'Minutes', colors.purple, 180, statsY, 110);
+      createMetricCard(doc, 'Games Avg', `${entry.stats.average_game_score.toFixed(1)}`, 
+                       'Out of 10', colors.orange, 300, statsY, 110);
+      createMetricCard(doc, 'Progress', `${entry.stats.progress_percentage.toFixed(0)}%`, 
+                       'Complete', colors.teal, 420, statsY, 110);
+
+      doc.y = statsY + 75;
+
+      // Mastered vs Needs Practice - Show all items
       if (entry.stats.total_correct.items.length > 0) {
-        doc.font('Helvetica-Bold')
-           .fontSize(10)
-           .fillColor(colors.success)
+        doc.font('Helvetica-Bold').fontSize(10).fillColor(colors.success)
            .text('Mastered Items:', 65);
         doc.moveDown(0.3);
-        doc.font('Arabic')
-           .fontSize(11)
-           .fillColor(colors.text)
-           .text(entry.stats.total_correct.items.join('، '), 75, doc.y, { width: 470 });
+        try {
+          doc.font('Arabic').fontSize(10).fillColor(colors.text);
+        } catch (e) {
+          doc.font('Helvetica').fontSize(10).fillColor(colors.text);
+        }
+        
+        const masteredText = entry.stats.total_correct.items.join('، ');
+        doc.text(masteredText, 85, doc.y, { width: 450 });
         doc.moveDown(1);
       }
-      
-      // Incorrect items
+
       if (entry.stats.total_incorrect.items.length > 0) {
-        doc.font('Helvetica-Bold')
-           .fontSize(10)
-           .fillColor(colors.error)
+        doc.font('Helvetica-Bold').fontSize(10).fillColor(colors.error)
            .text('Needs Practice:', 65);
         doc.moveDown(0.3);
-        doc.font('Arabic')
-           .fontSize(11)
-           .fillColor(colors.text)
-           .text(entry.stats.total_incorrect.items.join('، '), 75, doc.y, { width: 470 });
+        try {
+          doc.font('Arabic').fontSize(10).fillColor(colors.text);
+        } catch (e) {
+          doc.font('Helvetica').fontSize(10).fillColor(colors.text);
+        }
+        
+        const needsPracticeText = entry.stats.total_incorrect.items.join('، ');
+        doc.text(needsPracticeText, 85, doc.y, { width: 450 });
         doc.moveDown(1);
       }
-      
-      doc.moveDown(0.5);
+
+      // Separator
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#e5e7eb').stroke();
+      doc.moveDown(1);
+    }
+  }
+
+  // Recommendations section
+  if (overallProgress) {
+    if (doc.y > 650) doc.addPage();
+    createSectionHeader(doc, 'Recommendations', colors.warning);
+    
+    const recommendations = [];
+    const stats = overallProgress.overall_stats;
+    
+    if (stats.combined_accuracy < 70) {
+      recommendations.push('Focus on accuracy by practicing at a slower pace');
+    }
+    if (stats.total_time_spent < 300) { // Less than 5 minutes total
+      recommendations.push('=Try to spend more time practicing each day');
+    }
+    if (stats.average_score_all < 6) {
+      recommendations.push('Review fundamental concepts before attempting games');
+    }
+    
+    if (recommendations.length === 0) {
+      recommendations.push('Great progress! Keep up the excellent work!');
+    }
+
+    recommendations.forEach(rec => {
+      doc.font('Helvetica').fontSize(11).fillColor(colors.text)
+         .text(`${rec}`, 65, doc.y);
+      doc.moveDown(0.8);
     });
   }
 

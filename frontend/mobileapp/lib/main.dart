@@ -214,7 +214,34 @@ class _MyAppState extends State<MyApp> {
           // LETTER STAGE
 
           // LEVEL CONTENT
-          '/letters_level_1': (context) => const LetterLevel1(),
+          '/letters_level_1': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+
+            return LetterLevel1(
+                exerciseId: args['exerciseId'],
+                levelId: args['levelId'],
+                learner: args['learner']
+            );
+          },
+          '/letters_level_2': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+
+            return LetterLevel2(
+                exerciseId: args['exerciseId'],
+                levelId: args['levelId'],
+                learner: args['learner']
+            );
+          },
           '/letters_level_3': (context) => const LetterLevel3(),
 
           // LEVEL1 GAMES

@@ -1078,7 +1078,7 @@ class _StoryResultScreenState extends State<StoryResultScreen>
             _buildStoryCard(),
             _buildTimerCard(),
             _buildQuestionsButton(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),

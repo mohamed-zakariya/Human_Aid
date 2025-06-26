@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:mobileapp/generated/l10n.dart';
 import 'package:mobileapp/global/fns.dart';
 
-import '../../Services/check_exists.dart';
+import '../../Services/auth_service.dart';
 
 class SignupInputFieldUsername extends StatefulWidget {
   const SignupInputFieldUsername(
@@ -52,7 +52,7 @@ class _SignupInputFieldUsernameState extends State<SignupInputFieldUsername> {
 
   // Asynchronous check for existing username
   Future<void> _checkUsernameExists(String value) async {
-    bool exists = await CheckExists.usernameLearnerCheck(value);
+    bool exists = await AuthService.usernameLearnerCheck(value);
     print("existsss $exists");
     if (exists) {
       setState(() {

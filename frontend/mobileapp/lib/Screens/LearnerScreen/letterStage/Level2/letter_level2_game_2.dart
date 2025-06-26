@@ -65,6 +65,11 @@ class _LetterLevel2Game2State extends State<LetterLevel2Game2> {
     String roundKey = '${levelId}_${gameId}_${levelGameId}_round';
     String scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
 
+    print("levelId" + levelId!);
+    print("gameId" + gameId!);
+    print("levelGameId" + levelGameId!);
+
+
     currentRound = prefs.getInt(roundKey) ?? 1;
     score = prefs.getInt(scoreKey) ?? 0;
 

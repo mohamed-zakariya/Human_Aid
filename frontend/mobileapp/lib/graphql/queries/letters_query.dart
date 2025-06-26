@@ -3,7 +3,7 @@ query {
   getLettersForExercise {
     _id,
     letter,
-    group
+    group,
   }
 }
 ''';

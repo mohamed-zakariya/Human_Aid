@@ -102,6 +102,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "add_word": MessageLookupByLibrary.simpleMessage("Add Word"),
         "adultSignupTitle":
             MessageLookupByLibrary.simpleMessage("Create Account"),
+        "age": MessageLookupByLibrary.simpleMessage("Age"),
         "all": MessageLookupByLibrary.simpleMessage("all"),
         "allWordsCompleted": MessageLookupByLibrary.simpleMessage(
             "Great job! You\'ve completed all words!"),
@@ -117,6 +118,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ball": MessageLookupByLibrary.simpleMessage("Ball"),
         "birthdateValidation":
             MessageLookupByLibrary.simpleMessage("Please select a birthdate"),
+        "birthday": MessageLookupByLibrary.simpleMessage("Birthday"),
         "book": MessageLookupByLibrary.simpleMessage("Book"),
         "bottomNavCourses": MessageLookupByLibrary.simpleMessage("Courses"),
         "bottomNavHome": MessageLookupByLibrary.simpleMessage("Home"),
@@ -214,6 +216,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Tap these Navigation Menu to open the side menu. Here you can change your language preferences and log out when needed."),
         "drawerMenuTitle":
             MessageLookupByLibrary.simpleMessage("Navigation Menu"),
+        "email": MessageLookupByLibrary.simpleMessage("Email"),
         "emailExist": MessageLookupByLibrary.simpleMessage(
             "This email is already registered"),
         "emailHint": MessageLookupByLibrary.simpleMessage("Email"),
@@ -232,6 +235,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Password cannot be empty"),
         "errorLoadingLevels":
             MessageLookupByLibrary.simpleMessage("Error loading levels"),
+        "errorTitle":
+            MessageLookupByLibrary.simpleMessage("Oops! Something went wrong"),
         "errorTryAgain": MessageLookupByLibrary.simpleMessage(
             "An error occurred, try again"),
         "everyTryMakesStronger": MessageLookupByLibrary.simpleMessage(
@@ -288,6 +293,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Tap any game chip to go directly to that game within the course."),
         "gamesNavigationTitle":
             MessageLookupByLibrary.simpleMessage("Games Navigation"),
+        "gender": MessageLookupByLibrary.simpleMessage("Gender"),
         "genderFemale": MessageLookupByLibrary.simpleMessage("Female"),
         "genderMale": MessageLookupByLibrary.simpleMessage("Male"),
         "genderSelect": MessageLookupByLibrary.simpleMessage("Select Gender"),
@@ -307,6 +313,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Registering as a guardian allows you to track and follow the progress of your loved ones, whether they are your children, students, or anyone under your responsibility."),
         "guardianTitle": MessageLookupByLibrary.simpleMessage(
             "Register for someone you care about"),
+        "hello": MessageLookupByLibrary.simpleMessage("Hello"),
         "helloLabel": MessageLookupByLibrary.simpleMessage("Hello,"),
         "help": MessageLookupByLibrary.simpleMessage("Help"),
         "helpful_tips":
@@ -422,11 +429,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "Great job! You\'ve ordered the months correctly."),
         "monthsOrderTitle":
             MessageLookupByLibrary.simpleMessage("Order the Months"),
+        "nationality": MessageLookupByLibrary.simpleMessage("Nationality"),
         "next": MessageLookupByLibrary.simpleMessage("Next"),
         "nextButton": MessageLookupByLibrary.simpleMessage("Next"),
         "nextExercise": MessageLookupByLibrary.simpleMessage("Next Exercise"),
         "noAccount":
             MessageLookupByLibrary.simpleMessage("Don’t have an account?"),
+        "noData":
+            MessageLookupByLibrary.simpleMessage("No profile data available"),
         "noExercisesAvailable":
             MessageLookupByLibrary.simpleMessage("No exercises available"),
         "noGamesAvailable": MessageLookupByLibrary.simpleMessage(
@@ -493,7 +503,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "passwordShort": MessageLookupByLibrary.simpleMessage(
             "Password must be at least 8 characters"),
         "pen": MessageLookupByLibrary.simpleMessage("pen"),
+        "personalInfo":
+            MessageLookupByLibrary.simpleMessage("Personal Information"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
+        "phoneNumber": MessageLookupByLibrary.simpleMessage("Phone Number"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("search"),
         "placeImageInDirection": m16,
         "plate": MessageLookupByLibrary.simpleMessage("plate"),

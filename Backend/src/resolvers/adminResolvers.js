@@ -234,8 +234,32 @@ async updateWord(_, { id, word, level, image,synonym }) {
     return await Parents.find().populate('linkedChildren');
   },
   async getAllUsers() {
-  return await Users.find({ role: { $in: ['adult', 'child'] } });
+    // Fetch all users
+    const users = await Users.find({ role: { $in: ['adult', 'child'] } }).lean();
+
+    // Fetch parent-child mappings
+    const parents = await Parents.find({}, { _id: 1, linkedChildren: 1 }).lean();
+
+    // Create a map of childId → parentId
+    const childToParentMap = new Map();
+    for (const parent of parents) {
+      for (const childId of parent.linkedChildren || []) {
+        childToParentMap.set(childId.toString(), parent._id.toString());
+      }
+    }
+
+  return users.map(user => {
+    const { _id, ...rest } = user; // 🔥 remove _id from the rest
+    return {
+      id: _id.toString(),         // ✅ GraphQL expects 'id'
+      ...rest,
+      parentId: user.role === 'child' ? childToParentMap.get(_id.toString()) || null : null
+    };
+  });
+
+
   },
+  
   getStories: async () => {
       return await Stories.find();
     },
