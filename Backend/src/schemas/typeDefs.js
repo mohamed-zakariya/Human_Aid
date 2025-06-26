@@ -7,6 +7,7 @@ import { sentencesExerciseTypeDefs } from './sentencesExerciseSchema.js';
 import { lettersExerciseTypeDefs } from './lettersExerciseSchema.js';
 import { gamesTypeDefs } from './gamesSchema.js';
 import {adminTypeDefs} from './adminSchema.js';
+import {storyGeneratorTypeDefs} from './storySchema.js';
 export const baseTypeDefs = `#graphql
 
 type Query {
@@ -26,6 +27,7 @@ export const typeDefs = [
     ExercisesprogressTypeDefs,
     OverallProgressTypeDefs,
     sentencesExerciseTypeDefs,
+    storyGeneratorTypeDefs,
     lettersExerciseTypeDefs,
     gamesTypeDefs,
     adminTypeDefs

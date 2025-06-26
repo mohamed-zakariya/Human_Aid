@@ -5,4 +5,5 @@ import { sentencesExerciseResolver } from './sentencesExerciseResolver.js';
 import { lettersExerciseResolver } from './lettersExerciseResolver.js';
 import { gamesResolver } from './gamesResolver.js';
 import { adminResolvers } from './adminResolvers.js';
-export const resolvers = [userResolvers, parentResolvers,speechResolvers,sentencesExerciseResolver,lettersExerciseResolver,gamesResolver,adminResolvers];
+import storyGenerator from './storyResolver.js';
+export const resolvers = [userResolvers, parentResolvers,speechResolvers,sentencesExerciseResolver,lettersExerciseResolver,gamesResolver,adminResolvers,storyGenerator];

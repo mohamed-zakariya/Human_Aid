@@ -1,25 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class Question {
-  final String question;
-  final List<String> choices;
-  final int correctIndex;
+import '../models/questions.dart';
 
-  Question({
-    required this.question,
-    required this.choices,
-    required this.correctIndex,
-  });
 
-  factory Question.fromJson(Map<String, dynamic> json) {
-    return Question(
-      question: json['question'],
-      choices: List<String>.from(json['choices']),
-      correctIndex: json['correctIndex'],
-    );
-  }
-}
 
 class GenerateQuestionsService {
   // List of API keys for fallback functionality

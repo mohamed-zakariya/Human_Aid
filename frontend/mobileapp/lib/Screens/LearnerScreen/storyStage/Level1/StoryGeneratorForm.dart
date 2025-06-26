@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/global/fns.dart';
 import 'package:mobileapp/models/learner.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'StoryResultScreen.dart';
 
@@ -16,6 +17,7 @@ class _StoryInputScreenState extends State<StoryInputScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String? topic, setting, length, goal, style, heroType, secondaryValues;
+
 
   // final List<String> ages = ['4', '5', '6', '7', '8'];
   late int age = 0;
@@ -247,7 +249,7 @@ class _StoryInputScreenState extends State<StoryInputScreen> {
             goal: goal!,
             style: style,
             heroType: heroType,
-            secondaryValues: secondaryValues,
+            secondaryValues: secondaryValues, role: 'learner',
           ),
         ),
       );
