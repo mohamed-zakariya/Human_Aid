@@ -58,7 +58,7 @@ class SentenceExerciseService {
     final client = await GraphQLService.getClient();
     final result = await client.query(
       QueryOptions(
-        document: gql(getSentencesQuery),
+        document: gql(getRandomSentencesQuery),
         variables: {'level': level},
         fetchPolicy: FetchPolicy.networkOnly,
       ),
@@ -91,7 +91,7 @@ class SentenceExerciseService {
 
     if (streamedResponse.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = json.decode(responseString);
-      return jsonResponse['fileUrl']; 
+      return jsonResponse['fileUrl'];
     } else {
       print('Upload Error: ${streamedResponse.statusCode}');
       print('Upload Response: $responseString');
@@ -99,7 +99,7 @@ class SentenceExerciseService {
     }
   }
 
-  /// (B) Transcribes the uploaded audio by calling `/api/transcribe` 
+  /// (B) Transcribes the uploaded audio by calling `/api/transcribe`
   /// with JSON body `{ filePath: fileUrl }`. Returns the transcript or null.
   static Future<String?> _transcribeAudio(String fileUrl) async {
     final prefs = await SharedPreferences.getInstance();

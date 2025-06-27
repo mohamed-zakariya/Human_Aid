@@ -6,19 +6,18 @@ import '../../../../Services/add_score_service.dart';
 import '../../../../Services/sentence_exercise_service.dart';
 import '../../../../models/scentence.dart';
 
-
 class SentenceOrderingGameScreen extends StatefulWidget {
   final String level;
 
   const SentenceOrderingGameScreen(this.level, {Key? key}) : super(key: key);
 
   @override
-  State<SentenceOrderingGameScreen> createState() => _SentenceOrderingGameScreenState();
+  State<SentenceOrderingGameScreen> createState() =>
+      _SentenceOrderingGameScreenState();
 }
 
 class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     with TickerProviderStateMixin {
-
   // Game Configuration
   static const int maxRounds = 10;
   static const int maxListenAttempts = 2;
@@ -54,8 +53,10 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
   // Animation Controllers
   late AnimationController _cardFlipController;
   late AnimationController _progressController;
+  late AnimationController _pulseController;
   late Animation<double> _cardFlipAnimation;
   late Animation<double> _progressAnimation;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
@@ -67,13 +68,17 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
 
   void _initializeAnimations() {
     _cardFlipController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
     _progressController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    )..repeat(reverse: true);
 
     _cardFlipAnimation = Tween<double>(
       begin: 0.0,
@@ -89,6 +94,14 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     ).animate(CurvedAnimation(
       parent: _progressController,
       curve: Curves.easeOut,
+    ));
+
+    _pulseAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.2,
+    ).animate(CurvedAnimation(
+      parent: _pulseController,
+      curve: Curves.easeInOut,
     ));
   }
 
@@ -110,23 +123,17 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     levelGameId = prefs.getString('levelGameId');
 
     if (levelId != null && gameId != null) {
-      // Create keys for this specific level and game
       roundKey = '${levelId}_${gameId}_${levelGameId}_round';
       scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
 
-      // Initialize round and score from SharedPreferences
       currentRound = prefs.getInt(roundKey!) ?? 0;
       totalScore = prefs.getInt(scoreKey!) ?? 0;
 
-      // Ensure currentRound is within bounds
       if (currentRound < 0) currentRound = 0;
       if (currentRound >= maxRounds) currentRound = maxRounds - 1;
-
-      // Ensure score is within bounds
       if (totalScore < 0) totalScore = 0;
       if (totalScore > maxRounds * 2) totalScore = maxRounds * 2;
 
-      // Update progress animation
       _progressController.animateTo(currentRound / maxRounds);
     }
 
@@ -151,18 +158,14 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
         userOrder.clear();
       });
 
-      // Reset card flip animation
       _cardFlipController.reset();
 
-      // Fetch new sentences
-      final sentences = await SentenceExerciseService.fetchRandomSentences(widget.level);
+      final sentences =
+      await SentenceExerciseService.fetchRandomSentences(widget.level);
 
       if (sentences.isNotEmpty) {
-        // Take first 4 sentences or all if less than 4
         currentSentences = sentences.take(4).toList();
         correctOrder = List.from(currentSentences);
-
-        // Shuffle for user ordering
         shuffledSentences = List.from(currentSentences);
         shuffledSentences.shuffle(Random());
 
@@ -171,7 +174,7 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
           isListening = false;
         });
 
-        // Start TTS automatically
+        // Auto-play first time
         await _speakSentencesInOrder();
       }
     } catch (e) {
@@ -201,8 +204,8 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
       isListening = false;
     });
 
-    // Flip cards after first listen
-    if (currentListenAttempts == 1) {
+    // Auto-flip cards after listening
+    if (!areCardsFlipped) {
       await Future.delayed(const Duration(milliseconds: 500));
       _flipCards();
     }
@@ -213,17 +216,6 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
       areCardsFlipped = true;
     });
     _cardFlipController.forward();
-  }
-
-  void _onCardReorder(int oldIndex, int newIndex) {
-    if (newIndex > oldIndex) {
-      newIndex -= 1;
-    }
-
-    setState(() {
-      final item = userOrder.removeAt(oldIndex);
-      userOrder.insert(newIndex, item);
-    });
   }
 
   void _onDragAccept(Sentence sentence) {
@@ -237,6 +229,16 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
   void _removeFromUserOrder(int index) {
     setState(() {
       userOrder.removeAt(index);
+    });
+  }
+
+  void _onReorderUserOrder(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+      final item = userOrder.removeAt(oldIndex);
+      userOrder.insert(newIndex, item);
     });
   }
 
@@ -257,9 +259,7 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     setState(() {
       isRoundCompleted = true;
       if (isCorrect) {
-        totalScore += 2; // 2 points for correct answer
-      } else {
-        totalScore += 0; // 0 points for incorrect answer
+        totalScore += 2;
       }
     });
 
@@ -285,11 +285,13 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
             ),
             const SizedBox(width: 10),
             Text(
-              isCorrect ? "إجابة صحيحة!" : "إجابة خاطئة",
+              isCorrect
+                  ? ("إجابة صحيحة!")
+                  : ("إجابة خاطئة"),
               style: TextStyle(
                 color: isCorrect ? Colors.green : Colors.red,
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 18,
               ),
             ),
           ],
@@ -298,13 +300,13 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "النقاط: ${isCorrect ? '+2' : '+0'}",
-              style: const TextStyle(fontSize: 18),
+              "${"النقاط"}: ${isCorrect ? '+2' : '+0'}",
+              style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
-              "المجموع: $totalScore من ${maxRounds * 2}",
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
+              "${"المجموع"}: $totalScore ${"من"} ${maxRounds * 2}",
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
         ),
@@ -315,13 +317,15 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
               _nextRound();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
+              backgroundColor: const Color(0xFF6C63FF),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
             ),
             child: Text(
-              currentRound + 1 >= maxRounds ? "إنهاء اللعبة" : "الجولة التالية",
+              currentRound + 1 >= maxRounds
+                  ? ("إنهاء اللعبة")
+                  : ("الجولة التالية"),
               style: const TextStyle(color: Colors.white),
             ),
           ),
@@ -348,7 +352,6 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
       isGameCompleted = true;
     });
 
-    // Submit final score
     try {
       await AddScoreService.updateScore(
         score: totalScore,
@@ -358,7 +361,6 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
       print("Error submitting score: $e");
     }
 
-    // Clear game state
     if (roundKey != null && scoreKey != null) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(roundKey!);
@@ -379,16 +381,16 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.emoji_events, color: Colors.orangeAccent, size: 30),
-            SizedBox(width: 10),
+            const Icon(Icons.emoji_events, color: Colors.orangeAccent, size: 30),
+            const SizedBox(width: 10),
             Text(
               "اللعبة مكتملة!",
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.orangeAccent,
                 fontWeight: FontWeight.bold,
-                fontSize: 22,
+                fontSize: 20,
               ),
             ),
           ],
@@ -397,22 +399,28 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "النقاط النهائية: $totalScore من ${maxRounds * 2}",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              "${"النقاط النهائية"}: $totalScore ${"من"} ${maxRounds * 2}",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
-              "النسبة المئوية: %$percentage",
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
+              "${"النسبة المئوية"}: %$percentage",
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             Text(
-              percentage >= 80 ? "أداء ممتاز!" :
-              percentage >= 60 ? "أداء جيد!" : "تحتاج إلى مزيد من التدريب",
+              percentage >= 80
+                  ? ("أداء ممتاز!")
+                  : percentage >= 60
+                  ? ("أداء جيد!")
+                  : ("تحتاج إلى مزيد من التدريب"),
               style: TextStyle(
-                fontSize: 16,
-                color: percentage >= 80 ? Colors.green :
-                percentage >= 60 ? Colors.orange : Colors.red,
+                fontSize: 14,
+                color: percentage >= 80
+                    ? Colors.green
+                    : percentage >= 60
+                    ? Colors.orange
+                    : Colors.red,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -422,36 +430,35 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    "العودة للقائمة",
+                    style: const TextStyle(color: Colors.grey),
                   ),
-                ),
-                child: const Text(
-                  "العودة للقائمة",
-                  style: TextStyle(color: Colors.white),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _restartGame();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _restartGame();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6C63FF),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  "لعب مرة أخرى",
-                  style: TextStyle(color: Colors.white),
+                  child: Text(
+                    "لعب مرة أخرى",
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                  ),
                 ),
               ),
             ],
@@ -476,7 +483,7 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: const Color(0xFF6C63FF),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -489,12 +496,12 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("خطأ"),
+        title: Text("خطأ"),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text("موافق"),
+            child: Text("موافق"),
           ),
         ],
       ),
@@ -505,6 +512,7 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
   void dispose() {
     _cardFlipController.dispose();
     _progressController.dispose();
+    _pulseController.dispose();
     flutterTts.stop();
     super.dispose();
   }
@@ -512,38 +520,104 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
-          onPressed: () => Navigator.of(context).pop(),
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildCompactHeader(),
+            Expanded(
+              child: isGameStarted ? _buildGameContent() : _buildLoadingScreen(),
+            ),
+          ],
         ),
-        title: Text(
-          "ترتيب الجمل - ${widget.level}",
-          style: const TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        centerTitle: true,
       ),
-      body: isGameStarted ? _buildGameContent() : _buildLoadingScreen(),
+    );
+  }
+
+  Widget _buildCompactHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF6C63FF), Color(0xFF5A52E0)],
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              Expanded(
+                child: Text(
+                  "${"ترتيب الجمل"} - ${widget.level}",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Text(
+                  "$totalScore/${maxRounds * 2}",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Text(
+                "${"الجولة"} ${currentRound + 1}/$maxRounds",
+                style: const TextStyle(color: Colors.white70, fontSize: 12),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: AnimatedBuilder(
+                  animation: _progressAnimation,
+                  builder: (context, child) {
+                    return LinearProgressIndicator(
+                      value: _progressAnimation.value,
+                      backgroundColor: Colors.white.withOpacity(0.3),
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                      minHeight: 4,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildLoadingScreen() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 20),
+          const CircularProgressIndicator(color: Color(0xFF6C63FF)),
+          const SizedBox(height: 20),
           Text(
             "جاري تحميل اللعبة...",
-            style: TextStyle(fontSize: 18, color: Colors.grey),
+            style: const TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ],
       ),
@@ -553,121 +627,67 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
   Widget _buildGameContent() {
     return Column(
       children: [
-        _buildProgressSection(),
-        _buildListenSection(),
+        if (areCardsFlipped) _buildListenSection(),
         Expanded(child: _buildGameArea()),
         _buildActionButtons(),
       ],
     );
   }
 
-  Widget _buildProgressSection() {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "الجولة ${currentRound + 1} من $maxRounds",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                "النقاط: $totalScore",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          AnimatedBuilder(
-            animation: _progressAnimation,
-            builder: (context, child) {
-              return LinearProgressIndicator(
-                value: _progressAnimation.value,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
-                ),
-                minHeight: 8,
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildListenSection() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton.icon(
-            onPressed: (currentListenAttempts < maxListenAttempts && !isListening)
-                ? _speakSentencesInOrder
-                : null,
-            icon: isListening
-                ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      margin: const EdgeInsets.all(16),
+      child: AnimatedBuilder(
+        animation: _pulseAnimation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: isListening ? _pulseAnimation.value : 1.0,
+            child: ElevatedButton.icon(
+              onPressed: (currentListenAttempts < maxListenAttempts && !isListening)
+                  ? _speakSentencesInOrder
+                  : null,
+              icon: isListening
+                  ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+                  : const Icon(Icons.volume_up, size: 20),
+              label: Text(
+                isListening
+                    ? ("جاري التشغيل...")
+                    : "${"استمع"} (${maxListenAttempts - currentListenAttempts})",
+                style: const TextStyle(fontSize: 14),
               ),
-            )
-                : const Icon(Icons.volume_up),
-            label: Text(
-              isListening
-                  ? "جاري التشغيل..."
-                  : "استمع (${maxListenAttempts - currentListenAttempts} محاولات متبقية)",
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6C63FF),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                elevation: 2,
               ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
   Widget _buildGameArea() {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          // Sentence Cards
           Expanded(
-            flex: 2,
+            flex: 3,
             child: _buildSentenceCards(),
           ),
-          const SizedBox(height: 20),
-          // Ordering Area
+          const SizedBox(height: 16),
           Expanded(
             flex: 2,
             child: _buildOrderingArea(),
@@ -679,15 +699,16 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
 
   Widget _buildSentenceCards() {
     return GridView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 15,
-        mainAxisSpacing: 15,
-        childAspectRatio: 1.2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1.3,
       ),
-      itemCount: currentSentences.length,
+      itemCount: shuffledSentences.length,
       itemBuilder: (context, index) {
-        return _buildSentenceCard(currentSentences[index], index);
+        return _buildSentenceCard(shuffledSentences[index], index);
       },
     );
   }
@@ -703,59 +724,57 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
           transform: Matrix4.identity()
             ..setEntry(3, 2, 0.001)
             ..rotateY(_cardFlipAnimation.value * 3.14159),
-          child: Card(
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isShowingFront
-                      ? [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColor.withOpacity(0.8),
-                  ]
-                      : [
-                    Colors.white,
-                    Colors.grey[50]!,
-                  ],
-                ),
-              ),
-              child: isShowingFront
-                  ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.headphones,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      "${index + 1}",
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-                  : Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()..rotateY(3.14159),
-                child: _buildDraggableCard(sentence),
-              ),
+            child: isShowingFront
+                ? _buildCardFront(index)
+                : Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()..rotateY(3.14159),
+              child: _buildDraggableCard(sentence),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildCardFront(int index) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF6C63FF), Color(0xFF5A52E0)],
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.headphones, size: 32, color: Colors.white),
+            const SizedBox(height: 8),
+            Text(
+              "${index + 1}",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -766,13 +785,13 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
       data: sentence,
       feedback: Material(
         elevation: 8,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          width: 150,
+          width: 140,
           height: 100,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: Theme.of(context).primaryColor.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(12),
+            color: const Color(0xFF6C63FF).withOpacity(0.9),
           ),
           child: Center(
             child: Text(
@@ -780,32 +799,31 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 14,
+                fontSize: 12,
               ),
               textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
       ),
       childWhenDragging: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.grey[200],
+          border: Border.all(color: Colors.grey[300]!, width: 2),
         ),
         child: const Center(
-          child: Icon(
-            Icons.drag_indicator,
-            color: Colors.grey,
-            size: 30,
-          ),
+          child: Icon(Icons.drag_indicator, color: Colors.grey, size: 24),
         ),
       ),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: isUsed ? Colors.grey[300] : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          color: isUsed ? Colors.grey[200] : Colors.white,
           border: Border.all(
-            color: isUsed ? Colors.grey : Theme.of(context).primaryColor,
+            color: isUsed ? Colors.grey[300]! : const Color(0xFF6C63FF),
             width: 2,
           ),
         ),
@@ -815,11 +833,13 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
             child: Text(
               sentence.text,
               style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
                 color: isUsed ? Colors.grey : Colors.black87,
               ),
               textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
@@ -829,40 +849,39 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
 
   Widget _buildOrderingArea() {
     return Container(
-      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: const Offset(0, 5),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: const BoxDecoration(
+              color: Color(0xFF6C63FF),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
               ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.sort, color: Colors.white),
-                const SizedBox(width: 10),
-                const Text(
+                const Icon(Icons.sort, color: Colors.white, size: 18),
+                const SizedBox(width: 8),
+                Text(
                   "رتب الجمل بالترتيب الصحيح",
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
                   ),
                 ),
               ],
@@ -873,25 +892,41 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
                 ? DragTarget<Sentence>(
               onAccept: _onDragAccept,
               builder: (context, candidateData, rejectedData) {
+                final isHighlighted = candidateData.isNotEmpty;
                 return Container(
-                  margin: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Colors.grey[400]!,
+                      color: isHighlighted
+                          ? const Color(0xFF6C63FF)
+                          : Colors.grey[300]!,
                       width: 2,
                       style: BorderStyle.solid,
                     ),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
+                    color: isHighlighted
+                        ? const Color(0xFF6C63FF).withOpacity(0.1)
+                        : null,
                   ),
-                  child: const Center(
-                    child: Text(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      Icon(
+                      Icons.drag_handle,
+                      color: Colors.grey[400],
+                      size: 32,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
                       "اسحب الجمل هنا لترتيبها",
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 16,
                       ),
                     ),
-                  ),
+                  ]),
+                ),
                 );
               },
             )
@@ -907,6 +942,17 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
         ],
       ),
     );
+  }
+
+
+  void _onCardReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+      final item = userOrder.removeAt(oldIndex);
+      userOrder.insert(newIndex, item);
+    });
   }
 
   Widget _buildOrderedCard(Sentence sentence, int index) {
