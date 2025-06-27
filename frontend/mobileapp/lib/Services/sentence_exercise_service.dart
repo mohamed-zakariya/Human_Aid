@@ -53,6 +53,25 @@ class SentenceExerciseService {
     return raw.map((e) => Sentence.fromJson(e)).toList();
   }
 
+
+  static Future<List<Sentence>> fetchRandomSentences(String level) async {
+    final client = await GraphQLService.getClient();
+    final result = await client.query(
+      QueryOptions(
+        document: gql(getRandomSentencesQuery),
+        variables: {'level': level},
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+
+    if (result.hasException) {
+      throw Exception(result.exception.toString());
+    }
+
+    final List<dynamic> raw = result.data?['getSentencesByLevel'] ?? [];
+    return raw.map((e) => Sentence.fromJson(e)).toList();
+  }
+
   /// (A) Uploads the audio file to `/upload-audio`.
   /// Returns the `fileUrl` on success, else null.
   static Future<String?> _uploadAudioFile(String audioFilePath) async {
@@ -72,7 +91,7 @@ class SentenceExerciseService {
 
     if (streamedResponse.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = json.decode(responseString);
-      return jsonResponse['fileUrl']; 
+      return jsonResponse['fileUrl'];
     } else {
       print('Upload Error: ${streamedResponse.statusCode}');
       print('Upload Response: $responseString');
@@ -80,7 +99,7 @@ class SentenceExerciseService {
     }
   }
 
-  /// (B) Transcribes the uploaded audio by calling `/api/transcribe` 
+  /// (B) Transcribes the uploaded audio by calling `/api/transcribe`
   /// with JSON body `{ filePath: fileUrl }`. Returns the transcript or null.
   static Future<String?> _transcribeAudio(String fileUrl) async {
     final prefs = await SharedPreferences.getInstance();

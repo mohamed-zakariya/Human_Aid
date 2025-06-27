@@ -2680,6 +2680,206 @@ class S {
     );
   }
 
+  /// `Order the sentences correctly`
+  String get orderSentencesTitle {
+    return Intl.message(
+      'Order the sentences correctly',
+      name: 'orderSentencesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `round`
+  String get round {
+    return Intl.message(
+      'round',
+      name: 'round',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `of`
+  String get of2 {
+    return Intl.message(
+      'of',
+      name: 'of2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Correct Answer!`
+  String get correctAnswer2 {
+    return Intl.message(
+      'Correct Answer!',
+      name: 'correctAnswer2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wrong Answer`
+  String get wrongAnswer2 {
+    return Intl.message(
+      'Wrong Answer',
+      name: 'wrongAnswer2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Points`
+  String get points {
+    return Intl.message(
+      'Points',
+      name: 'points',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `End Game`
+  String get endGame {
+    return Intl.message(
+      'End Game',
+      name: 'endGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next Round`
+  String get nextRound {
+    return Intl.message(
+      'Next Round',
+      name: 'nextRound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Excellent! Outstanding performance!`
+  String get performanceExcellent {
+    return Intl.message(
+      'Excellent! Outstanding performance!',
+      name: 'performanceExcellent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Very good! Great job!`
+  String get performanceVeryGood {
+    return Intl.message(
+      'Very good! Great job!',
+      name: 'performanceVeryGood',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good! You can do even better!`
+  String get performanceGood {
+    return Intl.message(
+      'Good! You can do even better!',
+      name: 'performanceGood',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try again to improve your score!`
+  String get performanceTryAgain {
+    return Intl.message(
+      'Try again to improve your score!',
+      name: 'performanceTryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Percentage`
+  String get percentage {
+    return Intl.message(
+      'Percentage',
+      name: 'percentage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back to Menu`
+  String get backToMenu {
+    return Intl.message(
+      'Back to Menu',
+      name: 'backToMenu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error`
+  String get error {
+    return Intl.message(
+      'Error',
+      name: 'error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sentence Ordering`
+  String get sentenceOrdering {
+    return Intl.message(
+      'Sentence Ordering',
+      name: 'sentenceOrdering',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Playing...`
+  String get playingNow {
+    return Intl.message(
+      'Playing...',
+      name: 'playingNow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reveal Sentences`
+  String get revealSentences {
+    return Intl.message(
+      'Reveal Sentences',
+      name: 'revealSentences',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Answer`
+  String get confirmAnswer {
+    return Intl.message(
+      'Confirm Answer',
+      name: 'confirmAnswer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drag the sentences here to arrange them`
+  String get dragSentencesHint {
+    return Intl.message(
+      'Drag the sentences here to arrange them',
+      name: 'dragSentencesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Close`
   String get close {
     return Intl.message(
