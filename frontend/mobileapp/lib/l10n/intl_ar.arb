@@ -263,6 +263,31 @@
     "errorTitle": "عذراً! حدث خطأ ما",
     "noData": "لا توجد بيانات متاحة",
     "email": "البريد الإلكتروني",
+    "orderSentencesTitle": "رتب الجمل بالترتيب الصحيح",
+    "round": "الجولة",
+    "of2": "من",
+    "correctAnswer2": "إجابة صحيحة!",
+    "wrongAnswer2": "إجابة خاطئة",
+    "points": "النقاط",
+    "endGame": "إنهاء اللعبة",
+    "nextRound": "الجولة التالية",
+    "performanceExcellent": "ممتاز! أداء رائع جداً!",
+    "performanceVeryGood": "جيد جداً! أداء ممتاز!",
+    "performanceGood": "جيد! يمكنك تحسين أدائك!",
+    "performanceTryAgain": "حاول مرة أخرى لتحسين نتيجتك!",
+    "percentage": "النسبة المئوية",
+    "backToMenu": "العودة للقائمة",
+    "error": "خطأ",
+    "sentenceOrdering": "ترتيب الجمل",
+    "playingNow": "جاري التشغيل...",
+    "revealSentences": "اكشف الجمل",
+    "confirmAnswer": "تأكيد الإجابة",
+    "dragSentencesHint": "اسحب الجمل هنا لترتيبها",
+
+
+
+
+
 
 
 

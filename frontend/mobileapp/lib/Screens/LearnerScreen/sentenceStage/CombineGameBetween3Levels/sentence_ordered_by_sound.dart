@@ -4,148 +4,68 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Services/add_score_service.dart';
 import '../../../../Services/sentence_exercise_service.dart';
+import '../../../../generated/l10n.dart';
 import '../../../../models/scentence.dart';
 
 class SentenceOrderingGameScreen extends StatefulWidget {
   final String level;
-
   const SentenceOrderingGameScreen(this.level, {Key? key}) : super(key: key);
 
   @override
-  State<SentenceOrderingGameScreen> createState() =>
-      _SentenceOrderingGameScreenState();
+  State<SentenceOrderingGameScreen> createState() => _SentenceOrderingGameScreenState();
 }
 
-class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
-    with TickerProviderStateMixin {
-  // Game Configuration
+class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen> {
   static const int maxRounds = 10;
   static const int maxListenAttempts = 2;
+  static const int pointsPerRound = 1; // Changed from 2 to 1
 
-  // Game State
   int currentRound = 0;
   int totalScore = 0;
   int currentListenAttempts = 0;
   bool isGameStarted = false;
   bool areCardsFlipped = false;
   bool isListening = false;
-  bool isGameCompleted = false;
-  bool isRoundCompleted = false;
+  bool canUseListenAttempts = true;
 
-  // Data
-  List<Sentence> currentSentences = [];
   List<Sentence> correctOrder = [];
   List<Sentence> userOrder = [];
   List<Sentence> shuffledSentences = [];
 
-  // Services
   FlutterTts flutterTts = FlutterTts();
-
-  // SharedPreferences Keys
-  String? exerciseId;
-  String? levelId;
-  String? learnerId;
-  String? gameId;
-  String? levelGameId;
-  String? roundKey;
-  String? scoreKey;
-
-  // Animation Controllers
-  late AnimationController _cardFlipController;
-  late AnimationController _progressController;
-  late AnimationController _pulseController;
-  late Animation<double> _cardFlipAnimation;
-  late Animation<double> _progressAnimation;
-  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
-    _initializeAnimations();
     _initializeTTS();
     _loadGameState();
   }
 
-  void _initializeAnimations() {
-    _cardFlipController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    _progressController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _cardFlipAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _cardFlipController,
-      curve: Curves.easeInOut,
-    ));
-
-    _progressAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _progressController,
-      curve: Curves.easeOut,
-    ));
-
-    _pulseAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
-  }
-
   void _initializeTTS() async {
     await flutterTts.setLanguage("ar-SA");
-    await flutterTts.setSpeechRate(0.6);
+    await flutterTts.setSpeechRate(0.5);
     await flutterTts.setVolume(1.0);
     await flutterTts.setPitch(1.0);
   }
 
   Future<void> _loadGameState() async {
     final prefs = await SharedPreferences.getInstance();
-
-    // Get stored IDs
-    exerciseId = prefs.getString('exerciseId');
-    levelId = prefs.getString('levelId');
-    learnerId = prefs.getString('learnerId');
-    gameId = prefs.getString('gameId');
-    levelGameId = prefs.getString('levelGameId');
+    final levelId = prefs.getString('levelId');
+    final gameId = prefs.getString('gameId');
 
     if (levelId != null && gameId != null) {
-      roundKey = '${levelId}_${gameId}_${levelGameId}_round';
-      scoreKey = '${levelId}_${gameId}_${levelGameId}_score';
+      final roundKey = '${levelId}_${gameId}_round';
+      final scoreKey = '${levelId}_${gameId}_score';
 
-      currentRound = prefs.getInt(roundKey!) ?? 0;
-      totalScore = prefs.getInt(scoreKey!) ?? 0;
+      currentRound = prefs.getInt(roundKey) ?? 0;
+      totalScore = prefs.getInt(scoreKey) ?? 0;
 
-      if (currentRound < 0) currentRound = 0;
-      if (currentRound >= maxRounds) currentRound = maxRounds - 1;
-      if (totalScore < 0) totalScore = 0;
-      if (totalScore > maxRounds * 2) totalScore = maxRounds * 2;
-
-      _progressController.animateTo(currentRound / maxRounds);
+      // Validate bounds - updated for 1 point per round
+      currentRound = currentRound.clamp(0, maxRounds - 1);
+      totalScore = totalScore.clamp(0, maxRounds);
     }
 
     await _loadNewRound();
-  }
-
-  Future<void> _saveGameState() async {
-    if (roundKey != null && scoreKey != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt(roundKey!, currentRound);
-      await prefs.setInt(scoreKey!, totalScore);
-    }
   }
 
   Future<void> _loadNewRound() async {
@@ -153,38 +73,29 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
       setState(() {
         isListening = true;
         areCardsFlipped = false;
-        isRoundCompleted = false;
         currentListenAttempts = 0;
+        canUseListenAttempts = true;
         userOrder.clear();
       });
 
-      _cardFlipController.reset();
-
-      final sentences =
-      await SentenceExerciseService.fetchRandomSentences(widget.level);
+      final sentences = await SentenceExerciseService.fetchRandomSentences(widget.level);
 
       if (sentences.isNotEmpty) {
-        currentSentences = sentences.take(4).toList();
-        correctOrder = List.from(currentSentences);
-        shuffledSentences = List.from(currentSentences);
-        shuffledSentences.shuffle(Random());
+        correctOrder = sentences.take(4).toList();
+        shuffledSentences = List.from(correctOrder)..shuffle(Random());
 
         setState(() {
           isGameStarted = true;
           isListening = false;
         });
-
-        // Auto-play first time
-        await _speakSentencesInOrder();
       }
     } catch (e) {
-      print("Error loading new round: $e");
       _showErrorDialog("خطأ في تحميل الجملة الجديدة");
     }
   }
 
   Future<void> _speakSentencesInOrder() async {
-    if (currentListenAttempts >= maxListenAttempts) return;
+    if (!canUseListenAttempts || currentListenAttempts >= maxListenAttempts) return;
 
     setState(() {
       isListening = true;
@@ -192,51 +103,39 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     });
 
     try {
-      for (int i = 0; i < correctOrder.length; i++) {
-        await flutterTts.speak(correctOrder[i].text);
-        await Future.delayed(const Duration(milliseconds: 1500));
+      await flutterTts.awaitSpeakCompletion(true); // Ensure we wait for each sentence
+      for (var sentence in correctOrder) {
+        await flutterTts.speak(sentence.text);
+        await Future.delayed(const Duration(milliseconds: 800)); // Add clear pause between sentences
       }
     } catch (e) {
       print("TTS Error: $e");
     }
 
-    setState(() {
-      isListening = false;
-    });
-
-    // Auto-flip cards after listening
-    if (!areCardsFlipped) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      _flipCards();
-    }
+    setState(() => isListening = false);
   }
+
 
   void _flipCards() {
     setState(() {
       areCardsFlipped = true;
+      canUseListenAttempts = false; // Disable listen attempts after flipping
     });
-    _cardFlipController.forward();
   }
 
   void _onDragAccept(Sentence sentence) {
     if (!userOrder.contains(sentence)) {
-      setState(() {
-        userOrder.add(sentence);
-      });
+      setState(() => userOrder.add(sentence));
     }
   }
 
   void _removeFromUserOrder(int index) {
-    setState(() {
-      userOrder.removeAt(index);
-    });
+    setState(() => userOrder.removeAt(index));
   }
 
   void _onReorderUserOrder(int oldIndex, int newIndex) {
     setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
-      }
+      if (newIndex > oldIndex) newIndex -= 1;
       final item = userOrder.removeAt(oldIndex);
       userOrder.insert(newIndex, item);
     });
@@ -256,15 +155,20 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
       }
     }
 
-    setState(() {
-      isRoundCompleted = true;
-      if (isCorrect) {
-        totalScore += 2;
-      }
-    });
-
+    if (isCorrect) totalScore += pointsPerRound; // Now adds 1 point instead of 2
     _saveGameState();
     _showResultDialog(isCorrect);
+  }
+
+  Future<void> _saveGameState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final levelId = prefs.getString('levelId');
+    final gameId = prefs.getString('gameId');
+
+    if (levelId != null && gameId != null) {
+      await prefs.setInt('${levelId}_${gameId}_round', currentRound);
+      await prefs.setInt('${levelId}_${gameId}_score', totalScore);
+    }
   }
 
   void _showResultDialog(bool isCorrect) {
@@ -272,42 +176,21 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
         title: Row(
           children: [
             Icon(
               isCorrect ? Icons.check_circle : Icons.cancel,
               color: isCorrect ? Colors.green : Colors.red,
-              size: 30,
             ),
             const SizedBox(width: 10),
-            Text(
-              isCorrect
-                  ? ("إجابة صحيحة!")
-                  : ("إجابة خاطئة"),
-              style: TextStyle(
-                color: isCorrect ? Colors.green : Colors.red,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
+            Text(isCorrect ? S.of(context).correctAnswer2 : S.of(context).wrongAnswer2),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              "${"النقاط"}: ${isCorrect ? '+2' : '+0'}",
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "${"المجموع"}: $totalScore ${"من"} ${maxRounds * 2}",
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
+            Text("${S.of(context).points}: ${isCorrect ? '+$pointsPerRound' : '+0'}"),
+            Text(S.of(context).finalScore(totalScore, maxRounds)),
           ],
         ),
         actions: [
@@ -316,18 +199,9 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
               Navigator.of(context).pop();
               _nextRound();
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6C63FF),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
-            child: Text(
-              currentRound + 1 >= maxRounds
-                  ? ("إنهاء اللعبة")
-                  : ("الجولة التالية"),
-              style: const TextStyle(color: Colors.white),
-            ),
+            child: Text(currentRound + 1 >= maxRounds
+                ? S.of(context).endGame
+                : S.of(context).nextRound),
           ),
         ],
       ),
@@ -338,130 +212,113 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     if (currentRound + 1 >= maxRounds) {
       _completeGame();
     } else {
-      setState(() {
-        currentRound++;
-      });
-      _progressController.animateTo(currentRound / maxRounds);
+      setState(() => currentRound++);
       _saveGameState();
       _loadNewRound();
     }
   }
 
   Future<void> _completeGame() async {
-    setState(() {
-      isGameCompleted = true;
-    });
-
     try {
-      await AddScoreService.updateScore(
-        score: totalScore,
-        outOf: maxRounds * 2,
-      );
+      await AddScoreService.updateScore(score: totalScore, outOf: maxRounds);
     } catch (e) {
       print("Error submitting score: $e");
     }
-
-    if (roundKey != null && scoreKey != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(roundKey!);
-      await prefs.remove(scoreKey!);
-    }
-
     _showGameCompletedDialog();
   }
 
   void _showGameCompletedDialog() {
-    final percentage = (totalScore / (maxRounds * 2) * 100).round();
+    final percentage = (totalScore / maxRounds * 100).round();
+    String performanceMessage = "";
+    Color performanceColor = Colors.blue;
+    IconData performanceIcon = Icons.emoji_events;
+
+    // Add performance feedback based on score
+    if (percentage >= 90) {
+      performanceMessage = S.of(context).performanceExcellent;
+      performanceColor = Colors.green;
+      performanceIcon = Icons.star;
+    } else if (percentage >= 70) {
+      performanceMessage = S.of(context).performanceVeryGood;
+      performanceColor = Colors.blue;
+      performanceIcon = Icons.thumb_up;
+    } else if (percentage >= 50) {
+      performanceMessage = S.of(context).performanceGood;
+      performanceColor = Colors.orange;
+      performanceIcon = Icons.trending_up;
+    } else {
+      performanceMessage = S.of(context).performanceTryAgain;
+      performanceColor = Colors.red;
+      performanceIcon = Icons.refresh;
+    }
 
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
         title: Row(
           children: [
-            const Icon(Icons.emoji_events, color: Colors.orangeAccent, size: 30),
+            Icon(performanceIcon, color: performanceColor, size: 28),
             const SizedBox(width: 10),
-            Text(
-              "اللعبة مكتملة!",
-              style: const TextStyle(
-                color: Colors.orangeAccent,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
+            Text(S.of(context).gameCompleted)
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              "${"النقاط النهائية"}: $totalScore ${"من"} ${maxRounds * 2}",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "${"النسبة المئوية"}: %$percentage",
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 15),
-            Text(
-              percentage >= 80
-                  ? ("أداء ممتاز!")
-                  : percentage >= 60
-                  ? ("أداء جيد!")
-                  : ("تحتاج إلى مزيد من التدريب"),
-              style: TextStyle(
-                fontSize: 14,
-                color: percentage >= 80
-                    ? Colors.green
-                    : percentage >= 60
-                    ? Colors.orange
-                    : Colors.red,
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: performanceColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: performanceColor.withOpacity(0.3)),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    performanceMessage,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: performanceColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    "${S.of(context).finalScore}: $totalScore ${S.of(context).of2} $maxRounds",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "${S.of(context).percentage}: %$percentage",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: performanceColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
         actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    "العودة للقائمة",
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _restartGame();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6C63FF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: Text(
-                    "لعب مرة أخرى",
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ),
-              ),
-            ],
+          TextButton(
+            onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+            child: Text(S.of(context).backToMenu),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _restartGame();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6C63FF),
+              foregroundColor: Colors.white,
+            ),
+            child: Text(S.of(context).playAgain),
           ),
         ],
       ),
@@ -472,23 +329,14 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     setState(() {
       currentRound = 0;
       totalScore = 0;
-      isGameCompleted = false;
       isGameStarted = false;
     });
-    _progressController.reset();
     _loadNewRound();
   }
 
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFF6C63FF),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
+      SnackBar(content: Text(message)),
     );
   }
 
@@ -496,12 +344,12 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("خطأ"),
+        title: Text(S.of(context).error),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text("موافق"),
+            child: Text(S.of(context).ok),
           ),
         ],
       ),
@@ -510,9 +358,6 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
 
   @override
   void dispose() {
-    _cardFlipController.dispose();
-    _progressController.dispose();
-    _pulseController.dispose();
     flutterTts.stop();
     super.dispose();
   }
@@ -521,173 +366,130 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildCompactHeader(),
-            Expanded(
-              child: isGameStarted ? _buildGameContent() : _buildLoadingScreen(),
+      appBar: AppBar(
+        title: Text("${S.of(context).sentenceOrdering} - ${widget.level}"),
+        backgroundColor: const Color(0xFF6C63FF),
+        foregroundColor: Colors.white,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: Text(
+                "$totalScore/$maxRounds",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+      body: !isGameStarted
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+        children: [
+          _buildProgressBar(),
+          _buildControlButtons(),
+          Expanded(child: _buildGameContent()),
+          _buildSubmitButton(),
+        ],
       ),
     );
   }
 
-  Widget _buildCompactHeader() {
+  Widget _buildProgressBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF6C63FF), Color(0xFF5A52E0)],
-        ),
-      ),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              Expanded(
-                child: Text(
-                  "${"ترتيب الجمل"} - ${widget.level}",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Text(
-                  "$totalScore/${maxRounds * 2}",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          Text("${S.of(context).round} ${currentRound + 1}/$maxRounds"),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              Text(
-                "${"الجولة"} ${currentRound + 1}/$maxRounds",
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: AnimatedBuilder(
-                  animation: _progressAnimation,
-                  builder: (context, child) {
-                    return LinearProgressIndicator(
-                      value: _progressAnimation.value,
-                      backgroundColor: Colors.white.withOpacity(0.3),
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                      minHeight: 4,
-                    );
-                  },
-                ),
-              ),
-            ],
+          LinearProgressIndicator(
+            value: currentRound / maxRounds,
+            backgroundColor: Colors.grey[300],
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF6C63FF)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLoadingScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildControlButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
         children: [
-          const CircularProgressIndicator(color: Color(0xFF6C63FF)),
-          const SizedBox(height: 20),
-          Text(
-            "جاري تحميل اللعبة...",
-            style: const TextStyle(fontSize: 16, color: Colors.grey),
-          ),
+          // Listen button (only when cards are not flipped)
+          if (!areCardsFlipped)
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: (canUseListenAttempts &&
+                    currentListenAttempts < maxListenAttempts &&
+                    !isListening)
+                    ? _speakSentencesInOrder
+                    : null,
+                icon: isListening
+                    ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2)
+                )
+                    : const Icon(Icons.volume_up),
+                label: Text(
+                    isListening
+                        ? S.of(context).playingNow
+                        : "${S.of(context).listen} (${maxListenAttempts - currentListenAttempts})"
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6C63FF),
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+
+          if (!areCardsFlipped) const SizedBox(width: 8),
+
+          // Flip button (only when cards are not flipped)
+          if (!areCardsFlipped)
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: _flipCards,
+                icon: const Icon(Icons.flip),
+                label: Text(S.of(context).revealSentences),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 
   Widget _buildGameContent() {
-    return Column(
-      children: [
-        if (areCardsFlipped) _buildListenSection(),
-        Expanded(child: _buildGameArea()),
-        _buildActionButtons(),
-      ],
-    );
-  }
-
-  Widget _buildListenSection() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: AnimatedBuilder(
-        animation: _pulseAnimation,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: isListening ? _pulseAnimation.value : 1.0,
-            child: ElevatedButton.icon(
-              onPressed: (currentListenAttempts < maxListenAttempts && !isListening)
-                  ? _speakSentencesInOrder
-                  : null,
-              icon: isListening
-                  ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-                  : const Icon(Icons.volume_up, size: 20),
-              label: Text(
-                isListening
-                    ? ("جاري التشغيل...")
-                    : "${"استمع"} (${maxListenAttempts - currentListenAttempts})",
-                style: const TextStyle(fontSize: 14),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6C63FF),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                elevation: 2,
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildGameArea() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          // Cards area
           Expanded(
             flex: 3,
-            child: _buildSentenceCards(),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.3,
+              ),
+              itemCount: shuffledSentences.length,
+              itemBuilder: (context, index) {
+                return _buildSentenceCard(shuffledSentences[index], index);
+              },
+            ),
           ),
+
           const SizedBox(height: 16),
+
+          // Ordering area
           Expanded(
             flex: 2,
             child: _buildOrderingArea(),
@@ -697,88 +499,37 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
     );
   }
 
-  Widget _buildSentenceCards() {
-    return GridView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.3,
-      ),
-      itemCount: shuffledSentences.length,
-      itemBuilder: (context, index) {
-        return _buildSentenceCard(shuffledSentences[index], index);
-      },
-    );
-  }
-
   Widget _buildSentenceCard(Sentence sentence, int index) {
-    return AnimatedBuilder(
-      animation: _cardFlipAnimation,
-      builder: (context, child) {
-        final isShowingFront = _cardFlipAnimation.value < 0.5;
-
-        return Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.001)
-            ..rotateY(_cardFlipAnimation.value * 3.14159),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: isShowingFront
-                ? _buildCardFront(index)
-                : Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.identity()..rotateY(3.14159),
-              child: _buildDraggableCard(sentence),
-            ),
+    if (!areCardsFlipped) {
+      // Show card back
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF6C63FF), Color(0xFF5A52E0)],
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildCardFront(int index) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF6C63FF), Color(0xFF5A52E0)],
         ),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.headphones, size: 32, color: Colors.white),
-            const SizedBox(height: 8),
-            Text(
-              "${index + 1}",
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.headphones, size: 32, color: Colors.white),
+              const SizedBox(height: 8),
+              Text(
+                "${index + 1}",
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildDraggableCard(Sentence sentence) {
+    // Show draggable card
     final isUsed = userOrder.contains(sentence);
 
     return Draggable<Sentence>(
@@ -862,8 +613,9 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
       ),
       child: Column(
         children: [
+          // Header
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            padding: const EdgeInsets.all(12),
             decoration: const BoxDecoration(
               color: Color(0xFF6C63FF),
               borderRadius: BorderRadius.only(
@@ -871,159 +623,109 @@ class _SentenceOrderingGameScreenState extends State<SentenceOrderingGameScreen>
                 topRight: Radius.circular(12),
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.sort, color: Colors.white, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  "رتب الجمل بالترتيب الصحيح",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
+            child: Center(
+              child: Text(
+                S.of(context).orderSentencesTitle,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
                 ),
-              ],
+              ),
             ),
           ),
+
+          // Content - Always wrapped in DragTarget
           Expanded(
-            child: userOrder.isEmpty
-                ? DragTarget<Sentence>(
+            child: DragTarget<Sentence>(
               onAccept: _onDragAccept,
               builder: (context, candidateData, rejectedData) {
-                final isHighlighted = candidateData.isNotEmpty;
                 return Container(
-                  margin: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: isHighlighted
+                      color: candidateData.isNotEmpty
                           ? const Color(0xFF6C63FF)
-                          : Colors.grey[300]!,
+                          : Colors.transparent,
                       width: 2,
-                      style: BorderStyle.solid,
                     ),
                     borderRadius: BorderRadius.circular(8),
-                    color: isHighlighted
+                    color: candidateData.isNotEmpty
                         ? const Color(0xFF6C63FF).withOpacity(0.1)
                         : null,
                   ),
-                  child: Center(
+                  child: userOrder.isEmpty
+                      ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                      Icon(
-                      Icons.drag_handle,
-                      color: Colors.grey[400],
-                      size: 32,
+                        const Icon(Icons.drag_handle, color: Colors.grey, size: 32),
+                        const SizedBox(height: 8),
+                        Text(
+                          S.of(context).dragSentencesHint,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "اسحب الجمل هنا لترتيبها",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ]),
-                ),
+                  )
+                      : ReorderableListView.builder(
+                    onReorder: _onReorderUserOrder,
+                    itemCount: userOrder.length,
+                    itemBuilder: (context, index) {
+                      final sentence = userOrder[index];
+                      return Card(
+                        key: ValueKey(sentence.id),
+                        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: const Color(0xFF6C63FF),
+                            child: Text(
+                              "${index + 1}",
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          title: Text(sentence.text),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.drag_handle, color: Colors.grey),
+                              IconButton(
+                                icon: const Icon(Icons.close, color: Colors.red),
+                                onPressed: () => _removeFromUserOrder(index),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
-            )
-                : ReorderableListView.builder(
-              padding: const EdgeInsets.all(10),
-              onReorder: _onCardReorder,
-              itemCount: userOrder.length,
-              itemBuilder: (context, index) {
-                return _buildOrderedCard(userOrder[index], index);
-              },
             ),
           ),
         ],
       ),
     );
   }
-
-
-  void _onCardReorder(int oldIndex, int newIndex) {
-    setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
-      }
-      final item = userOrder.removeAt(oldIndex);
-      userOrder.insert(newIndex, item);
-    });
-  }
-
-  Widget _buildOrderedCard(Sentence sentence, int index) {
-    return Card(
-      key: ValueKey(sentence.id),
-      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor,
+  Widget _buildSubmitButton() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: userOrder.length == correctOrder.length ? _checkAnswer : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF6C63FF),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+          ),
           child: Text(
-            "${index + 1}",
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+            S.of(context).confirmAnswer,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
-        title: Text(
-          sentence.text,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.drag_handle, color: Colors.grey),
-            IconButton(
-              icon: const Icon(Icons.close, color: Colors.red),
-              onPressed: () => _removeFromUserOrder(index),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: userOrder.length == currentSentences.length && !isRoundCompleted
-                  ? _checkAnswer
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                elevation: 5,
-              ),
-              child: const Text(
-                "تأكيد الإجابة",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

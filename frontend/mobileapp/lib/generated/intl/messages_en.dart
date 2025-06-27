@@ -115,6 +115,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "availableExercises":
             MessageLookupByLibrary.simpleMessage("Available Exercises"),
         "award_won": MessageLookupByLibrary.simpleMessage("Award Won"),
+        "backToMenu": MessageLookupByLibrary.simpleMessage("Back to Menu"),
         "ball": MessageLookupByLibrary.simpleMessage("Ball"),
         "birthdateValidation":
             MessageLookupByLibrary.simpleMessage("Please select a birthdate"),
@@ -151,6 +152,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "completedAllWords": MessageLookupByLibrary.simpleMessage(
             "You have successfully completed all words in this exercise!"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
+        "confirmAnswer": MessageLookupByLibrary.simpleMessage("Confirm Answer"),
         "confirmPasswordHint":
             MessageLookupByLibrary.simpleMessage("Confirm Password"),
         "confirmPasswordRequired": MessageLookupByLibrary.simpleMessage(
@@ -164,6 +166,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Child Registration"),
         "correct": MessageLookupByLibrary.simpleMessage("Correct! ✅"),
         "correctAnswer": MessageLookupByLibrary.simpleMessage("🎉 Correct!"),
+        "correctAnswer2":
+            MessageLookupByLibrary.simpleMessage("Correct Answer!"),
         "correctAnswerIs": m2,
         "correctDirectionInfo": MessageLookupByLibrary.simpleMessage(
             "After each question, the correct direction will be shown."),
@@ -209,6 +213,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "dragImageToDirection": m5,
         "dragInfo": MessageLookupByLibrary.simpleMessage(
             "Drag the image to the correct direction."),
+        "dragSentencesHint": MessageLookupByLibrary.simpleMessage(
+            "Drag the sentences here to arrange them"),
         "drawInstruction": MessageLookupByLibrary.simpleMessage(
             "Touch and draw anywhere on the canvas"),
         "drawLetter": m6,
@@ -228,7 +234,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Email must be entered"),
         "encouragementMessage": MessageLookupByLibrary.simpleMessage(
             "👏 Well done! You traced all 28 Arabic letters!"),
+        "endGame": MessageLookupByLibrary.simpleMessage("End Game"),
         "englishLanguage": MessageLookupByLibrary.simpleMessage("English"),
+        "error": MessageLookupByLibrary.simpleMessage("Error"),
         "errorEmptyEmail":
             MessageLookupByLibrary.simpleMessage("Email cannot be empty"),
         "errorEmptyPassword":
@@ -433,6 +441,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "next": MessageLookupByLibrary.simpleMessage("Next"),
         "nextButton": MessageLookupByLibrary.simpleMessage("Next"),
         "nextExercise": MessageLookupByLibrary.simpleMessage("Next Exercise"),
+        "nextRound": MessageLookupByLibrary.simpleMessage("Next Round"),
         "noAccount":
             MessageLookupByLibrary.simpleMessage("Don’t have an account?"),
         "noData":
@@ -460,6 +469,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Point your camera at the requested object to complete the exercise"),
         "objectNotFound": MessageLookupByLibrary.simpleMessage(
             "Object not detected. Keep trying!"),
+        "of2": MessageLookupByLibrary.simpleMessage("of"),
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
         "okButton": MessageLookupByLibrary.simpleMessage("OK"),
         "orContinueWith":
@@ -470,6 +480,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("from last to first"),
         "orderMonthsCorrectly":
             MessageLookupByLibrary.simpleMessage("Order the months correctly."),
+        "orderSentencesTitle": MessageLookupByLibrary.simpleMessage(
+            "Order the sentences correctly"),
         "otpPrompt": MessageLookupByLibrary.simpleMessage(
             "Please enter the verification code"),
         "outOfTries": MessageLookupByLibrary.simpleMessage(
@@ -503,6 +515,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "passwordShort": MessageLookupByLibrary.simpleMessage(
             "Password must be at least 8 characters"),
         "pen": MessageLookupByLibrary.simpleMessage("pen"),
+        "percentage": MessageLookupByLibrary.simpleMessage("Percentage"),
+        "performanceExcellent": MessageLookupByLibrary.simpleMessage(
+            "Excellent! Outstanding performance!"),
+        "performanceGood": MessageLookupByLibrary.simpleMessage(
+            "Good! You can do even better!"),
+        "performanceTryAgain": MessageLookupByLibrary.simpleMessage(
+            "Try again to improve your score!"),
+        "performanceVeryGood":
+            MessageLookupByLibrary.simpleMessage("Very good! Great job!"),
         "personalInfo":
             MessageLookupByLibrary.simpleMessage("Personal Information"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
@@ -512,7 +533,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "plate": MessageLookupByLibrary.simpleMessage("plate"),
         "playAgain": MessageLookupByLibrary.simpleMessage("Play Again"),
         "playGame": MessageLookupByLibrary.simpleMessage("Play Now"),
+        "playingNow": MessageLookupByLibrary.simpleMessage("Playing..."),
         "pointCount": m17,
+        "points": MessageLookupByLibrary.simpleMessage("Points"),
         "previous": MessageLookupByLibrary.simpleMessage("Previous"),
         "processingError": MessageLookupByLibrary.simpleMessage(
             "An error occurred while processing"),
@@ -543,7 +566,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "restart": MessageLookupByLibrary.simpleMessage("Restart"),
         "retry": MessageLookupByLibrary.simpleMessage("Retry"),
         "returnBack": MessageLookupByLibrary.simpleMessage("Return"),
+        "revealSentences":
+            MessageLookupByLibrary.simpleMessage("Reveal Sentences"),
         "right": MessageLookupByLibrary.simpleMessage("Right"),
+        "round": MessageLookupByLibrary.simpleMessage("round"),
         "roundLabel": m23,
         "roundLabel2": MessageLookupByLibrary.simpleMessage("Round"),
         "score": m24,
@@ -558,6 +584,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Select a game to start playing"),
         "selectLevelToStart": MessageLookupByLibrary.simpleMessage(
             "Select a level to start playing"),
+        "sentenceOrdering":
+            MessageLookupByLibrary.simpleMessage("Sentence Ordering"),
         "showMore": MessageLookupByLibrary.simpleMessage("Show more"),
         "signup_password_mismatch":
             MessageLookupByLibrary.simpleMessage("Don\'t Match"),
@@ -694,6 +722,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "writeSummaryHere":
             MessageLookupByLibrary.simpleMessage("Write Your Summary Here"),
         "wrongAnswer": m32,
+        "wrongAnswer2": MessageLookupByLibrary.simpleMessage("Wrong Answer"),
         "wrongFeedback": MessageLookupByLibrary.simpleMessage("Try again"),
         "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
             "You traced the letter correctly!")

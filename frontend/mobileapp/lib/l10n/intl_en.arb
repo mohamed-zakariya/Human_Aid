@@ -263,6 +263,26 @@
     "errorTitle": "Oops! Something went wrong",
     "noData": "No profile data available",
     "email": "Email",
+    "orderSentencesTitle": "Order the sentences correctly",
+    "round": "round",
+    "of2": "of",
+    "correctAnswer2": "Correct Answer!",
+    "wrongAnswer2": "Wrong Answer",
+    "points": "Points",
+    "endGame": "End Game",
+    "nextRound": "Next Round",
+    "performanceExcellent": "Excellent! Outstanding performance!",
+    "performanceVeryGood": "Very good! Great job!",
+    "performanceGood": "Good! You can do even better!",
+    "performanceTryAgain": "Try again to improve your score!",
+    "percentage": "Percentage",
+    "backToMenu": "Back to Menu",
+    "error": "Error",
+    "sentenceOrdering": "Sentence Ordering",
+    "playingNow": "Playing...",
+    "revealSentences": "Reveal Sentences",
+    "confirmAnswer": "Confirm Answer",
+    "dragSentencesHint": "Drag the sentences here to arrange them",
 
 
 
@@ -292,7 +312,13 @@
 
 
 
-"close": "Close",
+
+
+
+
+
+
+    "close": "Close",
     "accuracy": "accuracy",
     "title1": "Welcome to your special world\nwhere learning is fun",
     "desc1": "I'm your friend (the app). Let me take you on a daily journey of progress and growth.",

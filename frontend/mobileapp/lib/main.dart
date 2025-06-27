@@ -340,6 +340,9 @@ class _MyAppState extends State<MyApp> {
           // Sentence Games
 
           '/sentences_game_1': (context) => const SentenceOrderingGameScreen("Beginner"),
+          '/sentences_game_2': (context) => const SentenceOrderingGameScreen("Intermediate"),
+          '/sentences_game_3': (context) => const SentenceOrderingGameScreen("Advanced"),
+
 
 
           // STORY STAGE GAMES

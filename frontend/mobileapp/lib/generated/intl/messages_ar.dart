@@ -110,6 +110,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "availableExercises":
             MessageLookupByLibrary.simpleMessage("التمارين المتاحة"),
         "award_won": MessageLookupByLibrary.simpleMessage("تم الفوز بالجائزة"),
+        "backToMenu": MessageLookupByLibrary.simpleMessage("العودة للقائمة"),
         "ball": MessageLookupByLibrary.simpleMessage("كرة"),
         "birthdateValidation":
             MessageLookupByLibrary.simpleMessage("يرجى اختيار تاريخ الميلاد"),
@@ -148,6 +149,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "completedAllWords": MessageLookupByLibrary.simpleMessage(
             "لقد أكملت بنجاح جميع الكلمات في هذا التمرين!"),
         "confirm": MessageLookupByLibrary.simpleMessage("تأكيد"),
+        "confirmAnswer": MessageLookupByLibrary.simpleMessage("تأكيد الإجابة"),
         "confirmPasswordHint":
             MessageLookupByLibrary.simpleMessage("تأكيد كلمة المرور"),
         "confirmPasswordRequired":
@@ -160,6 +162,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "تَسْجِيلُ بَيَانَاتِ الطِّفْلِ"),
         "correct": MessageLookupByLibrary.simpleMessage("صحيح! ✅"),
         "correctAnswer": MessageLookupByLibrary.simpleMessage("🎉 صحيح!"),
+        "correctAnswer2": MessageLookupByLibrary.simpleMessage("إجابة صحيحة!"),
         "correctAnswerIs": m2,
         "correctDirectionInfo": MessageLookupByLibrary.simpleMessage(
             "بعد كل سؤال، سيتم عرض الاتجاه الصحيح."),
@@ -204,6 +207,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "dragImageToDirection": m5,
         "dragInfo": MessageLookupByLibrary.simpleMessage(
             "اسحب الصورة وضعها في الاتجاه الصحيح."),
+        "dragSentencesHint":
+            MessageLookupByLibrary.simpleMessage("اسحب الجمل هنا لترتيبها"),
         "drawInstruction": MessageLookupByLibrary.simpleMessage(
             "المس وارسم في أي مكان على اللوحة"),
         "drawLetter": m6,
@@ -222,7 +227,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("يجب إدخال البريد الإلكتروني"),
         "encouragementMessage": MessageLookupByLibrary.simpleMessage(
             "👏 أحسنت! لقد تتبعت جميع الحروف العربية الـ28!"),
+        "endGame": MessageLookupByLibrary.simpleMessage("إنهاء اللعبة"),
         "englishLanguage": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
+        "error": MessageLookupByLibrary.simpleMessage("خطأ"),
         "errorEmptyEmail": MessageLookupByLibrary.simpleMessage(
             "لا يمكن ترك البريد الإلكتروني فارغًا"),
         "errorEmptyPassword": MessageLookupByLibrary.simpleMessage(
@@ -424,6 +431,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "next": MessageLookupByLibrary.simpleMessage("التالي"),
         "nextButton": MessageLookupByLibrary.simpleMessage("التالي"),
         "nextExercise": MessageLookupByLibrary.simpleMessage("التمرين التالي"),
+        "nextRound": MessageLookupByLibrary.simpleMessage("الجولة التالية"),
         "noAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
         "noData": MessageLookupByLibrary.simpleMessage("لا توجد بيانات متاحة"),
         "noExercisesAvailable":
@@ -449,6 +457,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "وجه الكاميرا نحو الشيء المطلوب لإكمال التمرين"),
         "objectNotFound": MessageLookupByLibrary.simpleMessage(
             "لم يتم اكتشاف الشيء. استمر في المحاولة!"),
+        "of2": MessageLookupByLibrary.simpleMessage("من"),
         "ok": MessageLookupByLibrary.simpleMessage("حسناً"),
         "okButton": MessageLookupByLibrary.simpleMessage("حسنًا"),
         "orContinueWith":
@@ -459,6 +468,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("من النهاية إلى البداية"),
         "orderMonthsCorrectly":
             MessageLookupByLibrary.simpleMessage("رتب الأشهر بشكل صحيح."),
+        "orderSentencesTitle":
+            MessageLookupByLibrary.simpleMessage("رتب الجمل بالترتيب الصحيح"),
         "otpPrompt": MessageLookupByLibrary.simpleMessage(
             "بِرَجَاءِإدْخَالِ رَمْزِالتَّحْقق"),
         "outOfTries": MessageLookupByLibrary.simpleMessage(
@@ -495,6 +506,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "passwordShort": MessageLookupByLibrary.simpleMessage(
             "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل"),
         "pen": MessageLookupByLibrary.simpleMessage("قلم"),
+        "percentage": MessageLookupByLibrary.simpleMessage("النسبة المئوية"),
+        "performanceExcellent":
+            MessageLookupByLibrary.simpleMessage("ممتاز! أداء رائع جداً!"),
+        "performanceGood":
+            MessageLookupByLibrary.simpleMessage("جيد! يمكنك تحسين أدائك!"),
+        "performanceTryAgain": MessageLookupByLibrary.simpleMessage(
+            "حاول مرة أخرى لتحسين نتيجتك!"),
+        "performanceVeryGood":
+            MessageLookupByLibrary.simpleMessage("جيد جداً! أداء ممتاز!"),
         "personalInfo":
             MessageLookupByLibrary.simpleMessage("المعلومات الشخصية"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
@@ -504,7 +524,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "plate": MessageLookupByLibrary.simpleMessage("طبق"),
         "playAgain": MessageLookupByLibrary.simpleMessage("العب مرة أخرى"),
         "playGame": MessageLookupByLibrary.simpleMessage("العب الآن"),
+        "playingNow": MessageLookupByLibrary.simpleMessage("جاري التشغيل..."),
         "pointCount": m17,
+        "points": MessageLookupByLibrary.simpleMessage("النقاط"),
         "previous": MessageLookupByLibrary.simpleMessage("السابقة"),
         "processingError": MessageLookupByLibrary.simpleMessage(
             "حدث خطأ أثناء معالجة التسجيل"),
@@ -533,7 +555,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "restart": MessageLookupByLibrary.simpleMessage("ابدأ من جديد"),
         "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
         "returnBack": MessageLookupByLibrary.simpleMessage("العودة"),
+        "revealSentences": MessageLookupByLibrary.simpleMessage("اكشف الجمل"),
         "right": MessageLookupByLibrary.simpleMessage("يمين"),
+        "round": MessageLookupByLibrary.simpleMessage("الجولة"),
         "roundLabel": m23,
         "roundLabel2": MessageLookupByLibrary.simpleMessage("الجولة"),
         "score": m24,
@@ -548,6 +572,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("اختر لعبة للبدء"),
         "selectLevelToStart":
             MessageLookupByLibrary.simpleMessage("اختر مستوى للبدء باللعب"),
+        "sentenceOrdering": MessageLookupByLibrary.simpleMessage("ترتيب الجمل"),
         "showMore": MessageLookupByLibrary.simpleMessage("عرض المزيد"),
         "signup_password_mismatch":
             MessageLookupByLibrary.simpleMessage("ليس  متماشث"),
@@ -685,6 +710,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "writeSummaryHere":
             MessageLookupByLibrary.simpleMessage("اكتب ملخصك هنا"),
         "wrongAnswer": m32,
+        "wrongAnswer2": MessageLookupByLibrary.simpleMessage("إجابة خاطئة"),
         "wrongFeedback": MessageLookupByLibrary.simpleMessage("حاول مرة أخرى"),
         "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
             "لقد قمت بتتبع الحرف بشكل صحيح.")
