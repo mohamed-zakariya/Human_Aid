@@ -21,16 +21,71 @@ export const userResolvers = {
       const user = await Users.findOne({ email });
       return { emailExists: !!user };
     },
-      getLevelsForExercises: async () => {
-        try {
-          console.log("Fetching exercises with levels");
-          const exercises = await Exercises.find().populate('levels.games'); // Populate the nested games inside levels
-          return exercises;
-        } catch (error) {
-          console.error("Error fetching exercises with levels:", error);
-          throw new Error("Could not fetch exercises and their levels");
-        }
-      },
+getLevelsForExercises: async (_, { userId, exerciseId }) => {
+  try {
+    // 🧾 No arguments passed → return all exercises with unlocked games
+    if (!userId || !exerciseId) {
+      console.log("First-time user: fetching all exercises");
+
+      const exercises = await Exercises.find().lean();
+
+      const allExercises = exercises.map(ex => ({
+        id: ex._id.toString(),
+        ...ex,
+        levels: ex.levels.map(level => ({
+          ...level,
+          progressPercentage: 0,
+          games: level.games.map(game => ({
+            ...game,
+            unlocked: true  // 🔓 unlocked by default for first time
+          }))
+        }))
+      }));
+
+      return allExercises;
+    }
+
+    // 🎯 If userId and exerciseId are provided → enrich based on progress
+    const exercise = await Exercises.findById(exerciseId).lean();
+    if (!exercise) throw new Error("Exercise not found");
+
+    const userProgress = await Exercisesprogress.findOne({
+      user_id: userId,
+      exercise_id: exerciseId
+    }).lean();
+
+    const enrichedLevels = exercise.levels.map(level => {
+      const levelProgress = userProgress?.levels.find(lv =>
+        lv.level_id.toString() === level.level_id
+      );
+
+      const progressPercentage = levelProgress?.progress_percentage ?? 0;
+
+      const totalGames = level.games.length;
+
+      const enrichedGames = level.games.map((game, idx) => {
+        const unlockThreshold = (100 / totalGames) * idx;
+        const unlocked = progressPercentage >= unlockThreshold;
+        return { ...game, unlocked };
+      });
+
+      return {
+        ...level,
+        progressPercentage,
+        games: enrichedGames
+      };
+    });
+
+    return [{
+      id: exercise._id.toString(),
+      ...exercise,
+      levels: enrichedLevels
+    }];
+  } catch (error) {
+    console.error("Error fetching exercises with levels:", error);
+    throw new Error("Could not fetch exercises and their levels");
+  }
+},
     getLearntWordsbyId: async (_, { userId }) => {
       const learnerProgress = await Exercisesprogress.findOne({ user_id: userId });
     
