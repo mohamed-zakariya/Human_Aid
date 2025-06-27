@@ -40,8 +40,9 @@ class GraphQLService {
 
   static Future<void> clearTokens() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove("accessToken");
-    await prefs.remove("refreshToken");
+    // await prefs.remove("accessToken");
+    // await prefs.remove("refreshToken");
+    await prefs.clear();
   }
 
   static Future<bool> refreshToken(String? role) async {

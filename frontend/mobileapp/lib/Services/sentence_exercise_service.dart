@@ -53,6 +53,25 @@ class SentenceExerciseService {
     return raw.map((e) => Sentence.fromJson(e)).toList();
   }
 
+
+  static Future<List<Sentence>> fetchRandomSentences(String level) async {
+    final client = await GraphQLService.getClient();
+    final result = await client.query(
+      QueryOptions(
+        document: gql(getSentencesQuery),
+        variables: {'level': level},
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+
+    if (result.hasException) {
+      throw Exception(result.exception.toString());
+    }
+
+    final List<dynamic> raw = result.data?['getSentencesByLevel'] ?? [];
+    return raw.map((e) => Sentence.fromJson(e)).toList();
+  }
+
   /// (A) Uploads the audio file to `/upload-audio`.
   /// Returns the `fileUrl` on success, else null.
   static Future<String?> _uploadAudioFile(String audioFilePath) async {

@@ -60,6 +60,7 @@ type SentenceAttempt {
 
 type Query {
   getSentenceForExercise(level: String!): [Sentence]
+  getSentencesByLevel(level: String!): [Sentence]
 }
 
 type Mutation {

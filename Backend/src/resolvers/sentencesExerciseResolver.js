@@ -12,7 +12,21 @@ export const sentencesExerciseResolver = {
           console.log("Sentences found:", sentences);
           return sentences;
         },
-      },
+        getSentencesByLevel: async (_, { level }) => {
+          const validLevels = ['Beginner', 'Intermediate', 'Advanced'];
+          if (!validLevels.includes(level)) {
+            throw new Error('Invalid level');
+          }
+          const sentences = await Sentences.aggregate([
+            { $match: { level } },
+            { $sample: { size: 4 } }
+          ]);
+          console.log(sentences);
+          // Return 4 random sentences for the given level
+          return sentences;
+        },
+  },
+      
 Mutation: {
     updateSentenceProgress: async (_, { userId, exerciseId,levelId, sentenceId, audioFile,spokenSentence}) => {
         return await updateSentenceProgress(userId, exerciseId,levelId, sentenceId, audioFile,spokenSentence);

@@ -9,6 +9,16 @@ query GetSentenceForExercise($level: String!) {
 }
 ''';
 
+const String getRandomSentencesQuery = r'''
+query getSentencesByLevel($level: String!) {
+  getSentencesByLevel(level: $level) {
+    _id
+    sentence
+    level
+  }
+}
+''';
+
 const String startExerciseMutation = r'''
 mutation StartExercise($userId: ID!, $exerciseId: ID!) {
   startExercise(userId: $userId, exerciseId: $exerciseId) {
