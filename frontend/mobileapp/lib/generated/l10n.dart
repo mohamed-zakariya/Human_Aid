@@ -4041,6 +4041,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Locked`
+  String get locked {
+    return Intl.message(
+      'Locked',
+      name: 'locked',
+      desc: 'Text shown when a game is locked',
+      args: [],
+    );
+  }
+
+  /// `This game is locked. Complete previous levels to unlock it.`
+  String get gameLockedMessage {
+    return Intl.message(
+      'This game is locked. Complete previous levels to unlock it.',
+      name: 'gameLockedMessage',
+      desc: 'Message shown when user tries to access a locked game',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

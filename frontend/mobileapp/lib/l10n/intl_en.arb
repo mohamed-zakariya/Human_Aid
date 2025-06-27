@@ -531,6 +531,14 @@
     "viewResults": "View Results",
     "@viewResults": {
         "description": "Button text when all words are completed to view final results"
+    },
+    "locked": "Locked",
+    "@locked": {
+        "description": "Text shown when a game is locked"
+    },
+    "gameLockedMessage": "This game is locked. Complete previous levels to unlock it.",
+    "@gameLockedMessage": {
+        "description": "Message shown when user tries to access a locked game"
     }
 
 }

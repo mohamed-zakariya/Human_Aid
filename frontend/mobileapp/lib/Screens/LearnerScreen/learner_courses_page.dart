@@ -928,7 +928,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
   void _goToLevel(Level level) async {
   try {
     // Fetch the exercise object and levels for this exercise
-    final data = await LevelService.getLevelsAndExercise(widget.exercise['id']);
+    final data = await LevelService.getLevelsAndExercise(widget.exercise['id'], widget.learner.id ?? '');
     final exercise = data['exercise'];
     if (exercise == null) throw Exception('Exercise not found');
     // Find the level object in the exercise's levels array that matches this level
@@ -999,7 +999,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
       _expanded = !_expanded;
       if (_expanded) {
         _expansionController.forward();
-        _levelsFuture ??= LevelService.getLevelsForExercise(widget.exercise['id']);
+        _levelsFuture ??= LevelService.getLevelsForExercise(widget.exercise['id'], widget.learner.id ?? '');
         print("Exercise expanded manually");
       } else {
         _expansionController.reverse();
@@ -1013,7 +1013,7 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     if (!_expanded) {
       setState(() {
         _expanded = true;
-        _levelsFuture ??= LevelService.getLevelsForExercise(widget.exercise['id']);
+        _levelsFuture ??= LevelService.getLevelsForExercise(widget.exercise['id'], widget.learner.id ?? '');
       });
 
       // Animate the expansion
@@ -1377,55 +1377,64 @@ class _ExerciseExpansionTileState extends State<_ExerciseExpansionTile>
     );
   }
 
-  Widget _buildGameChip(Level level,Game game) {
-    // Only assign the key to the very first game chip and only once
-    final shouldAssignKey = widget.gameChipsKey != null && !_gameChipKeyAssigned;
-    if (shouldAssignKey) {
-      _gameChipKeyAssigned = true;
-    }
+  Widget _buildGameChip(Level level, Game game) {
+  // Only assign the key to the very first game chip and only once
+  final shouldAssignKey = widget.gameChipsKey != null && !_gameChipKeyAssigned;
+  if (shouldAssignKey) {
+    _gameChipKeyAssigned = true;
+  }
 
-    return Container(
-      key: shouldAssignKey ? widget.gameChipsKey : null,
-      child: InkWell(
-        onTap: () => _goToGame(level, game),
-        borderRadius: BorderRadius.circular(25),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [widget.cardColor, widget.cardColor.withOpacity(0.8)],
+  final bool isUnlocked = game.unlocked ?? true;
+  final Color chipColor = isUnlocked ? widget.cardColor : Colors.grey;
+  final Color textColor = isUnlocked ? Colors.white : Colors.black38;
+  final Color iconColor = isUnlocked ? Colors.white : Colors.black38;
+
+  return Container(
+    key: shouldAssignKey ? widget.gameChipsKey : null,
+    child: InkWell(
+      onTap: isUnlocked ? () => _goToGame(level, game) : null,
+      borderRadius: BorderRadius.circular(25),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [chipColor, chipColor.withOpacity(0.8)],
+          ),
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+              color: chipColor.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
-            borderRadius: BorderRadius.circular(25),
-            boxShadow: [
-              BoxShadow(
-                color: widget.cardColor.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.videogame_asset,
+              size: 18,
+              color: iconColor,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              widget.isArabic ? game.arabicName : game.name,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: textColor,
               ),
+            ),
+            if (!isUnlocked) ...[
+              const SizedBox(width: 6),
+              Icon(Icons.lock, size: 16, color: Colors.black38),
             ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.videogame_asset,
-                size: 18,
-                color: Colors.white,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                widget.isArabic ? game.arabicName : game.name,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
 }

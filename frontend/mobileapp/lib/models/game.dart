@@ -7,6 +7,7 @@ class Game {
   final String arabicDescription;
   final String difficulty;
   final String? imageUrl;
+  final bool? unlocked; // Add this property
   
   Game({
     required this.id,
@@ -17,6 +18,7 @@ class Game {
     required this.arabicDescription,
     required this.difficulty,
     this.imageUrl,
+    this.unlocked, // Add this parameter
   });
   
   factory Game.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,8 @@ class Game {
       arabicDescription: json['arabic_description'] ?? '',
       difficulty: json['difficulty'] ?? 'medium',
       imageUrl: json['image_url'],
+      unlocked: json['unlocked'], // Add this line
     );
   }
+
 }

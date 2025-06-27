@@ -38,6 +38,12 @@ class _LevelScreenState extends State<LevelScreen> {
     [Color(0xFFFFAA33), Color(0xFFFF8800)],
   ];
 
+  // Locked game gradient (grey)
+  static const List<Color> _lockedGradient = [
+    Color(0xFF9E9E9E), 
+    Color(0xFF757575)
+  ];
+
   // ---- helpers -------------------------------------------------------------
 
   /// Returns a *non-null* game name in the active locale,
@@ -51,6 +57,11 @@ class _LevelScreenState extends State<LevelScreen> {
     return candidate?.trim().isNotEmpty == true
         ? candidate!
         : (isArabic ? 'لعبة' : 'Game');
+  }
+
+  /// Check if a game is unlocked
+  bool _isGameUnlocked(Game game) {
+    return game.unlocked ?? false;
   }
 
   // ---- UI ------------------------------------------------------------------
@@ -220,6 +231,7 @@ class _LevelScreenState extends State<LevelScreen> {
     final String description  = isArabic
         ? game.arabicDescription
         : game.description;
+    final bool   isUnlocked   = _isGameUnlocked(game);
 
     // difficulty chip colours
     final difficultyColors = <String, Color>{
@@ -227,19 +239,35 @@ class _LevelScreenState extends State<LevelScreen> {
       'medium': Colors.orange,
       'hard'  : Colors.red,
     };
-    final List<Color> gradient = _cardGradients[index % _cardGradients.length];
-    final Color       diffClr  =
-        difficultyColors[game.difficulty.toLowerCase()] ?? Colors.blue;
+
+    // Use locked gradient if game is locked, otherwise use normal gradient
+    final List<Color> gradient = isUnlocked 
+        ? _cardGradients[index % _cardGradients.length]
+        : _lockedGradient;
+    
+    final Color diffClr = isUnlocked
+        ? (difficultyColors[game.difficulty.toLowerCase()] ?? Colors.blue)
+        : Colors.grey.shade600;
 
     Future<void> _navigate() async {
+      // Don't navigate if game is locked
+      if (!isUnlocked) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(S.of(ctx).gameLockedMessage ?? 'This game is locked. Complete previous levels to unlock.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
       // Persist minimal context if you need it later
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('exerciseId', widget.exerciseId);
       await prefs.setString('levelId',    widget.level.id);
       await prefs.setString('learnerId',  widget.learner.id ?? '');
       await prefs.setString('gameId',     game.id);
-      await prefs.setString('levelGameId',     game.gameId);
-
+      await prefs.setString('levelGameId', game.gameId);
 
       String roundKey = '${widget.level.id}_${game.id}_${game.gameId}_round';
       if (!prefs.containsKey(roundKey)) {
@@ -250,10 +278,6 @@ class _LevelScreenState extends State<LevelScreen> {
       if (!prefs.containsKey(scoreKey)) {
         await prefs.setInt(scoreKey, 0);
       }
-
-
-
-
 
       Navigator.pushNamed(
         ctx,
@@ -269,7 +293,7 @@ class _LevelScreenState extends State<LevelScreen> {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 4,
+      elevation: isUnlocked ? 4 : 2,
       shadowColor: gradient.first.withOpacity(.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
@@ -284,95 +308,125 @@ class _LevelScreenState extends State<LevelScreen> {
             ),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              if (game.imageUrl?.isNotEmpty == true)
-                ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: Image.network(
-                    game.imageUrl!,
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 150,
-                      width: double.infinity,
-                      color: Colors.white.withOpacity(.1),
-                      child: const Icon(Icons.videogame_asset,
-                          color: Colors.white),
-                    ),
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // title & difficulty chip
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (game.imageUrl?.isNotEmpty == true)
+                    ClipRRect(
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(16)),
+                      child: ColorFiltered(
+                        colorFilter: isUnlocked 
+                            ? const ColorFilter.mode(Colors.transparent, BlendMode.multiply)
+                            : ColorFilter.mode(Colors.grey.withOpacity(0.6), BlendMode.saturation),
+                        child: Image.network(
+                          game.imageUrl!,
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            height: 150,
+                            width: double.infinity,
+                            color: Colors.white.withOpacity(.1),
+                            child: Icon(
+                              Icons.videogame_asset,
+                              color: isUnlocked ? Colors.white : Colors.grey.shade400,
                             ),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: diffClr,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            game.difficulty,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // title & difficulty chip
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                  color: isUnlocked ? Colors.white : Colors.grey.shade300,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: diffClr,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                game.difficulty,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        // description
+                        Text(
+                          description,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: isUnlocked 
+                                ? Colors.white.withOpacity(.9)
+                                : Colors.grey.shade400,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Play Now button
+                        Center(
+                          child: ElevatedButton.icon(
+                            onPressed: isUnlocked ? _navigate : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isUnlocked ? Colors.white : Colors.grey.shade300,
+                              foregroundColor: isUnlocked ? gradient.first : Colors.grey.shade600,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            icon: Icon(isUnlocked ? Icons.play_arrow : Icons.lock),
+                            label: Text(isUnlocked ? S.of(ctx).playGame : (S.of(ctx).locked ?? 'Locked')),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    // description
-                    Text(
-                      description,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(.9),
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Play Now button
-                    Center(
-                      child: ElevatedButton.icon(
-                        onPressed: _navigate,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: gradient.first,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        icon: const Icon(Icons.play_arrow),
-                        label: Text(S.of(ctx).playGame),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+              // Lock overlay for locked games
+              if (!isUnlocked)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.lock,
+                        color: Colors.white,
+                        size: 48,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

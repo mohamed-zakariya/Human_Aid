@@ -36,6 +36,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Screens/LearnerScreen/storyStage/Level2/story_summarize.dart';
 import 'Screens/LearnerScreen/wordStage/Level2/first_game/direction_game1_page.dart';
 import 'Screens/LearnerScreen/wordStage/Level3/word_level3_game.dart';
+import 'Screens/Level1Screen.dart';
 import 'Screens/Login/ParentForgetPassword/change_password_screen.dart';
 import 'Screens/Login/ParentForgetPassword/forgot_password_screen.dart';
 import 'Screens/Login/login_screen_gaurdian.dart';
@@ -311,7 +312,7 @@ class _MyAppState extends State<MyApp> {
           '/words_game_2': (context) => DirectionInstructionsPage(),
           '/words_game_3': (context) => DirectionInstructionsSecondPage(),
           '/words_game_5': (context) => const SpellingGameScreen("Intermediate"),
-          // '/words_game_8': (context) => const HandDetectionGameWidget(),
+          '/words_game_4': (context) => Level1Screen(),
 
           // LEVEL 3 GAMES
           '/words_game_6': (context) => const MonthsOrderGameScreen(),

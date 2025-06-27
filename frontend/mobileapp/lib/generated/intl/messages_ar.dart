@@ -276,6 +276,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "fork": MessageLookupByLibrary.simpleMessage("شوكة"),
         "gameCompleted": MessageLookupByLibrary.simpleMessage("تم الإكمال!"),
         "gameFinished": MessageLookupByLibrary.simpleMessage("انتهت اللعبة!"),
+        "gameLockedMessage": MessageLookupByLibrary.simpleMessage(
+            "هذه اللعبة مقفلة. أكمل المستويات السابقة لإلغاء قفلها."),
         "gameName": MessageLookupByLibrary.simpleMessage("لعبة الاتجاهات"),
         "gameOverTitle":
             MessageLookupByLibrary.simpleMessage("🎮 انتهت اللعبة"),
@@ -385,6 +387,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("استمع إلى الحرف"),
         "loadingWords":
             MessageLookupByLibrary.simpleMessage("جاري تحميل الكلمات..."),
+        "locked": MessageLookupByLibrary.simpleMessage("مقفل"),
         "loginButton": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
         "loginSubtitle": MessageLookupByLibrary.simpleMessage(
             "مرحبًا بعودتك! الرجاء تسجيل الدخول للمتابعة"),
