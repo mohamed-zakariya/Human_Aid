@@ -359,9 +359,24 @@ async function updateExerciseProgress(
 }
 
 // Fixed updateOverallProgress function
-async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, correctWord, isCorrect, timeSpent, updatedExerciseProgress, session) {
+// ✅ Fixed updateOverallProgress function with total word count across all levels
+async function updateOverallProgress(
+  userId,
+  exerciseId,
+  wordId,
+  spokenWord,
+  correctWord,
+  isCorrect,
+  timeSpent,
+  updatedExerciseProgress,
+  session
+) {
   console.log("🎯 updateOverallProgress called with:", {
-    userId, exerciseId, correctWord, isCorrect, timeSpent
+    userId,
+    exerciseId,
+    correctWord,
+    isCorrect,
+    timeSpent
   });
 
   let overall = await OverallProgress.findOne({ user_id: userId }).session(session);
@@ -411,16 +426,17 @@ async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, cor
     totalAttempted: stats.total_items_attempted
   });
 
-  // Check if this word was already attempted today
-  const alreadyAttempted = stats.total_correct.items.includes(correctWord) || 
-                          stats.total_incorrect.items.includes(correctWord);
+  // Check if this word was already attempted
+  const alreadyAttempted =
+    stats.total_correct.items.includes(correctWord) ||
+    stats.total_incorrect.items.includes(correctWord);
   console.log("🔍 Was already attempted:", alreadyAttempted);
 
-  // Remove the word from both lists first (clean slate)
+  // Remove word from both lists
   stats.total_correct.items = stats.total_correct.items.filter(w => w !== correctWord);
   stats.total_incorrect.items = stats.total_incorrect.items.filter(w => w !== correctWord);
 
-  // Add to appropriate list based on current result
+  // Add to appropriate list
   if (isCorrect) {
     stats.total_correct.items.push(correctWord);
     console.log("➕ Added to correct items:", correctWord);
@@ -429,23 +445,23 @@ async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, cor
     console.log("➕ Added to incorrect items:", correctWord);
   }
 
-  // Mark the nested objects as modified for Mongoose
-  overall.markModified('progress_by_exercise');
+  // Mark nested objects modified
+  overall.markModified("progress_by_exercise");
 
-  // If not already attempted, count as new attempt
+  // Count as new attempt if first time
   if (!alreadyAttempted) {
     stats.total_items_attempted += 1;
     console.log("📈 Incremented total attempts to:", stats.total_items_attempted);
   }
 
-  // Update correct/incorrect counts
+  // Update counts and accuracy
   stats.total_correct.count = stats.total_correct.items.length;
   stats.total_incorrect.count = stats.total_incorrect.items.length;
 
-  // Recalculate accuracy
-  stats.accuracy_percentage = stats.total_items_attempted > 0
-    ? (stats.total_correct.count / stats.total_items_attempted) * 100
-    : 0;
+  stats.accuracy_percentage =
+    stats.total_items_attempted > 0
+      ? (stats.total_correct.count / stats.total_items_attempted) * 100
+      : 0;
 
   // Time spent
   stats.time_spent_seconds += timeSpent || 0;
@@ -458,31 +474,23 @@ async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, cor
     accuracy: stats.accuracy_percentage
   });
 
-  // Calculate progress percentage using the updated exercise progress
+  // Calculate progress percentage using total word count
   if (updatedExerciseProgress) {
     let totalCorrect = 0;
-    let totalWordsAcrossAllLevels = 0;
 
+    // Count all correct items across all levels
     for (const level of updatedExerciseProgress.levels) {
       totalCorrect += level.correct_items.length;
-
-      // Get level name from a word in the level
-      const sampleWord = level.correct_items[0] || level.incorrect_items[0];
-      if (sampleWord) {
-        const wordDoc = await Words.findOne({ word: sampleWord }).session(session);
-        const levelName = wordDoc?.level;
-
-        if (levelName) {
-          const wordCount = await Words.countDocuments({ level: levelName }).session(session);
-          totalWordsAcrossAllLevels += wordCount;
-        }
-      }
     }
 
-    stats.progress_percentage = totalWordsAcrossAllLevels > 0
-      ? parseFloat(((totalCorrect / totalWordsAcrossAllLevels) * 100).toFixed(2))
-      : 0;
-    
+    // Count all words in the Words collection (no filter)
+    const totalWordsAcrossAllLevels = await Words.countDocuments().session(session);
+
+    stats.progress_percentage =
+      totalWordsAcrossAllLevels > 0
+        ? parseFloat(((totalCorrect / totalWordsAcrossAllLevels) * 100).toFixed(2))
+        : 0;
+
     console.log("📊 Progress percentage calculated:", {
       totalCorrect,
       totalWordsAcrossAllLevels,
@@ -502,9 +510,10 @@ async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, cor
   }
 
   overall.overall_stats.total_time_spent = totalTime;
-  overall.overall_stats.combined_accuracy = totalAttemptedGlobal > 0
-    ? (totalCorrectGlobal / totalAttemptedGlobal) * 100
-    : 0;
+  overall.overall_stats.combined_accuracy =
+    totalAttemptedGlobal > 0
+      ? (totalCorrectGlobal / totalAttemptedGlobal) * 100
+      : 0;
 
   console.log("🌍 Global stats updated:", {
     totalCorrectGlobal,
@@ -513,30 +522,26 @@ async function updateOverallProgress(userId, exerciseId, wordId, spokenWord, cor
   });
 
   console.log("💾 Saving overall progress...");
-  console.log("💾 About to save overall progress with:", {
-    exerciseId: exerciseProgress.exercise_id,
-    correctCount: stats.total_correct.count,
-    correctItems: stats.total_correct.items,
-    totalAttempted: stats.total_items_attempted,
-    accuracy: stats.accuracy_percentage
-  });
   await overall.save({ session });
   console.log("✅ Overall progress saved successfully");
-  
+
   // Verify the save worked
   const savedOverall = await OverallProgress.findOne({ user_id: userId }).session(session);
-  const savedExercise = savedOverall.progress_by_exercise.find(p => p.exercise_id.toString() === exerciseId.toString());
+  const savedExercise = savedOverall.progress_by_exercise.find(
+    p => p.exercise_id.toString() === exerciseId.toString()
+  );
   console.log("🔍 Verification - Saved overall data:", {
     correctCount: savedExercise?.stats?.total_correct?.count || 0,
     correctItems: savedExercise?.stats?.total_correct?.items || [],
     totalAttempted: savedExercise?.stats?.total_items_attempted || 0
   });
-  
+
   return {
     overall,
     exerciseStats: exerciseProgress.stats
   };
 }
+
 
 // Keep all other helper functions the same
 function validateSpokenWord(spokenWord) {

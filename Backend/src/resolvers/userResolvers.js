@@ -56,7 +56,7 @@ getLevelsForExercises: async (_, { userId, exerciseId }) => {
 
     const enrichedLevels = exercise.levels.map(level => {
       const levelProgress = userProgress?.levels.find(lv =>
-        lv.level_id.toString() === level.level_id
+        lv.level_id.toString() === level._id.toString()
       );
 
       const progressPercentage = levelProgress?.progress_percentage ?? 0;
