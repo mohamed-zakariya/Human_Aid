@@ -44,8 +44,11 @@ class _ExerciseLevelsScreenState extends State<ExerciseLevelsScreen> {
   }
 
   Future<List<Level>> _fetchLevelsAndMaybeImage() async {
-    // Use the new service method to get both levels and exercise object
-    final result = await LevelService.getLevelsAndExercise(widget.exerciseId);
+    // Get user ID from learner
+    final String userId = widget.learner.id ?? '';
+    
+    // Use the updated service method to get both levels and exercise object with user-specific data
+    final result = await LevelService.getLevelsAndExercise(widget.exerciseId, userId);
     final exercise = result['exercise'];
     if (_exerciseImageUrl == null && exercise != null && exercise['exercise_imageUrl'] != null) {
       setState(() {
@@ -209,7 +212,7 @@ class _ExerciseLevelsScreenState extends State<ExerciseLevelsScreen> {
                                 ElevatedButton(
                                   onPressed: () {
                                     setState(() {
-                                      _levelsFuture = LevelService.getLevelsForExercise(widget.exerciseId);
+                                      _levelsFuture = _fetchLevelsAndMaybeImage();
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(

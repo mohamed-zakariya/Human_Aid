@@ -4,11 +4,10 @@ import '../graphql/graphql_client.dart';
 import '../models/level.dart';
 
 class LevelService {
-  /// Re-use the query string in one place so it never drifts
-  // lib/services/level_service.dart  (only the query string is different)
+  /// Updated query string to include user parameters for unlocked games
   static const String _levelsQuery = r'''
-    query GetLevelsForExercises {
-        getLevelsForExercises {
+    query GetLevelsForExercises($userId: ID!, $exerciseId: ID!) {
+        getLevelsForExercises(userId: $userId, exerciseId: $exerciseId) {
           id
           name
           arabic_name
@@ -24,21 +23,26 @@ class LevelService {
               game_id
               name
               arabic_name
+              unlocked
             }
           }
         }
       }
   ''';
 
-  /// Public API – returns only the levels for the requested exercise
-  static Future<List<Level>> getLevelsForExercise(String exerciseId) async {
+  /// Public API – returns only the levels for the requested exercise with user-specific unlocked status
+  static Future<List<Level>> getLevelsForExercise(String exerciseId, String userId) async {
     try {
       final GraphQLClient client = await GraphQLService.getClient();
 
-      // ---- 1. run the plural-field query (no variables) --------------------
+      // ---- 1. run the query with user and exercise parameters --------------------
       final QueryResult result = await client.query(
         QueryOptions(
           document: gql(_levelsQuery),
+          variables: {
+            'userId': userId,
+            'exerciseId': exerciseId,
+          },
         ),
       );
 
@@ -46,7 +50,7 @@ class LevelService {
       final QueryResult? handledResult = await GraphQLService.handleAuthErrors(
         result: result,
         role: 'user',                  // adjust role if needed
-        retryRequest: () => _runQuery(client),
+        retryRequest: () => _runQuery(client, userId, exerciseId),
       );
 
       if (handledResult == null || handledResult.hasException) {
@@ -80,19 +84,23 @@ class LevelService {
     }
   }
 
-  /// Returns both the levels for the requested exercise and the exercise object itself
-  static Future<Map<String, dynamic>> getLevelsAndExercise(String exerciseId) async {
+  /// Returns both the levels for the requested exercise and the exercise object itself with user-specific data
+  static Future<Map<String, dynamic>> getLevelsAndExercise(String exerciseId, String userId) async {
     try {
       final GraphQLClient client = await GraphQLService.getClient();
       final QueryResult result = await client.query(
         QueryOptions(
           document: gql(_levelsQuery),
+          variables: {
+            'userId': userId,
+            'exerciseId': exerciseId,
+          },
         ),
       );
       final QueryResult? handledResult = await GraphQLService.handleAuthErrors(
         result: result,
         role: 'user',
-        retryRequest: () => _runQuery(client),
+        retryRequest: () => _runQuery(client, userId, exerciseId),
       );
       if (handledResult == null || handledResult.hasException) {
         throw Exception(
@@ -123,10 +131,14 @@ class LevelService {
   }
 
   /// Internal helper so handleAuthErrors can retry the same request
-  static Future<QueryResult> _runQuery(GraphQLClient client) {
+  static Future<QueryResult> _runQuery(GraphQLClient client, String userId, String exerciseId) {
     return client.query(
       QueryOptions(
         document: gql(_levelsQuery),
+        variables: {
+          'userId': userId,
+          'exerciseId': exerciseId,
+        },
       ),
     );
   }

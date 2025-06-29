@@ -292,6 +292,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "fork": MessageLookupByLibrary.simpleMessage("fork"),
         "gameCompleted": MessageLookupByLibrary.simpleMessage("Completed!"),
         "gameFinished": MessageLookupByLibrary.simpleMessage("Game Over!"),
+        "gameLockedMessage": MessageLookupByLibrary.simpleMessage(
+            "This game is locked. Complete previous levels to unlock it."),
         "gameName": MessageLookupByLibrary.simpleMessage("Direction Game"),
         "gameOverTitle": MessageLookupByLibrary.simpleMessage("🎮 Game Over"),
         "game_sessions": MessageLookupByLibrary.simpleMessage("game sessions"),
@@ -402,6 +404,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Listen to Letter"),
         "loadingWords":
             MessageLookupByLibrary.simpleMessage("Loading words..."),
+        "locked": MessageLookupByLibrary.simpleMessage("Locked"),
         "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
         "loginSubtitle": MessageLookupByLibrary.simpleMessage(
             "Welcome back! Please sign in to continue"),

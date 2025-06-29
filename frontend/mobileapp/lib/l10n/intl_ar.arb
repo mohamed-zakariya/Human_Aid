@@ -546,5 +546,13 @@
     "viewResults": "عرض النتائج",
     "@viewResults": {
         "description": "Button text when all words are completed to view final results"
+    },
+    "locked": "مقفل",
+    "@locked": {
+        "description": "Text shown when a game is locked"
+    },
+    "gameLockedMessage": "هذه اللعبة مقفلة. أكمل المستويات السابقة لإلغاء قفلها.",
+    "@gameLockedMessage": {
+        "description": "Message shown when user tries to access a locked game"
     }
 }
