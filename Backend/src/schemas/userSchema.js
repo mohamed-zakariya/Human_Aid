@@ -40,6 +40,7 @@ type Game {
   game_id: String!
   name: String!
   arabic_name: String!
+  unlocked: Boolean!
 }
 type OverallProgress {
   combinedAccuracy: Float!
@@ -60,6 +61,7 @@ type Level {
   level_number: Int!
   name: String!
   arabic_name: String!
+  progressPercentage: Float!
   games: [Game!]!
 }
 
@@ -127,7 +129,7 @@ type signUpAdultdResponse{
     checkUserUsernameExists(username: String!): UsernameCheckResponse!
     checkUserEmailExists(email: String!): EmailCheckResponse!
     learnerHomePage(userId: ID!): [Exercise!]!
-    getLevelsForExercises: [Exercise!]!
+    getLevelsForExercises(userId: ID, exerciseId: ID): [Exercise!]!
     learnerProfile(userId: ID!): LearnerProfile!
     # getLearnerDataById(userId: ID!): User!
     
