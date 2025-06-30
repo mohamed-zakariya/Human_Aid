@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:mobileapp/generated/l10n.dart';
 import '../../models/learner.dart';
 import '../../graphql/graphql_client.dart';
 import '../graphql/queries/learner_profile_query.dart';
-
 
 class LearnerProfileService {
   static Future<Learner?> fetchLearnerProfile(String learnerId) async {
@@ -50,10 +51,12 @@ class LearnerProfileService {
   }
 
   /// Get achievement level based on total time spent (in minutes)
-  static Map<String, dynamic> getAchievementLevel(int? totalMinutes) {
+  static Map<String, dynamic> getAchievementLevel(BuildContext context, int? totalMinutes) {
+    final localizations = S.of(context);
+    
     if (totalMinutes == null || totalMinutes == 0) {
       return {
-        'title': 'Explorer',
+        'title': localizations.explorer,
         'color': 0xFF10B981,
         'icon': '🌱',
       };
@@ -61,37 +64,37 @@ class LearnerProfileService {
 
     if (totalMinutes < 60) { // Less than 1 hour
       return {
-        'title': 'Rising Star',
+        'title': localizations.risingStar,
         'color': 0xFF3B82F6,
         'icon': '⭐',
       };
     } else if (totalMinutes < 300) { // Less than 5 hours
       return {
-        'title': 'Bright Mind',
+        'title': localizations.brightMind,
         'color': 0xFF8B5CF6,
         'icon': '💡',
       };
     } else if (totalMinutes < 600) { // Less than 10 hours
       return {
-        'title': 'Knowledge Seeker',
+        'title': localizations.knowledgeSeeker,
         'color': 0xFFF59E0B,
         'icon': '🔍',
       };
     } else if (totalMinutes < 1200) { // Less than 20 hours
       return {
-        'title': 'Wisdom Builder',
+        'title': localizations.wisdomBuilder,
         'color': 0xFFEF4444,
         'icon': '🏗️',
       };
     } else if (totalMinutes < 2400) { // Less than 40 hours
       return {
-        'title': 'Master Learner',
+        'title': localizations.masterLearner,
         'color': 0xFF06B6D4,
         'icon': '🎓',
       };
     } else {
       return {
-        'title': 'Learning Champion',
+        'title': localizations.learningChampion,
         'color': 0xFFDC2626,
         'icon': '🏆',
       };
@@ -268,7 +271,7 @@ class LearnerProfileService {
       'yemen': '🇾🇪',
       'zambia': '🇿🇲',
       'zimbabwe': '🇿🇼'
-};
+    };
     
     return flagMap[nationality.toLowerCase()] ?? '🌍';
   }

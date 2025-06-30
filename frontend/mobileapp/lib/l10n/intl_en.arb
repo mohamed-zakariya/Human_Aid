@@ -565,6 +565,208 @@
     "gameLockedMessage": "This game is locked. Complete previous levels to unlock it.",
     "@gameLockedMessage": {
         "description": "Message shown when user tries to access a locked game"
+    },
+    "level_one_live_camera": "Level One - Live Camera",
+    "@level_one_live_camera": {
+        "description": "Title for level one live camera screen"
+    },
+    "new_word": "New Word",
+    "@new_word": {
+        "description": "Button text for getting a new word"
+    },
+    "target_word": "Target Word",
+    "@target_word": {
+        "description": "Label for the target word section"
+    },
+    "analyzing": "Analyzing...",
+    "@analyzing": {
+        "description": "Text shown when analyzing the camera input"
+    },
+    "preparing_camera": "Preparing Camera...",
+    "@preparing_camera": {
+        "description": "Text shown when initializing the camera"
+    },
+    "result": "Result",
+    "@result": {
+        "description": "Label for the detection result"
+    },
+    "correct_answer": "Correct Answer! Well Done!",
+    "@correct_answer": {
+        "description": "Text shown when the answer is correct"
+    },
+    "try_again": "Try Again",
+    "@try_again": {
+        "description": "Text shown when the answer is incorrect"
+    },
+    "point_camera_instruction": "Point the camera towards the target object within the red frame",
+    "@point_camera_instruction": {
+        "description": "Instruction for pointing the camera at the target object"
+    },
+    "processing": "Processing",
+    "@processing": {
+        "description": "Status text when processing"
+    },
+    "ready_to_capture": "Ready to Capture",
+    "@ready_to_capture": {
+        "description": "Status text when ready to capture"
+    },
+    "errorReadingResult": "❌ Error reading result",
+    "congratsAllWordsCompleted": "Well done! You've completed all the words.",
+    "learnerIdRequired": "Learner ID is required",
+    "@learnerIdRequired": {
+        "description": "Error message when learner ID is missing"
+    },
+    
+    "profileDataLoadError": "Some profile data could not be loaded",
+    "@profileDataLoadError": {
+        "description": "Error message when profile data fails to load"
+    },
+    
+    "profileInformation": "Profile Information",
+    "@profileInformation": {
+        "description": "Title for profile information section"
+    },
+    
+    "email": "Email",
+    "@email": {
+        "description": "Label for email field"
+    },
+    
+    "age": "Age",
+    "@age": {
+        "description": "Label for age field"
+    },
+    
+    "gender": "Gender",
+    "@gender": {
+        "description": "Label for gender field"
+    },
+    
+    "notProvided": "Not provided",
+    "@notProvided": {
+        "description": "Text shown when information is not available"
+    },
+    
+    "learningJourney": "Learning Journey",
+    "@learningJourney": {
+        "description": "Title for learning statistics section"
+    },
+    
+    "totalTime": "Total Time",
+    "@totalTime": {
+        "description": "Label for total time spent learning"
+    },
+    
+    "achievement": "Achievement",
+    "@achievement": {
+        "description": "Label for achievement level"
+    },
+    
+    "personalDetails": "Personal Details",
+    "@personalDetails": {
+        "description": "Title for personal details section"
+    },
+    
+    "birthDate": "Birth Date",
+    "@birthDate": {
+        "description": "Label for birth date field"
+    },
+    
+    "parentName": "Parent Name",
+    "@parentName": {
+        "description": "Label for parent name field"
+    },
+    
+    "loadingProfile": "Loading Profile...",
+    "@loadingProfile": {
+        "description": "Loading message for profile"
+    },
+    
+    "failedToLoadProfile": "Failed to load profile",
+    "@failedToLoadProfile": {
+        "description": "Error message when profile loading fails"
+    },
+    
+    
+    "profileNotFound": "Profile not found",
+    "@profileNotFound": {
+        "description": "Message when profile is not found"
+    },
+    
+    "yearsOld": "{age} years old",
+    "@yearsOld": {
+        "description": "Format for displaying age",
+        "placeholders": {
+        "age": {
+            "type": "int",
+            "example": "25"
+        }
+        }
+    },
+    
+    "unknown": "Unknown",
+    "@unknown": {
+        "description": "Text for unknown values"
+    },
+    
+    "minutesFormat": "{minutes}m",
+    "@minutesFormat": {
+        "description": "Format for displaying minutes",
+        "placeholders": {
+        "minutes": {
+            "type": "int",
+            "example": "30"
+        }
+        }
+    },
+    
+    "hoursMinutesFormat": "{hours}h {minutes}m",
+    "@hoursMinutesFormat": {
+        "description": "Format for displaying hours and minutes",
+        "placeholders": {
+        "hours": {
+            "type": "int",
+            "example": "2"
+        },
+        "minutes": {
+            "type": "int",
+            "example": "30"
+        }
+        }
+    },
+    "explorer": "Explorer",
+    "@explorer": {
+        "description": "Achievement level title for beginners with 0 minutes"
+    },
+    
+    "risingStar": "Rising Star",
+    "@risingStar": {
+        "description": "Achievement level title for users with less than 1 hour of learning"
+    },
+    
+    "brightMind": "Bright Mind",
+    "@brightMind": {
+        "description": "Achievement level title for users with less than 5 hours of learning"
+    },
+    
+    "knowledgeSeeker": "Knowledge Seeker",
+    "@knowledgeSeeker": {
+        "description": "Achievement level title for users with less than 10 hours of learning"
+    },
+    
+    "wisdomBuilder": "Wisdom Builder",
+    "@wisdomBuilder": {
+        "description": "Achievement level title for users with less than 20 hours of learning"
+    },
+    
+    "masterLearner": "Master Learner",
+    "@masterLearner": {
+        "description": "Achievement level title for users with less than 40 hours of learning"
+    },
+    
+    "learningChampion": "Learning Champion",
+    "@learningChampion": {
+        "description": "Achievement level title for users with 40+ hours of learning"
     }
 
 }
