@@ -233,28 +233,17 @@ class _LevelScreenState extends State<LevelScreen> {
         : game.description;
     final bool   isUnlocked   = _isGameUnlocked(game);
 
-    // difficulty chip colours
-    final difficultyColors = <String, Color>{
-      'easy'  : Colors.green,
-      'medium': Colors.orange,
-      'hard'  : Colors.red,
-    };
-
     // Use locked gradient if game is locked, otherwise use normal gradient
     final List<Color> gradient = isUnlocked 
         ? _cardGradients[index % _cardGradients.length]
         : _lockedGradient;
     
-    final Color diffClr = isUnlocked
-        ? (difficultyColors[game.difficulty.toLowerCase()] ?? Colors.blue)
-        : Colors.grey.shade600;
-
     Future<void> _navigate() async {
       // Don't navigate if game is locked
       if (!isUnlocked) {
         ScaffoldMessenger.of(ctx).showSnackBar(
           SnackBar(
-            content: Text(S.of(ctx).gameLockedMessage ?? 'This game is locked. Complete previous levels to unlock.'),
+            content: Text(S.of(ctx).gameLockedMessage),
             backgroundColor: Colors.orange,
           ),
         );
@@ -343,7 +332,7 @@ class _LevelScreenState extends State<LevelScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // title & difficulty chip
+                        // title
                         Row(
                           children: [
                             Expanded(
@@ -352,22 +341,6 @@ class _LevelScreenState extends State<LevelScreen> {
                                 style: TextStyle(
                                   color: isUnlocked ? Colors.white : Colors.grey.shade300,
                                   fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: diffClr,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                game.difficulty,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -402,7 +375,7 @@ class _LevelScreenState extends State<LevelScreen> {
                               ),
                             ),
                             icon: Icon(isUnlocked ? Icons.play_arrow : Icons.lock),
-                            label: Text(isUnlocked ? S.of(ctx).playGame : (S.of(ctx).locked ?? 'Locked')),
+                            label: Text(isUnlocked ? S.of(ctx).playGame : S.of(ctx).locked),
                           ),
                         ),
                       ],

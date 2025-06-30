@@ -4261,6 +4261,136 @@ class S {
       args: [],
     );
   }
+
+  /// `Level One - Live Camera`
+  String get level_one_live_camera {
+    return Intl.message(
+      'Level One - Live Camera',
+      name: 'level_one_live_camera',
+      desc: 'Title for level one live camera screen',
+      args: [],
+    );
+  }
+
+  /// `New Word`
+  String get new_word {
+    return Intl.message(
+      'New Word',
+      name: 'new_word',
+      desc: 'Button text for getting a new word',
+      args: [],
+    );
+  }
+
+  /// `Target Word`
+  String get target_word {
+    return Intl.message(
+      'Target Word',
+      name: 'target_word',
+      desc: 'Label for the target word section',
+      args: [],
+    );
+  }
+
+  /// `Analyzing...`
+  String get analyzing {
+    return Intl.message(
+      'Analyzing...',
+      name: 'analyzing',
+      desc: 'Text shown when analyzing the camera input',
+      args: [],
+    );
+  }
+
+  /// `Preparing Camera...`
+  String get preparing_camera {
+    return Intl.message(
+      'Preparing Camera...',
+      name: 'preparing_camera',
+      desc: 'Text shown when initializing the camera',
+      args: [],
+    );
+  }
+
+  /// `Result`
+  String get result {
+    return Intl.message(
+      'Result',
+      name: 'result',
+      desc: 'Label for the detection result',
+      args: [],
+    );
+  }
+
+  /// `Correct Answer! Well Done!`
+  String get correct_answer {
+    return Intl.message(
+      'Correct Answer! Well Done!',
+      name: 'correct_answer',
+      desc: 'Text shown when the answer is correct',
+      args: [],
+    );
+  }
+
+  /// `Try Again`
+  String get try_again {
+    return Intl.message(
+      'Try Again',
+      name: 'try_again',
+      desc: 'Text shown when the answer is incorrect',
+      args: [],
+    );
+  }
+
+  /// `Point the camera towards the target object within the red frame`
+  String get point_camera_instruction {
+    return Intl.message(
+      'Point the camera towards the target object within the red frame',
+      name: 'point_camera_instruction',
+      desc: 'Instruction for pointing the camera at the target object',
+      args: [],
+    );
+  }
+
+  /// `Processing`
+  String get processing {
+    return Intl.message(
+      'Processing',
+      name: 'processing',
+      desc: 'Status text when processing',
+      args: [],
+    );
+  }
+
+  /// `Ready to Capture`
+  String get ready_to_capture {
+    return Intl.message(
+      'Ready to Capture',
+      name: 'ready_to_capture',
+      desc: 'Status text when ready to capture',
+      args: [],
+    );
+  }
+
+  /// `❌ Error reading result`
+  String get errorReadingResult {
+    return Intl.message(
+      '❌ Error reading result',
+      name: 'errorReadingResult',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Well done! You've completed all the words.`
+  String get congratsAllWordsCompleted {
+    return Intl.message(
+      'Well done! You\'ve completed all the words.',
+      name: 'congratsAllWordsCompleted',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

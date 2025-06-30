@@ -103,6 +103,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "allWordsCompleted": MessageLookupByLibrary.simpleMessage(
             "عمل رائع! لقد أكملت جميع الكلمات!"),
         "amazing": MessageLookupByLibrary.simpleMessage("مذهل! 😎"),
+        "analyzing": MessageLookupByLibrary.simpleMessage("جاري التحليل..."),
         "appTitle": MessageLookupByLibrary.simpleMessage("تمرين كشف الأشياء"),
         "apple": MessageLookupByLibrary.simpleMessage("تفاحة"),
         "arabicLanguage": MessageLookupByLibrary.simpleMessage("العربية"),
@@ -154,6 +155,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("تأكيد كلمة المرور"),
         "confirmPasswordRequired":
             MessageLookupByLibrary.simpleMessage("يجب تأكيد كلمة المرور"),
+        "congratsAllWordsCompleted": MessageLookupByLibrary.simpleMessage(
+            "أحسنت! لقد أكملت جميع الكلمات."),
         "congratulations": MessageLookupByLibrary.simpleMessage("مبروك!"),
         "continueButton": MessageLookupByLibrary.simpleMessage("استمرار"),
         "continueLearning":
@@ -168,6 +171,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "بعد كل سؤال، سيتم عرض الاتجاه الصحيح."),
         "correctDirectionIs": m3,
         "correctFeedback": MessageLookupByLibrary.simpleMessage("أحسنت! 🎉"),
+        "correct_answer":
+            MessageLookupByLibrary.simpleMessage("إجابة صحيحة! أحسنت!"),
         "coursesTabDescription": MessageLookupByLibrary.simpleMessage(
             "يمكنك الوصول إلى جميع دوراتك من هنا. تصفح الدروس المتاحة وتابع تقدمك."),
         "coursesTabTitle": MessageLookupByLibrary.simpleMessage("دوراتك"),
@@ -236,6 +241,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "لا يمكن ترك كلمة المرور فارغة"),
         "errorLoadingLevels":
             MessageLookupByLibrary.simpleMessage("خطأ في تحميل المستويات"),
+        "errorReadingResult":
+            MessageLookupByLibrary.simpleMessage("❌ خطأ في قراءة النتيجة"),
         "errorTitle": MessageLookupByLibrary.simpleMessage("عذراً! حدث خطأ ما"),
         "errorTryAgain":
             MessageLookupByLibrary.simpleMessage("حدث خطأ، حاول مرة أخرى"),
@@ -383,6 +390,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "levelRetry": MessageLookupByLibrary.simpleMessage(
             "واصل! أنت تتحسن مع كل محاولة!"),
         "levelSuccess": m12,
+        "level_one_live_camera": MessageLookupByLibrary.simpleMessage(
+            "المستوى الأول - كاميرا مباشرة"),
         "levels": MessageLookupByLibrary.simpleMessage("المستويات"),
         "levelsSectionDescription": MessageLookupByLibrary.simpleMessage(
             "هذه هي المستويات المتاحة لهذه الدورة. يحتوي كل مستوى على ألعاب وأنشطة مختلفة تساعدك على التعلم."),
@@ -431,6 +440,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "monthsOrderTitle":
             MessageLookupByLibrary.simpleMessage("ترتيب الشهور"),
         "nationality": MessageLookupByLibrary.simpleMessage("الجنسية"),
+        "new_word": MessageLookupByLibrary.simpleMessage("كلمة جديدة"),
         "next": MessageLookupByLibrary.simpleMessage("التالي"),
         "nextButton": MessageLookupByLibrary.simpleMessage("التالي"),
         "nextExercise": MessageLookupByLibrary.simpleMessage("التمرين التالي"),
@@ -529,8 +539,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "playGame": MessageLookupByLibrary.simpleMessage("العب الآن"),
         "playingNow": MessageLookupByLibrary.simpleMessage("جاري التشغيل..."),
         "pointCount": m17,
+        "point_camera_instruction": MessageLookupByLibrary.simpleMessage(
+            "وجه الكاميرا نحو الكائن المطلوب داخل الإطار الأحمر"),
         "points": MessageLookupByLibrary.simpleMessage("النقاط"),
+        "preparing_camera":
+            MessageLookupByLibrary.simpleMessage("جاري تحضير الكاميرا..."),
         "previous": MessageLookupByLibrary.simpleMessage("السابقة"),
+        "processing": MessageLookupByLibrary.simpleMessage("جاري المعالجة"),
         "processingError": MessageLookupByLibrary.simpleMessage(
             "حدث خطأ أثناء معالجة التسجيل"),
         "processingRecording":
@@ -548,6 +563,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("المهمة قيد الانتظار"),
         "questionProgress": m20,
         "readAloud": MessageLookupByLibrary.simpleMessage("اقرأ بصوت عالٍ"),
+        "ready_to_capture":
+            MessageLookupByLibrary.simpleMessage("جاهز للتصوير"),
         "recent_activity":
             MessageLookupByLibrary.simpleMessage("النشاطات الأخيرة"),
         "recordYourVoice": MessageLookupByLibrary.simpleMessage("سجّل صوتك"),
@@ -556,6 +573,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "recordingTimeout": MessageLookupByLibrary.simpleMessage(
             "انتهى الوقت المسموح للتسجيل!"),
         "restart": MessageLookupByLibrary.simpleMessage("ابدأ من جديد"),
+        "result": MessageLookupByLibrary.simpleMessage("النتيجة"),
         "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
         "returnBack": MessageLookupByLibrary.simpleMessage("العودة"),
         "revealSentences": MessageLookupByLibrary.simpleMessage("اكشف الجمل"),
@@ -630,6 +648,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "اضغط على السهم لسماع الاتجاه"),
         "tapToHearDirection": MessageLookupByLibrary.simpleMessage(
             "اضغط على السهم لسماع الاتجاه"),
+        "target_word": MessageLookupByLibrary.simpleMessage("الكلمة المطلوبة"),
         "timeLabel": MessageLookupByLibrary.simpleMessage("الوقت"),
         "timerInfo": MessageLookupByLibrary.simpleMessage(
             "سيكون لكل سؤال مؤقت 8 ثوانٍ للإجابة."),
@@ -661,6 +680,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("حاول مرة أخرى! 💪"),
         "tryAgainMotivation":
             MessageLookupByLibrary.simpleMessage("💪 استمر! يمكنك فعلها!"),
+        "try_again": MessageLookupByLibrary.simpleMessage("حاول مرة أخرى"),
         "tryingHardGreat":
             MessageLookupByLibrary.simpleMessage("أنت تحاول بجد، هذا رائع"),
         "tryingIsFirstStep":

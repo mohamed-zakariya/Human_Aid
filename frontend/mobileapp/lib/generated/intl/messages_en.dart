@@ -107,6 +107,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "allWordsCompleted": MessageLookupByLibrary.simpleMessage(
             "Great job! You\'ve completed all words!"),
         "amazing": MessageLookupByLibrary.simpleMessage("Amazing! 😎"),
+        "analyzing": MessageLookupByLibrary.simpleMessage("Analyzing..."),
         "appTitle":
             MessageLookupByLibrary.simpleMessage("Object Detection Exercise"),
         "apple": MessageLookupByLibrary.simpleMessage("Apple"),
@@ -157,6 +158,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Confirm Password"),
         "confirmPasswordRequired": MessageLookupByLibrary.simpleMessage(
             "Confirm password is required"),
+        "congratsAllWordsCompleted": MessageLookupByLibrary.simpleMessage(
+            "Well done! You\'ve completed all the words."),
         "congratulations":
             MessageLookupByLibrary.simpleMessage("Congratulations!"),
         "continueButton": MessageLookupByLibrary.simpleMessage("Continue"),
@@ -174,6 +177,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "correctDirectionIs": m3,
         "correctFeedback":
             MessageLookupByLibrary.simpleMessage("Well done! 🎉"),
+        "correct_answer":
+            MessageLookupByLibrary.simpleMessage("Correct Answer! Well Done!"),
         "coursesTabDescription": MessageLookupByLibrary.simpleMessage(
             "Access all your courses here. Browse available lessons, track your progress, and continue your learning journey."),
         "coursesTabTitle": MessageLookupByLibrary.simpleMessage("Your Courses"),
@@ -243,6 +248,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Password cannot be empty"),
         "errorLoadingLevels":
             MessageLookupByLibrary.simpleMessage("Error loading levels"),
+        "errorReadingResult":
+            MessageLookupByLibrary.simpleMessage("❌ Error reading result"),
         "errorTitle":
             MessageLookupByLibrary.simpleMessage("Oops! Something went wrong"),
         "errorTryAgain": MessageLookupByLibrary.simpleMessage(
@@ -393,6 +400,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "levelRetry": MessageLookupByLibrary.simpleMessage(
             "Keep going! You\'re getting better with each try!"),
         "levelSuccess": m12,
+        "level_one_live_camera":
+            MessageLookupByLibrary.simpleMessage("Level One - Live Camera"),
         "levels": MessageLookupByLibrary.simpleMessage("Levels"),
         "levelsSectionDescription": MessageLookupByLibrary.simpleMessage(
             "These are the available levels for this course. Each level includes unique games and activities to help you learn."),
@@ -441,6 +450,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "monthsOrderTitle":
             MessageLookupByLibrary.simpleMessage("Order the Months"),
         "nationality": MessageLookupByLibrary.simpleMessage("Nationality"),
+        "new_word": MessageLookupByLibrary.simpleMessage("New Word"),
         "next": MessageLookupByLibrary.simpleMessage("Next"),
         "nextButton": MessageLookupByLibrary.simpleMessage("Next"),
         "nextExercise": MessageLookupByLibrary.simpleMessage("Next Exercise"),
@@ -538,8 +548,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "playGame": MessageLookupByLibrary.simpleMessage("Play Now"),
         "playingNow": MessageLookupByLibrary.simpleMessage("Playing..."),
         "pointCount": m17,
+        "point_camera_instruction": MessageLookupByLibrary.simpleMessage(
+            "Point the camera towards the target object within the red frame"),
         "points": MessageLookupByLibrary.simpleMessage("Points"),
+        "preparing_camera":
+            MessageLookupByLibrary.simpleMessage("Preparing Camera..."),
         "previous": MessageLookupByLibrary.simpleMessage("Previous"),
+        "processing": MessageLookupByLibrary.simpleMessage("Processing"),
         "processingError": MessageLookupByLibrary.simpleMessage(
             "An error occurred while processing"),
         "processingRecording": MessageLookupByLibrary.simpleMessage(
@@ -558,6 +573,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "quest_pending": MessageLookupByLibrary.simpleMessage("Quest Pending"),
         "questionProgress": m20,
         "readAloud": MessageLookupByLibrary.simpleMessage("Read Aloud"),
+        "ready_to_capture":
+            MessageLookupByLibrary.simpleMessage("Ready to Capture"),
         "recent_activity":
             MessageLookupByLibrary.simpleMessage("Recent Activity"),
         "recordYourVoice":
@@ -567,6 +584,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "recordingTimeout": MessageLookupByLibrary.simpleMessage(
             "Recording time limit reached!"),
         "restart": MessageLookupByLibrary.simpleMessage("Restart"),
+        "result": MessageLookupByLibrary.simpleMessage("Result"),
         "retry": MessageLookupByLibrary.simpleMessage("Retry"),
         "returnBack": MessageLookupByLibrary.simpleMessage("Return"),
         "revealSentences":
@@ -640,6 +658,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Tap the arrow to hear the direction"),
         "tapToHearDirection": MessageLookupByLibrary.simpleMessage(
             "Tap the arrow to hear the direction"),
+        "target_word": MessageLookupByLibrary.simpleMessage("Target Word"),
         "timeLabel": MessageLookupByLibrary.simpleMessage("Time"),
         "timerInfo": MessageLookupByLibrary.simpleMessage(
             "Each question has 8 seconds to answer."),
@@ -672,6 +691,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Try again! 💪"),
         "tryAgainMotivation": MessageLookupByLibrary.simpleMessage(
             "💪 Keep going! You can do it!"),
+        "try_again": MessageLookupByLibrary.simpleMessage("Try Again"),
         "tryingHardGreat": MessageLookupByLibrary.simpleMessage(
             "You\'re trying hard, that\'s great"),
         "tryingIsFirstStep":

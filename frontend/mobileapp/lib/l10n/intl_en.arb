@@ -565,6 +565,52 @@
     "gameLockedMessage": "This game is locked. Complete previous levels to unlock it.",
     "@gameLockedMessage": {
         "description": "Message shown when user tries to access a locked game"
-    }
+    },
+    "level_one_live_camera": "Level One - Live Camera",
+    "@level_one_live_camera": {
+        "description": "Title for level one live camera screen"
+    },
+    "new_word": "New Word",
+    "@new_word": {
+        "description": "Button text for getting a new word"
+    },
+    "target_word": "Target Word",
+    "@target_word": {
+        "description": "Label for the target word section"
+    },
+    "analyzing": "Analyzing...",
+    "@analyzing": {
+        "description": "Text shown when analyzing the camera input"
+    },
+    "preparing_camera": "Preparing Camera...",
+    "@preparing_camera": {
+        "description": "Text shown when initializing the camera"
+    },
+    "result": "Result",
+    "@result": {
+        "description": "Label for the detection result"
+    },
+    "correct_answer": "Correct Answer! Well Done!",
+    "@correct_answer": {
+        "description": "Text shown when the answer is correct"
+    },
+    "try_again": "Try Again",
+    "@try_again": {
+        "description": "Text shown when the answer is incorrect"
+    },
+    "point_camera_instruction": "Point the camera towards the target object within the red frame",
+    "@point_camera_instruction": {
+        "description": "Instruction for pointing the camera at the target object"
+    },
+    "processing": "Processing",
+    "@processing": {
+        "description": "Status text when processing"
+    },
+    "ready_to_capture": "Ready to Capture",
+    "@ready_to_capture": {
+        "description": "Status text when ready to capture"
+    },
+    "errorReadingResult": "❌ Error reading result",
+    "congratsAllWordsCompleted": "Well done! You've completed all the words."
 
 }

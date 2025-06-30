@@ -554,5 +554,51 @@
     "gameLockedMessage": "هذه اللعبة مقفلة. أكمل المستويات السابقة لإلغاء قفلها.",
     "@gameLockedMessage": {
         "description": "Message shown when user tries to access a locked game"
-    }
+    },
+    "level_one_live_camera": "المستوى الأول - كاميرا مباشرة",
+    "@level_one_live_camera": {
+        "description": "Title for level one live camera screen"
+    },
+    "new_word": "كلمة جديدة",
+    "@new_word": {
+        "description": "Button text for getting a new word"
+    },
+    "target_word": "الكلمة المطلوبة",
+    "@target_word": {
+        "description": "Label for the target word section"
+    },
+    "analyzing": "جاري التحليل...",
+    "@analyzing": {
+        "description": "Text shown when analyzing the camera input"
+    },
+    "preparing_camera": "جاري تحضير الكاميرا...",
+    "@preparing_camera": {
+        "description": "Text shown when initializing the camera"
+    },
+    "result": "النتيجة",
+    "@result": {
+        "description": "Label for the detection result"
+    },
+    "correct_answer": "إجابة صحيحة! أحسنت!",
+    "@correct_answer": {
+        "description": "Text shown when the answer is correct"
+    },
+    "try_again": "حاول مرة أخرى",
+    "@try_again": {
+        "description": "Text shown when the answer is incorrect"
+    },
+    "point_camera_instruction": "وجه الكاميرا نحو الكائن المطلوب داخل الإطار الأحمر",
+    "@point_camera_instruction": {
+        "description": "Instruction for pointing the camera at the target object"
+    },
+    "processing": "جاري المعالجة",
+    "@processing": {
+        "description": "Status text when processing"
+    },
+    "ready_to_capture": "جاهز للتصوير",
+    "@ready_to_capture": {
+        "description": "Status text when ready to capture"
+    },
+    "errorReadingResult": "❌ خطأ في قراءة النتيجة",
+    "congratsAllWordsCompleted": "أحسنت! لقد أكملت جميع الكلمات."
 }
