@@ -15,6 +15,19 @@ class LetterLevel3 extends StatefulWidget {
 class _LetterLevel3State extends State<LetterLevel3> {
   int _current = 0;
   final CarouselSliderController _controller = CarouselSliderController();
+  final TTSService _ttsService = TTSService(); // Initialize TTS service
+
+  @override
+  void initState() {
+    super.initState();
+    _ttsService.initialize(); // Initialize TTS when widget starts
+  }
+
+  @override
+  void dispose() {
+    _ttsService.dispose(); // Clean up TTS when widget is disposed
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +68,13 @@ class _LetterLevel3State extends State<LetterLevel3> {
                 enableInfiniteScroll: true,
                 viewportFraction: isTablet ? 0.7 : 0.85,
                 height: screenSize.height * (isLandscape ? 0.85 : 0.92),
+                reverse: true, // This fixes the scrolling direction for Arabic
                 onPageChanged: (index, reason) {
                   setState(() {
                     _current = index;
                   });
+                  // Automatically speak the letter when page changes
+                  _speakLetter(arabicLetters[index]);
                 },
               ),
             ),
@@ -68,6 +84,11 @@ class _LetterLevel3State extends State<LetterLevel3> {
         ],
       ),
     );
+  }
+
+  // Method to speak text using TTS
+  void _speakLetter(String text) {
+    _ttsService.speak(text);
   }
 
   Widget _buildNavigationControls(Size screenSize) {
@@ -91,6 +112,25 @@ class _LetterLevel3State extends State<LetterLevel3> {
             icon: Icon(
               Icons.arrow_back_ios,
               size: iconSize.clamp(20.0, 30.0),
+            ),
+          ),
+          SizedBox(width: screenSize.width * 0.05),
+          // Add TTS button to speak current letter
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF6C63FF),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: IconButton(
+              onPressed: () {
+                _speakLetter(arabicLetters[_current]);
+              },
+              icon: Icon(
+                Icons.volume_up,
+                size: iconSize.clamp(20.0, 30.0),
+                color: Colors.white,
+              ),
+              tooltip: 'Listen to letter',
             ),
           ),
           SizedBox(width: screenSize.width * 0.05),
@@ -137,12 +177,23 @@ class _LetterLevel3State extends State<LetterLevel3> {
         ),
         child: Column(
           children: [
-            Text(
-              letter,
-              style: TextStyle(
-                fontSize: letterFontSize,
-                fontWeight: FontWeight.bold,
-                color: color,
+            // Make the main letter clickable to speak
+            GestureDetector(
+              onTap: () => _speakLetter(letter),
+              child: Container(
+                padding: EdgeInsets.all(screenSize.width * 0.04),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: color.withOpacity(0.1),
+                ),
+                child: Text(
+                  letter,
+                  style: TextStyle(
+                    fontSize: letterFontSize,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
               ),
             ),
             SizedBox(height: screenSize.height * 0.02),
@@ -232,70 +283,93 @@ class _LetterLevel3State extends State<LetterLevel3> {
     // Responsive padding
     final cardPadding = screenSize.width * 0.035;
 
-    return Container(
-      width: cardWidth,
-      height: cardHeight,
-      padding: EdgeInsets.all(cardPadding),
-      margin: EdgeInsets.symmetric(
-        horizontal: screenSize.width * 0.01,
-        vertical: screenSize.height * 0.005,
-      ),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(screenSize.width * 0.05),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: screenSize.width * 0.015,
-            offset: Offset(screenSize.width * 0.005, screenSize.width * 0.005),
-          ),
-        ],
-      ),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              flex: 2,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  data['form'] ?? '',
-                  style: TextStyle(
-                    fontSize: formFontSize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: cardHeight * 0.03),
-            if (data['image'] != null && data['image']!.isNotEmpty)
-              Flexible(
-                flex: 3,
-                child: Image.asset(
-                  data['image']!,
-                  width: imageSize,
-                  height: imageSize,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            SizedBox(height: cardHeight * 0.03),
-            Flexible(
-              flex: 2,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  data['example'] ?? '',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: exampleFontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+    return GestureDetector(
+      onTap: () {
+        // Speak the example word when card is tapped
+        final example = data['example'] ?? '';
+        if (example.isNotEmpty) {
+          _speakLetter(example);
+        }
+      },
+      child: Container(
+        width: cardWidth,
+        height: cardHeight,
+        padding: EdgeInsets.all(cardPadding),
+        margin: EdgeInsets.symmetric(
+          horizontal: screenSize.width * 0.01,
+          vertical: screenSize.height * 0.005,
+        ),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(screenSize.width * 0.05),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: screenSize.width * 0.015,
+              offset: Offset(screenSize.width * 0.005, screenSize.width * 0.005),
             ),
           ],
+        ),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                flex: 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          data['form'] ?? '',
+                          style: TextStyle(
+                            fontSize: formFontSize,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    // Add small speaker icon to indicate it's clickable
+                    Icon(
+                      Icons.volume_up,
+                      size: formFontSize * 0.3,
+                      color: Colors.black54,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: cardHeight * 0.03),
+              if (data['image'] != null && data['image']!.isNotEmpty)
+                Flexible(
+                  flex: 3,
+                  child: Image.asset(
+                    data['image']!,
+                    width: imageSize,
+                    height: imageSize,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              SizedBox(height: cardHeight * 0.03),
+              Flexible(
+                flex: 2,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    data['example'] ?? '',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: exampleFontSize,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
