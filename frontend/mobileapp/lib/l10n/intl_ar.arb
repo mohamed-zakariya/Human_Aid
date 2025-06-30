@@ -600,5 +600,161 @@
         "description": "Status text when ready to capture"
     },
     "errorReadingResult": "❌ خطأ في قراءة النتيجة",
-    "congratsAllWordsCompleted": "أحسنت! لقد أكملت جميع الكلمات."
+    "congratsAllWordsCompleted": "أحسنت! لقد أكملت جميع الكلمات.",
+    "learnerIdRequired": "معرف المتعلم مطلوب",
+    "@learnerIdRequired": {
+        "description": "Error message when learner ID is missing"
+    },
+    
+    "profileDataLoadError": "لا يمكن تحميل بعض بيانات الملف الشخصي",
+    "@profileDataLoadError": {
+        "description": "Error message when profile data fails to load"
+    },
+    
+    "profileInformation": "معلومات الملف الشخصي",
+    "@profileInformation": {
+        "description": "Title for profile information section"
+    },
+    
+    "email": "البريد الإلكتروني",
+    "@email": {
+        "description": "Label for email field"
+    },
+    
+    "age": "العمر",
+    "@age": {
+        "description": "Label for age field"
+    },
+    
+    "gender": "الجنس",
+    "@gender": {
+        "description": "Label for gender field"
+    },
+    
+    "notProvided": "غير متوفر",
+    "@notProvided": {
+        "description": "Text shown when information is not available"
+    },
+    
+    "learningJourney": "رحلة التعلم",
+    "@learningJourney": {
+        "description": "Title for learning statistics section"
+    },
+    
+    "totalTime": "الوقت الإجمالي",
+    "@totalTime": {
+        "description": "Label for total time spent learning"
+    },
+    
+    "achievement": "الإنجاز",
+    "@achievement": {
+        "description": "Label for achievement level"
+    },
+    
+    "personalDetails": "التفاصيل الشخصية",
+    "@personalDetails": {
+        "description": "Title for personal details section"
+    },
+    
+    "birthDate": "تاريخ الميلاد",
+    "@birthDate": {
+        "description": "Label for birth date field"
+    },
+    
+    "parentName": "اسم الوالد",
+    "@parentName": {
+        "description": "Label for parent name field"
+    },
+    
+    "loadingProfile": "جاري تحميل الملف الشخصي...",
+    "@loadingProfile": {
+        "description": "Loading message for profile"
+    },
+    
+    "failedToLoadProfile": "فشل في تحميل الملف الشخصي",
+    "@failedToLoadProfile": {
+        "description": "Error message when profile loading fails"
+    },
+    
+    
+    "profileNotFound": "الملف الشخصي غير موجود",
+    "@profileNotFound": {
+        "description": "Message when profile is not found"
+    },
+    
+    "yearsOld": "{age} سنة",
+    "@yearsOld": {
+        "description": "Format for displaying age",
+        "placeholders": {
+        "age": {
+            "type": "int",
+            "example": "25"
+        }
+        }
+    },
+    
+    "unknown": "غير معروف",
+    "@unknown": {
+        "description": "Text for unknown values"
+    },
+    
+    "minutesFormat": "{minutes} د",
+    "@minutesFormat": {
+        "description": "Format for displaying minutes",
+        "placeholders": {
+        "minutes": {
+            "type": "int",
+            "example": "30"
+        }
+        }
+    },
+    
+    "hoursMinutesFormat": "{hours} س {minutes} د",
+    "@hoursMinutesFormat": {
+        "description": "Format for displaying hours and minutes",
+        "placeholders": {
+        "hours": {
+            "type": "int",
+            "example": "2"
+        },
+        "minutes": {
+            "type": "int",
+            "example": "30"
+        }
+        }
+    },
+    "explorer": "مستكشف",
+    "@explorer": {
+        "description": "لقب مستوى الإنجاز للمبتدئين مع 0 دقيقة"
+    },
+    
+    "risingStar": "نجم صاعد",
+    "@risingStar": {
+        "description": "لقب مستوى الإنجاز للمستخدمين مع أقل من ساعة واحدة من التعلم"
+    },
+    
+    "brightMind": "عقل مشرق",
+    "@brightMind": {
+        "description": "لقب مستوى الإنجاز للمستخدمين مع أقل من 5 ساعات من التعلم"
+    },
+    
+    "knowledgeSeeker": "باحث عن المعرفة",
+    "@knowledgeSeeker": {
+        "description": "لقب مستوى الإنجاز للمستخدمين مع أقل من 10 ساعات من التعلم"
+    },
+    
+    "wisdomBuilder": "بناء الحكمة",
+    "@wisdomBuilder": {
+        "description": "لقب مستوى الإنجاز للمستخدمين مع أقل من 20 ساعة من التعلم"
+    },
+    
+    "masterLearner": "متعلم متمكن",
+    "@masterLearner": {
+        "description": "لقب مستوى الإنجاز للمستخدمين مع أقل من 40 ساعة من التعلم"
+    },
+    
+    "learningChampion": "بطل التعلم",
+    "@learningChampion": {
+        "description": "لقب مستوى الإنجاز للمستخدمين مع 40+ ساعة من التعلم"
+    }
 }

@@ -43,57 +43,64 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m10(name) => "Hello ${name}";
 
-  static String m11(count) =>
+  static String m11(hours, minutes) => "${hours}h ${minutes}m";
+
+  static String m12(count) =>
       "Your learners completed ${count} activities today";
 
-  static String m12(level) => "🎉 Amazing! You\'ve completed level ${level}!";
+  static String m13(level) => "🎉 Amazing! You\'ve completed level ${level}!";
 
-  static String m13(remaining) => "Listen again (${remaining} attempts left)";
+  static String m14(remaining) => "Listen again (${remaining} attempts left)";
 
-  static String m14(count) => "Order ${count} months of the year";
+  static String m15(minutes) => "${minutes}m";
 
-  static String m15(level, count, direction) =>
+  static String m16(count) => "Order ${count} months of the year";
+
+  static String m17(level, count, direction) =>
       "Level ${level}: Order ${count} months ${direction}";
 
-  static String m16(item, direction) =>
+  static String m18(item, direction) =>
       "Place ${item} in ${direction} direction";
 
-  static String m17(count) => "Points: ${count}";
+  static String m19(count) => "Points: ${count}";
 
-  static String m18(percent) => "${percent}% completed";
+  static String m20(percent) => "${percent}% completed";
 
-  static String m19(points) => "${points} pts";
+  static String m21(points) => "${points} pts";
 
-  static String m20(current, total) => "Question ${current} / ${total}";
+  static String m22(current, total) => "Question ${current} / ${total}";
 
-  static String m21(error) => "Error: ${error}";
+  static String m23(error) => "Error: ${error}";
 
-  static String m22(error) => "Error starting recording: ${error}";
+  static String m24(error) => "Error starting recording: ${error}";
 
-  static String m23(current, total) => "Round ${current} of ${total}";
+  static String m25(current, total) => "Round ${current} of ${total}";
 
-  static String m24(score) => "Score: ${score}";
+  static String m26(score) => "Score: ${score}";
 
-  static String m25(count) => "${count} seconds";
+  static String m27(count) => "${count} seconds";
 
-  static String m26(seconds) => "${seconds} ثواني متبقية";
+  static String m28(seconds) => "${seconds} ثواني متبقية";
 
-  static String m27(direction) => "The direction is ${direction}";
+  static String m29(direction) => "The direction is ${direction}";
 
-  static String m28(current, total) => "Story ${current} of ${total}";
+  static String m30(current, total) => "Story ${current} of ${total}";
 
-  static String m29(count) => "Strokes: ${count}";
+  static String m31(count) => "Strokes: ${count}";
 
-  static String m30(letter) => "📝 Trace this letter: ${letter}";
+  static String m32(letter) => "📝 Trace this letter: ${letter}";
 
-  static String m31(score, total) =>
+  static String m33(score, total) =>
       "😊 Good try! Your score: ${score} out of ${total}";
 
-  static String m32(letter) => "❌ Wrong! The correct letter is: ${letter}";
+  static String m34(letter) => "❌ Wrong! The correct letter is: ${letter}";
+
+  static String m35(age) => "${age} years old";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "accuracy": MessageLookupByLibrary.simpleMessage("accuracy"),
+        "achievement": MessageLookupByLibrary.simpleMessage("Achievement"),
         "add": MessageLookupByLibrary.simpleMessage("Add"),
         "addNewLearner":
             MessageLookupByLibrary.simpleMessage("Add New Learner"),
@@ -118,6 +125,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "award_won": MessageLookupByLibrary.simpleMessage("Award Won"),
         "backToMenu": MessageLookupByLibrary.simpleMessage("Back to Menu"),
         "ball": MessageLookupByLibrary.simpleMessage("Ball"),
+        "birthDate": MessageLookupByLibrary.simpleMessage("Birth Date"),
         "birthdateValidation":
             MessageLookupByLibrary.simpleMessage("Please select a birthdate"),
         "birthday": MessageLookupByLibrary.simpleMessage("Birthday"),
@@ -127,6 +135,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bottomNavMenu": MessageLookupByLibrary.simpleMessage("Menu"),
         "bottomNavProfile": MessageLookupByLibrary.simpleMessage("Profile"),
         "bravo": MessageLookupByLibrary.simpleMessage("Bravo! 👏"),
+        "brightMind": MessageLookupByLibrary.simpleMessage("Bright Mind"),
         "bringObject": m1,
         "button1": MessageLookupByLibrary.simpleMessage("Start"),
         "button2": MessageLookupByLibrary.simpleMessage("Continue"),
@@ -280,6 +289,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "explore": MessageLookupByLibrary.simpleMessage("Explore"),
         "explore_message": MessageLookupByLibrary.simpleMessage(
             "Let\'s explore some insights today"),
+        "explorer": MessageLookupByLibrary.simpleMessage("Explorer"),
+        "failedToLoadProfile":
+            MessageLookupByLibrary.simpleMessage("Failed to load profile"),
         "feedbackWidgetAnalyzing":
             MessageLookupByLibrary.simpleMessage("Analyzing..."),
         "finalLevelSuccess": MessageLookupByLibrary.simpleMessage(
@@ -337,6 +349,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Helpful tips for learning"),
         "hint": MessageLookupByLibrary.simpleMessage(
             "Point your camera at the requested object to complete the exercise"),
+        "hoursMinutesFormat": m11,
         "howToPlayDescription": MessageLookupByLibrary.simpleMessage(
             "Listen to the letter and find the matching fish. Tap on the correct fish. Earn a point for each correct answer!"),
         "howToPlayTitle": MessageLookupByLibrary.simpleMessage("How to Play"),
@@ -374,10 +387,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Keep progressing"),
         "keepTryingProgressing": MessageLookupByLibrary.simpleMessage(
             "Keep trying, you\'re progressing"),
+        "knowledgeSeeker":
+            MessageLookupByLibrary.simpleMessage("Knowledge Seeker"),
         "label_games": MessageLookupByLibrary.simpleMessage("Games"),
         "label_letters": MessageLookupByLibrary.simpleMessage("Letters"),
         "label_sentences": MessageLookupByLibrary.simpleMessage("Sentences"),
         "label_words": MessageLookupByLibrary.simpleMessage("Words"),
+        "learnerIdRequired":
+            MessageLookupByLibrary.simpleMessage("Learner ID is required"),
         "learnerNavBarCourses": MessageLookupByLibrary.simpleMessage("Courses"),
         "learnerNavBarHome": MessageLookupByLibrary.simpleMessage("Home"),
         "learnerNavBarMenu": MessageLookupByLibrary.simpleMessage("Menu"),
@@ -388,7 +405,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Learner Members"),
         "learner_progress":
             MessageLookupByLibrary.simpleMessage("Learners Progress"),
-        "learners_completed_activities": m11,
+        "learners_completed_activities": m12,
+        "learningChampion":
+            MessageLookupByLibrary.simpleMessage("Learning Champion"),
+        "learningJourney":
+            MessageLookupByLibrary.simpleMessage("Learning Journey"),
         "learningNeedsPatience":
             MessageLookupByLibrary.simpleMessage("Learning needs patience"),
         "left": MessageLookupByLibrary.simpleMessage("Left"),
@@ -399,7 +420,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "levelLabel": MessageLookupByLibrary.simpleMessage("spell the word"),
         "levelRetry": MessageLookupByLibrary.simpleMessage(
             "Keep going! You\'re getting better with each try!"),
-        "levelSuccess": m12,
+        "levelSuccess": m13,
         "level_one_live_camera":
             MessageLookupByLibrary.simpleMessage("Level One - Live Camera"),
         "levels": MessageLookupByLibrary.simpleMessage("Levels"),
@@ -408,9 +429,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "levelsSectionTitle":
             MessageLookupByLibrary.simpleMessage("Course Levels"),
         "listen": MessageLookupByLibrary.simpleMessage("Listen"),
-        "listenAgain": m13,
+        "listenAgain": m14,
         "listenToLetter":
             MessageLookupByLibrary.simpleMessage("Listen to Letter"),
+        "loadingProfile":
+            MessageLookupByLibrary.simpleMessage("Loading Profile..."),
         "loadingWords":
             MessageLookupByLibrary.simpleMessage("Loading words..."),
         "locked": MessageLookupByLibrary.simpleMessage("Locked"),
@@ -431,9 +454,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Main Course Navigation"),
         "manage_learners":
             MessageLookupByLibrary.simpleMessage("Manage your learners"),
+        "masterLearner": MessageLookupByLibrary.simpleMessage("Master Learner"),
+        "minutesFormat": m15,
         "monitor_daily_activities": MessageLookupByLibrary.simpleMessage(
             "Monitor daily learning activities"),
-        "monthsOrderHeader": m14,
+        "monthsOrderHeader": m16,
         "monthsOrderHelpDrag": MessageLookupByLibrary.simpleMessage(
             "Drag the months from below and place them in the correct order"),
         "monthsOrderHelpListen": MessageLookupByLibrary.simpleMessage(
@@ -442,7 +467,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Order the months from January to the last month in the level"),
         "monthsOrderHelpTranslate": MessageLookupByLibrary.simpleMessage(
             "Tap the translate button to switch between Arabic and Levantine names"),
-        "monthsOrderLevelInstruction": m15,
+        "monthsOrderLevelInstruction": m17,
         "monthsOrderList": MessageLookupByLibrary.simpleMessage(
             "يناير, فبراير, مارس, أبريل, مايو, يونيو, يوليو, أغسطس, سبتمبر, أكتوبر, نوفمبر, ديسمبر"),
         "monthsOrderSuccess": MessageLookupByLibrary.simpleMessage(
@@ -474,6 +499,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "No learning activities recorded for this day"),
         "no_progress_data":
             MessageLookupByLibrary.simpleMessage("No data available."),
+        "notProvided": MessageLookupByLibrary.simpleMessage("Not provided"),
         "objectDetected":
             MessageLookupByLibrary.simpleMessage("Great! Object detected!"),
         "objectDetectionExercise":
@@ -499,6 +525,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Please enter the verification code"),
         "outOfTries": MessageLookupByLibrary.simpleMessage(
             "No attempts left! Moving to the next word..."),
+        "parentName": MessageLookupByLibrary.simpleMessage("Parent Name"),
         "parentNavBarArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
         "parentNavBarChangeLanguage":
             MessageLookupByLibrary.simpleMessage("Choose Language"),
@@ -537,17 +564,19 @@ class MessageLookup extends MessageLookupByLibrary {
             "Try again to improve your score!"),
         "performanceVeryGood":
             MessageLookupByLibrary.simpleMessage("Very good! Great job!"),
+        "personalDetails":
+            MessageLookupByLibrary.simpleMessage("Personal Details"),
         "personalInfo":
             MessageLookupByLibrary.simpleMessage("Personal Information"),
         "phoneHint": MessageLookupByLibrary.simpleMessage("+20******336"),
         "phoneNumber": MessageLookupByLibrary.simpleMessage("Phone Number"),
         "phonenumbersearch": MessageLookupByLibrary.simpleMessage("search"),
-        "placeImageInDirection": m16,
+        "placeImageInDirection": m18,
         "plate": MessageLookupByLibrary.simpleMessage("plate"),
         "playAgain": MessageLookupByLibrary.simpleMessage("Play Again"),
         "playGame": MessageLookupByLibrary.simpleMessage("Play Now"),
         "playingNow": MessageLookupByLibrary.simpleMessage("Playing..."),
-        "pointCount": m17,
+        "pointCount": m19,
         "point_camera_instruction": MessageLookupByLibrary.simpleMessage(
             "Point the camera towards the target object within the red frame"),
         "points": MessageLookupByLibrary.simpleMessage("Points"),
@@ -559,11 +588,17 @@ class MessageLookup extends MessageLookupByLibrary {
             "An error occurred while processing"),
         "processingRecording": MessageLookupByLibrary.simpleMessage(
             "Processing your recording..."),
+        "profileDataLoadError": MessageLookupByLibrary.simpleMessage(
+            "Some profile data could not be loaded"),
+        "profileInformation":
+            MessageLookupByLibrary.simpleMessage("Profile Information"),
+        "profileNotFound":
+            MessageLookupByLibrary.simpleMessage("Profile not found"),
         "profileTabDescription": MessageLookupByLibrary.simpleMessage(
             "Tap here to view and update your profile information. Manage your personal details and preferences."),
         "profileTabTitle": MessageLookupByLibrary.simpleMessage("Your Profile"),
-        "progressCompleted": m18,
-        "progressPoints": m19,
+        "progressCompleted": m20,
+        "progressPoints": m21,
         "progressWillBeLost":
             MessageLookupByLibrary.simpleMessage("سيتم فقدان تقدمك"),
         "progress_summary":
@@ -571,7 +606,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "quest_complete":
             MessageLookupByLibrary.simpleMessage("Quest Complete"),
         "quest_pending": MessageLookupByLibrary.simpleMessage("Quest Pending"),
-        "questionProgress": m20,
+        "questionProgress": m22,
         "readAloud": MessageLookupByLibrary.simpleMessage("Read Aloud"),
         "ready_to_capture":
             MessageLookupByLibrary.simpleMessage("Ready to Capture"),
@@ -579,8 +614,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Recent Activity"),
         "recordYourVoice":
             MessageLookupByLibrary.simpleMessage("Record your voice"),
-        "recordingError": m21,
-        "recordingStartError": m22,
+        "recordingError": m23,
+        "recordingStartError": m24,
         "recordingTimeout": MessageLookupByLibrary.simpleMessage(
             "Recording time limit reached!"),
         "restart": MessageLookupByLibrary.simpleMessage("Restart"),
@@ -590,16 +625,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "revealSentences":
             MessageLookupByLibrary.simpleMessage("Reveal Sentences"),
         "right": MessageLookupByLibrary.simpleMessage("Right"),
+        "risingStar": MessageLookupByLibrary.simpleMessage("Rising Star"),
         "round": MessageLookupByLibrary.simpleMessage("round"),
-        "roundLabel": m23,
+        "roundLabel": m25,
         "roundLabel2": MessageLookupByLibrary.simpleMessage("Round"),
-        "score": m24,
+        "score": m26,
         "searchCoursesHint":
             MessageLookupByLibrary.simpleMessage("Search courses..."),
         "search_hint":
             MessageLookupByLibrary.simpleMessage("Search for activities..."),
-        "seconds": m25,
-        "secondsRemaining": m26,
+        "seconds": m27,
+        "secondsRemaining": m28,
         "seeAll": MessageLookupByLibrary.simpleMessage("See All"),
         "selectGameToPlay": MessageLookupByLibrary.simpleMessage(
             "Select a game to start playing"),
@@ -635,7 +671,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signuptitlephonenumber":
             MessageLookupByLibrary.simpleMessage("phone number"),
         "signuptitleusername": MessageLookupByLibrary.simpleMessage("username"),
-        "speakDirectionTemplate": m27,
+        "speakDirectionTemplate": m29,
         "spellingGame": MessageLookupByLibrary.simpleMessage("Spelling Game"),
         "spoon": MessageLookupByLibrary.simpleMessage("spoon"),
         "startExercise": MessageLookupByLibrary.simpleMessage("Start Exercise"),
@@ -645,10 +681,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "stat_total": MessageLookupByLibrary.simpleMessage("Total"),
         "stop": MessageLookupByLibrary.simpleMessage("Stop"),
         "story": MessageLookupByLibrary.simpleMessage("Story"),
-        "storyCounter": m28,
+        "storyCounter": m30,
         "storySummarizerGame":
             MessageLookupByLibrary.simpleMessage("Story Summarizer Game"),
-        "strokeCount": m29,
+        "strokeCount": m31,
         "submitbutton": MessageLookupByLibrary.simpleMessage("Done"),
         "successLogin":
             MessageLookupByLibrary.simpleMessage("Login successful"),
@@ -672,9 +708,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "title3": MessageLookupByLibrary.simpleMessage(
             "Don\'t fear trying,\nkeep going until you break the fear barrier"),
         "today": MessageLookupByLibrary.simpleMessage("Today"),
+        "totalTime": MessageLookupByLibrary.simpleMessage("Total Time"),
         "total_attempts":
             MessageLookupByLibrary.simpleMessage("total attempts"),
-        "traceThisLetter": m30,
+        "traceThisLetter": m32,
         "traceTitle":
             MessageLookupByLibrary.simpleMessage("✍️ Trace the letter"),
         "track_learning_progress":
@@ -685,7 +722,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "translateMonthsTooltip":
             MessageLookupByLibrary.simpleMessage("Switch month names"),
         "tryAgain": MessageLookupByLibrary.simpleMessage("Try Again"),
-        "tryAgain2": m31,
+        "tryAgain2": m33,
         "tryAgain3": MessageLookupByLibrary.simpleMessage("❌ Try Again"),
         "tryAgainEncouragement":
             MessageLookupByLibrary.simpleMessage("Try again! 💪"),
@@ -715,6 +752,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "tutorialPlayButtonTitle":
             MessageLookupByLibrary.simpleMessage("Play Button"),
         "tutorialSkip": MessageLookupByLibrary.simpleMessage("Skip"),
+        "unknown": MessageLookupByLibrary.simpleMessage("Unknown"),
         "up": MessageLookupByLibrary.simpleMessage("Up"),
         "upLeft": MessageLookupByLibrary.simpleMessage("Up Left"),
         "upRight": MessageLookupByLibrary.simpleMessage("Up Right"),
@@ -741,12 +779,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "wellDone": MessageLookupByLibrary.simpleMessage("Well done! ✅"),
         "whatIsDirection":
             MessageLookupByLibrary.simpleMessage("What is the direction?"),
+        "wisdomBuilder": MessageLookupByLibrary.simpleMessage("Wisdom Builder"),
         "wordsGame3Title": MessageLookupByLibrary.simpleMessage("Months Game"),
         "writeSummaryHere":
             MessageLookupByLibrary.simpleMessage("Write Your Summary Here"),
-        "wrongAnswer": m32,
+        "wrongAnswer": m34,
         "wrongAnswer2": MessageLookupByLibrary.simpleMessage("Wrong Answer"),
         "wrongFeedback": MessageLookupByLibrary.simpleMessage("Try again"),
+        "yearsOld": m35,
         "youTracedCorrectly": MessageLookupByLibrary.simpleMessage(
             "You traced the letter correctly!")
       };
