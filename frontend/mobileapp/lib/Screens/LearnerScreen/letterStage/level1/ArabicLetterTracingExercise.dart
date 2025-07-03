@@ -463,29 +463,29 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Great! You covered the letter shape accurately."),
+            // Text("Great! You covered the letter shape accurately."),
             const SizedBox(height: 16),
-            LinearProgressIndicator(
-              value: _accuracy,
-              backgroundColor: Colors.grey[200],
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
-            ),
+            // LinearProgressIndicator(
+            //   value: _accuracy,
+            //   backgroundColor: Colors.grey[200],
+            //   valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+            // ),
             const SizedBox(height: 8),
-            Text(
-              "Letter Coverage: ${(_accuracy * 100).toStringAsFixed(0)}%",
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+            // Text(
+            //   "Letter Coverage: ${(_accuracy * 100).toStringAsFixed(0)}%",
+            //   style: const TextStyle(fontWeight: FontWeight.bold),
+            // ),
             const SizedBox(height: 4),
-            Text(
-              _accuracy >= 0.7 ? "Excellent coverage!" :
-              _accuracy >= 0.5 ? "Good coverage!" :
-              "Adequate coverage!",
-              style: TextStyle(
-                color: _accuracy >= 0.7 ? Colors.green :
-                _accuracy >= 0.5 ? Colors.blue : Colors.orange,
-                fontSize: 12,
-              ),
-            ),
+            // Text(
+            //   _accuracy >= 0.7 ? "Excellent coverage!" :
+            //   _accuracy >= 0.5 ? "Good coverage!" :
+            //   "Adequate coverage!",
+            //   style: TextStyle(
+            //     color: _accuracy >= 0.7 ? Colors.green :
+            //     _accuracy >= 0.5 ? Colors.blue : Colors.orange,
+            //     fontSize: 12,
+            //   ),
+            // ),
           ],
         ),
         actions: [
@@ -618,24 +618,24 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("You need to cover more of the letter '${arabicLetters[currentLetterIndex]}' shape. Try tracing over more parts of the letter."),
+            // Text("You need to cover more of the letter '${arabicLetters[currentLetterIndex]}' shape. Try tracing over more parts of the letter."),
             const SizedBox(height: 16),
             if (_accuracy > 0) ...[
-              LinearProgressIndicator(
-                value: _accuracy,
-                backgroundColor: Colors.grey[200],
-                valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
-              ),
+              // LinearProgressIndicator(
+              //   value: _accuracy,
+              //   backgroundColor: Colors.grey[200],
+              //   valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
+              // ),
               const SizedBox(height: 8),
-              Text(
-                "Letter Coverage: ${(_accuracy * 100).toStringAsFixed(0)}% (need 35%+)",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "Tip: Draw over more areas of the letter to increase coverage",
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
+              // Text(
+              //   "Letter Coverage: ${(_accuracy * 100).toStringAsFixed(0)}% (need 35%+)",
+              //   style: const TextStyle(fontWeight: FontWeight.bold),
+              // ),
+              // const SizedBox(height: 4),
+              // Text(
+              //   "Tip: Draw over more areas of the letter to increase coverage",
+              //   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              // ),
             ],
           ],
         ),
@@ -694,13 +694,13 @@ class _ArabicLetterTracingExerciseState extends State<ArabicLetterTracingExercis
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: LinearProgressIndicator(
-                      value: (currentLetterIndex + 1) / arabicLetters.length,
-                      backgroundColor: Colors.white.withOpacity(0.3),
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: LinearProgressIndicator(
+                  //     value: (currentLetterIndex + 1) / arabicLetters.length,
+                  //     backgroundColor: Colors.white.withOpacity(0.3),
+                  //     valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                  //   ),
+                  // ),
                   const SizedBox(width: 12),
                   Text(
                     "✓ $completedLetters",

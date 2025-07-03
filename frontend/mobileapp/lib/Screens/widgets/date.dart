@@ -165,7 +165,7 @@ class DateTimePicker extends FormField<String> {
     );
 
     if (picked != null) {
-      final formatted = DateFormat('yyyy-MM-dd').format(picked);
+      final formatted = DateFormat('yyyy-MM-dd', 'en').format(picked);
       controller.text = formatted;
       field.didChange(formatted);
     }

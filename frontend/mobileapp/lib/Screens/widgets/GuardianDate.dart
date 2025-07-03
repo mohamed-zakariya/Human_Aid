@@ -152,10 +152,11 @@ class _EnhancedDateFieldState extends State<_EnhancedDateField> {
             });
 
             if (picked != null) {
-              final formatted = DateFormat('yyyy-MM-dd').format(picked);
+              final formatted = DateFormat('yyyy-MM-dd', 'en').format(picked); // force Western digits
               widget.controller.text = formatted;
               widget.field.didChange(formatted);
             }
+
           },
           decoration: InputDecoration(
             hintText: S.of(context).signupinputfieldbirthdate ?? 'Select your birthdate',
