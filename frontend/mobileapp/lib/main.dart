@@ -316,7 +316,7 @@ class _MyAppState extends State<MyApp> {
           '/words_game_4': (context) => Level1CameraScreen(),
 
           // LEVEL 3 GAMES
-          '/words_game_6': (context) => const MonthsOrderGameScreen(),
+          '/words_game_9': (context) => const MonthsOrderGameScreen(),
           '/words_game_7': (context) => const SpellingGameScreen("Advanced"),
 
           // SENTENCE STAGE
