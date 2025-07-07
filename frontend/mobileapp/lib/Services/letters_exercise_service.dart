@@ -7,6 +7,7 @@ import '../graphql/graphql_client.dart';
 import '../graphql/queries/letters_excercise_query.dart';
 import '../services/letters_service.dart';
 import '../models/letter.dart';
+import 'arabic_letter_mapping_service.dart'; // Add this import
 
 /// Handles GraphQL calls for the letter-pronunciation workflow.
 ///
@@ -104,6 +105,7 @@ class LetterExerciseService {
     required String levelId,
     String? fileUrl,
     String? spokenLetter,
+    required bool isCorrect, // Add this parameter
   }) async {
     try {
       final client = await GraphQLService.getClient();
@@ -116,6 +118,7 @@ class LetterExerciseService {
           'levelId': levelId,
           if (fileUrl != null) 'audioFile': fileUrl,
           'spokenLetter': spokenLetter,
+          'isCorrect': isCorrect, // Include the local validation result
         },
       );
 
@@ -153,6 +156,7 @@ class LetterExerciseService {
           return {
             'isCorrect': false,
             'message': 'فشل في رفع الملف الصوتي، حاول مجددًا.',
+            'transcript': null,
             'updatedData': null,
           };
         }
@@ -163,6 +167,7 @@ class LetterExerciseService {
           return {
             'isCorrect': false,
             'message': 'تعذّر تحويل الصوت إلى نص، حاول مجددًا.',
+            'transcript': null,
             'updatedData': null,
           };
         }
@@ -171,30 +176,48 @@ class LetterExerciseService {
         transcript = ''; // You could make this a required argument too
       }
 
-      // Step 3: Call updateLetterProgress mutation
+      // Step 3: LOCAL VALIDATION using our mapping
+      final String finalSpokenText = (transcript != null && transcript.isNotEmpty)
+          ? transcript
+          : (spokenLetter ?? '');
+
+      // Use our mapping to check if the pronunciation is correct
+      final bool isLocallyCorrect = ArabicLetterMapping.isCorrectPronunciation(
+        letter.letter,
+        finalSpokenText,
+      );
+
+      print('Expected letter: ${letter.letter}');
+      print('Spoken text: $finalSpokenText');
+      print('Is locally correct: $isLocallyCorrect');
+
+      // Step 4: Call updateLetterProgress mutation with our validation result
       final updatedData = await _callUpdateLetterProgress(
         userId: userId,
         exerciseId: exerciseId,
         letterId: letter.id,
         levelId: levelId,
         fileUrl: fileUrl, // nullable
-        spokenLetter: (transcript != null && transcript.isNotEmpty)
-            ? transcript
-            : (spokenLetter ?? ''),
+        spokenLetter: finalSpokenText,
+        isCorrect: isLocallyCorrect,
       );
 
-      if (updatedData == null) {
-        return {
-          'isCorrect': false,
-          'message': 'حدث خطأ أثناء معالجة البيانات، حاول مجددًا.',
-          'updatedData': null,
-        };
+      // Generate appropriate feedback messages
+      String feedbackMessage;
+      if (isLocallyCorrect) {
+        feedbackMessage = 'ممتاز! لقد نطقت الحرف بشكل صحيح.';
+      } else if (finalSpokenText.isEmpty) {
+        feedbackMessage = 'لم نتمكن من سماع صوتك، حاول مرة أخرى.';
+      } else {
+        final expectedName = ArabicLetterMapping.getLetterName(letter.letter);
+        feedbackMessage = 'قلت "$finalSpokenText" ولكن الحرف المطلوب هو "$expectedName". حاول مرة أخرى.';
       }
 
       return {
-        'isCorrect': updatedData['isCorrect'] ?? false,
-        'message': updatedData['message'] ?? 'تم إرسال الإجابة',
-        'transcript': transcript,
+        'isCorrect': isLocallyCorrect,
+        'message': feedbackMessage,
+        'transcript': finalSpokenText,
+        'expectedName': ArabicLetterMapping.getLetterName(letter.letter),
         'updatedData': updatedData,
       };
     } catch (e) {
@@ -202,9 +225,9 @@ class LetterExerciseService {
       return {
         'isCorrect': false,
         'message': 'حدث خطأ غير متوقع، حاول مجددًا.',
+        'transcript': null,
         'updatedData': null,
       };
     }
   }
-
 }

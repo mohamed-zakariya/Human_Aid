@@ -120,8 +120,8 @@ class DateTimePicker extends FormField<String> {
       ) async {
     DateTime now = DateTime.now();
     DateTime maxDate = isGuardian
-        ? now.subtract(const Duration(days: 15 * 365)) // 15+ years old for guardian
-        : now.subtract(const Duration(days: 4 * 365));  // 4+ years old for child
+        ? now.subtract(const Duration(days: 6 * 365)) // 15+ years old for guardian
+        : now.subtract(const Duration(days: 6 * 365));  // 4+ years old for child
     DateTime minDate = DateTime(1940); // More reasonable minimum date
 
     // Set initial date to a reasonable default if controller is empty
@@ -192,7 +192,7 @@ extension DateTimePickerValidation on String {
           (now.month == birthDate.month && now.day < birthDate.day)) {
         age--;
       }
-      return age >= 4; // Minimum age requirement
+      return age >= 6; // Minimum age requirement
     } catch (e) {
       return false;
     }
@@ -207,7 +207,7 @@ extension DateTimePickerValidation on String {
           (now.month == birthDate.month && now.day < birthDate.day)) {
         age--;
       }
-      return age >= 15; // Minimum guardian age requirement
+      return age >= 6; // Minimum guardian age requirement
     } catch (e) {
       return false;
     }
