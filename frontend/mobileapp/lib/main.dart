@@ -341,6 +341,34 @@ class _MyAppState extends State<MyApp> {
               levelId: args['levelId'], // Changed from levelObjectId to levelId
             );
           },
+          '/sentences_level_2': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+            return SentencePronunciationScreen(
+              onLocaleChange: _setLocale,
+              learner: args['learner'],
+              exerciseId: args['exerciseId'],
+              levelId: args['levelId'], // Changed from levelObjectId to levelId
+            );
+          },
+          '/sentences_level_3': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+            return SentencePronunciationScreen(
+              onLocaleChange: _setLocale,
+              learner: args['learner'],
+              exerciseId: args['exerciseId'],
+              levelId: args['levelId'], // Changed from levelObjectId to levelId
+            );
+          },
 
           // Sentence Games
 
