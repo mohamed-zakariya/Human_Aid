@@ -64,6 +64,38 @@ class ArabicLetterMapping {
     return false;
   }
 
+  /// Normalizes spoken text back to the letter character
+  /// Returns the letter character if the spoken text matches any pronunciation
+  /// Returns null if no match is found
+  static String? normalizeSpokenTextToLetter(String spokenText) {
+    if (spokenText.isEmpty) return null;
+    
+    String cleanSpoken = _cleanText(spokenText);
+    
+    // Check each letter and its possible pronunciations
+    for (String letter in _letterToSpokenNames.keys) {
+      // Direct match (if user says the letter itself)
+      if (cleanSpoken == _cleanText(letter)) {
+        return letter;
+      }
+      
+      // Check if the spoken text matches any of the letter's names
+      List<String> possibleNames = _letterToSpokenNames[letter]!;
+      for (String name in possibleNames) {
+        if (cleanSpoken == _cleanText(name)) {
+          return letter;
+        }
+        
+        // Partial match (in case of recognition issues)
+        if (_fuzzyMatch(cleanSpoken, _cleanText(name))) {
+          return letter;
+        }
+      }
+    }
+    
+    return null; // No match found
+  }
+
   /// Cleans text by removing diacritics and normalizing
   static String _cleanText(String text) {
     return text

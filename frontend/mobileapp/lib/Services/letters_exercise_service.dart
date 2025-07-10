@@ -177,28 +177,41 @@ class LetterExerciseService {
       }
 
       // Step 3: LOCAL VALIDATION using our mapping
-      final String finalSpokenText = (transcript != null && transcript.isNotEmpty)
+      final String rawSpokenText = (transcript != null && transcript.isNotEmpty)
           ? transcript
           : (spokenLetter ?? '');
 
       // Use our mapping to check if the pronunciation is correct
       final bool isLocallyCorrect = ArabicLetterMapping.isCorrectPronunciation(
         letter.letter,
-        finalSpokenText,
+        rawSpokenText,
       );
 
+      // Step 4: NORMALIZE the spoken text back to letter character
+      // This is what we'll send to the mutation
+      String normalizedSpokenLetter;
+      if (isLocallyCorrect) {
+        // If correct, send the expected letter
+        normalizedSpokenLetter = letter.letter;
+      } else {
+        // If incorrect, try to normalize what they said to a letter
+        // If no match found, send the original transcript
+        normalizedSpokenLetter = ArabicLetterMapping.normalizeSpokenTextToLetter(rawSpokenText) ?? rawSpokenText;
+      }
+
       print('Expected letter: ${letter.letter}');
-      print('Spoken text: $finalSpokenText');
+      print('Raw spoken text: $rawSpokenText');
+      print('Normalized spoken letter: $normalizedSpokenLetter');
       print('Is locally correct: $isLocallyCorrect');
 
-      // Step 4: Call updateLetterProgress mutation with our validation result
+      // Step 5: Call updateLetterProgress mutation with normalized letter
       final updatedData = await _callUpdateLetterProgress(
         userId: userId,
         exerciseId: exerciseId,
         letterId: letter.id,
         levelId: levelId,
         fileUrl: fileUrl, // nullable
-        spokenLetter: finalSpokenText,
+        spokenLetter: normalizedSpokenLetter, // Send normalized letter, not raw transcript
         isCorrect: isLocallyCorrect,
       );
 
@@ -206,17 +219,18 @@ class LetterExerciseService {
       String feedbackMessage;
       if (isLocallyCorrect) {
         feedbackMessage = 'ممتاز! لقد نطقت الحرف بشكل صحيح.';
-      } else if (finalSpokenText.isEmpty) {
+      } else if (rawSpokenText.isEmpty) {
         feedbackMessage = 'لم نتمكن من سماع صوتك، حاول مرة أخرى.';
       } else {
         final expectedName = ArabicLetterMapping.getLetterName(letter.letter);
-        feedbackMessage = 'قلت "$finalSpokenText" ولكن الحرف المطلوب هو "$expectedName". حاول مرة أخرى.';
+        feedbackMessage = 'قلت "$rawSpokenText" ولكن الحرف المطلوب هو "$expectedName". حاول مرة أخرى.';
       }
 
       return {
         'isCorrect': isLocallyCorrect,
         'message': feedbackMessage,
-        'transcript': finalSpokenText,
+        'transcript': rawSpokenText, // Keep original transcript for UI display
+        'normalizedLetter': normalizedSpokenLetter, // Add this for reference
         'expectedName': ArabicLetterMapping.getLetterName(letter.letter),
         'updatedData': updatedData,
       };
