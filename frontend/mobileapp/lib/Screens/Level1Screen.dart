@@ -244,16 +244,25 @@ class _Level1CameraScreenState extends State<Level1CameraScreen> {
       if (responseText != null) {
         final decoded = json.decode(responseText);
         final rawObject = decoded['object']?.toString().trim();
-        final reversedObject = reverseArabic(rawObject ?? '');
-        final normalizedObject = fixArabicPresentationForms(reversedObject);
+        
+        // Check if it's "no object found" - don't flip this
+        String processedObject;
+        if (rawObject == "لا يوجد كائن") {
+          processedObject = rawObject!; // Keep as is
+        } else {
+          // For other detected objects, apply reversal and normalization
+          final reversedObject = reverseArabic(rawObject ?? '');
+          processedObject = fixArabicPresentationForms(reversedObject);
+        }
 
-        print('🔍 predicted: ${normalizedObject.runes.toList()}');
+        print('🔍 predicted: ${processedObject.runes.toList()}');
         print('🎯 target   : ${randomTarget!.runes.toList()}');
 
         setState(() {
-          predictedObject = normalizedObject;
+          predictedObject = processedObject;
         });
-        if (randomTarget != null && normalizeAndCompare(normalizedObject, randomTarget!)) {
+        
+        if (randomTarget != null && normalizeAndCompare(processedObject, randomTarget!)) {
           handleCorrectAnswer();
         }
       }

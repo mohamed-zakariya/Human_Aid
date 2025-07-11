@@ -56,8 +56,13 @@ import 'models/level.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mobileapp/Services/notification_service.dart';
 
+import 'package:camera/camera.dart';
+
+List<CameraDescription>? cameras;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
   await Firebase.initializeApp();
   // 🔔 Don't call NotificationService.init() here - call it after user is logged in
   runApp(const MyApp());
@@ -318,14 +323,42 @@ class _MyAppState extends State<MyApp> {
           '/words_game_4': (context) => Level1CameraScreen(),
 
           // LEVEL 3 GAMES
-          '/words_game_9': (context) => const MonthsOrderGameScreen(),
-          '/words_game_7': (context) => const SpellingGameScreen("Advanced"),
+          '/words_game_7': (context) => const MonthsOrderGameScreen(),
+          '/words_game_6': (context) => const SpellingGameScreen("Advanced"),
 
           // SENTENCE STAGE
 
           // STAGE CONTENT
 
           '/sentences_level_1': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+            return SentencePronunciationScreen(
+              onLocaleChange: _setLocale,
+              learner: args['learner'],
+              exerciseId: args['exerciseId'],
+              levelId: args['levelId'], // Changed from levelObjectId to levelId
+            );
+          },
+          '/sentences_level_2': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            if (args == null) {
+              return const Scaffold(
+                body: Center(child: Text('Error: Missing arguments')),
+              );
+            }
+            return SentencePronunciationScreen(
+              onLocaleChange: _setLocale,
+              learner: args['learner'],
+              exerciseId: args['exerciseId'],
+              levelId: args['levelId'], // Changed from levelObjectId to levelId
+            );
+          },
+          '/sentences_level_3': (context) {
             final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
             if (args == null) {
               return const Scaffold(

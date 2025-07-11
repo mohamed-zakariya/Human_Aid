@@ -122,8 +122,8 @@ class _EnhancedDateFieldState extends State<_EnhancedDateField> {
 
             DateTime now = DateTime.now();
             DateTime maxDate = widget.isGuardian
-                ? now.subtract(const Duration(days: 15 * 365))
-                : now.subtract(const Duration(days: 4 * 365));
+                ? now.subtract(const Duration(days: 20 * 365))
+                : now.subtract(const Duration(days: 3 * 365));
             DateTime minDate = DateTime(1980);
 
             DateTime? picked = await showDatePicker(

@@ -39,25 +39,96 @@ class ProgressCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Background image (optional decorative element)
+          // ULTIMATE SOLUTION: Force identical visual appearance
           Positioned(
-            bottom: 0,
-            right: 0,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomRight: Radius.circular(16),
-              ),
-              child: Opacity(
-                opacity: 1,
-                child: Image.network(
-                  imageUrl,
-                  width: 120,
-                  height: 120,
-                  fit: BoxFit.fill,
+            bottom: -10, // Slightly adjust position
+            right: -10,
+            child: Container(
+              width: 130, // Make container slightly bigger
+              height: 130,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomRight: Radius.circular(16),
+                ),
+                child: FittedBox(
+                  fit: BoxFit.cover, // This ensures consistent sizing
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: 200, // Force a consistent base size
+                    height: 200,
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 200,
+                          height: 200,
+                          color: Colors.grey.withOpacity(0.3),
+                          child: const Icon(
+                            Icons.image_not_supported,
+                            color: Colors.white,
+                            size: 60,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
+          
+          // ALTERNATIVE SOLUTION 2: Using AspectRatio widget
+          // Positioned(
+          //   bottom: 0,
+          //   right: 0,
+          //   child: ClipRRect(
+          //     borderRadius: const BorderRadius.only(
+          //       bottomRight: Radius.circular(16),
+          //     ),
+          //     child: SizedBox(
+          //       width: 120,
+          //       height: 120,
+          //       child: AspectRatio(
+          //         aspectRatio: 1.0, // Square aspect ratio
+          //         child: Image.network(
+          //           imageUrl,
+          //           fit: BoxFit.cover,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+
+          // ALTERNATIVE SOLUTION 3: Using FittedBox for scaling
+          // Positioned(
+          //   bottom: 0,
+          //   right: 0,
+          //   child: ClipRRect(
+          //     borderRadius: const BorderRadius.only(
+          //       bottomRight: Radius.circular(16),
+          //     ),
+          //     child: SizedBox(
+          //       width: 120,
+          //       height: 120,
+          //       child: FittedBox(
+          //         fit: BoxFit.cover,
+          //         child: Image.network(
+          //           imageUrl,
+          //           errorBuilder: (context, error, stackTrace) {
+          //             return Container(
+          //               width: 120,
+          //               height: 120,
+          //               color: Colors.grey.withOpacity(0.3),
+          //               child: const Icon(Icons.image_not_supported),
+          //             );
+          //           },
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(

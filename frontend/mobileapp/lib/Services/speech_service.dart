@@ -66,7 +66,7 @@ class SpeechService {
     required String userId,
     required String exerciseId,
     required String wordId,
-    required String levelId, // ADD THIS PARAMETER
+    required String levelId, 
     required String fileUrl,
     required String spokenWord,
   }) async {
@@ -78,7 +78,7 @@ class SpeechService {
           'userId': userId,
           'exerciseId': exerciseId,
           'wordId': wordId,
-          'levelId': levelId, // ADD THIS VARIABLE
+          'levelId': levelId, 
           'audioFile': fileUrl,
           'spokenWord': spokenWord,
         },
@@ -108,7 +108,7 @@ class SpeechService {
     required String userId,
     required String exerciseId,
     required String wordId,
-    required String levelId, // ADD THIS PARAMETER
+    required String levelId, 
     required String correctWord,
     required String audioFilePath,
   }) async {
@@ -133,7 +133,7 @@ class SpeechService {
         userId: userId,
         exerciseId: exerciseId,
         wordId: wordId,
-        levelId: levelId, // ADD THIS PARAMETER
+        levelId: levelId, 
         fileUrl: fileUrl,
         spokenWord: transcript,
       );
