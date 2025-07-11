@@ -12,7 +12,6 @@ const String getStoryByProgressQuery = r'''
 
 
 const String generateStoryMutation = '''
-
     mutation generateArabicStory(
       \$topic: String!,
       \$setting: String!,
@@ -32,12 +31,9 @@ const String generateStoryMutation = '''
         jobId
       }
     }
-      
 ''';
 
-
 const String getStoryJobStatusQuery = '''
-
     query getStoryJobStatus(\$jobId: ID!) {
       getStoryJobStatus(jobId: \$jobId) {
         story
@@ -45,7 +41,6 @@ const String getStoryJobStatusQuery = '''
         error
       }
     }
-
 ''';
 
 const String generateQuestionsMutation = '''
@@ -57,8 +52,6 @@ const String generateQuestionsMutation = '''
   }
 
 ''';
-
-
 const String getQuestionsJobStatusQuery = '''
 
   query getQuestionsJobStatus(\$jobId: ID!){

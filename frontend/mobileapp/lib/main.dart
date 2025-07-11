@@ -94,6 +94,8 @@ class _MyAppState extends State<MyApp> {
 
     // Load saved locale from preferences
     final String? savedLocaleCode = prefs.getString('locale');
+
+
     if (savedLocaleCode != null) {
       _locale = Locale(savedLocaleCode);
     }
