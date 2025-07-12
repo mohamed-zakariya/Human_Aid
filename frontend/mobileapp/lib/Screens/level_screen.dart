@@ -173,7 +173,7 @@ class _LevelScreenState extends State<LevelScreen> {
   Widget _buildExerciseCard(BuildContext ctx) {
     final bool isArabic = Localizations.localeOf(ctx).languageCode == 'ar';
     final String title =
-        isArabic ? S.of(ctx).playGame : 'Start Exercise'; // adjust if needed
+        isArabic ? S.of(ctx).startExercise : 'Start Exercise'; // adjust if needed
     final List<Color> g = _cardGradients[0];
 
     return Card(
