@@ -2,62 +2,54 @@
 
 <div align="center">
 
-[![Download App](https://img.shields.io/badge/Download-App%20Store-blue?style=for-the-badge&logo=apple)](https://apps.apple.com/app/your-app)
-[![Download App](https://img.shields.io/badge/Download-Google%20Play-green?style=for-the-badge&logo=googleplay)](https://play.google.com/store/apps/details?id=your.app.id)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=for-the-badge)](https://github.com/your-repo)
-[![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
+<!-- App Logo -->
+<img src="logo/app-logo.png" alt="Arabic Learning App Logo" width="200" height="200">
 
-**A comprehensive mobile application designed to support Arabic language learning for students with dyslexia through visual aids, interactive activities, and AI-powered personalized learning experiences.**
+**A comprehensive mobile application designed to support Arabic language learning for students with dyslexia through visual aids, interactive activities, and personalized learning experiences.**
 
-[📱 Download Now](#-getting-started) • [🎥 Watch Demo](#-demo-videos) • [📋 Features](#-features-overview) • [💬 Support](#-support)
+![Arabic Learning Logo](https://img.shields.io/badge/Arabic-Learning-blue?style=for-the-badge&logo=translate&logoColor=white)
+![Dyslexia Support](https://img.shields.io/badge/Dyslexia-Friendly-green?style=for-the-badge&logo=accessibility&logoColor=white)
+![AI Powered](https://img.shields.io/badge/AI-Powered-purple?style=for-the-badge&logo=brain&logoColor=white)
+
+</div>
+
+
+---
+
+## 📥 Download Links
+
+<div align="center">
+
+### 🔗 **Direct Download**
+👉 **[Click here to download the app](#)**
+
+### 📱 **Scan QR Code**
+<img src="https://via.placeholder.com/200x200/4A90E2/FFFFFF?text=QR+CODE" alt="Download QR Code" width="150" height="150">
 
 </div>
 
 ---
 
-## 📖 Table of Contents
-
-- [🌟 Features Overview](#-features-overview)
-- [📱 Screenshots & Demo](#-screenshots--demo)
-- [👥 User Roles](#-user-roles)
-- [🎓 Learning Structure](#-learning-structure)
-- [🤖 AI-Powered Features](#-ai-powered-features)
-- [📊 Progress Tracking](#-progress-tracking--rewards)
-- [🚀 Getting Started](#-getting-started)
-- [📋 Technical Requirements](#-technical-requirements)
-- [🔧 Installation](#-installation)
-- [📞 Support](#-support)
-
----
-
-## 🌟 Features Overview
+## 🎯 **Key Highlights**
 
 <table>
 <tr>
 <td width="50%">
 
-### 🎯 **Core Learning System**
-- 🧩 **Dyslexia-Friendly Design**  
-  Visual aids, color coding, and tailored difficulty levels
-- 📈 **Gradual Learning Paradigm**  
-  Progressive path: Letters → Words → Sentences → Stories
-- 🎮 **Interactive Multisensory Activities**  
-  Games and activities with real-time feedback
-- 👨‍⚕️ **Expert-Backed Approach**  
-  Developed with psychologists and dyslexia specialists
+### 🧠 **Dyslexia-Specialized**
+- Visual aids & color coding
+- Expert-backed methodology
+- Adaptive learning paths
+- Multisensory approach
 
 </td>
 <td width="50%">
 
-### 🚀 **Advanced Technology**
-- 🔊 **Text-to-Speech System**  
-  Reading and auditory support for all content
-- 🎤 **Speech-to-Text Integration**  
-  Voice interaction and pronunciation evaluation
-- 📸 **Object Detection Module**  
-  Real-life object interaction for vocabulary
-- 🤖 **AI Story Generation**  
-  Personalized stories based on preferences
+### 🤖 **AI-Enhanced Learning**
+- Text-to-Speech integration
+- Voice recognition technology
+- Object detection capabilities
+- Personalized story generation
 
 </td>
 </tr>
@@ -65,256 +57,549 @@
 
 ---
 
-## 📱 Screenshots & Demo
+## 🌟 **Features Overview**
+
+### 🎓 Core Learning System
+
+<details>
+<summary><strong>Click to expand Core Learning features</strong></summary>
+
+#### 🎨 **Dyslexia-Friendly Design**
+Visual aids, color coding, and tailored difficulty levels specifically designed for dyslexic learners.
+
+#### 📈 **Gradual Learning Paradigm** 
+Progressive learning journey: `Letters` → `Words` → `Sentences` → `Stories`
+- Orchestrated by backend APIs for structured lesson delivery
+- Real-time progress tracking and user advancement monitoring
+
+#### 🎮 **Interactive Multisensory Activities**
+Engaging games and activities following each lesson:
+- Backend endpoints evaluate user input
+- Provide real-time feedback and corrections
+- Adaptive difficulty based on performance
+
+#### 👨‍⚕️ **Expert-Backed Approach**
+Developed with insights from:
+- Psychologists specializing in dyslexia
+- Educational specialists
+- Backend support for storing expert recommendations
+
+</details>
+
+### 🚀 Advanced Technology Integration
 
 <div align="center">
 
-### 📸 App Screenshots
-
-<table>
-<tr>
-<td align="center" width="25%">
-<img src="screenshots/home-screen.png" alt="Home Screen" width="200"/>
-<br><b>📊 Dashboard</b>
-<br><em>Learning progress overview</em>
-</td>
-<td align="center" width="25%">
-<img src="screenshots/learning-interface.png" alt="Learning Interface" width="200"/>
-<br><b>📚 Learning Interface</b>
-<br><em>Interactive lessons with visual aids</em>
-</td>
-<td align="center" width="25%">
-<img src="screenshots/games-section.png" alt="Games Section" width="200"/>
-<br><b>🎮 Games Section</b>
-<br><em>Multisensory activities</em>
-</td>
-<td align="center" width="25%">
-<img src="screenshots/object-detection.png" alt="Object Detection" width="200"/>
-<br><b>📸 Object Detection</b>
-<br><em>Real-time vocabulary learning</em>
-</td>
-</tr>
-</table>
-
-### 🎥 Demo Videos
-
-| Demo Type | Description | Link |
-|-----------|-------------|------|
-| 🎬 **Complete Walkthrough** | Full app demonstration and features | [![Demo](https://img.shields.io/badge/Watch-Demo-red?style=flat-square&logo=youtube)](videos/app-demo.mp4) |
-| 📚 **Learning Flow** | Step-by-step learning process | [![Demo](https://img.shields.io/badge/Watch-Flow-red?style=flat-square&logo=youtube)](videos/learning-flow.mp4) |
-| 🎤 **Voice Features** | Text-to-Speech and Speech-to-Text | [![Demo](https://img.shields.io/badge/Watch-Voice-red?style=flat-square&logo=youtube)](videos/voice-features.mp4) |
+| Feature | Description | Backend Integration |
+|---------|-------------|-------------------|
+| 🔊 **Text-to-Speech** | Reading & auditory support for all content | TTS services integration |
+| 🎤 **Speech-to-Text** | Voice interaction & pronunciation evaluation | Audio processing & scoring |
+| 📷 **Object Detection** | Real-life vocabulary learning through camera | AI-based image recognition |
+| 📚 **AI Story Generation** | Personalized stories based on preferences | Advanced language models |
+| 📝 **Story Summarization** | Comprehension assessment tools | Extractive AI summarization |
 
 </div>
 
 ---
 
-## 👥 User Roles
+## 📱 **App Screenshots**
 
 <div align="center">
 
-```mermaid
-graph TD
-    A[👤 Independent Learner] --> B[📊 Personal Progress]
-    A --> C[🎯 Self-Paced Learning]
-    A --> D[🏆 Individual Achievements]
-    
-    E[👨‍👩‍👧‍👦 Guardian Account] --> F[👶 Manage 3 Children]
-    E --> G[📈 Performance Reports]
-    E --> H[📧 Email Notifications]
-    E --> I[📊 Progress Monitoring]
-```
+<table>
+<tr>
+<td align="center">
+<img src="https://via.placeholder.com/300x600/4A90E2/FFFFFF?text=Home+Screen" alt="Home Screen" width="200">
+<br><em>📊 Main Dashboard</em>
+<br><small>Learning progress & available activities</small>
+</td>
+<td align="center">
+<img src="https://via.placeholder.com/300x600/50C878/FFFFFF?text=Learning+Interface" alt="Learning Interface" width="200">
+<br><em>🎨 Learning Interface</em>
+<br><small>Interactive lessons with visual aids</small>
+</td>
+<td align="center">
+<img src="https://via.placeholder.com/300x600/FF6B6B/FFFFFF?text=Games+Section" alt="Games Section" width="200">
+<br><em>🎮 Games Section</em>
+<br><small>Multisensory activities & games</small>
+</td>
+</tr>
+<tr>
+<td align="center">
+<img src="https://via.placeholder.com/300x600/FFD93D/FFFFFF?text=Object+Detection" alt="Object Detection" width="200">
+<br><em>📷 Object Detection</em>
+<br><small>Real-time vocabulary learning</small>
+</td>
+<td align="center">
+<img src="https://via.placeholder.com/300x600/A8E6CF/FFFFFF?text=Progress+Tracking" alt="Progress Tracking" width="200">
+<br><em>📈 Progress Tracking</em>
+<br><small>Detailed analytics & achievements</small>
+</td>
+<td align="center">
+<img src="https://via.placeholder.com/300x600/DDA0DD/FFFFFF?text=Voice+Features" alt="Voice Features" width="200">
+<br><em>🔊 Voice Features</em>
+<br><small>Speech recognition & TTS</small>
+</td>
+</tr>
+</table>
 
 </div>
 
-### 👤 Independent Learner
-> Perfect for self-motivated students
+---
 
-- ✅ Individual registration and app usage
-- 📊 Personal progress tracking with detailed analytics
+## 🎥 **Demo Videos**
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="33%">
+<a href="videos/app-demo.mp4">
+<img src="https://via.placeholder.com/400x225/FF6B6B/FFFFFF?text=▶+App+Demo" alt="App Demo" width="300">
+</a>
+<br><strong>🎬 Complete App Walkthrough</strong>
+<br><em>Full feature demonstration</em>
+</td>
+<td align="center" width="33%">
+<a href="videos/learning-flow.mp4">
+<img src="https://via.placeholder.com/400x225/4A90E2/FFFFFF?text=▶+Learning+Flow" alt="Learning Flow" width="300">
+</a>
+<br><strong>📚 Learning Process</strong>
+<br><em>Letters to stories progression</em>
+</td>
+<td align="center" width="33%">
+<a href="videos/voice-features.mp4">
+<img src="https://via.placeholder.com/400x225/50C878/FFFFFF?text=▶+Voice+Features" alt="Voice Features" width="300">
+</a>
+<br><strong>🎤 Voice Capabilities</strong>
+<br><em>TTS & STT in action</em>
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
+---
+
+## 🏗️ **Architecture & Database**
+
+<div align="center">
+
+### 🏛️ **Backend Server Architecture**
+<img src="architecture/backend-architecture.png" alt="Backend Server Architecture Diagram" width="800">
+*Comprehensive backend architecture showing API endpoints, services, and data flow*
+
+### 🗄️ **Database Schema (ERD)**
+<img src="database/database-schema-erd.png" alt="Database Schema Entity Relationship Diagram" width="800">
+*Entity Relationship Diagram showing database structure and relationships*
+
+</div>
+
+## 👥 **User Roles & Access**
+
+<div align="center">
+
+<table>
+<tr>
+<td width="50%" align="center">
+
+### 🧑‍🎓 **Independent Learner**
+
+![Learner Badge](https://img.shields.io/badge/Role-Learner-blue?style=flat-square&logo=user&logoColor=white)
+
+- 📝 Individual registration & app usage
+- 📊 Personal progress tracking with analytics
 - 🎯 Self-paced learning experience
-- 🏆 Achievement system and rewards
+- 🤖 Backend API-driven content adaptation
 
-### 👨‍👩‍👧‍👦 Guardian Account
-> Ideal for parents and educators
+**Features:**
+- ✅ Complete learning modules
+- ✅ Interactive games & activities  
+- ✅ Voice & object detection tools
+- ✅ AI-generated stories
+
+</td>
+<td width="50%" align="center">
+
+### 👨‍👩‍👧‍👦 **Guardian Account**
+
+![Guardian Badge](https://img.shields.io/badge/Role-Guardian-green?style=flat-square&logo=users&logoColor=white)
 
 - 👶 Manage up to **3 children** under supervision
-- 📈 Access detailed **performance reports**
-- 📧 Automated **PDF reports via email**
-- 👁️ Monitor learning progress and achievements
+- 📈 Access detailed performance reports
+- 📧 Automated PDF reports via email
+- 🎯 Monitor learning progress & achievements
 
----
+**Features:**
+- ✅ Multi-child account management
+- ✅ Performance analytics dashboard
+- ✅ Progress reports & insights
+- ✅ Email notifications & updates
 
-## 🎓 Learning Structure
-
-<div align="center">
-
-### 📚 Progressive Learning Path
-
-```
-🔤 Letter Recognition → 📝 Word Formation → 📖 Sentence Construction → 📚 Story Creation
-      ↓                    ↓                     ↓                       ↓
-  Visual & Audio      Object Detection     Grammar & Structure    AI Story Generation
-```
-
-</div>
-
-<table>
-<tr>
-<th>🔤 Letter Recognition</th>
-<th>📝 Word Formation</th>
-<th>📖 Sentence Construction</th>
-<th>📚 Story Creation</th>
-</tr>
-<tr>
-<td>
-• Visual letter introduction<br>
-• Audio pronunciation<br>
-• Writing practice<br>
-• Recognition games
-</td>
-<td>
-• Vocabulary building<br>
-• Object detection<br>
-• Word association<br>
-• Spelling exercises
-</td>
-<td>
-• Grammar fundamentals<br>
-• Sentence structure<br>
-• Pronunciation practice<br>
-• Reading comprehension
-</td>
-<td>
-• AI-generated stories<br>
-• Interactive narratives<br>
-• Comprehension questions<br>
-• Creative writing
 </td>
 </tr>
 </table>
 
-### 🎮 Interactive Activities
-
-- 🎯 **Multisensory Games** following each lesson
-- 🎤 **Pronunciation Evaluation** at multiple levels  
-- ⚡ **Real-time Feedback** and correction
-- 🎚️ **Adaptive Difficulty** adjustment
+</div>
 
 ---
 
-## 🤖 AI-Powered Features
+## 🔐 **Security & Authentication**
 
 <div align="center">
 
-### 🧠 Artificial Intelligence Integration
+| Security Feature | Implementation | Backend Integration |
+|------------------|----------------|-------------------|
+| 🔒 **Secure Authentication** | JWT-based system | Encrypted password storage |
+| 👤 **Role-Based Access** | Learner/Guardian/Admin roles | Middleware enforcement |
+| 🛡️ **Data Protection** | GDPR compliance | Secure session management |
+| 🔐 **Privacy Controls** | Data encryption | Validation & security protocols |
 
 </div>
-
-| Feature | Description | Technology |
-|---------|-------------|------------|
-| 📖 **Story Generation** | Personalized stories based on user preferences | 🤖 Large Language Models |
-| 📸 **Object Detection** | Real-time object recognition for vocabulary | 👁️ Computer Vision AI |
-| 🎤 **Voice Technology** | Speech-to-Text and Text-to-Speech | 🗣️ Natural Language Processing |
-| 📊 **Smart Analytics** | Learning pattern analysis and recommendations | 📈 Machine Learning |
 
 ---
 
-## 📊 Progress Tracking & Rewards
+## 🎓 **Learning Structure**
+
+### 📈 **Progressive Learning Path**
+
+```mermaid
+graph LR
+    A[📝 Letter Recognition] --> B[🔤 Word Formation]
+    B --> C[📋 Sentence Construction] 
+    C --> D[📚 Story Creation]
+    
+    A1[Visual & Audio Introduction] --> A
+    B1[Object Detection Vocabulary] --> B
+    C1[Grammar & Structure] --> C
+    D1[Narrative Development] --> D
+    
+    style A fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#fff
+    style B fill:#4A90E2,stroke:#333,stroke-width:2px,color:#fff
+    style C fill:#50C878,stroke:#333,stroke-width:2px,color:#fff
+    style D fill:#FFD93D,stroke:#333,stroke-width:2px,color:#000
+```
+
+<details>
+<summary><strong>📖 Detailed Learning Stages</strong></summary>
+
+#### 1️⃣ **Letter Recognition**
+- 👁️ Visual and auditory letter introduction
+- 📊 Backend tracking of attempts and accuracy
+- 🎯 Adaptive difficulty based on performance
+
+#### 2️⃣ **Word Formation** 
+- 🏗️ Building vocabulary with object detection
+- 🗣️ Backend evaluation of spoken input
+- 👁️ Visual association learning
+
+#### 3️⃣ **Sentence Construction**
+- 📝 Grammar and structure learning
+- 🔊 Backend scoring of pronunciation
+- ✅ Sentence formation evaluation
+
+#### 4️⃣ **Story Creation**
+- 📚 Narrative skills development
+- 🤖 Backend AI story generation
+- 📋 Comprehension summarization
+
+</details>
+
+### 🎮 **Interactive Activities**
 
 <div align="center">
 
-### 🏆 Gamification System
-
-![Progress](https://img.shields.io/badge/Progress-Tracking-blue?style=flat-square)
-![Badges](https://img.shields.io/badge/Achievement-Badges-gold?style=flat-square)
-![Points](https://img.shields.io/badge/Reward-Points-green?style=flat-square)
-![Streaks](https://img.shields.io/badge/Learning-Streaks-orange?style=flat-square)
+| Activity Type | Features | Backend Processing |
+|---------------|----------|-------------------|
+| 🎯 **Multisensory Games** | Post-lesson activities | Game controllers & feedback |
+| 🗣️ **Pronunciation Practice** | Multi-level evaluation | Speech-to-text scoring |
+| ⚡ **Real-time Feedback** | Instant corrections | Backend endpoint responses |
+| 📈 **Adaptive Difficulty** | Performance-based adjustment | Analytics-driven content |
 
 </div>
-
-### 📈 Performance Monitoring
-- 📊 Comprehensive progress tracking system
-- 🎯 Achievement milestones and goals
-- 📋 Learning analytics and insights
-- 📈 Performance trend analysis
-
-### 🎮 Engagement Features
-- 🏆 **Badge System**: Earn badges for achievements
-- ⭐ **Point Rewards**: Collect points for activities
-- 🔥 **Learning Streaks**: Maintain daily learning habits
-- 🎉 **Progress Celebrations**: Milestone rewards
-
-### 📧 Smart Notifications
-- 🔔 Personalized reminders for active users
-- 📩 Re-engagement campaigns for inactive users
-- 📊 Automated PDF performance reports for guardians
 
 ---
 
-## 🚀 Getting Started
+## 🤖 **AI-Powered Features**
 
 <div align="center">
 
-### Choose Your Path
+<table>
+<tr>
+<td align="center" width="33%">
+
+### 📚 **Story Generation**
+![AI Story](https://img.shields.io/badge/AI-Story_Gen-purple?style=for-the-badge&logo=magic&logoColor=white)
+
+- 🎨 Personalized story creation
+- 🤖 Language model integration  
+- ❓ Interactive comprehension questions
+- 📊 Assessment & evaluation tools
+
+</td>
+<td align="center" width="33%">
+
+### 📷 **Object Detection**
+![Object Detection](https://img.shields.io/badge/AI-Vision-orange?style=for-the-badge&logo=camera&logoColor=white)
+
+- 📸 Real-time object recognition
+- 🔗 Vocabulary building through visuals
+- 📱 Camera-based learning activities
+- 🗄️ Backend image processing & storage
+
+</td>
+<td align="center" width="33%">
+
+### 🎤 **Voice Technology**
+![Voice Tech](https://img.shields.io/badge/AI-Voice-green?style=for-the-badge&logo=microphone&logoColor=white)
+
+- 🗣️ Advanced Speech-to-Text
+- 🔊 Natural Text-to-Speech
+- 📊 Pronunciation accuracy evaluation
+- 📈 Progress tracking & analytics
+
+</td>
+</tr>
+</table>
 
 </div>
+
+---
+
+## 📊 **Progress Tracking & Rewards**
+
+<div align="center">
+
+### 📈 **Performance Monitoring**
 
 <table>
 <tr>
 <td width="50%">
 
-#### 👤 **For Independent Learners**
-
-1. 📲 **Download** the app from your app store
-2. 👤 **Create** your personal account  
-3. 📋 **Complete** the initial assessment
-4. 🎯 **Begin** your Arabic learning journey
-
-[![Download](https://img.shields.io/badge/Start-Learning-blue?style=for-the-badge)](https://your-app-store-link)
+#### 📊 **Analytics Dashboard**
+- Comprehensive progress tracking
+- Exercise and level progression
+- Learning analytics & insights
+- Performance trend analysis
 
 </td>
 <td width="50%">
 
-#### 👨‍👩‍👧‍👦 **For Guardians**
+#### 🎯 **Achievement System**
+- Milestone tracking & goals
+- Badge and point rewards
+- Motivational achievements
+- Progress celebrations
 
-1. 📝 **Register** for a Guardian account
+</td>
+</tr>
+</table>
+
+### 🏆 **Gamification Elements**
+
+| Element | Description | Backend Management |
+|---------|-------------|-------------------|
+| 🥇 **Badges** | Achievement unlocks | Backend achievement modules |
+| ⭐ **Points** | Activity rewards | Real-time point calculation |
+| 🔥 **Streaks** | Daily learning chains | Activity tracking & notifications |
+| 🎖️ **Milestones** | Progress celebrations | Automated achievement detection |
+
+</div>
+
+---
+
+## 📱 **Engagement Features**
+
+<div align="center">
+
+<table>
+<tr>
+<td width="50%" align="center">
+
+### 🔔 **Smart Notifications**
+![Notifications](https://img.shields.io/badge/Smart-Notifications-blue?style=for-the-badge&logo=bell&logoColor=white)
+
+- 📅 Personalized learning reminders
+- 🔄 Re-engagement campaigns for inactive users  
+- 🔥 Learning streak maintenance alerts
+- 📧 Backend notification & email services
+
+</td>
+<td width="50%" align="center">
+
+### 👨‍👩‍👧‍👦 **Guardian Integration**
+![Guardian](https://img.shields.io/badge/Guardian-Dashboard-green?style=for-the-badge&logo=family&logoColor=white)
+
+- 📄 Automated PDF performance reports
+- 📧 Email delivery to registered guardians
+- 📊 Progress summaries & recommendations
+- ⏰ Backend scheduled job automation
+
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
+## 🗄️ **Data Management**
+
+<div align="center">
+
+### 🔐 **Secure Database System**
+
+| Security Layer | Implementation | Compliance |
+|----------------|----------------|------------|
+| 🔒 **Encryption** | User data protection | AES-256 encryption |
+| 📊 **Progress Tracking** | Achievement & exercise data | Structured backend models |
+| 🌍 **GDPR Compliance** | Privacy-first approach | Data handling standards |
+| 💾 **Backup System** | Regular data protection | Automated backup jobs |
+
+</div>
+
+---
+
+## 👨‍💼 **Admin Dashboard**
+
+<div align="center">
+
+<table>
+<tr>
+<td width="50%">
+
+### 📊 **Analytics & Monitoring**
+- Real-time user activity tracking
+- Performance analytics dashboard
+- System health monitoring
+- Usage statistics & insights
+
+</td>
+<td width="50%">
+
+### 🛠️ **Management Tools**
+- Content management system
+- User account administration
+- CRUD operations for lessons & games
+- System maintenance utilities
+
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
+## 🧠 **Expert Consultation**
+
+<div align="center">
+
+**The app development incorporated insights from leading specialists:**
+
+<table>
+<tr>
+<td align="center" width="25%">
+🧠<br><strong>Educational Psychologists</strong><br><em>Learning methodology</em>
+</td>
+<td align="center" width="25%">
+📚<br><strong>Dyslexia Specialists</strong><br><em>Accessibility design</em>
+</td>
+<td align="center" width="25%">
+🔤<br><strong>Arabic Educators</strong><br><em>Language expertise</em>
+</td>
+<td align="center" width="25%">
+👶<br><strong>Child Development Experts</strong><br><em>Age-appropriate content</em>
+</td>
+</tr>
+</table>
+
+*Backend services store and reference expert recommendations to inform content and user support.*
+
+</div>
+
+---
+
+## 🚀 **Getting Started**
+
+<div align="center">
+
+<table>
+<tr>
+<td width="50%" align="center">
+
+### 🧑‍🎓 **For Independent Learners**
+
+1. 📱 **Download** the app from your device's app store
+2. 📝 **Create** your personal account  
+3. 🎯 **Complete** the initial assessment
+4. 🚀 **Begin** your Arabic learning journey
+
+[![Get Started](https://img.shields.io/badge/Start-Learning-success?style=for-the-badge&logo=play&logoColor=white)](#)
+
+</td>
+<td width="50%" align="center">
+
+### 👨‍👩‍👧‍👦 **For Guardians**
+
+1. 👤 **Register** for a Guardian account
 2. 👶 **Add** up to 3 children profiles
 3. 🎯 **Set** learning goals and preferences  
 4. 📊 **Monitor** progress through reports
 
-[![Download](https://img.shields.io/badge/Start-Monitoring-green?style=for-the-badge)](https://your-app-store-link)
+[![Guardian Access](https://img.shields.io/badge/Guardian-Dashboard-blue?style=for-the-badge&logo=users&logoColor=white)](#)
 
 </td>
 </tr>
 </table>
 
----
-
-## 📋 Technical Requirements
-
-### 📱 System Requirements
-
-| Platform | Minimum Version | RAM | Storage |
-|----------|----------------|-----|---------|
-| 🍎 **iOS** | 12.0+ | 2GB | 1GB |
-| 🤖 **Android** | 7.0+ | 2GB | 1GB |
-
-### 🔐 Required Permissions
-
-- 📸 **Camera**: Object detection and visual learning
-- 🎤 **Microphone**: Speech recognition and pronunciation  
-- 💾 **Storage**: Offline content and progress data
-- 🔔 **Notifications**: Learning reminders and updates
+</div>
 
 ---
 
-## 🔧 Installation
+## 📋 **Technical Requirements**
 
-### 📱 Mobile App Installation
+<div align="center">
 
-Download directly from your device's app store using the badges above.
+### 💻 **System Requirements**
 
-### 💻 Development Setup
+<table>
+<tr>
+<td width="50%">
+
+#### 📱 **Minimum Requirements**
+- ![iOS](https://img.shields.io/badge/iOS-12.0+-black?style=flat&logo=apple&logoColor=white) / ![Android](https://img.shields.io/badge/Android-7.0+-green?style=flat&logo=android&logoColor=white)
+- 🧠 **2GB RAM** minimum
+- 📷 **Camera** access for object detection
+- 🎤 **Microphone** for speech features
+- 🌐 **Internet** for AI features
+
+</td>
+<td width="50%">
+
+#### 🔐 **Required Permissions**
+- 📷 **Camera**: Object detection & visual learning
+- 🎤 **Microphone**: Speech recognition & pronunciation
+- 💾 **Storage**: Offline content & progress data
+- 🔔 **Notifications**: Learning reminders & updates
+
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
+## 🔧 **Installation & Development**
+
+<div align="center">
+
+### 💻 **Developer Setup**
+
+</div>
 
 ```bash
 # Clone the repository
@@ -330,108 +615,82 @@ npm install
 npm start
 ```
 
-### 🐋 Docker Setup (Optional)
-
-```bash
-# Build and run with Docker
-docker-compose up --build
-```
-
----
-
-## 🛡️ Security & Privacy
-
 <div align="center">
 
-![Security](https://img.shields.io/badge/Security-Enterprise%20Grade-red?style=for-the-badge)
-![Privacy](https://img.shields.io/badge/Privacy-GDPR%20Compliant-blue?style=for-the-badge)
-![Encryption](https://img.shields.io/badge/Data-Encrypted-green?style=for-the-badge)
-
-</div>
-
-- 🔐 **JWT-based Authentication** with encrypted password storage
-- 🛡️ **Role-based Access Control** for all user types
-- 📊 **GDPR-compliant Data Handling** 
-- 🔄 **Regular Security Updates** and backups
-
----
-
-## 👨‍💼 Admin Dashboard
-
-### 🎛️ Management Features
-
-- 📊 **User Analytics**: Real-time monitoring and insights
-- 📝 **Content Management**: CRUD operations for lessons and games
-- 📈 **Activity Tracking**: Comprehensive reporting system
-- ⚙️ **System Maintenance**: Admin controls and utilities
-
----
-
-## 🧠 Expert Consultation
-
-<div align="center">
-
-**Developed with insights from leading experts:**
-
-</div>
-
-| Expertise | Contribution |
-|-----------|--------------|
-| 👨‍⚕️ **Educational Psychologists** | Learning methodology and assessment |
-| 🧠 **Dyslexia Specialists** | Specialized techniques and accommodations |
-| 🗣️ **Arabic Language Educators** | Cultural and linguistic accuracy |
-| 👶 **Child Development Experts** | Age-appropriate content and progression |
-
----
-
-## 📊 Statistics
-
-<div align="center">
-
-![Users](https://img.shields.io/badge/Active%20Users-10K+-brightgreen?style=flat-square)
-![Success Rate](https://img.shields.io/badge/Success%20Rate-95%25-blue?style=flat-square)
-![Languages](https://img.shields.io/badge/Languages-Arabic%20+%20English-orange?style=flat-square)
-![Rating](https://img.shields.io/badge/App%20Rating-4.8%2F5-gold?style=flat-square)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github&logoColor=white)](#)
+[![Documentation](https://img.shields.io/badge/API-Docs-blue?style=for-the-badge&logo=swagger&logoColor=white)](#)
+[![Issues](https://img.shields.io/badge/Report-Issues-red?style=for-the-badge&logo=bug&logoColor=white)](#)
 
 </div>
 
 ---
 
-## 📞 Support
+## 📄 **License**
 
 <div align="center">
 
-### 💬 Get Help
-
-| Contact Method | Details |
-|----------------|---------|
-| 📧 **Email Support** | [support@arabic-dyslexia-app.com](mailto:support@arabic-dyslexia-app.com) |
-| 📚 **Documentation** | [View Docs](https://docs.your-app.com) |
-| 🐛 **Bug Reports** | [GitHub Issues](https://github.com/your-repo/issues) |
-| 💬 **Community** | [Discord Server](https://discord.gg/your-server) |
-
-[![Support](https://img.shields.io/badge/Support-24%2F7-blue?style=for-the-badge)](mailto:support@arabic-dyslexia-app.com)
-
-</div>
-
----
-
-## 📄 License
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensource&logoColor=white)
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
+</div>
+
 ---
 
-## 🙏 Acknowledgments
+## 📞 **Support & Contact**
 
 <div align="center">
 
-**Special Thanks To:**
+### 🤝 **Get Help**
 
-🎓 Dyslexia specialists and educators who provided expert consultation  
-🗣️ Arabic language experts who ensured cultural and linguistic accuracy  
-🧪 Beta testers and their families who provided valuable feedback  
-❤️ The amazing community that supports inclusive education
+<table>
+<tr>
+<td align="center" width="33%">
+📧<br><strong>Email Support</strong><br><a href="mailto:support@arabic-dyslexia-app.com">support@arabic-dyslexia-app.com</a>
+</td>
+<td align="center" width="33%">
+📚<br><strong>Documentation</strong><br><a href="#">Complete Guide</a>
+</td>
+<td align="center" width="33%">
+🐛<br><strong>Report Issues</strong><br><a href="#">GitHub Issues</a>
+</td>
+</tr>
+</table>
+
+[![Support](https://img.shields.io/badge/24%2F7-Support-success?style=for-the-badge&logo=customer_io&logoColor=white)](#)
+[![Community](https://img.shields.io/badge/Join-Community-purple?style=for-the-badge&logo=discord&logoColor=white)](#)
+
+</div>
+
+---
+
+## 🙏 **Acknowledgments**
+
+<div align="center">
+
+**We extend our heartfelt gratitude to:**
+
+<table>
+<tr>
+<td align="center" width="33%">
+🧠<br><strong>Expert Consultants</strong><br><em>Dyslexia specialists & educators who provided invaluable insights</em>
+</td>
+<td align="center" width="33%">
+🔤<br><strong>Language Experts</strong><br><em>Arabic language specialists ensuring cultural & linguistic accuracy</em>
+</td>
+<td align="center" width="33%">
+👨‍👩‍👧‍👦<br><strong>Beta Testers</strong><br><em>Families who provided essential feedback during development</em>
+</td>
+</tr>
+</table>
+
+---
+
+### 💝 **Made with ❤️ for dyslexic learners and their families**
+
+![Heart](https://img.shields.io/badge/Made_with-❤️-red?style=for-the-badge)
+![Accessibility](https://img.shields.io/badge/Accessibility-First-blue?style=for-the-badge&logo=accessibility&logoColor=white)
+![Education](https://img.shields.io/badge/Education-Focused-green?style=for-the-badge&logo=graduation-cap&logoColor=white)
 
 </div>
 
@@ -439,13 +698,10 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 <div align="center">
 
-### 🌟 Star this repository if it helped you!
+**⭐ Star this repository if you find it helpful! ⭐**
 
-[![GitHub stars](https://img.shields.io/github/stars/your-username/arabic-dyslexia-app?style=social)](https://github.com/your-username/arabic-dyslexia-app/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/your-username/arabic-dyslexia-app?style=social)](https://github.com/your-username/arabic-dyslexia-app/network/members)
-
-**Made with ❤️ for dyslexic learners and their families**
-
-[🔝 Back to Top](#-arabic-learning-app-for-dyslexic-students)
+[![Stars](https://img.shields.io/github/stars/your-username/arabic-dyslexia-app?style=social)](#)
+[![Forks](https://img.shields.io/github/forks/your-username/arabic-dyslexia-app?style=social)](#)
+[![Watchers](https://img.shields.io/github/watchers/your-username/arabic-dyslexia-app?style=social)](#)
 
 </div>
