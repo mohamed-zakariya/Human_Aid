@@ -196,7 +196,7 @@ Developed with insights from:
 
 ### 🗄️ **MongoDB Database**
 
-<img src="https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116820/Screenshot_2025-07-05_152909_basxy4.png" alt="Entity Relationship Diagram showing MongoDB database" width="800">
+<img src="https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116781/Screenshot_2025-07-10_014304_imcgbc.png" alt="Entity Relationship Diagram showing MongoDB database" width="800">
 
 *Entity Relationship Diagram showing MongoDB database*
 
