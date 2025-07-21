@@ -189,14 +189,16 @@ Developed with insights from:
 
 ### 🏛️ **Backend Server Architecture**
 
-<img src="https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116781/Screenshot_2025-07-10_014304_imcgbc.png" alt="Backend Server Architecture Diagram" width="800">
+<img src="https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116820/Screenshot_2025-07-05_152909_basxy4.png" alt="Backend Server Architecture Diagram" width="800">
 
 *Comprehensive backend architecture showing API, services, and data flow*
 
 
 ### 🗄️ **Database Schema (ERD)**
-<img src="database/database-schema-erd.png" alt="Database Schema Entity Relationship Diagram" width="800">
-*Entity Relationship Diagram showing database structure and relationships*
+
+<img src="[https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116820/Screenshot_2025-07-05_152909_basxy4.png](https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116781/Screenshot_2025-07-10_014304_imcgbc.png)" alt="Backend Server Architecture Diagram" width="800">
+
+*Entity Relationship Diagram showing Mongodb database*
 
 </div>
 
