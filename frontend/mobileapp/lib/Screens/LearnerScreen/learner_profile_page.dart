@@ -57,7 +57,7 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
   Future<void> _fetchLearnerProfile() async {
     if (widget.learnerId == null) {
       setState(() {
-        _errorMessage = 'Learner ID is required';
+        _errorMessage = S.of(context).learnerIdRequired;
       });
       return;
     }
@@ -154,7 +154,7 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Some profile data could not be loaded: $_errorMessage',
+              '${S.of(context).profileDataLoadError}: $_errorMessage',
               style: TextStyle(
                 color: Colors.red[700],
                 fontSize: 12,
@@ -321,9 +321,9 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'Profile Information',
-                  style: TextStyle(
+                Text(
+                  S.of(context).profileInformation,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF2D3748),
@@ -334,20 +334,20 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
             const SizedBox(height: 20),
             _buildInfoRow(
               icon: Icons.email_outlined,
-              label: 'Email',
-              value: learner.email ?? 'Not provided',
+              label: S.of(context).email,
+              value: learner.email ?? S.of(context).notProvided,
             ),
             const SizedBox(height: 16),
             _buildInfoRow(
               icon: Icons.cake_outlined,
-              label: 'Age',
-              value: learner.birthdate != null ? _calculateAge(learner.birthdate!) : 'Not provided',
+              label: S.of(context).age,
+              value: learner.birthdate != null ? _calculateAge(learner.birthdate!) : S.of(context).notProvided,
             ),
             const SizedBox(height: 16),
             _buildInfoRow(
               icon: Icons.wc_outlined,
-              label: 'Gender',
-              value: learner.gender?.capitalizeFirst() ?? 'Not provided',
+              label: S.of(context).gender,
+              value: learner.gender?.capitalizeFirst() ?? S.of(context).notProvided,
             ),
           ],
         ),
@@ -356,7 +356,7 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
   }
 
   Widget _buildStatsCard(Learner learner) {
-    final achievement = LearnerProfileService.getAchievementLevel(learner.totalTimeSpent);
+    final achievement = LearnerProfileService.getAchievementLevel(context, learner.totalTimeSpent);
     
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -396,9 +396,9 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'Learning Journey',
-                  style: TextStyle(
+                Text(
+                  S.of(context).learningJourney,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -412,7 +412,7 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
                 Expanded(
                   child: _buildStatItem(
                     icon: Icons.access_time,
-                    title: 'Total Time',
+                    title: S.of(context).totalTime,
                     value: learner.totalTimeSpent != null 
                         ? _formatTime(learner.totalTimeSpent!)
                         : '0m',
@@ -422,7 +422,7 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
                 Expanded(
                   child: _buildStatItem(
                     icon: Icons.military_tech,
-                    title: 'Achievement',
+                    title: S.of(context).achievement,
                     value: '${achievement['icon']} ${achievement['title']}',
                   ),
                 ),
@@ -469,9 +469,9 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'Personal Details',
-                  style: TextStyle(
+                Text(
+                  S.of(context).personalDetails,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF2D3748),
@@ -482,22 +482,22 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
             const SizedBox(height: 20),
             _buildInfoRow(
               icon: Icons.public,
-              label: 'Nationality',
+              label: S.of(context).nationality,
               value: learner.nationality != null 
                   ? '${LearnerProfileService.getFlagEmoji(learner.nationality)} ${learner.nationality!.capitalizeFirst()}'
-                  : 'Not provided',
+                  : S.of(context).notProvided,
             ),
             const SizedBox(height: 16),
             _buildInfoRow(
               icon: Icons.calendar_today,
-              label: 'Birth Date',
-              value: learner.birthdate != null ? _formatDate(learner.birthdate!) : 'Not provided',
+              label: S.of(context).birthDate,
+              value: learner.birthdate != null ? _formatDate(learner.birthdate!) : S.of(context).notProvided,
             ),
             if (learner.parentName != null) ...[
               const SizedBox(height: 16),
               _buildInfoRow(
                 icon: Icons.family_restroom,
-                label: 'Parent Name',
+                label: S.of(context).parentName,
                 value: learner.parentName!,
               ),
             ],
@@ -612,17 +612,17 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
             ],
           ),
         ),
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
+              const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
-                'Loading Profile...',
-                style: TextStyle(
+                S.of(context).loadingProfile,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -659,9 +659,9 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
                 size: 64,
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Failed to load profile',
-                style: TextStyle(
+              Text(
+                S.of(context).failedToLoadProfile,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -688,7 +688,7 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
                       vertical: 12,
                     ),
                   ),
-                  child: const Text('Retry'),
+                  child: Text(S.of(context).retry),
                 ),
             ],
           ),
@@ -711,19 +711,19 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
             ],
           ),
         ),
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.person_off_outlined,
                 color: Colors.white,
                 size: 64,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
-                'Profile not found',
-                style: TextStyle(
+                S.of(context).profileNotFound,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -745,9 +745,9 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
           (now.month == birthDate.month && now.day < birthDate.day)) {
         age--;
       }
-      return '$age years old';
+      return S.of(context).yearsOld(age);
     } catch (e) {
-      return 'Unknown';
+      return S.of(context).unknown;
     }
   }
 
@@ -762,11 +762,11 @@ class _LearnerProfilePageState extends State<LearnerProfilePage>
 
   String _formatTime(int totalMinutes) {
     if (totalMinutes < 60) {
-      return '${totalMinutes}m';
+      return S.of(context).minutesFormat(totalMinutes);
     } else {
       final hours = totalMinutes ~/ 60;
       final minutes = totalMinutes % 60;
-      return '${hours}h ${minutes}m';
+      return S.of(context).hoursMinutesFormat(hours, minutes);
     }
   }
 }

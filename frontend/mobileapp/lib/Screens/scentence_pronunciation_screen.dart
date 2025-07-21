@@ -31,7 +31,6 @@ class _SentencePronunciationScreenState
   // learner / session meta
   late Learner _learner;
   late String _userId;
-  final String _level = 'Beginner'; // or read from learner
   late String _exerciseId;
   late String _levelId;
 
@@ -53,6 +52,14 @@ class _SentencePronunciationScreenState
 
   // Timing
   DateTime? _recordingStartTime;
+
+  // Map levelId to backend key for fetching sentences
+  String _getBackendLevelKey(String levelId) {
+    if (levelId == '681004a0cb31000175a0b1be') return 'Beginner';
+    if (levelId == '681004a0cb31000175a0b1c1') return 'Intermediate';
+    if (levelId == '681004a0cb31000175a0b1c4') return 'Advanced';
+    return 'Beginner'; // fallback
+  }
 
   @override
   void initState() {
@@ -84,7 +91,8 @@ class _SentencePronunciationScreenState
     try {
       await _tts.initialize();
       await SentenceExerciseService.startExercise(_userId, _exerciseId);
-      _sentences = await SentenceExerciseService.fetchSentences(_level);
+      final backendLevel = _getBackendLevelKey(_levelId);
+      _sentences = await SentenceExerciseService.fetchSentences(backendLevel);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
@@ -339,7 +347,7 @@ class _SentencePronunciationScreenState
                         ),
                       ),
                       Text(
-                        _level,
+                        _levelId,
                         style: const TextStyle(
                           color: Colors.white70,
                           fontWeight: FontWeight.bold,

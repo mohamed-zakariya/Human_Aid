@@ -122,8 +122,8 @@ class _EnhancedDateFieldState extends State<_EnhancedDateField> {
 
             DateTime now = DateTime.now();
             DateTime maxDate = widget.isGuardian
-                ? now.subtract(const Duration(days: 15 * 365))
-                : now.subtract(const Duration(days: 4 * 365));
+                ? now.subtract(const Duration(days: 20 * 365))
+                : now.subtract(const Duration(days: 3 * 365));
             DateTime minDate = DateTime(1980);
 
             DateTime? picked = await showDatePicker(
@@ -152,10 +152,11 @@ class _EnhancedDateFieldState extends State<_EnhancedDateField> {
             });
 
             if (picked != null) {
-              final formatted = DateFormat('yyyy-MM-dd').format(picked);
+              final formatted = DateFormat('yyyy-MM-dd', 'en').format(picked); // force Western digits
               widget.controller.text = formatted;
               widget.field.didChange(formatted);
             }
+
           },
           decoration: InputDecoration(
             hintText: S.of(context).signupinputfieldbirthdate ?? 'Select your birthdate',

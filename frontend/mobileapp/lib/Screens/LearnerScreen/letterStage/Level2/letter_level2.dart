@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../../../../Services/arabic_letter_mapping_service.dart';
 import '../../../../Services/letters_exercise_service.dart';
 import '../../../../generated/l10n.dart';
 import '../../../../graphql/graphql_client.dart';
@@ -231,7 +232,7 @@ class _LetterLevel2State extends State<LetterLevel2> {
         ),
         const SizedBox(height: 12),
         
-        // Expected vs Spoken
+        // Expected vs Spoken comparison
         if (_lastTranscript != null) ...[
           Container(
             padding: const EdgeInsets.all(16),
@@ -242,75 +243,109 @@ class _LetterLevel2State extends State<LetterLevel2> {
             ),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
+                // Expected section
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'الحرف المطلوب',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
-                            'المطلوب',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.shade50,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              _letters[_current].letter,
-                              style: const TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
+                          // The letter itself
+                          Column(
+                            children: [
+                              Text(
+                                _letters[_current].letter,
+                                style: const TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
+                                ),
                               ),
-                            ),
+                              Text(
+                                'الحرف',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          // The expected pronunciation
+                          Column(
+                            children: [
+                              Text(
+                                ArabicLetterMapping.getLetterName(_letters[_current].letter),
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              Text(
+                                'النطق المتوقع',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text(
-                            'ما قلته',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: _isCorrect 
-                                  ? Colors.green.shade50 
-                                  : Colors.red.shade50,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              _lastTranscript!.isNotEmpty 
-                                  ? _lastTranscript! 
-                                  : 'غير واضح',
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: _isCorrect ? Colors.green : Colors.red,
-                              ),
-                            ),
-                          ),
-                        ],
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 12),
+                
+                // Spoken section
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: _isCorrect 
+                        ? Colors.green.shade50 
+                        : Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'ما قلته',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        _lastTranscript!.isNotEmpty 
+                            ? _lastTranscript! 
+                            : 'غير واضح',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: _isCorrect ? Colors.green : Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -333,6 +368,39 @@ class _LetterLevel2State extends State<LetterLevel2> {
                 color: Colors.grey.shade700,
               ),
               textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+        
+        // Hint for incorrect answers
+        if (!_isCorrect && _lastTranscript != null && _lastTranscript!.isNotEmpty) ...[
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.orange.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.orange.shade200),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  color: Colors.orange.shade700,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'نصيحة: قل "${ArabicLetterMapping.getLetterName(_letters[_current].letter)}" عندما ترى الحرف "${_letters[_current].letter}"',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.orange.shade700,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),

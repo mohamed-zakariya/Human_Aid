@@ -2615,7 +2615,7 @@ class S {
     return Intl.message(
       'Gender',
       name: 'gender',
-      desc: '',
+      desc: 'Label for gender field',
       args: [],
     );
   }
@@ -2635,7 +2635,7 @@ class S {
     return Intl.message(
       'Age',
       name: 'age',
-      desc: '',
+      desc: 'Label for age field',
       args: [],
     );
   }
@@ -2675,7 +2675,7 @@ class S {
     return Intl.message(
       'Email',
       name: 'email',
-      desc: '',
+      desc: 'Label for email field',
       args: [],
     );
   }
@@ -4258,6 +4258,381 @@ class S {
       'This game is locked. Complete previous levels to unlock it.',
       name: 'gameLockedMessage',
       desc: 'Message shown when user tries to access a locked game',
+      args: [],
+    );
+  }
+
+  /// `Level One - Live Camera`
+  String get level_one_live_camera {
+    return Intl.message(
+      'Level One - Live Camera',
+      name: 'level_one_live_camera',
+      desc: 'Title for level one live camera screen',
+      args: [],
+    );
+  }
+
+  /// `New Word`
+  String get new_word {
+    return Intl.message(
+      'New Word',
+      name: 'new_word',
+      desc: 'Button text for getting a new word',
+      args: [],
+    );
+  }
+
+  /// `Target Word`
+  String get target_word {
+    return Intl.message(
+      'Target Word',
+      name: 'target_word',
+      desc: 'Label for the target word section',
+      args: [],
+    );
+  }
+
+  /// `Analyzing...`
+  String get analyzing {
+    return Intl.message(
+      'Analyzing...',
+      name: 'analyzing',
+      desc: 'Text shown when analyzing the camera input',
+      args: [],
+    );
+  }
+
+  /// `Preparing Camera...`
+  String get preparing_camera {
+    return Intl.message(
+      'Preparing Camera...',
+      name: 'preparing_camera',
+      desc: 'Text shown when initializing the camera',
+      args: [],
+    );
+  }
+
+  /// `Result`
+  String get result {
+    return Intl.message(
+      'Result',
+      name: 'result',
+      desc: 'Label for the detection result',
+      args: [],
+    );
+  }
+
+  /// `Correct Answer! Well Done!`
+  String get correct_answer {
+    return Intl.message(
+      'Correct Answer! Well Done!',
+      name: 'correct_answer',
+      desc: 'Text shown when the answer is correct',
+      args: [],
+    );
+  }
+
+  /// `Try Again`
+  String get try_again {
+    return Intl.message(
+      'Try Again',
+      name: 'try_again',
+      desc: 'Text shown when the answer is incorrect',
+      args: [],
+    );
+  }
+
+  /// `Point the camera towards the target object within the red frame`
+  String get point_camera_instruction {
+    return Intl.message(
+      'Point the camera towards the target object within the red frame',
+      name: 'point_camera_instruction',
+      desc: 'Instruction for pointing the camera at the target object',
+      args: [],
+    );
+  }
+
+  /// `Processing`
+  String get processing {
+    return Intl.message(
+      'Processing',
+      name: 'processing',
+      desc: 'Status text when processing',
+      args: [],
+    );
+  }
+
+  /// `Ready to Capture`
+  String get ready_to_capture {
+    return Intl.message(
+      'Ready to Capture',
+      name: 'ready_to_capture',
+      desc: 'Status text when ready to capture',
+      args: [],
+    );
+  }
+
+  /// `❌ Error reading result`
+  String get errorReadingResult {
+    return Intl.message(
+      '❌ Error reading result',
+      name: 'errorReadingResult',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Well done! You've completed all the words.`
+  String get congratsAllWordsCompleted {
+    return Intl.message(
+      'Well done! You\'ve completed all the words.',
+      name: 'congratsAllWordsCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learner ID is required`
+  String get learnerIdRequired {
+    return Intl.message(
+      'Learner ID is required',
+      name: 'learnerIdRequired',
+      desc: 'Error message when learner ID is missing',
+      args: [],
+    );
+  }
+
+  /// `Some profile data could not be loaded`
+  String get profileDataLoadError {
+    return Intl.message(
+      'Some profile data could not be loaded',
+      name: 'profileDataLoadError',
+      desc: 'Error message when profile data fails to load',
+      args: [],
+    );
+  }
+
+  /// `Profile Information`
+  String get profileInformation {
+    return Intl.message(
+      'Profile Information',
+      name: 'profileInformation',
+      desc: 'Title for profile information section',
+      args: [],
+    );
+  }
+
+  /// `Not provided`
+  String get notProvided {
+    return Intl.message(
+      'Not provided',
+      name: 'notProvided',
+      desc: 'Text shown when information is not available',
+      args: [],
+    );
+  }
+
+  /// `Learning Journey`
+  String get learningJourney {
+    return Intl.message(
+      'Learning Journey',
+      name: 'learningJourney',
+      desc: 'Title for learning statistics section',
+      args: [],
+    );
+  }
+
+  /// `Total Time`
+  String get totalTime {
+    return Intl.message(
+      'Total Time',
+      name: 'totalTime',
+      desc: 'Label for total time spent learning',
+      args: [],
+    );
+  }
+
+  /// `Achievement`
+  String get achievement {
+    return Intl.message(
+      'Achievement',
+      name: 'achievement',
+      desc: 'Label for achievement level',
+      args: [],
+    );
+  }
+
+  /// `Personal Details`
+  String get personalDetails {
+    return Intl.message(
+      'Personal Details',
+      name: 'personalDetails',
+      desc: 'Title for personal details section',
+      args: [],
+    );
+  }
+
+  /// `Birth Date`
+  String get birthDate {
+    return Intl.message(
+      'Birth Date',
+      name: 'birthDate',
+      desc: 'Label for birth date field',
+      args: [],
+    );
+  }
+
+  /// `Parent Name`
+  String get parentName {
+    return Intl.message(
+      'Parent Name',
+      name: 'parentName',
+      desc: 'Label for parent name field',
+      args: [],
+    );
+  }
+
+  /// `Loading Profile...`
+  String get loadingProfile {
+    return Intl.message(
+      'Loading Profile...',
+      name: 'loadingProfile',
+      desc: 'Loading message for profile',
+      args: [],
+    );
+  }
+
+  /// `Failed to load profile`
+  String get failedToLoadProfile {
+    return Intl.message(
+      'Failed to load profile',
+      name: 'failedToLoadProfile',
+      desc: 'Error message when profile loading fails',
+      args: [],
+    );
+  }
+
+  /// `Profile not found`
+  String get profileNotFound {
+    return Intl.message(
+      'Profile not found',
+      name: 'profileNotFound',
+      desc: 'Message when profile is not found',
+      args: [],
+    );
+  }
+
+  /// `{age} years old`
+  String yearsOld(int age) {
+    return Intl.message(
+      '$age years old',
+      name: 'yearsOld',
+      desc: 'Format for displaying age',
+      args: [age],
+    );
+  }
+
+  /// `Unknown`
+  String get unknown {
+    return Intl.message(
+      'Unknown',
+      name: 'unknown',
+      desc: 'Text for unknown values',
+      args: [],
+    );
+  }
+
+  /// `{minutes}m`
+  String minutesFormat(int minutes) {
+    return Intl.message(
+      '${minutes}m',
+      name: 'minutesFormat',
+      desc: 'Format for displaying minutes',
+      args: [minutes],
+    );
+  }
+
+  /// `{hours}h {minutes}m`
+  String hoursMinutesFormat(int hours, int minutes) {
+    return Intl.message(
+      '${hours}h ${minutes}m',
+      name: 'hoursMinutesFormat',
+      desc: 'Format for displaying hours and minutes',
+      args: [hours, minutes],
+    );
+  }
+
+  /// `Explorer`
+  String get explorer {
+    return Intl.message(
+      'Explorer',
+      name: 'explorer',
+      desc: 'Achievement level title for beginners with 0 minutes',
+      args: [],
+    );
+  }
+
+  /// `Rising Star`
+  String get risingStar {
+    return Intl.message(
+      'Rising Star',
+      name: 'risingStar',
+      desc:
+          'Achievement level title for users with less than 1 hour of learning',
+      args: [],
+    );
+  }
+
+  /// `Bright Mind`
+  String get brightMind {
+    return Intl.message(
+      'Bright Mind',
+      name: 'brightMind',
+      desc:
+          'Achievement level title for users with less than 5 hours of learning',
+      args: [],
+    );
+  }
+
+  /// `Knowledge Seeker`
+  String get knowledgeSeeker {
+    return Intl.message(
+      'Knowledge Seeker',
+      name: 'knowledgeSeeker',
+      desc:
+          'Achievement level title for users with less than 10 hours of learning',
+      args: [],
+    );
+  }
+
+  /// `Wisdom Builder`
+  String get wisdomBuilder {
+    return Intl.message(
+      'Wisdom Builder',
+      name: 'wisdomBuilder',
+      desc:
+          'Achievement level title for users with less than 20 hours of learning',
+      args: [],
+    );
+  }
+
+  /// `Master Learner`
+  String get masterLearner {
+    return Intl.message(
+      'Master Learner',
+      name: 'masterLearner',
+      desc:
+          'Achievement level title for users with less than 40 hours of learning',
+      args: [],
+    );
+  }
+
+  /// `Learning Champion`
+  String get learningChampion {
+    return Intl.message(
+      'Learning Champion',
+      name: 'learningChampion',
+      desc: 'Achievement level title for users with 40+ hours of learning',
       args: [],
     );
   }

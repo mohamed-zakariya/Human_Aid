@@ -27,7 +27,7 @@ export const sentencesExerciseResolver = {
         },
   },
       
-Mutation: {
+  Mutation: {
     updateSentenceProgress: async (_, { userId, exerciseId,levelId, sentenceId, audioFile,spokenSentence}) => {
         return await updateSentenceProgress(userId, exerciseId,levelId, sentenceId, audioFile,spokenSentence);
       },      

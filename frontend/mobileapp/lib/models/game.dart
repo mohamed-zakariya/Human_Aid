@@ -5,7 +5,6 @@ class Game {
   final String arabicName;
   final String description;
   final String arabicDescription;
-  final String difficulty;
   final String? imageUrl;
   final bool? unlocked; // Add this property
   
@@ -16,7 +15,6 @@ class Game {
     required this.arabicName,
     required this.description,
     required this.arabicDescription,
-    required this.difficulty,
     this.imageUrl,
     this.unlocked, // Add this parameter
   });
@@ -29,7 +27,6 @@ class Game {
       arabicName: json['arabic_name'] ?? '',
       description: json['description'] ?? '',
       arabicDescription: json['arabic_description'] ?? '',
-      difficulty: json['difficulty'] ?? 'medium',
       imageUrl: json['image_url'],
       unlocked: json['unlocked'], // Add this line
     );

@@ -39,10 +39,26 @@ class GraphQLService {
   }
 
   static Future<void> clearTokens() async {
+    // final prefs = await SharedPreferences.getInstance();
+    // // await prefs.remove("accessToken");
+    // // await prefs.remove("refreshToken");
+    // await prefs.clear();
+
     final prefs = await SharedPreferences.getInstance();
-    // await prefs.remove("accessToken");
-    // await prefs.remove("refreshToken");
-    await prefs.clear();
+    final keysToKeep = {
+      'parentTutorialSeen',
+      'hasShownCoursePageTutorial',
+      'hasShownCourseTutorial',
+      'onboardingSeen',
+      'locale'
+    };
+
+    final allKeys = prefs.getKeys();
+    for (final key in allKeys) {
+      if (!keysToKeep.contains(key)) {
+        await prefs.remove(key);
+      }
+    }
   }
 
   static Future<bool> refreshToken(String? role) async {
