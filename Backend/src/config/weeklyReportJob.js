@@ -3,8 +3,7 @@ import Parents from '../models/Parents.js';
 import Users from '../models/Users.js';
 import DailyAttemptTracking from '../models/DailyAttemptTracking.js';
 import OverallProgress from '../models/OverallProgress.js';
-import { generateProgressPDF } from './pdfGenerator.js';
-import { sendEmailWithAttachment } from './emailConfig.js';
+import { emailQueue } from './emailQueue.js';
 
 export const weeklyReportJob = async () => {
   try {
@@ -36,7 +35,7 @@ export const weeklyReportJob = async () => {
         continue;
       }
 
-      const attachments = [];
+      const childrenData = [];
       let hasDataForAtLeastOneChild = false;
 
       for (const learner of parent.linkedChildren) {
@@ -63,16 +62,12 @@ export const weeklyReportJob = async () => {
         }
 
         hasDataForAtLeastOneChild = true;
-        const pdfPath = await generateProgressPDF({
-          learner,
-          parent,
-          dailyAttempts,
-          overallProgress
-        });
-
-        attachments.push({
-          path: pdfPath,
-          name: `${learner.name}_Weekly_Report.pdf`
+        
+        // Add child data to be processed by worker
+        childrenData.push({
+          learner: learner.toObject(), // Convert mongoose document to plain object
+          dailyAttempts: dailyAttempts.map(attempt => attempt.toObject()),
+          overallProgress: overallProgress ? overallProgress.toObject() : null
         });
       }
 
@@ -81,23 +76,26 @@ export const weeklyReportJob = async () => {
         continue;
       }
 
-      // Send email with all attachments
-      const subject = attachments.length > 1 
+      // Send email generation job to worker
+      const subject = childrenData.length > 1 
         ? `Weekly Reports for Your Children - ${new Date().toDateString()}`
-        : `Weekly Report for ${parent.linkedChildren[0].name} - ${new Date().toDateString()}`;
+        : `Weekly Report for ${childrenData[0].learner.name} - ${new Date().toDateString()}`;
       
-      const text = attachments.length > 1
+      const text = childrenData.length > 1
         ? `Dear ${parent.name},\n\nPlease find attached the weekly learning reports for your children.\n\nBest regards,\nLexFix App Team`
-        : `Dear ${parent.name},\n\nPlease find attached the weekly learning report for ${parent.linkedChildren[0].name}.\n\nBest regards,\nLexFix App Team`;
+        : `Dear ${parent.name},\n\nPlease find attached the weekly learning report for ${childrenData[0].learner.name}.\n\nBest regards,\nLexFix App Team`;
 
-      await sendEmailWithAttachment({
-        to: parent.email,
-        subject,
-        text,
-        attachments
+      await emailQueue.add("weeklyReport", {
+        type: "generateWeeklyReport",
+        data: {
+          parent: parent.toObject(), // Convert mongoose document to plain object
+          childrenData,
+          subject,
+          text
+        }
       });
 
-      console.log(`Sent ${attachments.length} report(s) to ${parent.email}`);
+      console.log(`Queued weekly report generation for ${parent.email} with ${childrenData.length} children`);
     }
   } catch (error) {
     console.error('Error in weeklyReportJob:', error);
