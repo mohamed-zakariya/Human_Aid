@@ -188,8 +188,8 @@ Developed with insights from:
 <div align="center">
 
 ### 🏛️ **Backend Server Architecture**
-<img src="architecture/backend-architecture.png" alt="Backend Server Architecture Diagram" width="800">
-*Comprehensive backend architecture showing API endpoints, services, and data flow*
+<img src="[architecture/backend-architecture.png](https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116781/Screenshot_2025-07-10_014304_imcgbc.png)" alt="Backend Server Architecture Diagram" width="800">
+*Comprehensive backend architecture showing API , services, and data flow*
 
 ### 🗄️ **Database Schema (ERD)**
 <img src="database/database-schema-erd.png" alt="Database Schema Entity Relationship Diagram" width="800">
