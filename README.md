@@ -183,7 +183,7 @@ Developed with insights from:
 
 ---
 
-## 🏗️ **Architecture & Database**
+## 🏗️ **Backend Architecture & Database**
 
 <div align="center">
 
@@ -194,11 +194,12 @@ Developed with insights from:
 *Comprehensive backend architecture showing API, services, and data flow*
 
 
-### 🗄️ **Database Schema (ERD)**
+### 🗄️ **MongoDB Database**
 
-<img src="[https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116820/Screenshot_2025-07-05_152909_basxy4.png](https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116781/Screenshot_2025-07-10_014304_imcgbc.png)" alt="Backend Server Architecture Diagram" width="800">
+<img src="https://res.cloudinary.com/dg4lqn3se/image/upload/v1753116820/Screenshot_2025-07-05_152909_basxy4.png" alt="Entity Relationship Diagram showing MongoDB database" width="800">
 
-*Entity Relationship Diagram showing Mongodb database*
+*Entity Relationship Diagram showing MongoDB database*
+
 
 </div>
 
