@@ -1,4 +1,4 @@
-<img width="1527" height="3289" alt="letters_level1_content" src="https://github.com/user-attachments/assets/f2fe9e2f-c80f-478d-b415-9294b6550bfa" /># 🌟 Arabic Learning App for Dyslexic Students
+# 🌟 Arabic Learning App for Dyslexic Students
 
 <div align="center">
 
