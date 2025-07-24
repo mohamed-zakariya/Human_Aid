@@ -2,11 +2,11 @@
 import axios from 'axios'; // ✅ Default import
 
 const apiKeys = [
-  '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',
-  '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',
-  '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',
-  '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',
-  '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'
+  process.env.api_story_1,
+  process.env.api_story_2,
+  process.env.api_story_3,
+  process.env.api_story_4,
+  process.env.api_story_5
 ];
 
 let currentKeyIndex = 0;
