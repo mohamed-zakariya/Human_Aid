@@ -1,9 +1,11 @@
-# 🌟 Arabic Learning App for Dyslexic Students
+<img width="1527" height="3289" alt="letters_level1_content" src="https://github.com/user-attachments/assets/f2fe9e2f-c80f-478d-b415-9294b6550bfa" /># 🌟 Arabic Learning App for Dyslexic Students
 
 <div align="center">
 
 <!-- App Logo -->
-<img src="logo/app-logo.png" alt="Arabic Learning App Logo" width="200" height="200">
+<img src="https://github.com/user-attachments/assets/29f4d4c5-abea-4cf8-a159-5641c692b69a" alt="Arabic Learning App Logo" width="200" height="200">
+
+
 
 **A comprehensive mobile application designed to support Arabic language learning for students with dyslexia through visual aids, interactive activities, and personalized learning experiences.**
 
@@ -21,10 +23,12 @@
 <div align="center">
 
 ### 🔗 **Direct Download**
-👉 **[Click here to download the app](#)**
+👉 **[Click here to download the app](https://ibrahimm0stafa.github.io/LexFix/)**
 
 ### 📱 **Scan QR Code**
-<img src="https://via.placeholder.com/200x200/4A90E2/FFFFFF?text=QR+CODE" alt="Download QR Code" width="150" height="150">
+<img src="https://github.com/user-attachments/assets/3c8c53be-d480-423c-8d3c-f92042b69c55" alt="Download QR Code" width="150" height="150">
+
+
 
 </div>
 
@@ -104,6 +108,9 @@ Developed with insights from:
 
 ## 📱 **App Screenshots**
 
+
+
+
 <div align="center">
 
 <table>
@@ -114,29 +121,31 @@ Developed with insights from:
 <br><small>Learning progress & available activities</small>
 </td>
 <td align="center">
-<img src="https://via.placeholder.com/300x600/50C878/FFFFFF?text=Learning+Interface" alt="Learning Interface" width="200">
+<img src="https://github.com/user-attachments/assets/7f93baed-9b02-4bf9-95a1-1c63a341a6fd" alt="Learning Interface" width="200">
 <br><em>🎨 Learning Interface</em>
 <br><small>Interactive lessons with visual aids</small>
 </td>
 <td align="center">
-<img src="https://via.placeholder.com/300x600/FF6B6B/FFFFFF?text=Games+Section" alt="Games Section" width="200">
+<img src="https://github.com/user-attachments/assets/e9950e4f-6c03-43f1-be7c-0cb3a8e0d15c" alt="Games Section" width="200">
 <br><em>🎮 Games Section</em>
 <br><small>Multisensory activities & games</small>
 </td>
 </tr>
 <tr>
+
+
 <td align="center">
-<img src="https://via.placeholder.com/300x600/FFD93D/FFFFFF?text=Object+Detection" alt="Object Detection" width="200">
+<img src="https://github.com/user-attachments/assets/232b364a-e312-4049-b252-cd6f6f9f8f03" alt="Object Detection" width="200">
 <br><em>📷 Object Detection</em>
 <br><small>Real-time vocabulary learning</small>
 </td>
 <td align="center">
-<img src="https://via.placeholder.com/300x600/A8E6CF/FFFFFF?text=Progress+Tracking" alt="Progress Tracking" width="200">
+<img src="https://github.com/user-attachments/assets/381fe293-d26b-42fa-8ecd-12092a247595" alt="Progress Tracking" width="200">
 <br><em>📈 Progress Tracking</em>
 <br><small>Detailed analytics & achievements</small>
 </td>
 <td align="center">
-<img src="https://via.placeholder.com/300x600/DDA0DD/FFFFFF?text=Voice+Features" alt="Voice Features" width="200">
+<img src="https://github.com/user-attachments/assets/bffc37e7-7dba-415c-93e1-fd8742ed8476" alt="Voice Features" width="200">
 <br><em>🔊 Voice Features</em>
 <br><small>Speech recognition & TTS</small>
 </td>
