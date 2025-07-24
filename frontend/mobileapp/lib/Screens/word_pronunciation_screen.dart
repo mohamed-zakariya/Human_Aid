@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart'; // Add this import
 import 'package:mobileapp/Screens/widgets/feedback_widget.dart';
 import 'package:mobileapp/Screens/widgets/letters_widget.dart';
 import 'package:mobileapp/Screens/widgets/recording_controls.dart';
@@ -51,6 +52,7 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
   String _userId = "";
 
   final AudioService _audioService = AudioService();
+  final FlutterTts _flutterTts = FlutterTts(); // Add TTS instance
 
   late final String _exerciseId;
   late final String _levelId;
@@ -81,6 +83,9 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
     _username = widget.initialLearner.name;
     _userId = widget.initialLearner.id!;
     
+    // Initialize TTS
+    _initializeTts();
+    
     // Load all words at the beginning
     _loadAllWords();
 
@@ -100,6 +105,57 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
     });
   }
 
+  // Initialize TTS settings
+  Future<void> _initializeTts() async {
+    // Check if Arabic is available, fallback to English
+    List<dynamic> languages = await _flutterTts.getLanguages;
+    
+    // Try Arabic first (ar-SA for Saudi Arabic, ar for general Arabic)
+    if (languages.contains("ar-SA")) {
+      await _flutterTts.setLanguage("ar-SA");
+    } else if (languages.contains("ar")) {
+      await _flutterTts.setLanguage("ar");
+    } else {
+      // Fallback to English if Arabic is not available
+      await _flutterTts.setLanguage("en-US");
+    }
+    
+    await _flutterTts.setSpeechRate(0.4); // Even slower for Arabic learning
+    await _flutterTts.setVolume(0.8);
+    await _flutterTts.setPitch(1.0);
+  }
+
+  // Function to speak the current word
+  Future<void> _speakCurrentWord() async {
+    if (_currentWord.isNotEmpty) {
+      try {
+        // Stop any ongoing speech first
+        await _flutterTts.stop();
+        
+        // Detect if the word contains Arabic characters
+        bool isArabic = _currentWord.contains(RegExp(r'[\u0600-\u06FF]'));
+        
+        if (isArabic) {
+          // Set Arabic language for Arabic words
+          await _flutterTts.setLanguage("ar-SA");
+        } else {
+          // Set English language for English words
+          await _flutterTts.setLanguage("en-US");
+        }
+        
+        await _flutterTts.speak(_currentWord);
+      } catch (e) {
+        print("TTS Error: $e");
+        // Show a snackbar if TTS fails
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Could not pronounce the word")),
+          );
+        }
+      }
+    }
+  }
+
   @override
   void dispose() {
     // NEW: Call endExercise
@@ -114,6 +170,7 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
 
     _timer?.cancel();
     _audioService.dispose();
+    _flutterTts.stop(); // Stop TTS
     super.dispose();
   }
 
@@ -346,7 +403,7 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
         if (mounted) {
           setState(() {
             _feedbackMessage =
-                "[S.of(context).transcriptLabel]: $transcript\n$message";
+                "${S.of(context).transcriptLabel}: $transcript\n$message";
             _isCorrect = isCorrect;
           });
         }
@@ -387,15 +444,6 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
           _feedbackMessage = S.of(context).recordingError('e');
         });
       }
-    }
-  }
-
-  /// When "التالي" is pressed, move to next word
-  void _onNextButtonPressed() {
-    if (_allWordsCompleted) {
-      _showCompletionDialog();
-    } else {
-      _moveToNextWord();
     }
   }
 
@@ -510,7 +558,6 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
               // Define proportional sizes
               final imageHeight = screenHeight * 0.18; // 18% of screen height
               final wordFontSize = screenWidth * 0.1; // 10% of screen width, capped
-              final buttonHeight = screenHeight * 0.07; // 7% of screen height
               
               return SingleChildScrollView(
                 child: ConstrainedBox(
@@ -560,14 +607,36 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
 
                         SizedBox(height: screenHeight * 0.012), // 1.2% of screen height
 
-                        // Word text with responsive font size
-                        Text(
-                          _currentWord,
-                          style: TextStyle(
-                            fontSize: wordFontSize.clamp(24.0, 48.0), // Clamp between 24-48
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
+                        // Word text with TTS button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _currentWord,
+                              style: TextStyle(
+                                fontSize: wordFontSize.clamp(24.0, 48.0), // Clamp between 24-48
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(width: screenWidth * 0.03),
+                            // TTS Button
+                            GestureDetector(
+                              onTap: _speakCurrentWord,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade100,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Icon(
+                                  Icons.volume_up,
+                                  color: Colors.blue.shade700,
+                                  size: wordFontSize.clamp(20.0, 32.0),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
 
                         SizedBox(height: screenHeight * 0.02), // 2% of screen height
@@ -638,40 +707,40 @@ class _WordPronunciationScreenState extends State<WordPronunciationScreen> {
 
                         const Spacer(),
 
-                        // Next button with responsive sizing
-                        Container(
-                          width: double.infinity,
-                          height: buttonHeight.clamp(50.0, 70.0), // Clamp button height
-                          margin: EdgeInsets.fromLTRB(
-                            screenWidth * 0.04, 
-                            screenHeight * 0.01, 
-                            screenWidth * 0.04, 
-                            screenHeight * 0.025
-                          ),
-                          child: ElevatedButton(
-                            onPressed: _isProcessing ? null : _onNextButtonPressed,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: _allWordsCompleted 
-                                  ? Colors.green[200] 
-                                  : Colors.blueGrey[200],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 2,
-                              disabledBackgroundColor: Colors.grey.shade300,
+                        // Show completion message when all words are done
+                        if (_allWordsCompleted)
+                          Padding(
+                            padding: EdgeInsets.all(screenWidth * 0.04),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.celebration,
+                                  size: 50,
+                                  color: Colors.green,
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  S.of(context).congratulations,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  S.of(context).completedAllWords,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: Text(
-                              _allWordsCompleted 
-                                  ? S.of(context).viewResults
-                                  : S.of(context).nextButton,
-                              style: TextStyle(
-                                fontSize: (screenWidth * 0.055).clamp(18.0, 26.0), // Responsive font size
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
                           ),
-                        ),
+
+                        SizedBox(height: screenHeight * 0.025),
                       ],
                     ),
                   ),
