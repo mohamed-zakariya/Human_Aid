@@ -1,9 +1,9 @@
-# 🌟 Arabic Learning App for Dyslexic Students
+# 🌟 LEXFIX: Arabic Learning App for Dyslexic Students
+
 
 <div align="center">
 
 <!-- App Logo -->
-<img src="https://github.com/user-attachments/assets/29f4d4c5-abea-4cf8-a159-5641c692b69a" alt="Arabic Learning App Logo" width="200" height="200">
 
 
 
